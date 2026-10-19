@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="WordlistHighlighting" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Heading" foreground="White" background="#FF333333" />
+  <Color name="Comment" foreground="Green" />
+  <RuleSet>
+    <Rule color="Heading">
+      ^[#].*$
+    </Rule>
+    <Span color="Comment" begin="//" />
+  </RuleSet>
+</SyntaxDefinition>

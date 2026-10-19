@@ -1,0 +1,63 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:DictationAssistant.App.ViewModels"
+        xmlns:controls="using:DictationAssistant.App.Controls"
+        xmlns:fp="using:ALampy.XamlFontPicker.Avalonia"
+        x:Class="DictationAssistant.App.PreferenceWindow"
+        x:DataType="vm:PreferenceWindowViewModel"
+        Title="偏好设置"
+        Width="700"
+        Height="480"
+        MinWidth="580"
+        MinHeight="380"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
+      <Button Width="88" IsCancel="True" Content="取消" Click="CancelButton_Click" HorizontalContentAlignment="Center" />
+      <Button Width="88" IsDefault="True" Content="确定" Click="OkButton_Click" HorizontalContentAlignment="Center" />
+    </StackPanel>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="10">
+        <controls:GroupBox Header="编辑器">
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Text="字体" />
+            <fp:FontPicker Grid.Row="0" Grid.Column="1"
+                           SelectedFontInfo="{Binding EditorFontInfo, Mode=TwoWay}" />
+          </Grid>
+        </controls:GroupBox>
+
+        <controls:GroupBox Header="引擎">
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Text="默认中文语音" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,8" ItemsSource="{Binding VoiceOptions}" SelectedItem="{Binding DefaultChineseVoice, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Info.DisplayName}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Text="默认英文语音" />
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,8" ItemsSource="{Binding VoiceOptions}" SelectedItem="{Binding DefaultEnglishVoice, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Info.DisplayName}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Text="音源增强目录" />
+            <DockPanel Grid.Row="2" Grid.Column="1">
+              <Button DockPanel.Dock="Right" Width="34" Content="..." Click="SetPathForImprovedResourceButton_Click" />
+              <TextBox Text="{Binding ImprovedResourcePath, Mode=TwoWay}" Watermark="选择目录" />
+            </DockPanel>
+          </Grid>
+        </controls:GroupBox>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

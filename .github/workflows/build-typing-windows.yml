@@ -1,0 +1,32 @@
+name: Windows desktop app with preinstalled typing plugin
+
+on:
+  push:
+    branches: ['main', 'master']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install .NET 10 SDK on CI runner
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build desktop application and sideloaded DLLs
+        shell: cmd
+        run: call build-windows-typing.cmd
+      - name: Validate portable archive and DLL content
+        shell: cmd
+        run: python scripts\verify_build.py
+      - name: Upload portable Windows archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: DictationAssistant-Integrated-Typing-Windows-x64
+          path: artifacts/DictationAssistant_IntegratedTyping_Windows_x64.zip
+          if-no-files-found: error
+          retention-days: 30

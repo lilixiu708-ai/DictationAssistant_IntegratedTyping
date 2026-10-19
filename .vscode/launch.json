@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "C#: DictationAssistant.App Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/DictationAssistant.App/DictationAssistant.App.csproj",
+        }
+    ]
+}

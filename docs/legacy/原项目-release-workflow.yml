@@ -1,0 +1,249 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  APP_NAME: DictationAssistant
+  APP_DISPLAY_NAME: 自动默写
+  PROJECT_PATH: src/DictationAssistant.App/DictationAssistant.App.csproj
+  DOTNET_VERSION: 10.0.x
+  LINUX_PACKAGE_ID: dictation-assistant
+
+jobs:
+  build-windows:
+    name: Build Windows Artifacts
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Compute version metadata
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') {
+            $version = $env:GITHUB_REF_NAME.Substring(1)
+            $isRelease = 'true'
+          }
+          else {
+            $version = '0.0.0'
+            $isRelease = 'false'
+          }
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "is_release=$isRelease" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore DictationAssistant.slnx
+
+      - name: Publish Windows self-contained
+        shell: pwsh
+        run: |
+          dotnet publish $env:PROJECT_PATH `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:Version=${{ steps.version.outputs.version }} `
+            -o artifacts/win-x64-self-contained
+
+      - name: Archive Windows portable package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "artifacts/win-x64-self-contained/*" -DestinationPath "artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-win-x64-portable.zip" -Force
+
+      - name: Install NSIS
+        shell: pwsh
+        run: |
+          choco install nsis -y --no-progress
+          Add-Content -Path $env:GITHUB_PATH -Value "C:\Program Files (x86)\NSIS"
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          & makensis `
+            /INPUTCHARSET UTF8 `
+            /DAPP_VERSION=${{ steps.version.outputs.version }} `
+            /DPUBLISH_DIR=$PWD\artifacts\win-x64-self-contained `
+            /DOUTPUT_FILE=$PWD\artifacts\${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-win-x64-installer.exe `
+            deploy\win-x64-installer\nsis.nsi
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release-assets
+          path: |
+            artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-win-x64-portable.zip
+            artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-win-x64-installer.exe
+          if-no-files-found: error
+
+  build-linux-packages:
+    name: Build Linux DEB/RPM/Arch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Compute version metadata
+        id: version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+            is_release=true
+          else
+            version="0.0.0"
+            is_release=false
+          fi
+
+          {
+            echo "version=$version"
+            echo "is_release=$is_release"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore DictationAssistant.slnx
+
+      - name: Publish Linux framework-dependent
+        run: |
+          dotnet publish "$PROJECT_PATH" \
+            -c Release \
+            -r linux-x64 \
+            --self-contained false \
+            -p:UseAppHost=true \
+            -p:Version=${{ steps.version.outputs.version }} \
+            -o artifacts/linux-x64
+
+      - name: Create Linux portable archive
+        run: |
+          tar -C artifacts/linux-x64 -czf "artifacts/${APP_NAME}-${{ steps.version.outputs.version }}-linux-x64.tar.gz" .
+
+      - name: Prepare Linux package root
+        run: |
+          mkdir -p artifacts/pkgroot/opt/dictation-assistant
+          mkdir -p artifacts/pkgroot/usr/bin
+          mkdir -p artifacts/pkgroot/usr/share/applications
+          mkdir -p artifacts/pkgroot/usr/share/icons/hicolor/256x256/apps
+          mkdir -p artifacts/pkgroot/usr/share/licenses/dictation-assistant
+          mkdir -p artifacts/pkgroot/usr/share/doc/dictation-assistant
+
+          cp -R artifacts/linux-x64/. artifacts/pkgroot/opt/dictation-assistant/
+          cp deploy/linux/dictation-assistant.desktop artifacts/pkgroot/usr/share/applications/dictation-assistant.desktop
+          cp deploy/linux/dictation-assistant.png artifacts/pkgroot/usr/share/icons/hicolor/256x256/apps/dictation-assistant.png
+          cp LICENSE.md artifacts/pkgroot/usr/share/licenses/dictation-assistant/LICENSE.md
+          cp deploy/shared/EULA.txt artifacts/pkgroot/usr/share/doc/dictation-assistant/EULA.txt
+          ln -s /opt/dictation-assistant/DictationAssistant.App artifacts/pkgroot/usr/bin/dictation-assistant
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libarchive-tools rpm zstd
+          sudo gem install --no-document fpm
+
+      - name: Build DEB package
+        run: |
+          fpm -s dir -t deb -C artifacts/pkgroot \
+            -n "$LINUX_PACKAGE_ID" \
+            -v "${{ steps.version.outputs.version }}" \
+            --iteration 1 \
+            -a amd64 \
+            --license AGPL-3.0-or-later \
+            --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --maintainer "DictationAssistant Contributors" \
+            --description "Cross-platform dictation assistant for word, phrase, and sentence practice" \
+            --depends "dotnet-runtime-10.0" \
+            --depends "libasound2" \
+            -p "artifacts/${APP_NAME}-${{ steps.version.outputs.version }}-linux-x64.deb" \
+            .
+
+      - name: Build RPM package
+        run: |
+          fpm -s dir -t rpm -C artifacts/pkgroot \
+            -n "$LINUX_PACKAGE_ID" \
+            -v "${{ steps.version.outputs.version }}" \
+            --iteration 1 \
+            -a x86_64 \
+            --license AGPL-3.0-or-later \
+            --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --maintainer "DictationAssistant Contributors" \
+            --description "Cross-platform dictation assistant for word, phrase, and sentence practice" \
+            --depends "dotnet-runtime-10.0" \
+            --depends "alsa-lib" \
+            -p "artifacts/${APP_NAME}-${{ steps.version.outputs.version }}-linux-x64.rpm" \
+            .
+
+      - name: Build Arch package
+        run: |
+          fpm -s dir -t pacman -C artifacts/pkgroot \
+            -n "$LINUX_PACKAGE_ID" \
+            -v "${{ steps.version.outputs.version }}" \
+            --iteration 1 \
+            -a x86_64 \
+            --license AGPL-3.0-or-later \
+            --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --maintainer "DictationAssistant Contributors" \
+            --description "Cross-platform dictation assistant for word, phrase, and sentence practice" \
+            --depends "dotnet-runtime" \
+            --depends "alsa-lib" \
+            -p "artifacts/${APP_NAME}-${{ steps.version.outputs.version }}-linux-x64.pkg.tar.zst" \
+            .
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-release-assets
+          path: |
+            artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-x64.tar.gz
+            artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-x64.deb
+            artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-x64.rpm
+            artifacts/${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-x64.pkg.tar.zst
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - build-windows
+      - build-linux-packages
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-release-assets"
+          path: release-assets
+          merge-multiple: true
+
+      - name: Generate checksums
+        run: |
+          cd release-assets
+          sha256sum * > SHA256SUMS.txt
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ env.APP_DISPLAY_NAME }} ${{ github.ref_name }}
+          draft: true
+          generate_release_notes: true
+          files: |
+            release-assets/*

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=自动默写
+Name[en]=DictationAssistant
+Comment=Practice dictation for words, phrases, and sentences
+Comment[zh_CN]=用于单词、短语和句子默写练习的工具
+Exec=dictation-assistant %F
+Icon=dictation-assistant
+Terminal=false
+Categories=Education;Utility;
+StartupNotify=true

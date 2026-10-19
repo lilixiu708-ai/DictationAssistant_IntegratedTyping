@@ -1,0 +1,71 @@
+<!-- Document importer preview, 2026-10-19. AGPL-3.0-or-later. -->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DictationAssistant.App.WordListImportWindow"
+        Title="从文档提取词表"
+        Icon="/Assets/DictationAssistant.ico"
+        Width="900"
+        Height="720"
+        MinWidth="760"
+        MinHeight="580"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="20">
+    <StackPanel DockPanel.Dock="Bottom" Spacing="10" Margin="0,12,0,0">
+      <TextBlock x:Name="SummaryTextBlock" TextWrapping="Wrap" />
+      <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+        <TextBlock Grid.Column="0" Text="每行一条，确认后写入词表。" VerticalAlignment="Center" Opacity="0.7" />
+        <Button x:Name="CancelButton" Grid.Column="1" Content="取消" IsCancel="True" MinWidth="82" HorizontalContentAlignment="Center" Margin="0,0,8,0" />
+        <Button x:Name="AppendButton" Grid.Column="2" Content="追加到词表" MinWidth="116" HorizontalContentAlignment="Center" Margin="0,0,8,0" IsEnabled="False" />
+        <Button x:Name="ReplaceButton" Grid.Column="3" Content="替换当前词表" MinWidth="132" HorizontalContentAlignment="Center" IsEnabled="False" />
+      </Grid>
+    </StackPanel>
+
+    <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="0,0,0,12">
+      <TextBlock Text="从文档提取词表" FontSize="24" FontWeight="SemiBold" />
+      <TextBlock x:Name="FileNameTextBlock" TextTrimming="CharacterEllipsis" FontSize="14" />
+
+      <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="提取插件" VerticalAlignment="Center" Margin="0,0,12,0" />
+        <ComboBox x:Name="PluginComboBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" />
+        <Button x:Name="ReadAgainButton" Grid.Row="0" Grid.Column="2" Content="重新读取" Margin="8,0,0,0" />
+        <ProgressBar x:Name="ReadProgressBar" Grid.Row="1" Grid.ColumnSpan="3" Height="3" Margin="0,8,0,0" IsIndeterminate="True" IsVisible="False" />
+      </Grid>
+
+      <Grid x:Name="FilterGrid" ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" IsEnabled="False">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="文档区域" VerticalAlignment="Center" Margin="0,0,12,0" />
+        <ComboBox x:Name="SectionComboBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="0" Grid.Column="2" Text="提取列" VerticalAlignment="Center" Margin="18,0,12,0" />
+        <ComboBox x:Name="ColumnComboBox" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Stretch" />
+        <WrapPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,8,0,0">
+          <CheckBox x:Name="SkipHeadersCheckBox" Content="跳过表头" IsChecked="True" Margin="0,0,22,0" />
+          <CheckBox x:Name="DeduplicateCheckBox" Content="去除完全相同的条目" IsChecked="False" Margin="0,0,22,0" />
+          <CheckBox x:Name="StripNumberingCheckBox" Content="移除行首编号" IsChecked="True" />
+        </WrapPanel>
+      </Grid>
+
+      <Border x:Name="WarningsPanel" Background="#16D88B00" CornerRadius="5" Padding="10" IsVisible="False">
+        <ScrollViewer MaxHeight="72" VerticalScrollBarVisibility="Auto">
+          <TextBlock x:Name="WarningsTextBlock" TextWrapping="Wrap" />
+        </ScrollViewer>
+      </Border>
+
+      <Border x:Name="ReadStatusPanel" BorderBrush="#808080" BorderThickness="1" CornerRadius="5" Padding="10" IsVisible="False">
+        <TextBlock x:Name="ReadStatusTextBlock" TextWrapping="Wrap" />
+      </Border>
+
+      <StackPanel Spacing="4">
+        <TextBlock Text="提取预览（可以直接编辑）" FontWeight="SemiBold" />
+        <TextBlock Text="修改筛选选项会重新生成预览；选择多张表格时，指定列按列序号匹配。" FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+      </StackPanel>
+    </StackPanel>
+
+    <TextBox x:Name="PreviewTextBox"
+             AcceptsReturn="True"
+             TextWrapping="NoWrap"
+             FontSize="16"
+             IsReadOnly="True"
+             Watermark="读取完成后，提取出的词语会显示在这里。"
+             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+  </DockPanel>
+</Window>

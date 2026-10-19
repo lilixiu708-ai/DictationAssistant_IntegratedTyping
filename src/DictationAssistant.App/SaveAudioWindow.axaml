@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:DictationAssistant.App.ViewModels"
+        x:Class="DictationAssistant.App.SaveAudioWindow"
+        x:DataType="vm:SaveAudioWindowViewModel"
+        Title="保存音频"
+        Width="440"
+        Height="400"
+        MinWidth="380"
+        MinHeight="340"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+  <DockPanel Margin="12">
+    <!-- Bottom: progress bar + buttons -->
+    <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,12,0,0">
+      <ProgressBar Minimum="0" Maximum="1" Value="{Binding ExportProgress}"
+                   IsVisible="{Binding IsExporting}" Height="18" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <Button Width="88" Content="取消" Click="CancelButton_Click" HorizontalContentAlignment="Center" />
+        <Button Width="88" IsDefault="True" Content="确定" Click="OkButton_Click"
+                IsEnabled="{Binding !IsExporting}" HorizontalContentAlignment="Center" />
+      </StackPanel>
+    </StackPanel>
+
+    <!-- Settings form -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" IsEnabled="{Binding !IsExporting}">
+      <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="8">
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="声道" />
+        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ChannelOptions}" SelectedItem="{Binding Channel, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="位宽" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SampleFormatOptions}" SelectedItem="{Binding SampleFormat, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="采样率" />
+        <ComboBox Grid.Row="2" Grid.Column="1" IsEditable="True" ItemsSource="{Binding FrequencyOptions}" Text="{Binding Frequency, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="输出格式" />
+        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding EncoderOptions}" SelectedItem="{Binding SelectedEncoder, Mode=TwoWay}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Info.Name}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="字幕模式" />
+        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding LyricModeOptions}" SelectedItem="{Binding LyricMode, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Text="目标文件" />
+        <DockPanel Grid.Row="5" Grid.Column="1">
+          <Button DockPanel.Dock="Right" Width="34" Content="..." Click="SetTargetPath_Click" />
+          <TextBox Text="{Binding TargetPath, Mode=TwoWay}" />
+        </DockPanel>
+      </Grid>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

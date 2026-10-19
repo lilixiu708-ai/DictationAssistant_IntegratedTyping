@@ -1,0 +1,39 @@
+<!-- Sideloaded importer management, 2026-10-19. AGPL-3.0-or-later. -->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DictationAssistant.App.PluginManagerWindow"
+        Title="插件管理"
+        Icon="/Assets/DictationAssistant.ico"
+        Width="780"
+        Height="600"
+        MinWidth="620"
+        MinHeight="460"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="20">
+    <StackPanel DockPanel.Dock="Bottom" Spacing="10" Margin="0,12,0,0">
+      <TextBlock x:Name="FolderErrorTextBlock" TextWrapping="Wrap" IsVisible="False" />
+      <Grid ColumnDefinitions="*,Auto,Auto">
+        <TextBlock Grid.Column="0" Text="插件的新增、更新和移除在重启后生效。" VerticalAlignment="Center" Opacity="0.7" TextWrapping="Wrap" Margin="0,0,12,0" />
+        <Button x:Name="OpenFolderButton" Grid.Column="1" Content="打开插件目录" Margin="0,0,8,0" />
+        <Button x:Name="CloseButton" Grid.Column="2" Content="关闭" IsCancel="True" IsDefault="True" MinWidth="82" HorizontalContentAlignment="Center" />
+      </Grid>
+    </StackPanel>
+
+    <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="0,0,0,16">
+      <TextBlock Text="插件管理" FontSize="24" FontWeight="SemiBold" />
+      <TextBlock Text="将解压后的整个插件文件夹放入下方目录，然后重启应用。每个插件文件夹应包含 plugin.json 和相应的 DLL 文件。" TextWrapping="Wrap" />
+      <SelectableTextBlock x:Name="PluginDirectoryTextBlock" TextWrapping="Wrap" />
+      <Border Background="#16D88B00" CornerRadius="5" Padding="10">
+        <TextBlock Text="第三方插件以应用的权限运行。请只安装来自信任来源的插件。" TextWrapping="Wrap" />
+      </Border>
+      <TextBlock x:Name="PluginCountTextBlock" FontWeight="SemiBold" />
+    </StackPanel>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel>
+        <TextBlock x:Name="EmptyPluginsTextBlock" Text="当前目录中还没有插件。复制完整的插件文件夹后重启即可加载。" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,12" />
+        <StackPanel x:Name="PluginEntriesPanel" />
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:DictationAssistant.App.ViewModels"
+        x:Class="DictationAssistant.App.AboutWindow"
+        x:DataType="vm:AboutWindowViewModel"
+        Title="关于"
+        Icon="/Assets/DictationAssistant.ico"
+        Width="640"
+        Height="420"
+        MinWidth="520"
+        MinHeight="320"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+  <DockPanel Margin="12">
+    <Border DockPanel.Dock="Top" Margin="0,0,0,12" Padding="12" Background="#4A4A4A" CornerRadius="6">
+      <StackPanel HorizontalAlignment="Center" Spacing="6">
+        <TextBlock Text="{Binding Title}" FontSize="46" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding Version, StringFormat=v{0}}" Foreground="White" HorizontalAlignment="Center" />
+      </StackPanel>
+    </Border>
+
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Width="88" IsDefault="True" Click="OkButton_Click" Content="确定" HorizontalContentAlignment="Center" />
+    </StackPanel>
+
+    <TextBox Text="{Binding EulaText}"
+             IsReadOnly="True"
+             AcceptsReturn="True"
+             TextWrapping="Wrap"
+             ScrollViewer.VerticalScrollBarVisibility="Visible" />
+  </DockPanel>
+</Window>

@@ -1,0 +1,221 @@
+<!-- Modified 2026-10-19: reversible shuffle and sideloaded document import. -->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:DictationAssistant.App.ViewModels"
+        xmlns:avaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:controls="using:DictationAssistant.App.Controls"
+        x:Class="DictationAssistant.App.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="{Binding MainWindowWidth, Mode=TwoWay}"
+        Height="{Binding MainWindowHeight, Mode=TwoWay}"
+        MinWidth="860"
+        MinHeight="560"
+        Title="自动默写 · 插件扩展版"
+        Icon="/Assets/DictationAssistant.ico"
+        mc:Ignorable="d"
+        DragDrop.AllowDrop="True">
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="文件(_F)">
+        <MenuItem Header="新建(_N)..." InputGesture="Ctrl+N" Click="NewWordList_Click" />
+        <MenuItem Header="打开(_O)..." InputGesture="Ctrl+O" Click="OpenFile_Click" />
+        <MenuItem Header="保存(_S)..." InputGesture="Ctrl+S" Click="SaveFile_Click" />
+        <Separator />
+        <MenuItem Header="退出(_E)" Click="Exit_Click" />
+      </MenuItem>
+      <MenuItem Header="编辑(_E)">
+        <MenuItem Header="{Binding ShowOrHideWordListText}" Command="{Binding ToggleWordListCommand}" />
+        <Separator />
+        <MenuItem Header="剪切" InputGesture="Ctrl+X" Click="Cut_Click" />
+        <MenuItem Header="复制" InputGesture="Ctrl+C" Click="Copy_Click" />
+        <MenuItem Header="粘贴" InputGesture="Ctrl+V" Click="Paste_Click" />
+        <Separator />
+        <MenuItem Header="撤销" InputGesture="Ctrl+Z" Click="Undo_Click" />
+        <MenuItem Header="重做" InputGesture="Ctrl+Y" Click="Redo_Click" />
+        <Separator />
+        <MenuItem Header="打乱听写顺序" InputGesture="Ctrl+Shift+R" Click="ShuffleWordList_Click" />
+        <Separator />
+        <MenuItem Header="全选" InputGesture="Ctrl+A" Click="SelectAll_Click" />
+      </MenuItem>
+      <MenuItem Header="选项(_O)">
+        <MenuItem Header="偏好设置(_P)..." Click="Preference_Click" />
+        <Separator />
+        <MenuItem Header="自动翻页" ToggleType="CheckBox" IsChecked="{Binding AutoScrollCurrentLine, Mode=TwoWay}" />
+        <MenuItem Header="高亮跟随" ToggleType="CheckBox" IsChecked="{Binding HighlightCurrentLine, Mode=TwoWay}" />
+      </MenuItem>
+      <MenuItem Header="插件(_P)">
+        <MenuItem Header="从文档提取词表…" InputGesture="Ctrl+Shift+I" Click="ImportDocument_Click" />
+        <Separator />
+        <MenuItem Header="同步打字练习…" InputGesture="Ctrl+Shift+T" Click="TypingPractice_Click" />
+        <MenuItem Header="插件管理…" Click="PluginManager_Click" />
+        <MenuItem Header="打开插件目录" Click="OpenPluginFolder_Click" />
+      </MenuItem>
+      <MenuItem Header="辅助(_A)">
+        <MenuItem Header="保存音频" Click="SaveAudio_Click" />
+      </MenuItem>
+      <MenuItem Header="帮助(_H)">
+        <MenuItem Header="关于(_A)" Click="About_Click" />
+      </MenuItem>
+    </Menu>
+
+    <DockPanel DockPanel.Dock="Right" Width="264" Margin="0,8,8,8" LastChildFill="True">
+      <controls:GroupBox DockPanel.Dock="Top" Header="播报信息">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" RowSpacing="4" ColumnSpacing="4">
+          <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Text="{Binding CurrentRepeat, StringFormat=本词语播报次数：{0}}" />
+          <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="自动播报间隔/秒：" />
+          <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
+            <TextBlock DockPanel.Dock="Left"
+                       Width="20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       Foreground="Red"
+                       Text="⚠️"
+                       ToolTip.Tip="{Binding IntervalValidationHint}"
+                       IsVisible="{Binding IntervalValidationHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <TextBox HorizontalContentAlignment="Right" Text="{Binding IntervalExpression, Mode=TwoWay}" />
+          </DockPanel>
+          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="自动播报次数/词：" />
+          <TextBox Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Right" Text="{Binding TimesPerWord, Mode=TwoWay}" />
+          <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Text="{Binding SpeakStateText}" />
+        </Grid>
+      </controls:GroupBox>
+
+      <Button DockPanel.Dock="Bottom" Content="{Binding ShowOrHideWordListText}" Command="{Binding ToggleWordListCommand}" Margin="0,4,0,0" Padding="4"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+
+      <controls:GroupBox DockPanel.Dock="Bottom" Header="引擎设置">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" RowSpacing="4" ColumnSpacing="4">
+          <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="音量：" />
+          <Slider Grid.Row="0" Grid.Column="1"  Minimum="0" Maximum="100" Value="{Binding Volume, Mode=TwoWay}" />
+          <TextBlock Grid.Row="1" Grid.Column="0"  VerticalAlignment="Center" Text="语速：" />
+          <Slider Grid.Row="1" Grid.Column="1" Minimum="-10" Maximum="10" Value="{Binding Rate, Mode=TwoWay}" />
+          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="语音：" />
+          <ComboBox Grid.Row="2" Grid.Column="1"
+                    ItemsSource="{Binding VoiceOptions}"
+                    SelectedItem="{Binding SelectedVoiceFactory, Mode=TwoWay}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Info.DisplayName}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="*,*" RowSpacing="4" ColumnSpacing="4">
+            <Grid.Styles>
+              <Style Selector="Button">
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+              </Style>
+            </Grid.Styles>
+            <Button Grid.Column="0" Content="中文引擎" Command="{Binding SwitchToChineseVoiceCommand}" />
+            <Button Grid.Column="1" Content="英文引擎" Command="{Binding SwitchToEnglishVoiceCommand}" />
+          </Grid>
+        </Grid>
+      </controls:GroupBox>
+
+      <controls:GroupBox Header="播报控制">
+        <Grid RowDefinitions="*,2*,*,*" ColumnDefinitions="*,*" RowSpacing="4" ColumnSpacing="4">
+          <Grid.Styles>
+            <Style Selector="Button">
+              <Setter Property="VerticalAlignment" Value="Stretch" />
+              <Setter Property="HorizontalAlignment" Value="Stretch" />
+              <Setter Property="VerticalContentAlignment" Value="Center" />
+              <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+          </Grid.Styles>
+          <Button Grid.Row="0" Grid.Column="0" Command="{Binding StartAutoCommand}" Content="开始播报(_S)" />
+          <Button Grid.Row="0" Grid.Column="1" Command="{Binding StopCommand}" Content="停止播报(_D)" />
+          <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" FontSize="22" FontWeight="Bold" Content="{Binding PauseOrResumeAutoText}" Command="{Binding PauseOrResumeAutoCommand}" />
+          <Button Grid.Row="2" Grid.Column="0" Command="{Binding SpeakNextCommand}" Content="报下一个(_N)" />
+          <Button Grid.Row="2" Grid.Column="1" Click="ResetRecord_Click" Content="记录归零(_C)" />
+          <Button Grid.Row="3" Grid.Column="0" Command="{Binding SpeakAgainCommand}" Content="再报一遍(_M)" />
+          <Button Grid.Row="3" Grid.Column="1" Command="{Binding SpeakPreviousCommand}" Content="报上一个(_L)" />
+        </Grid>
+      </controls:GroupBox>
+    </DockPanel>
+
+    <controls:GroupBox Margin="8,8,8,8" Header="词语列表">
+      <Panel>
+        <DockPanel IsVisible="{Binding WordListVisible}">
+          <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8" LastChildFill="True">
+            <Button DockPanel.Dock="Left" Content="导入文档" Click="ImportDocument_Click"
+                    Padding="12,6" Margin="0,0,8,0"
+                    ToolTip.Tip="通过插件从 Word 等文档提取词表。快捷键：Ctrl+Shift+I" />
+            <Button DockPanel.Dock="Left" Content="同步打字" Click="TypingPractice_Click"
+                    Padding="12,6" Margin="0,0,8,0"
+                    ToolTip.Tip="逐词完整播报后限时打字，整轮结束再显示正确率。Ctrl+Shift+T" />
+            <Button DockPanel.Dock="Left" Content="打乱顺序" Click="ShuffleWordList_Click"
+                    Padding="12,6" Margin="0,0,10,0"
+                    ToolTip.Tip="随机重排整行词条；再次点击可重新打乱。快捷键：Ctrl+Shift+R" />
+            <TextBlock x:Name="ShuffleStatusMessage" Text="每行一个词条；可导入文档、打乱顺序，Ctrl+Z 撤销。"
+                       VerticalAlignment="Center" TextWrapping="Wrap" FontSize="12" />
+          </DockPanel>
+          <StackPanel DockPanel.Dock="Right" Margin="8,0,0,0" Spacing="4" Width="40">
+            <Button ToolTip.Tip="打开" Click="OpenFile_Click">
+              <PathIcon Data="m572.501 747-254.933 815.893-101.867-31.786 278.507-890.774h1105.813v-320H783.808L612.181 107H.021v1546.667c0 88.213 71.787 160 160 160h1388.054c75.946 0 141.973-54.08 156.906-128.64L1892.608 747H572.501Z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="保存" Click="SaveFile_Click">
+              <PathIcon Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="剪切" Click="Cut_Click">
+              <PathIcon Data="M4.5,24C2,24,0,22,0,19.5S2,15,4.5,15c1,0,1.9,0.3,2.7,0.9l4.7-3.9L7.2,8.1C6.5,8.7,5.5,9,4.5,9C2,9,0,7,0,4.5S2,0,4.5,0S9,2,9,4.5C9,5.3,8.8,6,8.5,6.6l4.9,4.1l9-7.5l1.3,1.5L15,12l8.7,7.2l-1.3,1.5l-9-7.5l-4.9,4.1C8.8,17.9,9,18.6,9,19.4C9,22,7,24,4.5,24z M4.5,17C3.1,17,2,18.1,2,19.5S3.1,22,4.5,22S7,20.9,7,19.5S5.9,17,4.5,17z M4.5,2C3.1,2,2,3.1,2,4.5S3.1,7,4.5,7S7,5.9,7,4.5S5.9,2,4.5,2z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="复制" Click="Copy_Click">
+              <PathIcon Data="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="粘贴" Click="Paste_Click">
+              <PathIcon Data="M19,20H5V4H7V7H17V4H19M12,2A1,1 0 0,1 13,3A1,1 0 0,1 12,4A1,1 0 0,1 11,3A1,1 0 0,1 12,2M19,2H14.82C14.4,0.84 13.3,0 12,0C10.7,0 9.6,0.84 9.18,2H5A2,2 0 0,0 3,4V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V4A2,2 0 0,0 19,2Z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="删除" Click="Delete_Click">
+              <PathIcon Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="新建" Click="NewWordList_Click">
+              <PathIcon Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" Width="16" Height="16" />
+            </Button>
+            <Button ToolTip.Tip="计数" Click="Count_Click">
+              <PathIcon Data="F1 M4,1.25 L20,1.25 A2.75,2.75 0 0 1 22.75,4 L22.75,20 A2.75,2.75 0 0 1 20,22.75 L4,22.75 A2.75,2.75 0 0 1 1.25,20 L1.25,4 A2.75,2.75 0 0 1 4,1.25 Z M20,2.75 L4,2.75 A1.25,1.25 0 0 0 2.75,4 L2.75,20 A1.25,1.25 0 0 0 4,21.25 L20,21.25 A1.25,1.25 0 0 0 21.25,20 L21.25,4 A1.25,1.25 0 0 0 20,2.75 Z M2,12.75 L22,12.75 A0.75,0.75 0 0 0 22,11.25 L2,11.25 A0.75,0.75 0 0 0 2,12.75 Z M11.25,2 L11.25,22 A0.75,0.75 0 0 0 12.75,22 L12.75,2 A0.75,0.75 0 0 0 11.25,2 Z M5,17.75 L9,17.75 A0.75,0.75 0 0 0 9,16.25 L5,16.25 A0.75,0.75 0 0 0 5,17.75 Z M15.31,16.16 L19.31,16.16 A0.75,0.75 0 0 0 19.31,14.66 L15.31,14.66 A0.75,0.75 0 0 0 15.31,16.16 Z M15.31,19.16 L19.31,19.16 A0.75,0.75 0 0 0 19.31,17.66 L15.31,17.66 A0.75,0.75 0 0 0 15.31,19.16 Z M6.25,5 L6.25,9 A0.75,0.75 0 0 0 7.75,9 L7.75,5 A0.75,0.75 0 0 0 6.25,5 Z M5,7.75 L9,7.75 A0.75,0.75 0 0 0 9,6.25 L5,6.25 A0.75,0.75 0 0 0 5,7.75 Z M17.88,5.06 L15.06,7.88 A0.75,0.75 0 0 0 16.12,8.94 L18.94,6.12 A0.75,0.75 0 0 0 17.88,5.06 Z M15.06,6.12 L17.88,8.94 A0.75,0.75 0 0 0 18.94,7.88 L16.12,5.06 A0.75,0.75 0 0 0 15.06,6.12 Z" Width="16" Height="16" />
+            </Button>
+          </StackPanel>
+
+          <avaloniaEdit:TextEditor x:Name="WordlistEditor"
+                                   FontFamily="{Binding EditorFontInfo.Family}"
+                                   FontSize="{Binding EditorFontInfo.Size}"
+                                   FontStyle="{Binding EditorFontInfo.Style}"
+                                   FontWeight="{Binding EditorFontInfo.Weight}"
+                                   ShowLineNumbers="True"
+                                   HorizontalScrollBarVisibility="Auto"
+                                   VerticalScrollBarVisibility="Auto">
+            <avaloniaEdit:TextEditor.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="读选定词语" Click="SpeakSelection_Click" />
+                <MenuItem Header="在Bing词典中查看" Click="ViewSelectionInBingDictionary_Click" />
+                <MenuItem Header="从此处开始自动播报" Click="StartFromSelection_Click" />
+                <Separator />
+                <MenuItem Header="打乱听写顺序" Click="ShuffleWordList_Click" />
+                <Separator />
+                <MenuItem Header="剪切" Click="Cut_Click" />
+                <MenuItem Header="复制" Click="Copy_Click" />
+                <MenuItem Header="粘贴" Click="Paste_Click" />
+                <Separator />
+                <MenuItem Header="撤销" Click="Undo_Click" />
+                <MenuItem Header="重做" Click="Redo_Click" />
+                <Separator />
+                <MenuItem Header="全选" Click="SelectAll_Click" />
+              </ContextMenu>
+            </avaloniaEdit:TextEditor.ContextMenu>
+          </avaloniaEdit:TextEditor>
+        </DockPanel>
+        <TextBlock Text="Hidden"
+                   IsVisible="{Binding !WordListVisible}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="24"
+                   FontWeight="Bold" />
+      </Panel>
+    </controls:GroupBox>
+  </DockPanel>
+</Window>

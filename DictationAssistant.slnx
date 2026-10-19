@@ -1,0 +1,14 @@
+<!-- Modified 2026-10-19: add the importer contract and independently built DOCX plugin. -->
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DictationAssistant.App/DictationAssistant.App.csproj" />
+    <Project Path="src/DictationAssistant.Plugin.Abstractions/DictationAssistant.Plugin.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/plugins/">
+    <Project Path="plugins/DictationAssistant.Importers.Docx/DictationAssistant.Importers.Docx.csproj" />
+    <Project Path="plugins/DictationAssistant.Practices.Typing/DictationAssistant.Practices.Typing.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TypingPlugin.SmokeTests/TypingPlugin.SmokeTests.csproj" />
+  </Folder>
+</Solution>

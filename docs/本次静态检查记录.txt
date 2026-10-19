@@ -1,0 +1,21 @@
+Verified source-only checks:
+- PASS: All .csproj files parse as XML
+- PASS: Solution file parses as XML
+- PASS: Plugin manifests and SDK global.json parse as JSON
+- PASS: IPracticeHost exposes awaitable playback and interval settings
+- PASS: Host loads actual practice DLLs through managed interface
+- PASS: Modal exercise enters through existing Avalonia host
+- PASS: UI awaits complete repetition sequence before creating input
+- PASS: Scoring after all words; typed answers recorded in-loop
+- PASS: Typing controls hidden during playback and shown after playback
+- PASS: Sequencer awaits last audio and all requested gaps
+- PASS: SDL callback pinned before device starts
+- PASS: Audio device closed before callback unpinned
+- PASS: Empty synthesized audio must not start typing
+- PASS: CMD build script performs compilation without invoking PowerShell
+- PASS: Build script publishes host/plugins and runs behavioral smoke tests
+- PASS: GitHub Actions produces an uploaded Windows portable artifact
+- PASS: Behavioral test program included
+- PASS: Complete C# source tree present (81 source files)
+
+UNVERIFIED: .NET 10 compilation, Windows launch, SAPI output, SDL device audio, full GUI behavior, GitHub Actions execution.

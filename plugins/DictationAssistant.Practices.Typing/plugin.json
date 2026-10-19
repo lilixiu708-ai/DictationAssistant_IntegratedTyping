@@ -1,0 +1,11 @@
+{
+  "id": "synchronous-typing",
+  "name": "同步打字听写",
+  "description": "按自动播报次数完整读完后，开启限时打字；整轮结束统一展示成绩并可导出 CSV。",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "kind": "practice",
+  "extensions": [],
+  "entryAssembly": "DictationAssistant.Practices.Typing.dll",
+  "entryType": "DictationAssistant.Practices.Typing.SynchronousTypingPlugin"
+}

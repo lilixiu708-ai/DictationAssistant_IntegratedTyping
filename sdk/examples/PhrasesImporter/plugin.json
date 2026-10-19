@@ -1,0 +1,10 @@
+{
+  "id": "example-phrases",
+  "name": "逐行短语导入示例",
+  "version": "1.0.0",
+  "description": "读取 .phrases 文本文件，每个非空行作为一个完整短语。",
+  "apiVersion": 1,
+  "extensions": [".phrases"],
+  "entryAssembly": "Example.PhrasesImporter.dll",
+  "entryType": "Example.PhrasesImporter.PhrasesImporter"
+}
