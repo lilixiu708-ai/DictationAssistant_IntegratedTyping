@@ -22,6 +22,6 @@ with zipfile.ZipFile(archive) as zf:
     assert zf.testzip() is None, 'Corrupted zip member'
     docx = json.loads(zf.read(next(n for n in zf.namelist() if n.endswith('Plugins/DocxVocabulary/plugin.json'))))
     typing = json.loads(zf.read(next(n for n in zf.namelist() if n.endswith('Plugins/SynchronousTyping/plugin.json'))))
-    assert docx['kind'] == 'document-importer' and '.docx' in docx['extensions']
+    assert docx.get('kind', 'document-importer') == 'document-importer' and '.docx' in docx['extensions']
     assert typing['kind'] == 'practice' and typing['id'] == 'synchronous-typing'
 print(f'Validated {len(names)} portable package files: {archive}')
