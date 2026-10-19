@@ -15,15 +15,11 @@ if not "%SDKVER:~0,3%"=="10." (
 
 set "ROOT=%CD%"
 set "OUTPUT=%ROOT%\artifacts\Windows-x64"
-set "WORDOUT=%ROOT%\artifacts\_docx"
-set "TYPEOUT=%ROOT%\artifacts\_typing"
 set "WORDPLUGIN=%OUTPUT%\Plugins\DocxVocabulary"
 set "TYPEPLUGIN=%OUTPUT%\Plugins\SynchronousTyping"
 if not exist "artifacts" mkdir "artifacts"
 if exist "%OUTPUT%" rmdir /s /q "%OUTPUT%"
 mkdir "%OUTPUT%"
-mkdir "%WORDOUT%" 2>nul
-mkdir "%TYPEOUT%" 2>nul
 
 echo [1/6] Restore Windows host dependencies...
 dotnet restore "src\DictationAssistant.App\DictationAssistant.App.csproj" -r win-x64 --locked-mode
@@ -32,16 +28,9 @@ echo [2/6] Build native desktop host (self-contained)...
 dotnet publish "src\DictationAssistant.App\DictationAssistant.App.csproj" -c Release -r win-x64 --self-contained true --no-restore -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o "%OUTPUT%"
 if errorlevel 1 goto :failed
 echo [3/6] Build the two independent plugins...
-dotnet publish "plugins\DictationAssistant.Importers.Docx\DictationAssistant.Importers.Docx.csproj" -c Release -p:DebugType=None -p:DebugSymbols=false -o "%WORDOUT%"
+dotnet publish "plugins\DictationAssistant.Importers.Docx\DictationAssistant.Importers.Docx.csproj" -c Release -p:DebugType=None -p:DebugSymbols=false -o "%WORDPLUGIN%"
 if errorlevel 1 goto :failed
-dotnet publish "plugins\DictationAssistant.Practices.Typing\DictationAssistant.Practices.Typing.csproj" -c Release -p:DebugType=None -p:DebugSymbols=false -o "%TYPEOUT%"
-if errorlevel 1 goto :failed
-mkdir "%WORDPLUGIN%"
-mkdir "%TYPEPLUGIN%"
-REM The host shares DictationAssistant.Plugin.Abstractions.dll with plugin ALCs.
-xcopy "%WORDOUT%\*" "%WORDPLUGIN%" /E /I /Y /Q >nul
-if errorlevel 1 goto :failed
-xcopy "%TYPEOUT%\*" "%TYPEPLUGIN%" /E /I /Y /Q >nul
+dotnet publish "plugins\DictationAssistant.Practices.Typing\DictationAssistant.Practices.Typing.csproj" -c Release -p:DebugType=None -p:DebugSymbols=false -o "%TYPEPLUGIN%"
 if errorlevel 1 goto :failed
 
 echo [4/6] Check installed extension DLLs and manifests...
@@ -61,10 +50,7 @@ copy /y "docs\同步打字插件使用说明.md" "%OUTPUT%\同步打字插件使
 echo [6/6] Create portable ZIP...
 if exist "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip" del "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip"
 tar.exe -a -c -f "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip" -C "%OUTPUT%" .
-if errorlevel 1 (
-  echo [WARN] ZIP packaging unavailable; compiled folder is usable: %OUTPUT%
-  exit /b 0
-)
+if errorlevel 1 goto :failed
 echo [OK] artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip
 exit /b 0
 

@@ -14,9 +14,8 @@
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
-    <!-- UI packages are shared with the already-running Avalonia host. -->
+    <!-- The host provides desktop startup and native graphics libraries. -->
     <PackageReference Include="Avalonia" Version="11.3.12" ExcludeAssets="runtime" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.12" ExcludeAssets="runtime" />
     <None Update="plugin.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

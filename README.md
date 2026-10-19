@@ -1,6 +1,6 @@
 # DictationAssistant
 
-> 2026-10-19 定制版：基于上传的 4.x 源码加入 DOCX 词表提取、随机顺序和独立同步打字 DLL 侧载接口。当前交付为源码 + GitHub Actions Windows 构建工作流，**尚未在本环境成功编译为可运行 Windows EXE**。可直接使用 `build-windows-typing.cmd`（不调用 PowerShell），详见 [同步打字插件使用说明](docs/同步打字插件使用说明.md)。
+> 2026-10-19 定制版：加入 DOCX 词表提取、随机顺序和独立同步打字 DLL 插件。Windows x64 包自带 .NET 运行环境，插件共享主程序的图形库以减少体积。云环境已完成交叉构建和包校验，Windows 窗口、音频与输入法仍需实机验证。可使用 `build-windows-typing.cmd`（不调用 PowerShell），详见 [同步打字插件使用说明](docs/同步打字插件使用说明.md)。
 
 自动默写（DictationAssistant）是一个用于辅助学习的工具，它可以利用自动化手段帮助您默写单词、短语、句子等。软件通过语音合成技术以给定的间隔、重复次数朗读指定的文本，以帮助您在传统纸张或电子设备上默写。
 

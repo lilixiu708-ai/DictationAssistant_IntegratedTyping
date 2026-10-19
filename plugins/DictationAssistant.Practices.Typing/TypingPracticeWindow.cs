@@ -225,7 +225,7 @@ internal sealed class TypingPracticeWindow : Window
                 // returns only when the last device playback completes.
                 await RepetitionPlayback.PlayAsync(word, Math.Clamp(_host.TimesPerWord, 1, 100),
                     _host.SpeakOnceAsync, _host.GetRepeatInterval,
-                    (repeat, maxRepeat, waiting) => ShowPlaying(repeat, maxRepeat, waiting), ct);
+                    ShowPlaying, ct);
                 ct.ThrowIfCancellationRequested();
                 var answer = await AwaitTypingAsync(word, ct);
                 // Only record here. Do not compare and do not show correct text.
@@ -397,13 +397,8 @@ internal sealed class TypingPracticeWindow : Window
             await writer.WriteLineAsync("序号,正确词条,输入内容,是否正确,是否超时,耗时秒");
             foreach (var row in _records)
             {
-                await writer.WriteLineAsync(string.Join(",", new[]
-                {
-                    row.Index.ToString(CultureInfo.InvariantCulture),
-                    TypingEvaluation.CsvCell(row.Expected), TypingEvaluation.CsvCell(row.Entered),
-                    row.Correct ? "正确" : "错误", row.TimedOut ? "是" : "否",
-                    row.ElapsedSeconds.ToString("F2", CultureInfo.InvariantCulture)
-                }));
+                await writer.WriteLineAsync(string.Create(CultureInfo.InvariantCulture,
+                    $"{row.Index},{TypingEvaluation.CsvCell(row.Expected)},{TypingEvaluation.CsvCell(row.Entered)},{(row.Correct ? "正确" : "错误")},{(row.TimedOut ? "是" : "否")},{row.ElapsedSeconds:F2}"));
             }
             await writer.FlushAsync();
             _error.Text = "已导出成绩 CSV。";
