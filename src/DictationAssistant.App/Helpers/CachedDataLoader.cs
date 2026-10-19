@@ -11,7 +11,7 @@ public sealed class CachedDataLoader<TKey, TValue> where TKey : notnull
     private readonly Func<TKey, Task<TValue>> _loader;
     private readonly LinkedList<CacheEntry> _cacheOrder = new();
     private readonly Dictionary<TKey, LinkedListNode<CacheEntry>> _cacheMap = new();
-    private readonly Dictionary<TKey, Task<TValue>> _pendingLoads = new();
+    private readonly Dictionary<TKey, Lazy<Task<TValue>>> _pendingLoads = new();
     private readonly object _lock = new();
 
     public CachedDataLoader(Func<TKey, Task<TValue>> loader, int capacity = 4)
@@ -24,7 +24,8 @@ public sealed class CachedDataLoader<TKey, TValue> where TKey : notnull
 
     public async Task<TValue> GetAsync(TKey key, CancellationToken ct)
     {
-        Task<TValue> task;
+        ct.ThrowIfCancellationRequested();
+        Lazy<Task<TValue>> load;
 
         lock (_lock)
         {
@@ -33,14 +34,18 @@ public sealed class CachedDataLoader<TKey, TValue> where TKey : notnull
                 return cached!;
             }
 
-            if (!_pendingLoads.TryGetValue(key, out task!))
+            if (!_pendingLoads.TryGetValue(key, out load!))
             {
-                task = LoadAndCacheAsync(key);
-                _pendingLoads[key] = task;
+                // Register first: a synchronous loader may complete (or fail)
+                // before its first await and remove this entry immediately.
+                load = new Lazy<Task<TValue>>(() => LoadAndCacheAsync(key),
+                    LazyThreadSafetyMode.ExecutionAndPublication);
+                _pendingLoads[key] = load;
             }
         }
 
-        return await task.WaitAsync(ct).ConfigureAwait(false);
+        ct.ThrowIfCancellationRequested();
+        return await load.Value.WaitAsync(ct).ConfigureAwait(false);
     }
 
     private async Task<TValue> LoadAndCacheAsync(TKey key)

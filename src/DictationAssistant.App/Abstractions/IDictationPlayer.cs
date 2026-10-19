@@ -21,6 +21,7 @@ public interface IDictationPlayer
     DictationProgress Progress { get; }
 
     event EventHandler<DictationProgress>? ProgressChanged;
+    event EventHandler<Exception>? PlaybackFailed;
 
     void SpeakAt(int index, bool resetElapsedTimes = false);
     void SpeakNext();
@@ -31,6 +32,7 @@ public interface IDictationPlayer
     void PauseAuto();
     void ResumeAuto();
     void Stop();
+    Task StopAsync();
     void ResetProgress();
 
     // Await before replacing the word list; completes after earlier commands and the active chain stop.

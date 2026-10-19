@@ -21,6 +21,7 @@ public sealed class EdgeTtsVoice : IPreloadableVoice
 
     public async Task<PcmAudio> SynthesizePcmAsync(string text, VoiceSynthesisOptions options, CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
         if (string.IsNullOrWhiteSpace(text))
         {
             return PcmAudio.Empty;
@@ -31,6 +32,7 @@ public sealed class EdgeTtsVoice : IPreloadableVoice
         try
         {
             var mp3Bytes = await _cache.GetAsync(key, ct).ConfigureAwait(false);
+            ct.ThrowIfCancellationRequested();
             return DecodeMp3ToPcm(mp3Bytes);
         }
         catch (OperationCanceledException)
@@ -44,18 +46,19 @@ public sealed class EdgeTtsVoice : IPreloadableVoice
         }
     }
 
-    public Task PreloadAsync(string text, VoiceSynthesisOptions options, CancellationToken ct)
+    public async Task PreloadAsync(string text, VoiceSynthesisOptions options, CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
         if (string.IsNullOrWhiteSpace(text))
         {
-            return Task.CompletedTask;
+            return;
         }
 
         var key = new CacheKey(text, options.Rate ?? 0);
 
-        // Fire and forget: trigger cache loading in the background
-        _ = _cache.GetAsync(key, CancellationToken.None);
-        return Task.CompletedTask;
+        // The caller observes failure and controls its own wait; the shared
+        // cache load remains available to other callers after cancellation.
+        await _cache.GetAsync(key, ct).ConfigureAwait(false);
     }
 
     private async Task<byte[]> LoadMp3Async(CacheKey key)
@@ -121,9 +124,14 @@ public sealed class EdgeTtsVoiceFactoryProvider : IVoiceFactoryProvider
 {
     public async Task<IReadOnlyList<IVoiceFactory>> GetFactoriesAsync(CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
+        Task? request = null;
         try
         {
-            var voices = await Voices.ListVoicesAsync().ConfigureAwait(false);
+            var voiceListTask = Voices.ListVoicesAsync();
+            request = voiceListTask;
+            var voices = await voiceListTask.WaitAsync(ct).ConfigureAwait(false);
+            ct.ThrowIfCancellationRequested();
             return voices.Select(v => new EdgeTtsVoiceFactory(new VoiceInfo
             {
                 Id = $"edge-tts:{v.ShortName}",
@@ -131,10 +139,25 @@ public sealed class EdgeTtsVoiceFactoryProvider : IVoiceFactoryProvider
                 LocaleOrLanguage = v.Locale,
             }, v.ShortName)).ToList();
         }
+        catch (OperationCanceledException)
+        {
+            // EdgeTTS does not accept our token. Stop waiting during shutdown,
+            // but still observe a later failure of the read-only HTTP request.
+            if (request is not null) _ = ObserveCancelledRequestAsync(request);
+            throw;
+        }
         catch (Exception ex)
         {
+            ct.ThrowIfCancellationRequested();
             Trace.WriteLine($"[EdgeTTS] Failed to list voices: {ex.Message}");
             return [];
         }
+    }
+
+    private static async Task ObserveCancelledRequestAsync(Task request)
+    {
+        try { await request.ConfigureAwait(false); }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { Trace.WriteLine($"[EdgeTTS] Voice list request finished after cancellation: {ex.Message}"); }
     }
 }

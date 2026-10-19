@@ -1,0 +1,12 @@
+{
+  "id": "example-extension-toolkit",
+  "name": "词表工具示例",
+  "version": "1.0.0",
+  "description": "演示带修订保护的词表规范、统计、生命周期及后台观察；不会自动修改词表。",
+  "apiVersion": 1,
+  "minimumHostFeatureLevel": 2,
+  "kind": "command",
+  "extensions": [],
+  "entryAssembly": "Example.ExtensionToolkit.dll",
+  "entryType": "Example.ExtensionToolkit.ExtensionToolkit"
+}

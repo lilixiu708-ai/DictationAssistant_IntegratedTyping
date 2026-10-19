@@ -22,6 +22,7 @@ internal sealed class TypingPracticeWindow : Window
 {
     private readonly IPracticeHost _host;
     private readonly CancellationTokenSource _cancellation;
+    private readonly CancellationTokenRegistration _externalCancellationRegistration;
     private readonly TextBlock _progress = new() { FontSize = 16 };
     private readonly TextBlock _phaseTitle = new()
     {
@@ -183,18 +184,25 @@ internal sealed class TypingPracticeWindow : Window
         Closing += OnClosing;
         Closed += (_, _) =>
         {
+            _closing = true;
+            _allowClose = true;
+            _externalCancellationRegistration.Dispose();
             _timer.Stop();
             _timer.Tick -= OnTimerTick;
             _resultsList.ItemsSource = null;
             // An in-flight CSV export still needs the records until it finishes.
+            _cancellation.Cancel();
             _cancellation.Dispose();
         };
         RestorePreferences();
+        // Always post: an already-cancelled token must let ShowDialog open first.
+        _externalCancellationRegistration = externalToken.Register(() =>
+            Dispatcher.UIThread.Post(async () => await CancelAndCloseAsync()));
     }
 
     private void StartPractice()
     {
-        if (_sessionTask is not null) return;
+        if (_closing || _sessionTask is not null) return;
         if (!int.TryParse(_seconds.Text?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var secs)
             || secs is < 1 or > 300)
         {
@@ -421,8 +429,12 @@ internal sealed class TypingPracticeWindow : Window
             try { await _sessionTask; }
             catch (OperationCanceledException) { }
         }
-        _allowClose = true;
-        Close();
+        // The owner may have closed this window while the session was stopping.
+        if (!_allowClose)
+        {
+            _allowClose = true;
+            Close();
+        }
     }
 
     private async void OnClosing(object? sender, WindowClosingEventArgs e)
@@ -433,7 +445,7 @@ internal sealed class TypingPracticeWindow : Window
     }
 
     private static string PreferencesPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify),
         "DictationAssistant", "Plugins", "SynchronousTyping", "settings.json");
 
     private void RestorePreferences()

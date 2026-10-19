@@ -1,0 +1,12 @@
+{
+  "id": "example-tone-voice",
+  "name": "离线提示音示例（非语音）",
+  "version": "1.0.0",
+  "description": "用 440 Hz 正弦波演示 PCM 生成，不朗读文本，不是 TTS 引擎。",
+  "apiVersion": 1,
+  "minimumHostFeatureLevel": 2,
+  "kind": "voice",
+  "extensions": [],
+  "entryAssembly": "Example.ToneVoice.dll",
+  "entryType": "Example.ToneVoice.ToneVoice"
+}

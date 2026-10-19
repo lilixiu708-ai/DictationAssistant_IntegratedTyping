@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DictationAssistant.App.Abstractions;
 using DictationAssistant.Plugin.Abstractions;
 using System.Diagnostics;
+using Avalonia.Threading;
 
 namespace DictationAssistant.App;
 
@@ -26,7 +27,9 @@ public partial class MainWindow
         await StartTypingPracticeAsync();
     }
 
-    private async Task StartTypingPracticeAsync()
+    private Task StartTypingPracticeAsync() => StartPracticeAsync("synchronous-typing");
+
+    private async Task StartPracticeAsync(string pluginId)
     {
         if (_isPracticing || _isOpeningWordList || _isApplyingWordList || _isShufflingWordList ||
             WordlistEditor is null || GetViewModel() is not { } vm)
@@ -36,10 +39,10 @@ public partial class MainWindow
         try
         {
             await EnsurePluginsLoadedAsync();
-            var entry = _pluginCatalog.GetPracticePlugin("synchronous-typing");
+            var entry = _pluginCatalog.GetPracticePlugin(pluginId);
             if (entry?.PracticePlugin is not { } plugin)
             {
-                await ShowFileErrorAsync("尚未加载同步打字插件。请将 Plugins/SynchronousTyping 完整文件夹放在程序旁并重启；可在插件管理中查看错误原因。");
+                await ShowFileErrorAsync($"未加载练习插件 {pluginId}。请在插件管理中查看状态，安装插件后重启。");
                 return;
             }
 
@@ -64,19 +67,31 @@ public partial class MainWindow
                 (word, token) => player.SpeakPracticeWordAsync(word, token));
 
             ShuffleStatusMessage.Text = $"同步打字练习：{words.Length} 条，{host.TimesPerWord} 次/词。";
-            await plugin.RunAsync(host, CancellationToken.None);
-            ShuffleStatusMessage.Text = "同步打字练习已结束；原词表保持不变。";
+            await PluginRuntime.InvokeAsync(entry, "practice", async token =>
+            {
+                var callback = PluginRuntime.CaptureInvocation(() =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    return plugin.RunAsync(host, token);
+                });
+                await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Normal, token);
+            }, _windowLifetime.Token);
+            ShuffleStatusMessage.Text = $"{entry.DisplayName}已结束。";
         }
+        catch (OperationCanceledException) when (_windowLifetime.IsCancellationRequested) { }
         catch (Exception ex)
         {
             Trace.WriteLine($"[SynchronousTyping] Plugin failed: {ex}");
-            await ShowFileErrorAsync($"同步打字练习无法运行：{ex.Message}");
+            if (!_isClosing) await ShowFileErrorAsync($"练习无法运行：{ex.Message}");
         }
         finally
         {
-            if (GetViewModel() is { } currentVm)
-                await currentVm.DictationPlayer.ResetProgressAsync();
-            _isPracticing = false;
+            try
+            {
+                if (GetViewModel() is { } currentVm)
+                    await currentVm.DictationPlayer.ResetProgressAsync();
+            }
+            finally { _isPracticing = false; }
         }
     }
 

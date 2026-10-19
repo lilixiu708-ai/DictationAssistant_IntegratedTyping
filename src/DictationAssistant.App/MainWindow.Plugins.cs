@@ -4,6 +4,8 @@ using System.Text;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using DictationAssistant.App.Importing;
 using DictationAssistant.App.Plugins;
@@ -23,21 +25,137 @@ public partial class MainWindow
         Patterns = ["*.txt", "*.text", "*.lst", "*.csv", "*.tsv", "*.md", "*.lrc"]
     };
     private readonly PluginCatalog _pluginCatalog = new(Path.Combine(AppContext.BaseDirectory, "Plugins"));
-    private Task? _pluginLoadTask;
+    private readonly CancellationTokenSource _windowLifetime = new();
+    private DispatcherTimer? _pluginWordListTimer;
+    private long _wordListRevision;
+    private bool _isClosing;
+    private bool _canClose;
+    public PluginRuntime PluginRuntime { get; private set; } = null!;
     private bool _isOpeningWordList;
     private bool _isApplyingWordList;
     private string _suggestedWordListFileName = "wordlist.txt";
 
     private void InitializePlugins()
     {
+        PluginRuntime = new PluginRuntime(_pluginCatalog,
+            entry => new WindowPluginContext(this, entry), _windowLifetime.Token);
         KeyBindings.Add(new KeyBinding
         {
             Gesture = new KeyGesture(Key.I, KeyModifiers.Control | KeyModifiers.Shift),
             Command = new AsyncRelayCommand(() => ChooseAndOpenWordListAsync(documentOnly: true))
         });
+        Opened += async (_, _) =>
+        {
+            WordlistEditor.Document.Changed += (_, _) =>
+            {
+                _wordListRevision++;
+                if (_isClosing || !_pluginCatalog.Entries.Any(entry =>
+                        entry.IsInitialized && entry.WordListObserver is not null)) return;
+                _pluginWordListTimer ??= CreatePluginWordListTimer();
+                _pluginWordListTimer.Stop();
+                _pluginWordListTimer.Start();
+            };
+            try
+            {
+                await EnsurePluginsLoadedAsync();
+                RebuildPluginMenus();
+                if (!_isClosing) NotifyPluginsOfWordList();
+            }
+            catch (OperationCanceledException) when (_windowLifetime.IsCancellationRequested) { }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"[Plugins] Initialization failed: {ex}");
+                if (!_isClosing) await ShowFileErrorAsync($"插件初始化失败：{ex.Message}");
+            }
+        };
+        Closing += MainWindow_Closing;
     }
 
-    private Task EnsurePluginsLoadedAsync() => _pluginLoadTask ??= Task.Run(_pluginCatalog.Load);
+    private Task EnsurePluginsLoadedAsync() => PluginRuntime.InitializeAsync(_windowLifetime.Token);
+
+    private DispatcherTimer CreatePluginWordListTimer()
+    {
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
+        timer.Tick += (_, _) => { timer.Stop(); NotifyPluginsOfWordList(); };
+        return timer;
+    }
+
+    private void NotifyPluginsOfWordList()
+    {
+        if (_isClosing || !_pluginCatalog.Entries.Any(entry => entry.IsInitialized && entry.WordListObserver is not null)) return;
+        PluginRuntime.NotifyWordListChanged(GetPluginWordListSnapshot());
+    }
+
+    private DictationAssistant.Plugin.Abstractions.PluginWordListSnapshot GetPluginWordListSnapshot() =>
+        new(WordlistEditor.Text, WordlistEditor.SelectedText, _wordListRevision);
+
+    private void RebuildPluginMenus()
+    {
+        PluginCommandsMenu.Items.Clear();
+        PluginPracticesMenu.Items.Clear();
+        foreach (var entry in _pluginCatalog.Entries.Where(entry => entry.IsLoaded && entry.IsInitialized))
+        {
+            foreach (var command in entry.Commands)
+            {
+                var item = new MenuItem { Header = $"{entry.DisplayName} · {command.Name}" };
+                ToolTip.SetTip(item, command.Description);
+                item.Click += async (_, _) => await RunPluginCommandAsync(entry, command.Id);
+                PluginCommandsMenu.Items.Add(item);
+            }
+            if (entry.PracticePlugin is not null)
+            {
+                var item = new MenuItem { Header = entry.DisplayName };
+                item.Click += async (_, _) => await StartPracticeAsync(entry.Manifest!.Id);
+                PluginPracticesMenu.Items.Add(item);
+            }
+        }
+        PluginCommandsMenu.IsEnabled = PluginCommandsMenu.Items.Count > 0;
+        PluginPracticesMenu.IsEnabled = PluginPracticesMenu.Items.Count > 0;
+    }
+
+    private async Task RunPluginCommandAsync(PluginEntry entry, string commandId)
+    {
+        if (_isClosing || _isPracticing) return;
+        try
+        {
+            await PluginRuntime.InvokeAsync(entry, "command:" + commandId,
+                token => entry.CommandPlugin!.ExecuteAsync(commandId, PluginRuntime.GetContext(entry), token),
+                _windowLifetime.Token);
+        }
+        catch (OperationCanceledException) when (_windowLifetime.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"[Plugins] Command failed: {ex}");
+            if (!_isClosing) await ShowFileErrorAsync($"插件 {entry.DisplayName} 执行失败：{ex.Message}");
+        }
+    }
+
+    private async void MainWindow_Closing(object? sender, WindowClosingEventArgs e)
+    {
+        if (_canClose) return;
+        e.Cancel = true;
+        if (_isClosing) return;
+        _isClosing = true;
+        IsEnabled = false;
+        _pluginWordListTimer?.Stop();
+        try
+        {
+            try { _windowLifetime.Cancel(); }
+            catch (Exception ex) { Trace.WriteLine($"[Shutdown] Cancellation failed: {ex}"); }
+            try
+            {
+                if (GetViewModel() is { } vm) await vm.ShutdownAsync();
+            }
+            finally { await PluginRuntime.ShutdownAsync(); }
+        }
+        catch (Exception ex) { Trace.WriteLine($"[Shutdown] Cleanup failed: {ex}"); }
+        finally
+        {
+            _canClose = true;
+            _windowLifetime.Dispose();
+            Close();
+        }
+    }
 
     private async void ImportDocument_Click(object? sender, RoutedEventArgs e) =>
         await ChooseAndOpenWordListAsync(documentOnly: true);
@@ -88,7 +206,8 @@ public partial class MainWindow
             if (importers.Count > 0)
             {
                 var preview = new WordListImportWindow(file.Name, importers,
-                    (plugin, token) => DocumentImportService.ReadAsync(plugin, file.OpenReadAsync, file.Name, token));
+                    (plugin, token) => PluginRuntime.InvokeAsync(plugin, "import-document",
+                        ct => DocumentImportService.ReadAsync(plugin, file.OpenReadAsync, file.Name, ct), token));
                 var selection = await preview.ShowDialog<WordListImportSelection?>(this);
                 if (selection is null) return;
                 await ApplyWordListTextAsync(selection.Text, selection.Append);
@@ -122,7 +241,7 @@ public partial class MainWindow
         catch (Exception ex)
         {
             Trace.WriteLine($"[DocumentImport] Cannot open word list: {ex}");
-            await ShowFileErrorAsync($"无法打开或导入文件：{ex.Message}");
+            if (!_isClosing) await ShowFileErrorAsync($"无法打开或导入文件：{ex.Message}");
         }
         finally
         {
@@ -130,8 +249,10 @@ public partial class MainWindow
         }
     }
 
-    private async Task ApplyWordListTextAsync(string text, bool append)
+    private async Task ApplyWordListTextAsync(string text, bool append, long? expectedRevision = null,
+        CancellationToken cancellationToken = default, int? maximumCharacters = null)
     {
+        _windowLifetime.Token.ThrowIfCancellationRequested();
         if (_isApplyingWordList || _isShufflingWordList)
             throw new InvalidOperationException("词表正在更新，请稍后重试。");
         _isApplyingWordList = true;
@@ -141,18 +262,27 @@ public partial class MainWindow
             IsEnabled = false;
             if (GetViewModel() is { } vm)
                 await vm.DictationPlayer.ResetProgressAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+            _windowLifetime.Token.ThrowIfCancellationRequested();
+            if (expectedRevision is { } expected && expected != _wordListRevision)
+                throw new InvalidOperationException("词表已发生变化，请重新读取后再更新。");
 
             // Snapshot after the player has stopped. Keep the same document
             // instance so the speech source and the editor stay attached.
             var document = WordlistEditor.Document;
             var current = document.Text;
             var next = text;
-            if (append && current.Length > 0)
+            if (append && text.Length == 0) next = current;
+            else if (append && current.Length > 0)
             {
                 var newline = GetExistingNewLine(current);
                 var separator = current.EndsWith('\r') || current.EndsWith('\n') ? string.Empty : newline;
+                if (maximumCharacters is { } maximum && (long)current.Length + separator.Length + text.Length > maximum)
+                    throw new InvalidDataException($"插件更新后的词表不能超过 {maximum:N0} 字符。");
                 next = current + separator + text.ReplaceLineEndings(newline);
             }
+            if (maximumCharacters is { } limit && next.Length > limit)
+                throw new InvalidDataException($"插件更新后的词表不能超过 {limit:N0} 字符。");
             if (!string.Equals(current, next, StringComparison.Ordinal))
             {
                 document.BeginUpdate();
@@ -165,9 +295,9 @@ public partial class MainWindow
         }
         finally
         {
-            IsEnabled = wasEnabled;
+            IsEnabled = wasEnabled && !_isClosing;
             _isApplyingWordList = false;
-            WordlistEditor.Focus();
+            if (!_isClosing) WordlistEditor.Focus();
         }
     }
 
@@ -183,9 +313,13 @@ public partial class MainWindow
         try
         {
             await EnsurePluginsLoadedAsync();
-            await new PluginManagerWindow(_pluginCatalog, OpenPluginFolder).ShowDialog(this);
+            await new PluginManagerWindow(PluginRuntime, OpenPluginFolder).ShowDialog(this);
         }
-        catch (Exception ex) { await ShowFileErrorAsync($"无法打开插件管理：{ex.Message}"); }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"[Plugins] Manager failed: {ex}");
+            if (!_isClosing) await ShowFileErrorAsync($"无法打开插件管理：{ex.Message}");
+        }
     }
 
     private void OpenPluginFolder()
@@ -202,6 +336,7 @@ public partial class MainWindow
 
     private async Task ShowFileErrorAsync(string message)
     {
+        if (_isClosing) return;
         var box = MessageBoxManager.GetMessageBoxStandard("自动默写", message, ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
         await box.ShowWindowDialogAsync(this);
     }

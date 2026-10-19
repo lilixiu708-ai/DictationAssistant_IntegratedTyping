@@ -2,7 +2,7 @@
 
 用于单词、短语和句子听写的桌面程序，基于 C#、.NET 10 与 Avalonia。支持语音播报、Word 词表导入、随机顺序和独立的同步打字练习插件。
 
-当前发布版本为 **`v4.0.0-typing.1` 预览版**，面向 Windows x64，基于上游 4.x 定制。产品名称为 **DictationAssistant Typing**，GitHub 仓库保留 [`lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady)。C# 项目、程序集和命名空间保持 `DictationAssistant.*`。
+当前版本为 **`v4.0.0-typing.2` 预览版**，面向 Windows x64，基于上游 `v4.0.0` 迭代。产品名称为 **DictationAssistant Typing**，GitHub 仓库保留 [`lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady)。C# 项目、程序集和命名空间保持 `DictationAssistant.*`。
 
 ## 下载与使用
 
@@ -22,6 +22,8 @@
 - 听写练习：保留重复词条和随机顺序；播报完成后开放输入，支持限时作答和 CSV 导出。
 - 性能优化：降低倒计时文本刷新频率，后台初始化语音，成绩列表按可见范围创建和复用控件。
 - 便携包：保留自带 .NET；插件共享主程序图形依赖，减少重复文件。
+- 扩展 SDK：通用命令、自定义练习、词表观察、语音引擎及音效；提供上下文、数据目录、日志和生命周期管理。
+- 稳定性：统一取消和退出清理，隔离音频回调异常，释放合成和导出资源，避免插件递归与互相等待。
 
 云环境已完成构建、现有 15 项打字逻辑检查、插件加载、DOCX 提取及 Windows 包校验。**真实 Windows 窗口、扬声器音频、中文输入法和内存降幅仍需实机验证**，执行步骤见 [Windows 验证清单](docs/同步打字验证清单.md)。
 
@@ -30,7 +32,7 @@
 | 路径 | 内容 |
 | --- | --- |
 | `src/DictationAssistant.App/` | Avalonia 主程序、音频和插件加载 |
-| `src/DictationAssistant.Plugin.Abstractions/` | 文档导入与练习插件的共享契约 |
+| `src/DictationAssistant.Plugin.Abstractions/` | 导入、练习、命令、语音、音效及生命周期共享契约 |
 | `plugins/` | DOCX 导入、同步打字两个独立插件 |
 | `sdk/examples/` | 插件开发示例 |
 | `tests/TypingPlugin.SmokeTests/` | 已有的打字逻辑检查程序 |
@@ -67,6 +69,7 @@ dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c
 
 - [文档索引](docs/README.md)
 - [插件开发指南](docs/插件开发指南.md)
+- [插件扩展 SDK 与可编译示例](docs/PLUGIN_SDK.md)
 - [贡献、命名与验证规则](CONTRIBUTING.md)
 - [代理开发约定](AGENTS.md)
 

@@ -49,6 +49,8 @@
         <MenuItem Header="从文档提取词表…" InputGesture="Ctrl+Shift+I" Click="ImportDocument_Click" />
         <Separator />
         <MenuItem Header="同步打字练习…" InputGesture="Ctrl+Shift+T" Click="TypingPractice_Click" />
+        <MenuItem x:Name="PluginPracticesMenu" Header="所有练习" IsEnabled="False" />
+        <MenuItem x:Name="PluginCommandsMenu" Header="扩展命令" IsEnabled="False" />
         <MenuItem Header="插件管理…" Click="PluginManager_Click" />
         <MenuItem Header="打开插件目录" Click="OpenPluginFolder_Click" />
       </MenuItem>

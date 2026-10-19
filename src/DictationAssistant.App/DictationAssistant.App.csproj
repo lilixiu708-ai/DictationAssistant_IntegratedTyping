@@ -43,7 +43,7 @@
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <Version>4.0.0-typing.1</Version>
+    <Version>4.0.0-typing.2</Version>
     <ApplicationIcon>Assets\DictationAssistant.ico</ApplicationIcon>
     <RollForward>Major</RollForward>
   </PropertyGroup>

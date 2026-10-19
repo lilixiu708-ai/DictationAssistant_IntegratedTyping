@@ -21,18 +21,22 @@ public class PcmWriter : IDisposable
 
     public PcmWriter(PcmAudio dest, bool leaveOpen = false)
     {
-        this._dest = dest;
+        ArgumentNullException.ThrowIfNull(dest);
+        ValidateFormat(dest.Format);
+        if (!dest.Data.CanWrite)
+            throw new ArgumentException("PCM destination must be writable.", nameof(dest));
+        _dest = dest;
         _leaveOpen = leaveOpen;
     }
 
     public long MillisecondsToSamples(long ms)
     {
-        return ((ms / 1000) * _dest.Format.SampleRate) + (((ms % 1000) * _dest.Format.SampleRate) / 1000);
+        return checked(((ms / 1000) * _dest.Format.SampleRate) + (((ms % 1000) * _dest.Format.SampleRate) / 1000));
     }
 
     public long MillisecondsToBytes(long ms)
     {
-        return MillisecondsToSamples(ms) * GetBlockAlign();
+        return checked(MillisecondsToSamples(ms) * GetBlockAlign());
     }
 
     public long BytesToMilliseconds(long byteOffset)
@@ -50,14 +54,15 @@ public class PcmWriter : IDisposable
 
     public long WriteDelay(long ms)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(ms);
         var len = MillisecondsToBytes(ms);
-        var remainingBytes = (int)len;
+        var remainingBytes = len;
 
         var emptyData = _dest.Format.SampleFormat == PcmSampleFormat.U8 ? Byte80_1M : Byte00_1M;
 
         while (remainingBytes > 0)
         {
-            var bytesToWrite = Math.Min(remainingBytes, emptyData.Length);
+            var bytesToWrite = (int)Math.Min(remainingBytes, emptyData.Length);
             _dest.Data.Write(emptyData, 0, bytesToWrite);
             remainingBytes -= bytesToWrite;
         }
@@ -67,6 +72,10 @@ public class PcmWriter : IDisposable
 
     public unsafe long Write(PcmAudio input)
     {
+        ArgumentNullException.ThrowIfNull(input);
+        ValidateFormat(input.Format);
+        if (!input.Data.CanRead)
+            throw new ArgumentException("PCM input must be readable.", nameof(input));
         var srcFormat = GetSdlFormat(input.Format.SampleFormat);
         var dstFormat = GetSdlFormat(_dest.Format.SampleFormat);
         var srcChannels = (byte)input.Format.Channels;
@@ -75,36 +84,58 @@ public class PcmWriter : IDisposable
         var dstSampleRate = _dest.Format.SampleRate;
 
         SDLAudioCVT cvt = new SDLAudioCVT();
-        SDL.BuildAudioCVT(ref cvt, srcFormat, srcChannels, srcSampleRate, dstFormat, dstChannels, dstSampleRate);
+        var conversion = SDL.BuildAudioCVT(ref cvt, srcFormat, srcChannels, srcSampleRate, dstFormat, dstChannels, dstSampleRate);
+        if (conversion < 0)
+            throw new InvalidOperationException($"SDL audio conversion setup failed: {SDL.GetErrorS()}");
+        if (cvt.LenMult < 1)
+            throw new InvalidOperationException("SDL audio conversion returned an invalid buffer multiplier.");
 
         var bytesPerSample = input.Format.SampleFormat == PcmSampleFormat.U8 ? 1 : 2;
         var srcBlockAlign = srcChannels * bytesPerSample;
         var len = 1024 * srcBlockAlign;
-        byte[] buf = new byte[len * cvt.LenMult];
+        byte[] buf = new byte[checked(len * cvt.LenMult)];
         GCHandle p = GCHandle.Alloc(buf, GCHandleType.Pinned);
-        cvt.Buf = (byte*)p.AddrOfPinnedObject();
 
         long totalBytes = 0;
-        do
+        try
         {
-            int numOfRead = 0;
-            while (numOfRead < len)
+            cvt.Buf = (byte*)p.AddrOfPinnedObject();
+            do
             {
-                var t = input.Data.Read(buf, numOfRead, len - numOfRead);
-                numOfRead += t;
-                if (t == 0)
-                    break;
-            }
+                int numOfRead = 0;
+                while (numOfRead < len)
+                {
+                    var t = input.Data.Read(buf, numOfRead, len - numOfRead);
+                    if ((uint)t > (uint)(len - numOfRead))
+                        throw new InvalidDataException("PCM stream returned an invalid read count.");
+                    numOfRead += t;
+                    if (t == 0)
+                        break;
+                }
 
-            if (numOfRead == 0)
-                break;
-            cvt.Len = numOfRead;
-            SDL.ConvertAudio(ref cvt);
-            _dest.Data.Write(buf, 0, cvt.LenCvt);
-            totalBytes += cvt.LenCvt;
+                if (numOfRead == 0)
+                    break;
+                if (numOfRead % srcBlockAlign != 0)
+                    throw new InvalidDataException("PCM input ended with an incomplete sample frame.");
+                var convertedLength = numOfRead;
+                if (conversion != 0)
+                {
+                    cvt.Len = numOfRead;
+                    if (SDL.ConvertAudio(ref cvt) < 0)
+                        throw new InvalidOperationException($"SDL audio conversion failed: {SDL.GetErrorS()}");
+                    convertedLength = cvt.LenCvt;
+                }
+                if ((uint)convertedLength > (uint)buf.Length)
+                    throw new InvalidOperationException("SDL audio conversion returned an invalid output size.");
+                _dest.Data.Write(buf, 0, convertedLength);
+                totalBytes += convertedLength;
+            }
+            while (true);
         }
-        while (true);
-        p.Free();
+        finally
+        {
+            p.Free();
+        }
 
         var dstBlockAlign = GetBlockAlign();
         if (totalBytes % dstBlockAlign != 0)
@@ -116,6 +147,13 @@ public class PcmWriter : IDisposable
         }
 
         return totalBytes;
+    }
+
+    private static void ValidateFormat(PcmFormatInfo format)
+    {
+        if (format.SampleRate <= 0 || format.Channels is < 1 or > byte.MaxValue)
+            throw new ArgumentException("PCM sample rate and channel count are invalid.", nameof(format));
+        _ = GetSdlFormat(format.SampleFormat);
     }
 
     private static ushort GetSdlFormat(PcmSampleFormat format)

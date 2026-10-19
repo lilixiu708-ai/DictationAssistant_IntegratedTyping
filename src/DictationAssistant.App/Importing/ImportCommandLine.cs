@@ -43,120 +43,143 @@ public static class ImportCommandLine
 
         string? outputPath = null;
         string? reportPath = null;
-        var outputCreated = false;
         var outputSaved = false;
         var reportSaved = false;
-        try
-        {
-            if (args.Length == 1 && args[0] is "--help" or "-h" or "-?")
-            {
-                PrintHelp();
-                return 0;
-            }
+        HeadlessPluginSession? session = null;
 
-            var catalog = new PluginCatalog(Path.Combine(AppContext.BaseDirectory, "Plugins"));
-            if (args.Length == 1 && args[0] == "--list-plugins")
+        async Task<int> ExecuteAsync()
+        {
+            try
             {
-                await Task.Run(catalog.Load, cancellation.Token).ConfigureAwait(false);
-                cancellation.Token.ThrowIfCancellationRequested();
-                Console.WriteLine(JsonSerializer.Serialize(new
+                if (args.Length == 1 && args[0] is "--help" or "-h" or "-?")
                 {
-                    catalog.RootDirectory,
-                    ApiVersion = PluginApi.Version,
-                    RequiresRestartForChanges = true,
-                    LoadedCount = catalog.Entries.Count(entry => entry.IsLoaded),
-                    catalog.SupportedExtensions,
-                    Plugins = catalog.Entries.Select(entry => new
+                    PrintHelp();
+                    return 0;
+                }
+
+                session = new HeadlessPluginSession(cancellation.Token);
+                var catalog = session.Catalog;
+                if (args.Length == 1 && args[0] == "--list-plugins")
+                {
+                    await session.Runtime.EnsureLoadedAsync(cancellation.Token).ConfigureAwait(false);
+                    cancellation.Token.ThrowIfCancellationRequested();
+                    Console.WriteLine(JsonSerializer.Serialize(new
                     {
-                        entry.Manifest,
-                        entry.FolderPath,
-                        entry.IsLoaded,
-                        entry.DisplayName,
-                        entry.StatusText,
-                        entry.Error
-                    }).ToArray()
-                }, ReportJsonOptions));
+                        catalog.RootDirectory,
+                        ApiVersion = PluginApi.Version,
+                        HostFeatureLevel = PluginApi.FeatureLevel,
+                        RequiresRestartForChanges = true,
+                        LoadedCount = catalog.Entries.Count(entry => entry.IsLoaded),
+                        catalog.SupportedExtensions,
+                        Plugins = catalog.Entries.Select(entry => new
+                        {
+                            entry.Manifest,
+                            entry.FolderPath,
+                            entry.IsLoaded,
+                            entry.IsEnabled,
+                            entry.IsInitialized,
+                            entry.Capabilities,
+                            entry.DisplayName,
+                            entry.StatusText,
+                            entry.Error
+                        }).ToArray()
+                    }, ReportJsonOptions));
+                    return 0;
+                }
+
+                var arguments = ParseExtractionArguments(args);
+                ValidatePaths(arguments);
+                outputPath = arguments.OutputFile;
+                reportPath = arguments.ReportFile;
+
+                await session.Runtime.InitializeAsync(cancellation.Token).ConfigureAwait(false);
+                cancellation.Token.ThrowIfCancellationRequested();
+                var plugin = SelectPlugin(catalog, arguments);
+                var document = await session.Runtime.InvokeAsync(plugin, "document-import", token =>
+                    DocumentImportService.ReadAsync(plugin,
+                        () => Task.FromResult<Stream>(new FileStream(arguments.InputFile,
+                            FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024,
+                            FileOptions.Asynchronous | FileOptions.SequentialScan)),
+                        Path.GetFileName(arguments.InputFile), token), cancellation.Token).ConfigureAwait(false);
+                var options = new ImportPreviewOptions(
+                    arguments.SectionIndex ?? document.SuggestedSectionIndex,
+                    arguments.ColumnIndex,
+                    SkipHeaders: !arguments.IncludeHeaders,
+                    Deduplicate: arguments.Deduplicate,
+                    StripNumbering: !arguments.KeepNumbering);
+                var selectedIndices = ValidateSelection(document, options);
+                var preview = ImportPreviewBuilder.Build(document, options);
+                if (preview.EntryCount == 0)
+                {
+                    throw new InvalidDataException("所选区域和列没有可导出的词条。请检查 --section、--column 或 --include-headers。");
+                }
+
+                // Serialize the complete report before either destination is touched.
+                var report = arguments.ReportFile is null ? null
+                    : BuildReport(arguments, plugin, document, options, preview, selectedIndices);
+                cancellation.Token.ThrowIfCancellationRequested();
+                await WriteTextAsync(arguments.OutputFile, preview.Text, arguments.Overwrite,
+                    cancellation.Token).ConfigureAwait(false);
+                outputSaved = true;
+                if (arguments.ReportFile is not null && report is not null)
+                {
+                    await WriteTextAsync(arguments.ReportFile, report, arguments.Overwrite,
+                        cancellation.Token).ConfigureAwait(false);
+                    reportSaved = true;
+                }
+
+                Console.WriteLine($"已提取 {preview.EntryCount} 条词条（插件：{plugin.Manifest!.Id}）。");
+                Console.WriteLine($"词表：{arguments.OutputFile}");
+                if (arguments.ReportFile is not null)
+                {
+                    Console.WriteLine($"报告：{arguments.ReportFile}");
+                }
+                foreach (var warning in document.Warnings.Take(20))
+                {
+                    Console.Error.WriteLine($"提示：{warning}");
+                }
+                if (document.Warnings.Count > 20)
+                {
+                    Console.Error.WriteLine($"另有 {document.Warnings.Count - 20} 条提示，可使用 --report 查看完整记录。");
+                }
                 return 0;
             }
-
-            var arguments = ParseExtractionArguments(args);
-            ValidatePaths(arguments);
-            outputPath = arguments.OutputFile;
-            reportPath = arguments.ReportFile;
-
-            await Task.Run(catalog.Load, cancellation.Token).ConfigureAwait(false);
-            cancellation.Token.ThrowIfCancellationRequested();
-            var plugin = SelectPlugin(catalog, arguments);
-            var document = await DocumentImportService.ReadAsync(plugin,
-                () => Task.FromResult<Stream>(new FileStream(arguments.InputFile,
-                    FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024,
-                    FileOptions.Asynchronous | FileOptions.SequentialScan)),
-                Path.GetFileName(arguments.InputFile), cancellation.Token).ConfigureAwait(false);
-            var options = new ImportPreviewOptions(
-                arguments.SectionIndex ?? document.SuggestedSectionIndex,
-                arguments.ColumnIndex,
-                SkipHeaders: !arguments.IncludeHeaders,
-                Deduplicate: arguments.Deduplicate,
-                StripNumbering: !arguments.KeepNumbering);
-            var selectedIndices = ValidateSelection(document, options);
-            var preview = ImportPreviewBuilder.Build(document, options);
-            if (preview.EntryCount == 0)
+            catch (CommandLineArgumentException ex)
             {
-                throw new InvalidDataException("所选区域和列没有可导出的词条。请检查 --section、--column 或 --include-headers。");
+                Console.Error.WriteLine($"参数错误：{ex.Message}");
+                Console.Error.WriteLine("使用 --help 查看命令格式。");
+                return 2;
             }
-
-            // Serialize the complete report before either destination is touched.
-            var report = arguments.ReportFile is null ? null
-                : BuildReport(arguments, plugin, document, options, preview, selectedIndices);
-            cancellation.Token.ThrowIfCancellationRequested();
-            await WriteTextAsync(arguments.OutputFile, preview.Text, arguments.Overwrite,
-                cancellation.Token, () => outputCreated = true).ConfigureAwait(false);
-            outputSaved = true;
-            if (arguments.ReportFile is not null && report is not null)
+            catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
             {
-                await WriteTextAsync(arguments.ReportFile, report, arguments.Overwrite,
-                    cancellation.Token, () => { }).ConfigureAwait(false);
-                reportSaved = true;
+                Console.Error.WriteLine("操作已取消。");
+                ExplainOutputState(outputSaved, outputPath, reportPath, reportSaved);
+                return 1;
             }
-
-            Console.WriteLine($"已提取 {preview.EntryCount} 条词条（插件：{plugin.Manifest!.Id}）。");
-            Console.WriteLine($"词表：{arguments.OutputFile}");
-            if (arguments.ReportFile is not null)
+            catch (Exception ex)
             {
-                Console.WriteLine($"报告：{arguments.ReportFile}");
+                Console.Error.WriteLine($"提取失败：{ex.Message}");
+                ExplainOutputState(outputSaved, outputPath, reportPath, reportSaved);
+                return 1;
             }
-            foreach (var warning in document.Warnings.Take(20))
-            {
-                Console.Error.WriteLine($"提示：{warning}");
-            }
-            if (document.Warnings.Count > 20)
-            {
-                Console.Error.WriteLine($"另有 {document.Warnings.Count - 20} 条提示，可使用 --report 查看完整记录。");
-            }
-            return 0;
         }
-        catch (CommandLineArgumentException ex)
-        {
-            Console.Error.WriteLine($"参数错误：{ex.Message}");
-            Console.Error.WriteLine("使用 --help 查看命令格式。");
-            return 2;
-        }
-        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
-        {
-            Console.Error.WriteLine("操作已取消。");
-            ExplainOutputState(outputCreated, outputSaved, outputPath, reportPath, reportSaved);
-            return 1;
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"提取失败：{ex.Message}");
-            ExplainOutputState(outputCreated, outputSaved, outputPath, reportPath, reportSaved);
-            return 1;
-        }
+
+        var exitCode = 1;
+        try { exitCode = await ExecuteAsync().ConfigureAwait(false); }
         finally
         {
+            if (session is not null)
+            {
+                try { await session.ShutdownAsync().ConfigureAwait(false); }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"插件关闭失败：{ex.Message}");
+                    exitCode = 1;
+                }
+            }
             Console.CancelKeyPress -= cancelHandler;
         }
+        return exitCode;
     }
 
     private static ExtractionArguments ParseExtractionArguments(string[] args)
@@ -327,7 +350,7 @@ public static class ImportCommandLine
             {
                 throw new InvalidOperationException($"插件 {arguments.PluginId} 未能加载：{entry.Error}");
             }
-            if (!entry.Manifest!.Extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+            if (entry.Importer is null || !entry.Manifest!.Extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
             {
                 throw new CommandLineArgumentException($"插件 {arguments.PluginId} 不支持 {extension} 文件。");
             }
@@ -441,48 +464,17 @@ public static class ImportCommandLine
     }
 
     private static async Task WriteTextAsync(string path, string text, bool overwrite,
-        CancellationToken cancellationToken, Action destinationCreated)
+        CancellationToken cancellationToken)
     {
-        var writePath = overwrite
-            ? Path.Combine(Path.GetDirectoryName(path)!, $".dictation-import-{Guid.NewGuid():N}.tmp")
-            : path;
-        var temporaryCreated = false;
-        try
+        await PluginCommandLine.WriteAtomicallyAsync(path, overwrite, async stream =>
         {
-            await using (var stream = new FileStream(writePath, FileMode.CreateNew, FileAccess.Write,
-                             FileShare.None, 64 * 1024, FileOptions.Asynchronous))
-            {
-                temporaryCreated = overwrite;
-                if (!overwrite)
-                {
-                    destinationCreated();
-                }
-                await using var writer = new StreamWriter(stream, Utf8WithoutBom);
-                await writer.WriteAsync(text.AsMemory(), cancellationToken).ConfigureAwait(false);
-                await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
-            }
-            cancellationToken.ThrowIfCancellationRequested();
-            if (overwrite)
-            {
-                // Replace the destination only after a complete file is ready;
-                // do not truncate an existing file or follow its leaf symlink.
-                File.Move(writePath, path, overwrite: true);
-                temporaryCreated = false;
-                destinationCreated();
-            }
-        }
-        finally
-        {
-            if (temporaryCreated)
-            {
-                try { File.Delete(writePath); }
-                catch (IOException) { }
-                catch (UnauthorizedAccessException) { }
-            }
-        }
+            await using var writer = new StreamWriter(stream, Utf8WithoutBom, 64 * 1024, leaveOpen: true);
+            await writer.WriteAsync(text.AsMemory(), cancellationToken).ConfigureAwait(false);
+            await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
-    private static void ExplainOutputState(bool outputCreated, bool outputSaved,
+    private static void ExplainOutputState(bool outputSaved,
         string? outputPath, string? reportPath, bool reportSaved)
     {
         if (outputSaved)
@@ -490,12 +482,8 @@ public static class ImportCommandLine
             Console.Error.WriteLine($"词表文件已保存：{outputPath}。");
             if (reportPath is not null && !reportSaved)
             {
-                Console.Error.WriteLine($"附加报告未完整保存，请检查：{reportPath}。");
+                Console.Error.WriteLine($"附加报告未保存或替换，请检查：{reportPath}。");
             }
-        }
-        else if (outputCreated)
-        {
-            Console.Error.WriteLine($"输出文件已创建但写入未完成，可能包含部分内容，请检查：{outputPath}。");
         }
     }
 
@@ -523,6 +511,7 @@ public static class ImportCommandLine
             插件目录固定为程序旁的 Plugins；添加或更新插件后重新运行程序。
             退出码：0 成功，1 读取/插件/写入失败或取消，2 参数错误。
             """);
+        PluginCommandLine.PrintHelp();
     }
 
     private sealed class ExtractionArguments

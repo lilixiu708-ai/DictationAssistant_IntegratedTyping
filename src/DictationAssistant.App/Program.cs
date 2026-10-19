@@ -9,6 +9,8 @@ internal sealed class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        if (PluginCommandLine.Handles(args))
+            return PluginCommandLine.RunAsync(args).GetAwaiter().GetResult();
         return ImportCommandLine.Handles(args)
             ? ImportCommandLine.RunAsync(args).GetAwaiter().GetResult()
             : BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);

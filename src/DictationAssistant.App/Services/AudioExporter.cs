@@ -26,14 +26,15 @@ public sealed class AudioExporter
         IProgress<double>? progress,
         CancellationToken cancellationToken = default)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(timesPerWord, 1);
         if (_words.Count <= 0)
         {
             throw new InvalidOperationException("没有词语可导出");
         }
 
         var totalWords = _words.Count;
-        var totalSegments = totalWords * timesPerWord;
-        var currentSegment = 0;
+        var totalSegments = (long)totalWords * timesPerWord;
+        long currentSegment = 0;
         long byteOffset = 0;
 
         progress?.Report(0);
@@ -43,52 +44,41 @@ public sealed class AudioExporter
             cancellationToken.ThrowIfCancellationRequested();
 
             var word = _words[index];
-            var waitingMs = GetWaitingSeconds(word) * 1000;
+            var waitingMs = (long)GetWaitingSeconds(word) * 1000;
 
-            if (timesPerWord >= 1)
+            var options = new VoiceSynthesisOptions { Rate = rate };
+            PcmAudio? pcmAudio = null;
+            try
             {
-                // First speak
-                var options = new VoiceSynthesisOptions { Rate = rate };
-                var pcmAudio = await _voice.SynthesizePcmAsync(word, options, cancellationToken).ConfigureAwait(false);
-
-                if (pcmAudio is not null)
+                for (var repeat = 0; repeat < timesPerWord; repeat++)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (pcmAudio is not null && pcmAudio.Data.CanSeek)
+                    {
+                        pcmAudio.Data.Seek(0, SeekOrigin.Begin);
+                    }
+                    else
+                    {
+                        // Clear before resynthesis so a failed provider does
+                        // not cause a second Dispose of the previous stream.
+                        var previousAudio = pcmAudio;
+                        pcmAudio = null;
+                        previousAudio?.Dispose();
+                        pcmAudio = await _voice.SynthesizePcmAsync(word, options, cancellationToken).ConfigureAwait(false)
+                            ?? throw new InvalidOperationException("语音引擎未返回音频。");
+                    }
+
+                    cancellationToken.ThrowIfCancellationRequested();
                     lyricWriter?.WriteTimestamp(pcmWriter.BytesToMilliseconds(byteOffset), word);
                     byteOffset += pcmWriter.Write(pcmAudio);
                     byteOffset += pcmWriter.WriteDelay(waitingMs);
-
-                    // Subsequent repeats
-                    for (var repeat = 2; repeat <= timesPerWord; repeat++)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        if (pcmAudio.Data.CanSeek)
-                        {
-                            pcmAudio.Data.Seek(0, SeekOrigin.Begin);
-                        }
-                        else
-                        {
-                            pcmAudio.Dispose();
-                            pcmAudio = await _voice.SynthesizePcmAsync(word, options, cancellationToken).ConfigureAwait(false);
-                            if (pcmAudio is null)
-                            {
-                                break;
-                            }
-                        }
-
-                        lyricWriter?.WriteTimestamp(pcmWriter.BytesToMilliseconds(byteOffset), word);
-                        byteOffset += pcmWriter.Write(pcmAudio);
-                        byteOffset += pcmWriter.WriteDelay(waitingMs);
-
-                        currentSegment++;
-                        progress?.Report((double)currentSegment / totalSegments);
-                    }
-
-                    pcmAudio?.Dispose();
+                    currentSegment++;
+                    progress?.Report((double)currentSegment / totalSegments);
                 }
-
-                currentSegment++;
-                progress?.Report((double)currentSegment / totalSegments);
+            }
+            finally
+            {
+                pcmAudio?.Dispose();
             }
 
             // Blank marker after each word (at offset - 10ms), matching v3.x

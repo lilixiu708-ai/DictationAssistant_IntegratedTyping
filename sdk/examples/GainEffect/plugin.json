@@ -1,0 +1,12 @@
+{
+  "id": "example-gain-effect",
+  "name": "半幅增益音效示例",
+  "version": "1.0.0",
+  "description": "将 U8 或 S16LE PCM 幅度减半，演示新缓冲区输出和整数削波保护。安装后影响宿主音效链。",
+  "apiVersion": 1,
+  "minimumHostFeatureLevel": 2,
+  "kind": "audio-effect",
+  "extensions": [],
+  "entryAssembly": "Example.GainEffect.dll",
+  "entryType": "Example.GainEffect.GainEffect"
+}

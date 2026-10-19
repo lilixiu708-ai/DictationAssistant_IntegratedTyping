@@ -75,6 +75,7 @@ public sealed class DictationPlayer : IDictationPlayer
     public DictationProgress Progress { get; private set; }
 
     public event EventHandler<DictationProgress>? ProgressChanged;
+    public event EventHandler<Exception>? PlaybackFailed;
 
     private TimeSpan GetWaitingTime(string word)
     {
@@ -90,6 +91,8 @@ public sealed class DictationPlayer : IDictationPlayer
     {
         _ = ResetProgressAsync();
     }
+
+    public Task StopAsync() => ResetProgressAsync();
 
     public Task ResetProgressAsync()
     {
@@ -180,7 +183,8 @@ public sealed class DictationPlayer : IDictationPlayer
 
             var cts = new CancellationTokenSource();
             _currentChainCts = cts;
-            _currentChainTask = ScheduleAndContinueAsync(Progress.CurrentWordIndex, cts.Token);
+            _currentChainTask = ObservePlaybackAsync(
+                ScheduleAndContinueAsync(Progress.CurrentWordIndex, cts.Token), cts.Token);
         });
     }
 
@@ -226,7 +230,53 @@ public sealed class DictationPlayer : IDictationPlayer
 
         var cts = new CancellationTokenSource();
         _currentChainCts = cts;
-        _currentChainTask = SpeakChainAsync(index, cts.Token);
+        _currentChainTask = ObservePlaybackAsync(SpeakChainAsync(index, cts.Token), cts.Token);
+    }
+
+    private async Task ObservePlaybackAsync(Task playback, CancellationToken ct)
+    {
+        try
+        {
+            await playback.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // Replacing or stopping a chain is an expected transition.
+        }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"Dictation playback failed: {ex}");
+            lock (_stateLock)
+            {
+                _autoMode = false;
+                _isPaused = false;
+            }
+            IsSpeaking = false;
+            try
+            {
+                UpdateProgress(p => p with { NextWordIndex = null, NextSpeakTime = null });
+            }
+            catch (Exception notificationError)
+            {
+                Trace.WriteLine($"Playback progress notification failed: {notificationError}");
+            }
+
+            // A faulty subscriber must not create another unobserved task.
+            if (PlaybackFailed is { } failed)
+            {
+                foreach (EventHandler<Exception> handler in failed.GetInvocationList())
+                {
+                    try
+                    {
+                        handler(this, ex);
+                    }
+                    catch (Exception notificationError)
+                    {
+                        Trace.WriteLine($"Playback failure notification failed: {notificationError}");
+                    }
+                }
+            }
+        }
     }
 
     private Task EnqueueCommand(Func<Task> command)
@@ -453,15 +503,18 @@ public sealed class DictationPlayer : IDictationPlayer
         using var audio = await _voice.SynthesizePcmAsync(word,
             new VoiceSynthesisOptions { Rate = Rate }, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
-        // Some voice providers return PcmAudio.Empty on synthesis failure.
-        // Treat it as an error instead of instantly opening the answer field
-        // for a word that was never audible.
+        EnsureAudioHasData(audio);
+        await _audioPlayer.PlayAsync(audio, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static void EnsureAudioHasData(PcmAudio audio)
+    {
+        // Built-in providers may return Empty instead of throwing on failure.
         if (ReferenceEquals(audio.Data, Stream.Null) ||
             (audio.Data.CanSeek && audio.Data.Length <= audio.Data.Position))
         {
             throw new InvalidOperationException("语音合成未生成音频：请选择正常工作的语音引擎后重试。");
         }
-        await _audioPlayer.PlayAsync(audio, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task SpeakWordAsync(int index, CancellationToken ct)
@@ -478,11 +531,15 @@ public sealed class DictationPlayer : IDictationPlayer
             Rate = Rate
         };
 
-        var pcmAudio = word is null ? PcmAudio.Empty : await _voice.SynthesizePcmAsync(word, options, ct).ConfigureAwait(false);
+        var voice = _voice;
+        using var pcmAudio = word is null ? PcmAudio.Empty : await voice.SynthesizePcmAsync(word, options, ct).ConfigureAwait(false);
+        ct.ThrowIfCancellationRequested();
+        if (!string.IsNullOrWhiteSpace(word))
+            EnsureAudioHasData(pcmAudio);
 
         // Preload the next word while the current one is being played, 
         // if supported by the voice and if there is a next word.
-        if (_voice is IPreloadableVoice preloadable)
+        if (voice is IPreloadableVoice preloadable)
         {
             var nextWord = _wordListSource.TryGetAt(index + 1);
             var nextOptions = new VoiceSynthesisOptions
@@ -496,7 +553,12 @@ public sealed class DictationPlayer : IDictationPlayer
                 {
                     try
                     {
-                        await preloadable.PreloadAsync(nextWord, nextOptions, CancellationToken.None).ConfigureAwait(false);
+                        ct.ThrowIfCancellationRequested();
+                        await preloadable.PreloadAsync(nextWord, nextOptions, ct).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                    {
+                        // Cancellation of a replaced chain also cancels its prefetch wait.
                     }
                     catch (Exception ex)
                     {

@@ -13,7 +13,7 @@
     <StackPanel DockPanel.Dock="Bottom" Spacing="10" Margin="0,12,0,0">
       <TextBlock x:Name="FolderErrorTextBlock" TextWrapping="Wrap" IsVisible="False" />
       <Grid ColumnDefinitions="*,Auto,Auto">
-        <TextBlock Grid.Column="0" Text="插件的新增、更新和移除在重启后生效。" VerticalAlignment="Center" Opacity="0.7" TextWrapping="Wrap" Margin="0,0,12,0" />
+        <TextBlock Grid.Column="0" Text="安装、启用、禁用和更新插件后，请重启程序。" VerticalAlignment="Center" Opacity="0.7" TextWrapping="Wrap" Margin="0,0,12,0" />
         <Button x:Name="OpenFolderButton" Grid.Column="1" Content="打开插件目录" Margin="0,0,8,0" />
         <Button x:Name="CloseButton" Grid.Column="2" Content="关闭" IsCancel="True" IsDefault="True" MinWidth="82" HorizontalContentAlignment="Center" />
       </Grid>

@@ -1,6 +1,7 @@
 // Manifest-driven sideloaded importers, 2026-10-19. AGPL-3.0-or-later.
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using DictationAssistant.Plugin.Abstractions;
 
@@ -19,13 +20,18 @@ public sealed class PluginCatalog
         MaxDepth = 16
     };
     private readonly object _loadGate = new();
+    private readonly object _settingsGate = new();
+    private readonly string _disabledSettingsPath;
     private bool _loadAttempted;
     private volatile CatalogSnapshot _snapshot = new([], []);
 
-    public PluginCatalog(string rootDirectory)
+    public PluginCatalog(string rootDirectory, string? disabledSettingsPath = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootDirectory);
         RootDirectory = Path.GetFullPath(rootDirectory);
+        _disabledSettingsPath = disabledSettingsPath ?? Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify),
+            "DictationAssistant", "Plugins", "disabled.json");
     }
 
     public string RootDirectory { get; }
@@ -67,9 +73,11 @@ public sealed class PluginCatalog
                     }
 
                     MarkDuplicateIds(entries);
+                    var disabledIds = ReadDisabledIds();
                     foreach (var entry in entries.Where(entry => entry.Error is null))
                     {
-                        LoadPlugin(entry);
+                        entry.IsEnabled = entry.EnabledAtStartup = !disabledIds.Contains(entry.Manifest!.Id);
+                        if (entry.EnabledAtStartup) LoadPlugin(entry);
                     }
                 }
             }
@@ -110,6 +118,48 @@ public sealed class PluginCatalog
     public PluginEntry? GetPracticePlugin(string pluginId) => _snapshot.Entries.FirstOrDefault(entry =>
         entry.IsLoaded && entry.PracticePlugin is not null &&
         string.Equals(entry.Manifest?.Id, pluginId, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>Persist a preference without constructing or unloading any plugin in this process.</summary>
+    public void SetEnabled(string pluginId, bool enabled)
+    {
+        if (!IsValidId(pluginId)) throw new ArgumentException("插件 id 无效。", nameof(pluginId));
+        lock (_settingsGate)
+        {
+            var ids = ReadDisabledIds();
+            if (enabled) ids.Remove(pluginId);
+            else ids.Add(pluginId);
+            var directory = Path.GetDirectoryName(Path.GetFullPath(_disabledSettingsPath))!;
+            Directory.CreateDirectory(directory);
+            var temporary = Path.Combine(directory, $".disabled-{Guid.NewGuid():N}.tmp");
+            try
+            {
+                var json = JsonSerializer.Serialize(ids.Order(StringComparer.OrdinalIgnoreCase));
+                if (Encoding.UTF8.GetByteCount(json) > MaximumManifestBytes)
+                    throw new InvalidDataException("插件禁用配置将超过 64 KiB，未保存更改。");
+                File.WriteAllText(temporary, json);
+                File.Move(temporary, _disabledSettingsPath, overwrite: true);
+            }
+            finally
+            {
+                if (File.Exists(temporary)) File.Delete(temporary);
+            }
+            foreach (var entry in Entries.Where(entry => string.Equals(entry.Manifest?.Id, pluginId,
+                         StringComparison.OrdinalIgnoreCase))) entry.IsEnabled = enabled;
+        }
+    }
+
+    private HashSet<string> ReadDisabledIds()
+    {
+        if (!File.Exists(_disabledSettingsPath)) return new(StringComparer.OrdinalIgnoreCase);
+        using var stream = File.OpenRead(_disabledSettingsPath);
+        if (stream.Length > MaximumManifestBytes)
+            throw new InvalidDataException("插件禁用配置超过 64 KiB，未加载插件，请检查 disabled.json。");
+        var ids = JsonSerializer.Deserialize<string[]>(stream, ManifestJsonOptions)
+            ?? throw new InvalidDataException("插件禁用配置无效，未加载插件，请检查 disabled.json。");
+        if (ids.Length > 4096 || ids.Any(id => !IsValidId(id)))
+            throw new InvalidDataException("插件禁用配置含无效 id，未加载插件，请检查 disabled.json。");
+        return new(ids, StringComparer.OrdinalIgnoreCase);
+    }
 
     private static PluginEntry ReadManifest(string folder)
     {
@@ -160,6 +210,8 @@ public sealed class PluginCatalog
         {
             throw new InvalidDataException($"插件接口版本为 {manifest.ApiVersion}，当前应用仅支持 v{PluginApi.Version}。");
         }
+        if (manifest.MinimumHostFeatureLevel is < 1 || manifest.MinimumHostFeatureLevel > PluginApi.FeatureLevel)
+            throw new InvalidDataException($"插件要求宿主功能级别 {manifest.MinimumHostFeatureLevel}，当前为 {PluginApi.FeatureLevel}。");
 
         if (!PluginLoadContext.IsSimpleFileName(manifest.EntryAssembly) ||
             !manifest.EntryAssembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
@@ -168,13 +220,15 @@ public sealed class PluginCatalog
         }
 
         var kind = string.IsNullOrWhiteSpace(manifest.Kind) ? "document-importer" : manifest.Kind.Trim();
-        if (kind is not ("document-importer" or "practice"))
-            throw new InvalidDataException("kind 只能是 document-importer 或 practice。");
-        if (kind == "document-importer" && (manifest.Extensions is null || manifest.Extensions.Length is < 1 or > 32 ||
-            manifest.Extensions.Any(extension => !IsValidExtension(extension))))
+        if (kind is not ("document-importer" or "practice" or "command" or "voice" or "audio-effect" or "extension"))
+            throw new InvalidDataException("kind 必须是 document-importer、practice、command、voice、audio-effect 或 extension。");
+        if ((kind == "document-importer" && (manifest.Extensions is null || manifest.Extensions.Length == 0)) ||
+            manifest.Extensions is { Length: > 32 } || manifest.Extensions?.Any(extension => !IsValidExtension(extension)) == true)
             throw new InvalidDataException("导入插件 extensions 需要 1–32 个扩展名，如 .docx。");
-        if (kind == "practice" && manifest.Extensions is { Length: > 0 })
-            throw new InvalidDataException("练习插件不声明文件扩展名，请设置 extensions 为 []。");
+        if (kind != "document-importer" && kind != "extension" && manifest.Extensions is { Length: > 0 })
+            throw new InvalidDataException("此类插件不声明文件扩展名，请设置 extensions 为 []；多功能导入插件请使用 extension。");
+        if (manifest.Description?.Length > 4000 || manifest.Author?.Length > 200)
+            throw new InvalidDataException("插件说明不能超过 4000 字符，作者不能超过 200 字符。");
 
         return new PluginManifest
         {
@@ -184,6 +238,7 @@ public sealed class PluginCatalog
             Description = manifest.Description ?? string.Empty,
             Author = manifest.Author,
             ApiVersion = manifest.ApiVersion,
+            MinimumHostFeatureLevel = manifest.MinimumHostFeatureLevel,
             Extensions = (manifest.Extensions ?? []).Select(extension => extension.ToLowerInvariant())
                 .Distinct(StringComparer.OrdinalIgnoreCase).ToArray(),
             EntryAssembly = manifest.EntryAssembly,
@@ -217,22 +272,71 @@ public sealed class PluginCatalog
             entry.LoadContext = context;
             var assembly = context.LoadFromAssemblyPath(entry.AssemblyPath!);
             var type = assembly.GetType(manifest.EntryType, throwOnError: true)!;
-            var expectedType = manifest.Kind == "practice" ? typeof(IPracticePlugin) : typeof(IDocumentImporter);
+            var expectedType = manifest.Kind switch
+            {
+                "document-importer" => typeof(IDocumentImporter),
+                "practice" => typeof(IPracticePlugin),
+                "command" => typeof(ICommandPlugin),
+                "voice" => typeof(IVoiceProviderPlugin),
+                "audio-effect" => typeof(IAudioEffectPlugin),
+                _ => typeof(object)
+            };
             if (!type.IsClass || !type.IsVisible || type.IsAbstract || type.ContainsGenericParameters ||
                 !expectedType.IsAssignableFrom(type) || type.GetConstructor(Type.EmptyTypes) is null)
                 throw new InvalidDataException($"入口类型必须是公开、非抽象的 {expectedType.Name} 实现，并有公开无参构造函数。");
 
             var instance = Activator.CreateInstance(type)!;
-            if (manifest.Kind == "practice") entry.PracticePlugin = (IPracticePlugin)instance;
-            else entry.Importer = (IDocumentImporter)instance;
+            entry.Instance = instance;
+            var capabilities = new List<string>();
+            if (instance is IDocumentImporter) capabilities.Add("document-importer");
+            if (instance is IPracticePlugin) capabilities.Add("practice");
+            if (instance is ICommandPlugin) capabilities.Add("command");
+            if (instance is IVoiceProviderPlugin) capabilities.Add("voice");
+            if (instance is IAudioEffectPlugin) capabilities.Add("audio-effect");
+            if (instance is IWordListObserverPlugin) capabilities.Add("word-list-observer");
+            if (capabilities.Count == 0)
+                throw new InvalidDataException("扩展插件至少实现一个受支持的功能接口。");
+            if (instance is IDocumentImporter && manifest.Extensions.Length == 0)
+                throw new InvalidDataException("具有文档导入能力的插件必须声明 extensions。");
+            if (instance is not IDocumentImporter && manifest.Extensions.Length > 0)
+                throw new InvalidDataException("只有具有文档导入能力的插件才能声明 extensions。");
+            entry.Capabilities = capabilities.AsReadOnly();
+            if (instance is not IPluginLifecycle) FreezeCommands(entry);
         }
         catch (Exception ex)
         {
             Trace.WriteLine($"[PluginCatalog] Cannot load {entry.FolderPath}: {ex}");
-            entry.Importer = null;
-            entry.PracticePlugin = null;
             entry.Error = GetErrorMessage(ex);
+            entry.LastError = entry.Error;
         }
+    }
+
+    internal static void FreezeCommands(PluginEntry entry)
+    {
+        if (entry.CommandsFrozen) return;
+        if (entry.CommandPlugin is not { } plugin)
+        {
+            entry.CommandsFrozen = true;
+            return;
+        }
+        var commands = plugin.Commands;
+        if (commands is null || commands.Count > 128)
+            throw new InvalidDataException("插件命令不能为 null，且最多 128 个。");
+        var snapshot = new List<PluginCommand>(commands.Count);
+        var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var command in commands)
+        {
+            if (snapshot.Count >= 128)
+                throw new InvalidDataException("插件命令最多 128 个。");
+            if (command is null || !IsValidId(command.Id) || !ids.Add(command.Id))
+                throw new InvalidDataException("插件命令 id 无效或重复；使用 1–100 位字母、数字、点、下划线或短横线。");
+            ValidateLabel(command.Name, "command.name", 200);
+            if (command.Description is null || command.Description.Length > 2000)
+                throw new InvalidDataException("插件命令说明不能为 null 或超过 2000 字符。");
+            snapshot.Add(new PluginCommand(command.Id, command.Name.Trim(), command.Description));
+        }
+        entry.Commands = snapshot.AsReadOnly();
+        entry.CommandsFrozen = true;
     }
 
     private static bool IsValidId(string? value) => value is { Length: >= 1 and <= 100 } &&

@@ -42,6 +42,7 @@ public partial class MainWindow : Window
             if (DataContext is MainWindowViewModel vm)
             {
                 HookEditor(vm);
+                vm.InitializeVoices();
                 vm.AlertRequested += message =>
                 {
                     Dispatcher.UIThread.Post(async () =>
@@ -64,9 +65,6 @@ public partial class MainWindow : Window
 
         AddHandler(DragDrop.DropEvent, OnDrop);
 
-        Closing += (_, _) =>
-        {
-        };
     }
 
     private void HookEditor(MainWindowViewModel vm)

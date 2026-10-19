@@ -25,19 +25,20 @@ public partial class App : Application
             var settingsStore = new AppSettingsStore();
             var wordListSource = new EditorDocumentWordListSource();
             var audioPlayer = new SdlPcmPlayer();
+            var mainWindow = new MainWindow();
             var aggregator = new VoiceAggregator([
                 new SapiVoiceFactoryProvider(),
                 new MacSayVoiceFactoryProvider(),
                 new EspeakNgVoiceFactoryProvider(),
                 new EdgeTtsVoiceFactoryProvider(),
+                new PluginVoiceFactoryProvider(mainWindow.PluginRuntime),
             ]);
 
             var initialVoice = NullVoice.Instance;
 
-            desktop.MainWindow = new MainWindow()
-            {
-                DataContext = new MainWindowViewModel(wordListSource, audioPlayer, aggregator, initialVoice, settingsStore)
-            };
+            mainWindow.DataContext = new MainWindowViewModel(wordListSource, audioPlayer, aggregator,
+                initialVoice, settingsStore, mainWindow.PluginRuntime);
+            desktop.MainWindow = mainWindow;
 
             // Command-line file argument support (v3.x compat)
             if (desktop.Args is { Length: > 0 } cliArgs)
@@ -54,8 +55,8 @@ public partial class App : Application
 
             desktop.Exit += (_, _) =>
             {
-                (desktop.MainWindow?.DataContext as IDisposable)?.Dispose();
-                audioPlayer.Dispose();
+                try { (desktop.MainWindow?.DataContext as IDisposable)?.Dispose(); }
+                finally { audioPlayer.Dispose(); }
             };
         }
 

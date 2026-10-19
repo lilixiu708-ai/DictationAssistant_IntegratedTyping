@@ -9,6 +9,9 @@ using DictationAssistant.App.Services;
 using DictationAssistant.App.Settings;
 using DictationAssistant.App.Voice;
 using DictationAssistant.App.Abstractions;
+using DictationAssistant.App.Audio;
+using DictationAssistant.App.Plugins;
+using DictationAssistant.Plugin.Abstractions;
 
 namespace DictationAssistant.App.ViewModels;
 
@@ -18,6 +21,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private readonly IDictationPlayer _dictationPlayer;
     private readonly AppSettingsStore _settingsStore;
     private readonly VoiceAggregator _aggregator;
+    private readonly IAudioPlayer _audioPlayer;
+    private readonly PluginRuntime _pluginRuntime;
+    private readonly CancellationTokenSource _lifetime = new();
+    private Task? _voiceLoadTask;
+    private bool _disposed;
     private readonly List<IDisposable> _disposables = [];
     private IVoice _currentVoice;
     private DispatcherTimer? _countdownTimer;
@@ -31,18 +39,22 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         IAudioPlayer audioPlayer,
         VoiceAggregator aggregator,
         IVoice initialVoice,
-        AppSettingsStore settingsStore)
+        AppSettingsStore settingsStore,
+        PluginRuntime pluginRuntime)
     {
         _wordListSource = wordListSource;
         _settingsStore = settingsStore;
         _aggregator = aggregator;
         _currentVoice = initialVoice;
+        _audioPlayer = audioPlayer;
+        _pluginRuntime = pluginRuntime;
 
         _dictationPlayer = new DictationPlayer(_currentVoice, wordListSource, audioPlayer);
         _dictationPlayer.ProgressChanged += (_, progress) =>
         {
             Dispatcher.UIThread.Post(() =>
             {
+                if (_disposed || _lifetime.IsCancellationRequested) return;
                 CurrentLineIndex = progress.CurrentWordIndex;
                 CurrentRepeat = progress.CurrentRepeat;
 
@@ -56,6 +68,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
                 UpdateCountdownTimer();
             });
         };
+        _dictationPlayer.PlaybackFailed += (_, exception) => Dispatcher.UIThread.Post(() =>
+        {
+            if (!_disposed && !_lifetime.IsCancellationRequested)
+                AlertRequested?.Invoke($"播报失败：{exception.Message}");
+        });
 
         _disposables.Add(_settingsStore.Observe(s => s.Dictation.IntervalExpression, v =>
         {
@@ -109,22 +126,52 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         _dictationPlayer.Volume = _settingsStore.Value.Dictation.Volume;
         _dictationPlayer.Rate = _settingsStore.Value.Dictation.Rate;
 
-        _ = LoadVoiceOptionsAsync();
         OnPropertyChanged(nameof(SpeakStateText));
     }
 
     public EditorDocumentWordListSource WordListSource => _wordListSource;
 
+    // Third-party initialization can use window services; start after the owner is shown.
+    public void InitializeVoices() => _voiceLoadTask ??= Task.Run(LoadVoiceOptionsAsync);
+
     public void Dispose()
     {
+        if (_disposed) return;
+        _disposed = true;
+        CancelLifetime();
+        _countdownTimer?.Stop();
         if (_disposables is not null)
         {
             foreach (var d in _disposables)
             {
-                d?.Dispose();
+                try { d?.Dispose(); }
+                catch (Exception ex) { Trace.WriteLine($"Settings subscription cleanup failed: {ex}"); }
             }
             _disposables.Clear();
         }
+    }
+
+    public async Task ShutdownAsync()
+    {
+        CancelLifetime();
+        _countdownTimer?.Stop();
+        try { await _dictationPlayer.StopAsync(); }
+        finally
+        {
+            if (_voiceLoadTask is { } loading) await loading;
+        }
+    }
+
+    private void CancelLifetime()
+    {
+        try { _lifetime.Cancel(); }
+        catch (Exception ex) { Trace.WriteLine($"View model cancellation callback failed: {ex}"); }
+    }
+
+    internal async Task PlayPluginAudioAsync(PluginAudioData data, CancellationToken cancellationToken)
+    {
+        using var audio = PluginAudioBridge.ToPcm(data);
+        await _audioPlayer.PlayAsync(audio, cancellationToken).ConfigureAwait(false);
     }
 
     public string IntervalExpression
@@ -384,10 +431,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         try
         {
-            var factories = await _aggregator.GetAllFactoriesAsync(CancellationToken.None).ConfigureAwait(false);
+            var factories = await _aggregator.GetAllFactoriesAsync(_lifetime.Token).ConfigureAwait(false);
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
+                if (_disposed || _lifetime.IsCancellationRequested) return;
                 VoiceOptions.Clear();
                 foreach (var factory in factories)
                 {
@@ -411,10 +459,14 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
                 }
             });
         }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
         catch (Exception ex)
         {
             Trace.WriteLine($"Failed to load voice factories: {ex}");
-            await Dispatcher.UIThread.InvokeAsync(() => VoiceOptions.Clear());
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (!_disposed && !_lifetime.IsCancellationRequested) VoiceOptions.Clear();
+            });
         }
     }
 
@@ -422,10 +474,17 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         if (value is not null)
         {
-            _settingsStore.Update(s => s with { Dictation = s.Dictation with { LastSelectedVoiceId = value.Info.Id } });
-
-            _currentVoice = value.Create();
-            UpdateEffectiveVoice();
+            try
+            {
+                _currentVoice = value.Create();
+                UpdateEffectiveVoice();
+                _settingsStore.Update(s => s with { Dictation = s.Dictation with { LastSelectedVoiceId = value.Info.Id } });
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Voice creation failed: {ex}");
+                AlertRequested?.Invoke($"无法切换语音：{ex.Message}");
+            }
         }
     }
 
@@ -439,7 +498,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
         if (_dictationPlayer is DictationPlayer player)
         {
-            player.Voice = effective;
+            player.Voice = new PluginEffectVoice(effective, _pluginRuntime);
         }
     }
 

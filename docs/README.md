@@ -1,6 +1,6 @@
 # 文档索引
 
-本仓库当前版本为 **`v4.0.0-typing.1` 预览版**，对应应用的同步打字练习扩展。当前入口是 [项目首页](../README.md) 与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases)。插件版本与接口版本独立管理。
+本仓库当前版本为 **`v4.0.0-typing.2` 预览版**，对应应用的同步打字练习与通用插件扩展。当前入口是 [项目首页](../README.md) 与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases)。插件版本与接口版本独立管理。
 
 ## 当前文档
 
@@ -9,6 +9,7 @@
 | [同步打字插件使用说明](同步打字插件使用说明.md) | 安装、DOCX 词表、播报与练习、成绩导出 |
 | [Windows 验证清单](同步打字验证清单.md) | Windows 界面、输入、音频、长列表与资源占用的实机检查 |
 | [插件开发指南](插件开发指南.md) | 文档导入接口、插件清单、练习接口及 SDK 示例 |
+| [插件扩展 SDK](PLUGIN_SDK.md) | 功能级别 2 的命令、词表观察、生命周期、语音、音效及可编译示例 |
 | [贡献规则](../CONTRIBUTING.md) | 目录、命名、开发与验证约定 |
 | [发布说明](RELEASING.md) | 版本、发布流程和资产校验 |
 | [变更记录](../CHANGELOG.md) | 当前版本改动与限制 |

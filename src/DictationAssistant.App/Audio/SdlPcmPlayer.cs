@@ -1,6 +1,7 @@
 using DictationAssistant.App.Abstractions;
 using DictationAssistant.App.Audio;
 using Hexa.NET.SDL2;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace DictationAssistant.App.Audio;
@@ -14,7 +15,8 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
 
     private static readonly object InitLock = new();
     private static int s_instanceCount;
-    private bool _disposed;
+    private readonly SemaphoreSlim _playbackGate = new(1, 1);
+    private int _disposed;
 
     private int _sdlVolume = 128; // Default volume is 100%
 
@@ -53,8 +55,30 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
 
     public async Task PlayAsync(PcmAudio audio, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(audio);
+        ct.ThrowIfCancellationRequested();
         ThrowIfDisposed();
+        await _playbackGate.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            ThrowIfDisposed();
+            ct.ThrowIfCancellationRequested();
+            await PlayCoreAsync(audio, ct).ConfigureAwait(false);
+        }
+        finally
+        {
+            // A following playback or shutdown may proceed only after the
+            // device has joined its callback and both handles are released.
+            _playbackGate.Release();
+        }
+    }
 
+    private async Task PlayCoreAsync(PcmAudio audio, CancellationToken ct)
+    {
+        if (!audio.Data.CanRead)
+            throw new ArgumentException("PCM data must be a readable stream.", nameof(audio));
+        if (audio.Format.SampleRate <= 0 || audio.Format.Channels is < 1 or > byte.MaxValue)
+            throw new ArgumentException("PCM sample rate and channel count are invalid.", nameof(audio));
         var sdlFormat = GetSdlFormat(audio.Format.SampleFormat);
         if (sdlFormat == 0)
         {
@@ -84,10 +108,16 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
             {
                 throw new InvalidOperationException($"SDL open audio device failed: {SDL.GetErrorS()}");
             }
-            if (obtained.Format != sdlFormat)
+            if (obtained.Format != sdlFormat || obtained.Freq != audio.Format.SampleRate ||
+                obtained.Channels != audio.Format.Channels)
             {
-                throw new NotSupportedException($"SDL device returned unsupported format: 0x{obtained.Format:X}");
+                throw new NotSupportedException("SDL device returned a different PCM format.");
             }
+            // SDL normally requests only a few KiB. Reject an invalid device
+            // size before allocating, and reuse this buffer for volume mixing.
+            if (obtained.Size is 0 or > 16 * 1024 * 1024)
+                throw new InvalidOperationException("SDL device returned an invalid buffer size.");
+            userdata.MixBuffer = new byte[checked((int)obtained.Size)];
 
             using var ctr = ct.Register(() => tcs.TrySetCanceled(ct));
             ct.ThrowIfCancellationRequested();
@@ -106,45 +136,54 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
 
     private unsafe void AudioCallback(IntPtr udata, IntPtr streamPtr, int len)
     {
-        if (streamPtr == IntPtr.Zero || len == 0)
+        if (streamPtr == IntPtr.Zero || len <= 0)
         {
             return;
-        }
-
-        var handle = GCHandle.FromIntPtr(udata);
-        if (!handle.IsAllocated || handle.Target is not AudioCallbackData data)
-        {
-            throw new InvalidOperationException("Invalid SDL audio callback userdata.");
         }
 
         Span<byte> streamSpan = new(streamPtr.ToPointer(), len);
-        int numOfRead = 0;
-        if (data.FinalBufferQueued)
+        AudioCallbackData? data = null;
+        byte silence = 0;
+        // Plugin streams can throw during Read. Never allow a managed
+        // exception to cross this reverse P/Invoke boundary into SDL.
+        try
         {
-            // SDL requests another buffer only after the previously queued final
-            // PCM/silence buffer has been consumed by the output callback.
-            streamSpan.Fill(SdlFormatIsUnsigned(data.SdlFormat) ? (byte)128 : (byte)0);
-            data.Tcs.TrySetResult();
-            return;
-        }
-        {
-            if (_sdlVolume < 128)
+            var handle = GCHandle.FromIntPtr(udata);
+            data = handle.IsAllocated ? handle.Target as AudioCallbackData : null;
+            if (data is null)
+                throw new InvalidOperationException("Invalid SDL audio callback userdata.");
+
+            silence = SdlFormatIsUnsigned(data.SdlFormat) ? (byte)128 : (byte)0;
+            streamSpan.Fill(silence);
+            if (len > data.MixBuffer.Length)
+                throw new InvalidOperationException("SDL callback exceeded its negotiated buffer size.");
+            if (data.Tcs.Task.IsCompleted)
+                return;
+            if (data.FinalBufferQueued)
             {
-                // Read PCM data into a temporary buffer
-                var buffer = new byte[len];
+                // The previously queued final PCM buffer has now drained.
+                data.Tcs.TrySetResult();
+                return;
+            }
+
+            var numOfRead = 0;
+            var volume = Volatile.Read(ref _sdlVolume);
+            if (volume < 128)
+            {
+                var buffer = data.MixBuffer;
                 while (numOfRead < len)
                 {
                     var t = data.PcmStream.Read(buffer, numOfRead, len - numOfRead);
+                    if ((uint)t > (uint)(len - numOfRead))
+                        throw new InvalidDataException("PCM stream returned an invalid read count.");
                     numOfRead += t;
                     if (t == 0)
                         break;
                 }
-                // Fill the stream buffer with silence before mixing to avoid noise
-                streamSpan[..numOfRead].Fill(SdlFormatIsUnsigned(data.SdlFormat) ? (byte)128 : (byte)0);
                 // Mix the PCM data with volume control into the stream buffer
                 fixed (byte* srcPtr = buffer)
                 {
-                    SDL.MixAudioFormat((byte*)streamPtr, srcPtr, data.SdlFormat, (uint)numOfRead, (byte)_sdlVolume);
+                    SDL.MixAudioFormat((byte*)streamPtr, srcPtr, data.SdlFormat, (uint)numOfRead, volume);
                 }
             }
             else
@@ -153,22 +192,24 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
                 while (numOfRead < len)
                 {
                     var t = data.PcmStream.Read(streamSpan[numOfRead..]);
+                    if ((uint)t > (uint)(len - numOfRead))
+                        throw new InvalidDataException("PCM stream returned an invalid read count.");
                     numOfRead += t;
                     if (t == 0)
                         break;
                 }
             }
+            if (numOfRead < len)
+            {
+                // A partial final buffer must drain before PlayAsync completes.
+                if (numOfRead == 0) data.Tcs.TrySetResult();
+                else data.FinalBufferQueued = true;
+            }
         }
-
-        if (numOfRead < len)
+        catch (Exception ex)
         {
-            // Fill the remaining stream buffer with silence to avoid noise
-            streamSpan[numOfRead..].Fill(SdlFormatIsUnsigned(data.SdlFormat) ? (byte)128 : (byte)0);
-            // If no samples were queued in this callback, the previous full
-            // device buffer has already played. A partially filled callback
-            // must instead wait for the NEXT request to drain its audio tail.
-            if (numOfRead == 0) data.Tcs.TrySetResult();
-            else data.FinalBufferQueued = true;
+            streamSpan.Fill(silence);
+            data?.Tcs.TrySetException(ex);
         }
     }
 
@@ -178,7 +219,7 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
         {
             Freq = format.SampleRate,
             Format = sdlFormat,
-            Channels = (byte)Math.Clamp(format.Channels, 1, byte.MaxValue),
+            Channels = checked((byte)format.Channels),
             Samples = 1024,
             Callback = (void*)callbackPtr,
             Userdata = GCHandle.ToIntPtr(userdataGcHandle).ToPointer()
@@ -193,24 +234,35 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
 
     public void Dispose()
     {
-        if (_disposed)
-        {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
-        }
 
-        lock (InitLock)
+        // Do not block the UI while a callback is finishing. New plays are
+        // rejected immediately; SDL is released after active device cleanup.
+        _ = DisposeWhenIdleAsync();
+    }
+
+    private async Task DisposeWhenIdleAsync()
+    {
+        await _playbackGate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            if (s_instanceCount > 0)
+            lock (InitLock)
             {
-                s_instanceCount--;
-                if (s_instanceCount == 0)
+                if (s_instanceCount > 0 && --s_instanceCount == 0)
                 {
                     SDL.QuitSubSystem(SDL_INIT_AUDIO);
                 }
             }
         }
-
-        _disposed = true;
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"SDL shutdown failed: {ex}");
+        }
+        finally
+        {
+            _playbackGate.Release();
+        }
     }
 
     private static ushort GetSdlFormat(PcmSampleFormat format)
@@ -233,12 +285,13 @@ public sealed class SdlPcmPlayer : IAudioPlayer, IDisposable
         public required Stream PcmStream { get; set; }
         public ushort SdlFormat { get; set; }
         public bool FinalBufferQueued { get; set; }
+        public byte[] MixBuffer { get; set; } = [];
         public required TaskCompletionSource Tcs { get; set; }
     }
 
     private void ThrowIfDisposed()
     {
-        if (_disposed)
+        if (Volatile.Read(ref _disposed) != 0)
         {
             throw new ObjectDisposedException(nameof(SdlPcmPlayer));
         }
