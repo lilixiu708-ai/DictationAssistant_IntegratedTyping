@@ -6,11 +6,13 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using DictationAssistant.Plugin.Abstractions;
 
@@ -28,7 +30,8 @@ internal sealed class TypingPracticeWindow : Window
     };
     private readonly TextBlock _phaseDetail = new()
     {
-        TextWrapping = TextWrapping.Wrap, HorizontalAlignment = HorizontalAlignment.Center
+        TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center,
+        HorizontalAlignment = HorizontalAlignment.Center, Opacity = 0.8
     };
     private readonly TextBlock _mask = new()
     {
@@ -53,7 +56,15 @@ internal sealed class TypingPracticeWindow : Window
         HorizontalContentAlignment = HorizontalAlignment.Center
     };
     private readonly StackPanel _setupPanel = new() { Spacing = 10 };
-    private readonly StackPanel _resultsPanel = new() { Spacing = 7, IsVisible = false };
+    private readonly ProgressBar _sessionProgress = new() { Height = 6, Minimum = 0 };
+    private readonly ScrollViewer _exerciseScroll;
+    private readonly Grid _resultsView = new() { RowDefinitions = new RowDefinitions("Auto,*"), IsVisible = false };
+    private readonly ListBox _resultsList = new()
+    {
+        BorderThickness = new Thickness(0),
+        ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel { CacheLength = 0.5 }),
+        ItemTemplate = new FuncDataTemplate<TypedResult>(static (_, _) => new ResultRow(), supportsRecycling: true)
+    };
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(100) };
     private readonly Stopwatch _clock = new();
     private readonly List<TypedResult> _records = [];
@@ -81,34 +92,70 @@ internal sealed class TypingPracticeWindow : Window
         MinHeight = 450;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-        var root = new DockPanel { Margin = new Thickness(24) };
+        var root = new Grid { Margin = new Thickness(24), RowDefinitions = new RowDefinitions("Auto,*,Auto,Auto"), RowSpacing = 14 };
         Content = root;
+
+        var header = new StackPanel { Spacing = 8 };
+        header.Children.Add(_progress);
+        header.Children.Add(_sessionProgress);
+        header.Children.Add(_phaseTitle);
+        header.Children.Add(_phaseDetail);
+        _sessionProgress.Maximum = Math.Max(1, _host.Words.Count);
+        root.Children.Add(header);
+
         var footer = new StackPanel
         {
             Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right,
-            Spacing = 12, Margin = new Thickness(0, 12, 0, 0)
+            Spacing = 12
         };
         footer.Children.Add(_exportButton);
         footer.Children.Add(_closeButton);
-        DockPanel.SetDock(footer, Dock.Bottom);
+        Grid.SetRow(footer, 3);
         root.Children.Add(footer);
+        Grid.SetRow(_error, 2);
+        root.Children.Add(_error);
 
         var content = new StackPanel { Spacing = 14 };
-        var scroll = new ScrollViewer
+        _exerciseScroll = new ScrollViewer
         {
             Content = content, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
-        root.Children.Add(scroll);
-        content.Children.Add(_progress);
-        content.Children.Add(_phaseTitle);
-        content.Children.Add(_phaseDetail);
+        var body = new Grid();
+        body.Children.Add(_exerciseScroll);
+        body.Children.Add(_resultsView);
+        var card = new Border
+        {
+            Child = body, Padding = new Thickness(16), CornerRadius = new CornerRadius(8),
+            BorderThickness = new Thickness(1), BorderBrush = Brushes.LightGray
+        };
+        Grid.SetRow(card, 1);
+        root.Children.Add(card);
         content.Children.Add(_mask);
         content.Children.Add(_countdown);
         content.Children.Add(_answer);
         content.Children.Add(_setupPanel);
-        content.Children.Add(_error);
-        content.Children.Add(_resultsPanel);
+
+        var resultHeader = new TextBlock
+        {
+            Text = "逐词核对 · 正确词条与本次输入", FontWeight = FontWeight.SemiBold,
+            Margin = new Thickness(10, 0, 10, 8)
+        };
+        _resultsView.Children.Add(resultHeader);
+        // The list owns its scroll viewer and receives a finite viewport from
+        // this star row. Wrapping it in the exercise scroll would disable virtualization.
+        Grid.SetRow(_resultsList, 1);
+        ScrollViewer.SetVerticalScrollBarVisibility(_resultsList, ScrollBarVisibility.Auto);
+        ScrollViewer.SetHorizontalScrollBarVisibility(_resultsList, ScrollBarVisibility.Disabled);
+        _resultsList.Styles.Add(new Style(selector => selector.OfType<ListBoxItem>())
+        {
+            Setters =
+            {
+                new Setter(ListBoxItem.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch),
+                new Setter(ListBoxItem.PaddingProperty, new Thickness(10, 8))
+            }
+        });
+        _resultsView.Children.Add(_resultsList);
 
         var secondsRow = new StackPanel
         {
@@ -134,7 +181,14 @@ internal sealed class TypingPracticeWindow : Window
             handledEventsToo: true);
         _timer.Tick += OnTimerTick;
         Closing += OnClosing;
-        Closed += (_, _) => { _timer.Stop(); _cancellation.Dispose(); };
+        Closed += (_, _) =>
+        {
+            _timer.Stop();
+            _timer.Tick -= OnTimerTick;
+            _resultsList.ItemsSource = null;
+            // An in-flight CSV export still needs the records until it finishes.
+            _cancellation.Dispose();
+        };
         RestorePreferences();
     }
 
@@ -177,9 +231,13 @@ internal sealed class TypingPracticeWindow : Window
                 // Only record here. Do not compare and do not show correct text.
                 _records.Add(new TypedResult(_index + 1, word, answer.Value,
                     answer.TimedOut, answer.Elapsed.TotalSeconds));
+                _sessionProgress.Value = _records.Count;
             }
             ct.ThrowIfCancellationRequested();
-            ShowFinalResults();
+            _phaseTitle.Text = "正在汇总成绩";
+            var correct = await Task.Run(() => ScoreRecords(ct), ct);
+            ct.ThrowIfCancellationRequested();
+            ShowFinalResults(correct);
         }
         catch (OperationCanceledException) when (_cancellation.IsCancellationRequested || ct.IsCancellationRequested)
         {
@@ -288,14 +346,23 @@ internal sealed class TypingPracticeWindow : Window
         }
     }
 
-    private void ShowFinalResults()
+    private int ScoreRecords(CancellationToken ct)
+    {
+        var correct = 0;
+        foreach (var record in _records)
+        {
+            ct.ThrowIfCancellationRequested();
+            record.Correct = TypingEvaluation.IsCorrect(record.Expected, record.Entered, _ignoreCaseSnapshot);
+            if (record.Correct) correct++;
+        }
+        return correct;
+    }
+
+    private void ShowFinalResults(int correct)
     {
         _phase = Phase.Completed;
         _timer.Stop();
-        var compared = _records.Select(record => new ScoredResult(record,
-            TypingEvaluation.IsCorrect(record.Expected, record.Entered, _ignoreCaseSnapshot))).ToArray();
-        var count = compared.Length;
-        var correct = compared.Count(item => item.Correct);
+        var count = _records.Count;
         var wrong = count - correct;
         _phaseTitle.Text = $"正确率 {TypingEvaluation.Accuracy(correct, count):F1}%";
         _phaseDetail.Text = $"完成 {count} 词 · 正确 {correct} · 错误或漏答 {wrong}。已在整轮结束后统一评分。";
@@ -303,18 +370,9 @@ internal sealed class TypingPracticeWindow : Window
         _countdown.Text = string.Empty;
         _answer.IsVisible = false;
         _mask.IsVisible = false;
-        _resultsPanel.IsVisible = true;
-        _resultsPanel.Children.Clear();
-        foreach (var item in compared)
-        {
-            var record = item.Result;
-            _resultsPanel.Children.Add(new TextBlock
-            {
-                Text = $"{record.Index,2}. {(item.Correct ? "✓" : "✗")} 正确：{record.Expected}     输入：{(string.IsNullOrEmpty(record.Entered) ? "（空白）" : record.Entered)}" +
-                    (record.TimedOut ? "   [到时]" : string.Empty),
-                TextWrapping = TextWrapping.Wrap
-            });
-        }
+        _exerciseScroll.IsVisible = false;
+        _resultsList.ItemsSource = _records;
+        _resultsView.IsVisible = true;
         _closeButton.Content = "关闭";
         _exportButton.IsVisible = true;
     }
@@ -339,12 +397,11 @@ internal sealed class TypingPracticeWindow : Window
             await writer.WriteLineAsync("序号,正确词条,输入内容,是否正确,是否超时,耗时秒");
             foreach (var row in _records)
             {
-                var correct = TypingEvaluation.IsCorrect(row.Expected, row.Entered, _ignoreCaseSnapshot);
                 await writer.WriteLineAsync(string.Join(",", new[]
                 {
                     row.Index.ToString(CultureInfo.InvariantCulture),
                     TypingEvaluation.CsvCell(row.Expected), TypingEvaluation.CsvCell(row.Entered),
-                    correct ? "正确" : "错误", row.TimedOut ? "是" : "否",
+                    row.Correct ? "正确" : "错误", row.TimedOut ? "是" : "否",
                     row.ElapsedSeconds.ToString("F2", CultureInfo.InvariantCulture)
                 }));
             }
@@ -418,7 +475,55 @@ internal sealed class TypingPracticeWindow : Window
     }
 
     private sealed record TypedAnswer(string Value, bool TimedOut, TimeSpan Elapsed);
-    private sealed record TypedResult(int Index, string Expected, string Entered, bool TimedOut, double ElapsedSeconds);
-    private sealed record ScoredResult(TypedResult Result, bool Correct);
+    private sealed record TypedResult(int Index, string Expected, string Entered, bool TimedOut, double ElapsedSeconds)
+    {
+        public bool Correct { get; set; }
+    }
+
+    private sealed class ResultRow : Grid
+    {
+        private readonly TextBlock _number = new();
+        private readonly TextBlock _expected = new() { TextWrapping = TextWrapping.Wrap };
+        private readonly TextBlock _entered = new() { TextWrapping = TextWrapping.Wrap, Opacity = 0.8 };
+        private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
+
+        public ResultRow()
+        {
+            ColumnDefinitions = new ColumnDefinitions("40,*,64");
+            RowDefinitions = new RowDefinitions("Auto,Auto");
+            ColumnSpacing = 12;
+            RowSpacing = 4;
+            Grid.SetRowSpan(_number, 2);
+            Grid.SetColumn(_expected, 1);
+            Grid.SetColumn(_entered, 1);
+            Grid.SetRow(_entered, 1);
+            Grid.SetColumn(_status, 2);
+            Grid.SetRowSpan(_status, 2);
+            Children.Add(_number);
+            Children.Add(_expected);
+            Children.Add(_entered);
+            Children.Add(_status);
+        }
+
+        protected override void OnDataContextChanged(EventArgs e)
+        {
+            base.OnDataContextChanged(e);
+            if (DataContext is not TypedResult record)
+            {
+                _number.Text = _expected.Text = _entered.Text = _status.Text = null;
+                return;
+            }
+
+            // Virtualized rows are recycled; update every field for the new item.
+            // Format only visible rows instead of retaining one string/control per word.
+            _number.Text = record.Index.ToString(CultureInfo.InvariantCulture);
+            _expected.Text = "正确：" + record.Expected;
+            _entered.Text = "输入：" + (string.IsNullOrEmpty(record.Entered) ? "（空白）" : record.Entered);
+            _status.Text = record.Correct
+                ? (record.TimedOut ? "✓ 正确\n到时" : "✓ 正确")
+                : (record.TimedOut ? "✗ 超时" : "✗ 错误");
+            _status.Foreground = record.Correct ? Brushes.SeaGreen : Brushes.IndianRed;
+        }
+    }
     private enum Phase { Setup, Playing, Typing, Committing, Completed, Error }
 }
