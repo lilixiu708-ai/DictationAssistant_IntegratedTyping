@@ -22,3 +22,7 @@
 
 - 使用 NuGet 库（如 ManagedBass, Hexa.NET.SDL2）而非直接 DllImport
 - 封装平台差异，不在业务代码中直接调用 native 方法
+
+## 仓库与发布约定
+
+命名、目录、贡献和验证规则见 [CONTRIBUTING.md](CONTRIBUTING.md)。版本、标签、源码与发行资产的对应关系见 [发布规范](docs/RELEASING.md)。保持已有程序集名称及插件接口版本独立于应用发行版本。

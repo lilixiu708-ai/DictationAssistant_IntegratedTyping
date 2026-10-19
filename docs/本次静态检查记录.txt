@@ -1,3 +1,7 @@
+HISTORICAL RECORD — initial source-only delivery.
+以下结论仅适用于最初静态核对，UNVERIFIED 不代表当前状态。
+当前构建与验证范围见 ../README.md；文档索引见 README.md。
+
 Verified source-only checks:
 - PASS: All .csproj files parse as XML
 - PASS: Solution file parses as XML

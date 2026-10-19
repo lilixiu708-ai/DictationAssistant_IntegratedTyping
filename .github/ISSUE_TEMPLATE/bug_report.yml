@@ -1,0 +1,36 @@
+name: 缺陷反馈
+description: 报告听写、插件、界面或构建问题
+title: "fix: "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 程序版本
+      description: 填写 Release 标签或提交编号，以及使用的语音引擎。
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: 系统与架构
+      placeholder: 例如 Windows 11 x64
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 列出操作顺序；性能问题请注明词表数量、发生阶段及 CPU/内存现象。
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: 预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 日志或截图
+      description: 可选。请先移除个人词表、账户信息、令牌和私人文件路径。
