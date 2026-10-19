@@ -37,7 +37,8 @@ internal sealed class TypingPracticeWindow : Window
     };
     private readonly TextBlock _countdown = new()
     {
-        FontSize = 18, HorizontalAlignment = HorizontalAlignment.Center
+        FontSize = 18, Width = 460, Height = 28,
+        HorizontalAlignment = HorizontalAlignment.Center, TextAlignment = TextAlignment.Center
     };
     private readonly TextBlock _error = new() { Foreground = Brushes.IndianRed, TextWrapping = TextWrapping.Wrap };
     private readonly TextBox _seconds = new() { Width = 80, Text = "10", HorizontalContentAlignment = HorizontalAlignment.Center };
@@ -61,6 +62,7 @@ internal sealed class TypingPracticeWindow : Window
     private Task? _sessionTask;
     private Phase _phase = Phase.Setup;
     private int _typingSeconds;
+    private int _lastDisplayedSeconds = -1;
     private int _index;
     private bool _closing;
     private bool _allowClose;
@@ -218,6 +220,7 @@ internal sealed class TypingPracticeWindow : Window
         _mask.IsVisible = true;
         _answer.Text = string.Empty;
         _answer.IsVisible = true;
+        _lastDisplayedSeconds = -1;
         _clock.Restart();
         var pending = new TaskCompletionSource<TypedAnswer>(TaskCreationOptions.RunContinuationsAsynchronously);
         _pendingAnswer = pending;
@@ -258,14 +261,22 @@ internal sealed class TypingPracticeWindow : Window
     {
         if (_phase != Phase.Typing || _pendingAnswer is null) return;
         var left = Math.Max(0, _typingSeconds - _clock.Elapsed.TotalSeconds);
-        _countdown.Text = $"剩余时间：{left:F1} 秒";
+        var displayedSeconds = (int)Math.Ceiling(left);
+        // Keep deadline checks frequent without rebuilding text during every input tick.
+        if (displayedSeconds != _lastDisplayedSeconds)
+        {
+            _lastDisplayedSeconds = displayedSeconds;
+            _countdown.Text = $"剩余时间：{displayedSeconds} 秒";
+        }
         if (left <= 0) CompleteAnswer(timedOut: true);
     }
 
     private void CompleteAnswer(bool timedOut)
     {
         if (_phase != Phase.Typing || _pendingAnswer is not { } pending) return;
-        if (pending.TrySetResult(new TypedAnswer(_answer.Text ?? string.Empty, timedOut, _clock.Elapsed)))
+        var elapsed = _clock.Elapsed;
+        timedOut |= elapsed >= TimeSpan.FromSeconds(_typingSeconds);
+        if (pending.TrySetResult(new TypedAnswer(_answer.Text ?? string.Empty, timedOut, elapsed)))
         {
             _phase = Phase.Committing;
             _timer.Stop();

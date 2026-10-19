@@ -103,6 +103,9 @@ public partial class MainWindow
         public string IntervalDescription { get; }
         public TimeSpan GetRepeatInterval(string word) => _getInterval(word);
         public Task SpeakOnceAsync(string word, CancellationToken cancellationToken) =>
-            _speak(word, cancellationToken);
+            // Cached synthesis and local audio can complete synchronously, so
+            // ConfigureAwait(false) alone cannot keep decoding/device setup
+            // off the UI thread when the user submits an answer.
+            Task.Run(() => _speak(word, cancellationToken), cancellationToken);
     }
 }
