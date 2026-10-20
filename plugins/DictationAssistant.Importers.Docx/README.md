@@ -25,7 +25,7 @@
 
 读取使用 [ExcelDataReader 3.9.0](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3) 的底层接口，无需安装 Excel。该库覆盖旧 `.xls` 与 `.xlsb`，适合本次只读多格式导入；相比之下，[ClosedXML](https://github.com/ClosedXML/ClosedXML/tree/09f2f21a60e821ce7fb18ca3576b272e5dd6d921) 偏向 `.xlsx` / `.xlsm` 的读写编辑，[Open XML SDK](https://github.com/dotnet/Open-XML-SDK/tree/431ab05cf160248cc3885a4a766026d4f8243792) 面向 Open XML 容器，不能覆盖本次全部格式。当前使用的 net8.0 资产没有传递依赖。
 
-用户 `.xlsx` 的 19 张工作表、2,886 个位置和 2,683 份非空文本已在 Linux 独立逐字符比对通过，92 处合并与来源行号等读取规则也已核对；默认 112 处标题 / 表头识别、全部列预览及默认 95 条替换导入均通过。其他 Excel 格式与 Windows 尚未实测。私人工作簿只用于本地验证，记录仅保留工作表名称、计数、文件哈希及验证范围，见 [Excel 导入验证](../../docs/Excel导入验证.md)。
+用户 `.xlsx` 的 19 张工作表、2,886 个位置和 2,683 份非空文本已在 Linux 独立逐字符比对通过，92 处合并与来源行号等读取规则也已核对；默认 112 处标题 / 表头识别、全部列预览及默认 95 条替换导入均通过。Windows 构建及程序窗口检查通过，其他 Excel 格式与 Windows 下的 Excel 导入交互尚未实测。私人工作簿只用于本地验证，记录仅保留工作表名称、计数、文件哈希及验证范围，见 [Excel 导入验证](../../docs/Excel导入验证.md)。
 
 ## DOCX 格式与限制
 
