@@ -3,11 +3,14 @@ Base-Repository: https://github.com/mono/skia
 Base-Commit: 4bed689c9c9eb77a120c6a9d54af6a572c85d1c2
 Dependency-Repository: https://chromium.googlesource.com/chromium/src/third_party/zlib
 Dependency-Commit: 3ca9f16f02950edffa391ec19cea856090158e9e
+Libpng-Repository: https://skia.googlesource.com/third_party/libpng.git
+Libpng-Commit: f135775ad4e5d4408d2e12ffcc71bb36e6b48551
 Scope: the native macOS no-DNG producer only; existing Windows builds are unchanged.
 The generic GN shared-library tool otherwise selects a .so filename, and does not
 set the Apple framework switches required by this direct GN/Ninja build.
 The deployment target follows the producer's min_macos_version for both CPUs.
 The fixed zlib dependency must not select the classic-Mac fdopen stub on Darwin.
+The fixed libpng dependency must likewise use modern Darwin's standard math.h.
 
 diff --git a/BUILD.gn b/BUILD.gn
 --- a/BUILD.gn
@@ -90,3 +93,19 @@ diff --git a/third_party/externals/zlib/zutil.h b/third_party/externals/zlib/zut
  #  define OS_CODE  7
  #  ifndef Z_SOLO
  #    if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+diff --git a/third_party/externals/libpng/pngpriv.h b/third_party/externals/libpng/pngpriv.h
+--- a/third_party/externals/libpng/pngpriv.h
++++ b/third_party/externals/libpng/pngpriv.h
+@@ -514,8 +514,10 @@
+     */
+ #  include <float.h>
+ 
+-#  if (defined(__MWERKS__) && defined(macintosh)) || defined(applec) || \
+-    defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)
++   /* Darwin uses math.h even when its SDK also defines TARGET_OS_MAC. */
++#  if ((defined(__MWERKS__) && defined(macintosh)) || defined(applec) || \
++    defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)) && \
++    !defined(__APPLE__)
+    /* We need to check that <math.h> hasn't already been included earlier
+     * as it seems it doesn't agree with <fp.h>, yet we should really use
+     * <fp.h> if possible.

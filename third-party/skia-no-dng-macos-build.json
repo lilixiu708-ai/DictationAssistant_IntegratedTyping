@@ -36,6 +36,6 @@
   },
   "macos_patch": {
     "path": "third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch",
-    "sha256": "157779ba59d2b40335603b32bfcfe121a48fde2ce7e325da2a81758ccda44ec6"
+    "sha256": "ccdaa12eeebb26fb0c780519dc13c86837953fdc6811a07a8b1d7db1b5f240fb"
   }
 }

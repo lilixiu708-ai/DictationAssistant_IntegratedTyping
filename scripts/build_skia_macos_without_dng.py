@@ -320,7 +320,7 @@ def build(args):
         'dependencies': downloaded[2:], 'patches': patches, 'gn_args': arguments,
         'downstream_modifications': [
             'RAW/DNG and PIEX are disabled and their optional source checkouts are omitted.',
-            'macOS toolchain/platform compatibility changes (including modern Apple zlib platform detection) '
+            'macOS toolchain/platform compatibility changes (including modern Apple zlib/libpng platform detection) '
             f'are in {mac_patch["path"]}; original upstream archives and copyright notices are preserved.',
         ],
         'tools': lock['tools'], 'gn_source_archive': gn_source,
@@ -344,7 +344,7 @@ def build(args):
     shutil.copyfile(binary, output / binary.name)
     notice = ('SkiaSharp 2.88.9 for macOS, rebuilt without RAW/DNG and PIEX.\n'
               'This is a modified native build. macOS toolchain/platform compatibility changes '
-              '(including modern Apple zlib platform detection) are in '
+              '(including modern Apple zlib/libpng platform detection) are in '
               f'{mac_patch["path"]} in the paired source archive.\n'
               'Original copyright, license grants and disclaimers are retained in LICENSES/.\n'
               'This software is based in part on the work of the Independent JPEG Group.\n'
