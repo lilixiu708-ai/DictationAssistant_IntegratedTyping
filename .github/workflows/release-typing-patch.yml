@@ -1,0 +1,316 @@
+name: Typing 1.4.2 patch (Windows, Intel Mac and Apple Silicon)
+'on':
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: 'Empty: validate main on all three platforms; publish: dispatch on the 1.4.2 tag with its successful build run ID'
+        required: false
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: typing-patch-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  dispatch-mode:
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+    steps:
+      - name: Select a main build or promotion of the original verified artifacts
+        id: mode
+        env:
+          BUILD_RUN_ID: ${{ inputs.build_run_id }}
+        shell: python {0}
+        run: |
+          import os, re
+          build_run = os.environ['BUILD_RUN_ID']
+          if os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch':
+              raise SystemExit('The patch workflow requires an explicit dispatch.')
+          if build_run:
+              if (not re.fullmatch(r'[1-9][0-9]*', build_run)
+                      or os.environ['GITHUB_REF'] != 'refs/tags/plugin-synchronous-typing-v1.4.2'):
+                  raise SystemExit('Promotion requires the exact 1.4.2 tag and a positive verified build run ID.')
+              mode = 'publish'
+          else:
+              if os.environ['GITHUB_REF'] != 'refs/heads/main':
+                  raise SystemExit('Build the main branch first; a tagged dispatch can only promote verified artifacts.')
+              mode = 'build'
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write(f'mode={mode}\n')
+  windows-patch:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'build'
+    runs-on: windows-latest
+    timeout-minutes: 35
+    env:
+      PATCH_RELEASE_TAG: plugin-synchronous-typing-v1.4.2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.100
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify the exact plugin update and unchanged published host sources
+        shell: python {0}
+        run: |
+          import os, subprocess, sys
+          sys.path.insert(0, 'scripts')
+          from prepare_plugin_release import typing_release_config, verify_typing_release_source
+          config = typing_release_config(os.environ['PATCH_RELEASE_TAG'])
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          if head != os.environ['GITHUB_SHA']:
+              raise SystemExit('The release must use its exact tagged build commit')
+          if os.environ['GITHUB_REF'] != 'refs/heads/main':
+              raise SystemExit('The patch preflight must build the main branch, never a release tag.')
+          local_tag = 'refs/tags/' + os.environ['PATCH_RELEASE_TAG']
+          existing = subprocess.run(['git', 'rev-parse', '--verify', local_tag + '^{commit}'],
+                                    capture_output=True, text=True)
+          if existing.returncode == 0:
+              if existing.stdout.strip() != head:
+                  raise SystemExit('An existing patch tag does not match this preflight source.')
+          else:
+              subprocess.run(['git', 'tag', os.environ['PATCH_RELEASE_TAG'], head], check=True)
+          verify_typing_release_source(config, head)
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              output.write('HOST_RELEASE_TAG=' + config['host_release_tag'] + '\n')
+      - name: Download and verify the unchanged published compatibility host
+        shell: cmd
+        run: python scripts\prepare_plugin_release.py --prepare-host --host-release-tag %HOST_RELEASE_TAG%
+      - name: Build only the updated plugin into the compatibility host
+        shell: cmd
+        run: |
+          rmdir /s /q artifacts\Windows-x64\Plugins\SynchronousTyping
+          if errorlevel 1 exit /b 1
+          dotnet restore plugins\DictationAssistant.Practices.Typing\DictationAssistant.Practices.Typing.csproj -p:NuGetLockFilePath=obj/cloud.packages.lock.json
+          if errorlevel 1 exit /b 1
+          dotnet publish plugins\DictationAssistant.Practices.Typing\DictationAssistant.Practices.Typing.csproj -c Release --no-restore -p:DebugType=None -p:DebugSymbols=false -o artifacts\Windows-x64\Plugins\SynchronousTyping
+          if errorlevel 1 exit /b 1
+      - name: Run the existing typing logic checks
+        shell: cmd
+        run: |
+          dotnet restore tests\TypingPlugin.SmokeTests\TypingPlugin.SmokeTests.csproj -p:NuGetLockFilePath=obj/cloud.packages.lock.json
+          if errorlevel 1 exit /b 1
+          dotnet run --project tests\TypingPlugin.SmokeTests\TypingPlugin.SmokeTests.csproj -c Release --no-restore
+          if errorlevel 1 exit /b 1
+      - name: Load the updated plugin in the published executable
+        shell: python {0}
+        run: |
+          import json, os, pathlib, subprocess, sys
+          sys.path.insert(0, 'scripts')
+          from prepare_plugin_release import typing_release_config, write_json
+          config = typing_release_config(os.environ['PATCH_RELEASE_TAG'])
+          host_config = config['host']
+          host = pathlib.Path('artifacts/Windows-x64').resolve()
+          result = subprocess.run([str(host / 'DictationAssistant.App.exe'), '--list-plugins'],
+                                  cwd=host, capture_output=True, check=True, timeout=60)
+          report = json.loads(result.stdout.decode('utf-8-sig'))
+          if report.get('ApiVersion') != 1 or report.get('HostFeatureLevel') != host_config['feature_level']:
+              raise SystemExit('The compatibility executable has an unexpected API or feature level')
+          plugins = {item['Manifest']['Id']: item for item in report['Plugins'] if item.get('Manifest')}
+          if set(plugins) != {'synchronous-typing', 'docx-vocabulary'} or report.get('LoadedCount') != 2:
+              raise SystemExit('The fixed published host did not load exactly the expected two plugins')
+          typing, word = plugins['synchronous-typing'], plugins['docx-vocabulary']
+          if (not typing.get('IsLoaded') or typing.get('Error') is not None
+                  or typing['Manifest'].get('Version') != config['version']
+                  or typing['Manifest'].get('ApiVersion') != 1
+                  or typing['Manifest'].get('MinimumHostFeatureLevel') != host_config['feature_level']
+                  or not {'practice', 'configuration'} <= set(typing.get('Capabilities', []))):
+              raise SystemExit('The updated practice and configuration capabilities did not load')
+          if (not word.get('IsLoaded') or word.get('Error') is not None
+                  or word['Manifest'].get('Version') != host_config['word_plugin_version']):
+              raise SystemExit('The unchanged bundled Word/Excel importer no longer loads')
+          write_json(pathlib.Path('artifacts/host-releases') / config['host_release_tag'] / 'plugin-discovery.json', report)
+          print('The published host loaded the updated practice plugin and unchanged importer.')
+      - name: Start and close the published production application
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $executable = Join-Path $env:GITHUB_WORKSPACE 'artifacts/Windows-x64/DictationAssistant.App.exe'
+          $process = Start-Process $executable -WorkingDirectory (Split-Path $executable) -PassThru
+          try {
+            Start-Sleep -Seconds 8
+            $process.Refresh()
+            if ($process.HasExited) { throw "The published host exited during startup: $($process.ExitCode)" }
+            if ($process.MainWindowHandle -eq 0) { throw 'The published host did not create a main window.' }
+            $null = $process.CloseMainWindow()
+            if (-not $process.WaitForExit(10000)) { throw 'The published main window did not close normally.' }
+            if ($process.ExitCode -ne 0) { throw "The published host exited unsuccessfully: $($process.ExitCode)" }
+            @{ main_window_opened_and_closed = $true } | ConvertTo-Json | Set-Content (Join-Path ('artifacts/host-releases/' + $env:HOST_RELEASE_TAG) 'window-smoke.json')
+          } finally {
+            if (-not $process.HasExited) { $process.Kill() }
+          }
+      - name: Record compatibility and prepare only independent plugin assets
+        shell: python {0}
+        run: |
+          import hashlib, json, os, pathlib, subprocess, sys
+          sys.path.insert(0, 'scripts')
+          from prepare_plugin_release import typing_release_config, write_json
+          config = typing_release_config(os.environ['PATCH_RELEASE_TAG'])
+          host_config = config['host']
+          cache = pathlib.Path('artifacts/host-releases') / config['host_release_tag']
+          discovery = json.loads((cache / 'plugin-discovery.json').read_text(encoding='utf-8'))
+          window = json.loads((cache / 'window-smoke.json').read_text(encoding='utf-8-sig'))
+          baseline = json.loads((cache / 'HOST_BASELINE.json').read_text(encoding='utf-8'))
+          plugin = pathlib.Path('artifacts/Windows-x64/Plugins/SynchronousTyping/DictationAssistant.Practices.Typing.dll')
+          with plugin.open('rb') as stream:
+              checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
+          compatibility = {
+              'host_release_tag': config['host_release_tag'], 'host_source_commit': host_config['source_commit'],
+              'plugin_source_commit': os.environ['GITHUB_SHA'],
+              'plugin_version': config['version'], 'plugin_api_version': discovery['ApiVersion'],
+              'host_feature_level': discovery['HostFeatureLevel'], 'word_plugin_version': host_config['word_plugin_version'],
+              'practice_and_configuration_loaded': True,
+              'main_window_opened_and_closed': window.get('main_window_opened_and_closed') is True,
+              'plugin_dll_sha256': checksum,
+              'host_documentation_path_adaptations': baseline['documentation_path_adaptations'],
+              'host_non_typing_file_count': len(baseline['files_outside_typing_plugin']),
+              'host_staging_note': baseline['staging_note'],
+              'scope': 'Existing fixed published host, plugin discovery and normal main-window open/close only. Full interactive practice, live translation, credential migration and cross-account encryption are not claimed verified.',
+          }
+          write_json(cache / 'PLUGIN_COMPATIBILITY.json', compatibility)
+          subprocess.run([sys.executable, 'scripts/prepare_plugin_release.py', '--standalone',
+                          '--host-release-tag', config['host_release_tag'], '--plugin-release-tag', os.environ['PATCH_RELEASE_TAG']], check=True)
+      - name: Upload only the independent typing plugin release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: typing-patch-win-x64
+          path: artifacts/plugin-releases/synchronous-typing/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+          overwrite: true
+  macos-patch:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'build'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            rid: osx-x64
+          - runner: macos-15
+            rid: osx-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.100
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Update only the typing plugin in the verified R8 application and sign the bundle
+        run: python3 scripts/prepare_typing_macos_patch.py --build --rid ${{ matrix.rid }} --output-dir artifacts/typing-patch/${{ matrix.rid }}
+      - name: Verify the actual plugins, existing logic, speech, SDL and normal main-window close
+        run: python3 scripts/prepare_typing_macos_patch.py --validate --rid ${{ matrix.rid }} --output-dir artifacts/typing-patch/${{ matrix.rid }}
+      - name: Upload only the verified Mac patch and its metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: typing-patch-${{ matrix.rid }}
+          path: |
+            artifacts/typing-patch/${{ matrix.rid }}/*.zip
+            artifacts/typing-patch/${{ matrix.rid }}/*.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+          overwrite: true
+      - name: Preserve Mac runtime diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typing-patch-${{ matrix.rid }}-diagnostics-attempt-${{ github.run_attempt }}
+          path: |
+            artifacts/typing-patch/${{ matrix.rid }}/*.log
+            artifacts/typing-patch/${{ matrix.rid }}/PLUGIN_DISCOVERY.json
+            artifacts/typing-patch/${{ matrix.rid }}/BUILD_VALIDATION.json
+          if-no-files-found: warn
+          retention-days: 30
+          overwrite: true
+  publish-patch:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'publish' && github.ref == 'refs/tags/plugin-synchronous-typing-v1.4.2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify the original three-platform build has the exact tagged source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_RUN_ID: ${{ inputs.build_run_id }}
+        shell: python {0}
+        run: |
+          import json, os, re, subprocess
+          run_id, repository = os.environ['BUILD_RUN_ID'], os.environ['GH_REPO']
+          if (not re.fullmatch(r'[1-9][0-9]*', run_id) or run_id == os.environ['GITHUB_RUN_ID']
+                  or os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch'
+                  or os.environ['GITHUB_REF'] != 'refs/tags/plugin-synchronous-typing-v1.4.2'
+                  or repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping'):
+              raise SystemExit('Invalid typing patch artifact promotion request.')
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          tagged = subprocess.check_output(['git', 'rev-parse', 'refs/tags/plugin-synchronous-typing-v1.4.2^{commit}'], text=True).strip()
+          source = json.loads(subprocess.check_output(['gh', 'api', f'repos/{repository}/actions/runs/{run_id}']))
+          if (source.get('id') != int(run_id) or source.get('status') != 'completed'
+                  or source.get('conclusion') != 'success' or source.get('event') != 'workflow_dispatch'
+                  or source.get('path') != '.github/workflows/release-typing-patch.yml'
+                  or source.get('head_branch') != 'main'
+                  or source.get('repository', {}).get('full_name') != repository
+                  or source.get('head_repository', {}).get('full_name') != repository
+                  or not re.fullmatch(r'[0-9a-f]{40}', head)
+                  or not (source.get('head_sha') == os.environ['GITHUB_SHA'] == head == tagged)):
+              raise SystemExit('Promotion requires this repository successful three-platform preflight and the exact tagged source.')
+          print(f'Promoting verified three-platform typing patches from run {run_id}, commit {head}.')
+      - uses: actions/download-artifact@v4
+        with:
+          name: typing-patch-win-x64
+          path: artifacts/typing-patch/parts/win-x64
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: typing-patch-osx-x64
+          path: artifacts/typing-patch/parts/osx-x64
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: typing-patch-osx-arm64
+          path: artifacts/typing-patch/parts/osx-arm64
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+      - name: Verify all three patches and prepare complete patch source and disclosures
+        run: python3 scripts/publish_typing_patch.py --assemble --parts-root artifacts/typing-patch/parts --output-dir artifacts/typing-patch/release --tag ${{ github.ref_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: typing-patch-release-assets
+          path: artifacts/typing-patch/release/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+          overwrite: true
+      - name: Publish the new patch after verifying all uploaded asset digests
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PATCH_BUILD_RUN_ID: ${{ inputs.build_run_id }}
+        run: python3 scripts/publish_typing_patch.py --publish --output-dir artifacts/typing-patch/release --tag ${{ github.ref_name }}

@@ -1,8 +1,8 @@
 {
   "id": "synchronous-typing",
   "name": "背诵练习插件",
-  "description": "从 Word/Excel 选择提示和答案，静音背诵或播报后拼写；支持中途结算、离子上下标、成绩导出与提前翻译。",
-  "version": "1.4.1",
+  "description": "从 Word/Excel 选择提示和答案，静音背诵或播报后拼写，可打乱题目；支持中途结算、离子上下标、成绩导出与提前翻译。",
+  "version": "1.4.2",
   "apiVersion": 1,
   "minimumHostFeatureLevel": 5,
   "kind": "practice",

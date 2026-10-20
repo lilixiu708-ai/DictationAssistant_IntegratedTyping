@@ -1,5 +1,5 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: support early settlement and clarify practice instructions.
+// Modified 2026-10-20: retain one paired question order throughout a shuffled practice round.
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -109,6 +109,7 @@ internal sealed class TypingPracticeWindow : Window
     private Task? _translationTask;
     private CancellationTokenSource? _sessionCancellation;
     private Dictionary<string, string> _translations = new(StringComparer.Ordinal);
+    private IReadOnlyList<PracticeQuestion> _questions = Array.Empty<PracticeQuestion>();
     private IReadOnlyList<string> _words = Array.Empty<string>();
     private int _expectedWordCount;
     private Phase _phase = Phase.Setup;
@@ -286,7 +287,7 @@ internal sealed class TypingPracticeWindow : Window
         int? failedIndex = null;
         try
         {
-            var words = await Task.Run(() =>
+            var round = await Task.Run(() =>
             {
                 ct.ThrowIfCancellationRequested();
                 var source = _plan.Questions ?? throw new InvalidDataException("没有可用的练习题。");
@@ -294,7 +295,6 @@ internal sealed class TypingPracticeWindow : Window
                 expected = _plan.UsesHostWordList && _host is IPracticeWordListMetadata metadata
                     ? metadata.ExpectedWordCount : count;
                 if (expected <= 0) throw new InvalidDataException("词表没有可读取的词条。");
-                var answers = new string[count];
                 int? invalidIndex = null;
                 for (var index = 0; index < count; index++)
                 {
@@ -309,7 +309,6 @@ internal sealed class TypingPracticeWindow : Window
                         invalidIndex ??= index + 1;
                         continue;
                     }
-                    answers[index] = question.Answer;
                     actual++;
                 }
                 failedIndex = invalidIndex;
@@ -317,10 +316,13 @@ internal sealed class TypingPracticeWindow : Window
                     throw new InvalidDataException($"词表读取不完整：{actual} / {expected}。" +
                         (invalidIndex is { } invalid ? $"第 {invalid} 个词条为空或包含空字符。" : "词条数量与来源不一致。"));
                 ct.ThrowIfCancellationRequested();
-                return Array.AsReadOnly(answers);
+                var questions = _plan.CreateRoundQuestions(ct);
+                var answers = Array.AsReadOnly(questions.Select(question => question.Answer).ToArray());
+                return (Questions: questions, Answers: answers);
             }, ct);
             if (_closing) return;
-            _words = words;
+            _questions = round.Questions;
+            _words = round.Answers;
             _expectedWordCount = expected;
             _sessionProgress.Maximum = expected;
             _progress.Text = $"已读取 {actual} / {expected} 条";
@@ -383,14 +385,15 @@ internal sealed class TypingPracticeWindow : Window
     private string DescribePlan() => $"来源：{_plan.SourceDescription}\n共 {_words.Count} 题 · "
         + (_plan.PlayAudio ? $"每题读 {_host.TimesPerWord} 遍，每遍间隔 {_host.IntervalDescription} 秒。"
             : "静音计时。")
+        + (_plan.ShuffleQuestions ? "\n题目已打乱，本轮顺序保持不变。" : "\n按原顺序练习。")
         + (_plan.ChemicalAnswers ? "\n化学式的元素大小写和电荷都需要写对。" : string.Empty);
 
     private void RefreshTranslationHint()
     {
-        var hasPrompt = _phase == Phase.Typing && _index < _plan.Questions.Count;
+        var hasPrompt = _phase == Phase.Typing && _index < _questions.Count;
         _questionPrompt.Text = hasPrompt
-            ? (_plan.PromptIsChemical ? ChemicalNotation.ToDisplay(_plan.Questions[_index].Prompt)
-                : _plan.Questions[_index].Prompt) : string.Empty;
+            ? (_plan.PromptIsChemical ? ChemicalNotation.ToDisplay(_questions[_index].Prompt)
+                : _questions[_index].Prompt) : string.Empty;
         _questionPrompt.IsVisible = !string.IsNullOrEmpty(_questionPrompt.Text);
         var show = _phase == Phase.Typing && _showTranslation.IsChecked == true
             && _index < _words.Count;
@@ -457,7 +460,7 @@ internal sealed class TypingPracticeWindow : Window
                 ct.ThrowIfCancellationRequested();
                 var answer = await AwaitTypingAsync(ct);
                 // Only record here. Do not compare and do not show correct text.
-                var question = _plan.Questions[_index];
+                var question = _questions[_index];
                 _records.Add(new TypedResult(_index + 1, word, answer.Value,
                     answer.TimedOut, answer.Elapsed.TotalSeconds)
                 {

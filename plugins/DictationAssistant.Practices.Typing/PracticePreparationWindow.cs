@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Modified 2026-10-20: select a paired document source before timed recitation or dictation.
+// Modified 2026-10-20: select paired questions and optional random order before practice.
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -24,6 +24,7 @@ internal sealed class PracticePreparationWindow : Window
     private readonly Button _swap = new() { Content = "交换提示与答案", MinWidth = 140 };
     private readonly CheckBox _skipHeaders = new() { Content = "跳过标题和表头", IsChecked = true };
     private readonly CheckBox _chemicalAnswers = new() { Content = "答案是化学式（区分元素大小写）" };
+    private readonly CheckBox _shuffleQuestions = new() { Content = "打乱顺序", IsChecked = false };
     private readonly ComboBox _mode = new()
     {
         ItemsSource = new[] { "静音计时", "播报后作答" },
@@ -82,14 +83,15 @@ internal sealed class PracticePreparationWindow : Window
         _documentOptions.Children.Add(row);
         content.Children.Add(_documentOptions);
         content.Children.Add(Labeled("练习方式", _mode));
+        content.Children.Add(_shuffleQuestions);
         content.Children.Add(_chemicalAnswers);
         content.Children.Add(new TextBlock
         {
-            Text = "离子式可写成 Na^+、SO4^2-，也可直接输入上下标。\n同一行的提示和答案组成一题，按文档顺序练习，重复项也会保留。",
+            Text = "离子式可写成 Na^+、SO4^2-，也可直接输入上下标。\n打乱时，提示和答案一起移动，重复项也会保留。不勾选则按原顺序练习。",
             Opacity = 0.8, TextWrapping = TextWrapping.Wrap
         });
         content.Children.Add(_summary);
-        content.Children.Add(new TextBlock { Text = "题目预览（前 100 题，练习时隐藏答案）", FontWeight = FontWeight.SemiBold });
+        content.Children.Add(new TextBlock { Text = "题目预览（原顺序，前 100 题，练习时隐藏答案）", FontWeight = FontWeight.SemiBold });
         content.Children.Add(_preview);
         var scroll = new ScrollViewer
         {
@@ -212,7 +214,7 @@ internal sealed class PracticePreparationWindow : Window
         _questionSet = new PracticeQuestionSet(Array.AsReadOnly(_host.Words.Select((word, index) =>
             new PracticeQuestion(string.Empty, word, $"词表第 {index + 1} 项")).ToArray()), _host.Words.Count, 0, 0);
         _source.Text = $"当前词表共 {_host.Words.Count} 条，听完播报后作答。";
-        _summary.Text = $"共 {_questionSet.Questions.Count} 题，按词表顺序练习，重复项也会保留。";
+        _summary.Text = $"共 {_questionSet.Questions.Count} 题，重复项也会保留。";
         _status.Text = string.Empty;
         RefreshPreviewList();
         UpdateControls();
@@ -337,6 +339,7 @@ internal sealed class PracticePreparationWindow : Window
         _openDocument.IsEnabled = !_busy && !_closing && _host is IPracticeDocumentHost;
         _useWords.IsEnabled = !_busy && !_closing && _host.Words.Count > 0;
         _documentOptions.IsEnabled = _chemicalAnswers.IsEnabled = !_busy && !_closing;
+        _shuffleQuestions.IsEnabled = !_busy && !_closing;
         _mode.IsEnabled = !_busy && !_closing && !_usingHostWords;
         _next.IsEnabled = !_busy && !_closing && _questionSet?.Questions.Count > 0;
         _cancel.Content = _busy ? "取消并关闭" : "取消";
@@ -351,7 +354,8 @@ internal sealed class PracticePreparationWindow : Window
             && PracticeQuestionBuilder.IsChemicalColumn(_document, section.Index, column.Index);
         var plan = new PracticePlan(_questionSet.Questions, _usingHostWords || _mode.SelectedIndex == 1,
             promptIsChemical, _chemicalAnswers.IsChecked == true,
-            _usingHostWords ? "当前主窗口词表" : _fileName ?? "已选文档", _usingHostWords);
+            _usingHostWords ? "当前主窗口词表" : _fileName ?? "已选文档", _usingHostWords,
+            _shuffleQuestions.IsChecked == true);
         _busy = true;
         UpdateControls();
         try

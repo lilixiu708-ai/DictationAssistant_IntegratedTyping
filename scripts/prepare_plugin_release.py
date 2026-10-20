@@ -34,6 +34,7 @@ STANDALONE_PLUGIN_TAG = 'plugin-synchronous-typing-v1.3.1'
 STANDALONE_IMPORTER_TAG = 'plugin-docx-vocabulary-v1.1.0'
 PRESERVED_TYPING_TAG = 'plugin-synchronous-typing-v1.3.1'
 PRESERVED_TYPING_COMMIT = '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'
+TYPING_PATCH_BASE_COMMIT = 'f277468443bf2d20c0803c39977d93cbe2c1ce13'
 IMPORTER_EXTENSIONS = ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm']
 IMPORTER_BASELINE_FILE = 'HOST_BASELINE-docx-vocabulary.json'
 IMPORTER_COMPATIBILITY_FILE = 'PLUGIN_COMPATIBILITY-docx-vocabulary.json'
@@ -74,6 +75,7 @@ HOSTS = {
 TYPING_RELEASES = {
     STANDALONE_PLUGIN_TAG: ('1.3.1', HOST_RELEASE_TAG, '插件更新：同步打字 1.3.1（多翻译服务）'),
     'plugin-synchronous-typing-v1.4.1': ('1.4.1', R7_RELEASE_TAG, '背诵练习插件 1.4.1'),
+    'plugin-synchronous-typing-v1.4.2': ('1.4.2', R7_RELEASE_TAG, '背诵练习插件 1.4.2 · 随机词序补丁'),
 }
 
 
@@ -81,8 +83,11 @@ def typing_release_config(tag):
     if tag not in TYPING_RELEASES:
         raise ValueError('Only the exact approved independent typing plugin tags are supported')
     version, host_tag, title = TYPING_RELEASES[tag]
-    return {'tag': tag, 'version': version, 'host_release_tag': host_tag,
-            'host': HOSTS[host_tag], 'title': title}
+    config = {'tag': tag, 'version': version, 'host_release_tag': host_tag,
+              'host': HOSTS[host_tag], 'title': title}
+    if version == '1.4.2':
+        config['patch_base_commit'] = TYPING_PATCH_BASE_COMMIT
+    return config
 
 
 def git(*arguments):
@@ -282,12 +287,19 @@ def verify_typing_release_source(config, head):
         raise ValueError('The exact standalone plugin tag must match the current HEAD')
     if git('rev-parse', '--verify', f'refs/tags/{config["host_release_tag"]}^{{commit}}') != host['source_commit']:
         raise ValueError('The published host tag moved from its fixed commit')
+    source_base = config.get('patch_base_commit', host['source_commit'])
     paths = ['src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Abstractions']
-    if config['host_release_tag'] == R7_RELEASE_TAG:
+    if config.get('patch_base_commit'):
+        # R8 introduced Mac host changes before this plugin-only patch. Keep
+        # those existing sources fixed without pretending they are R7 sources;
+        # the actual Windows compatibility executable still comes from pinned R7.
+        subprocess.run(['git', 'merge-base', '--is-ancestor', source_base, head], cwd=ROOT, check=True)
+        paths.append('plugins/DictationAssistant.Importers.Docx')
+    elif config['host_release_tag'] == R7_RELEASE_TAG:
         paths.extend(['plugins/DictationAssistant.Importers.Docx/*.cs',
                       'plugins/DictationAssistant.Importers.Docx/*.csproj',
                       'plugins/DictationAssistant.Importers.Docx/plugin.json'])
-    subprocess.run(['git', 'diff', '--quiet', host['source_commit'], head, '--', *paths], cwd=ROOT, check=True)
+    subprocess.run(['git', 'diff', '--quiet', source_base, head, '--', *paths], cwd=ROOT, check=True)
 
 
 def standalone_context(args, head):
@@ -463,6 +475,8 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
     if compatibility is not None:
         review['publication_scope'] = 'standalone-plugin-update-existing-host'
         review['host_compatibility'] = compatibility
+        if plugin_id == 'synchronous-typing' and version == '1.4.2':
+            review['patch_base_commit'] = TYPING_PATCH_BASE_COMMIT
     if app_tag == R7_RELEASE_TAG:
         if compatibility is None:
             review['publication_scope'] = 'combined-host-and-plugin-release'
@@ -526,14 +540,22 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
                            for path in sorted(binary_root.rglob('*')) if path.is_file()]}
     write_json(binary_root / 'PLUGIN_COMPONENTS.json', inventory)
     write_json(binary_root / 'PRIVATE_DEPENDENCY_SOURCES.json', source_index)
+    installation = (f'''On Windows, close DictationAssistant, replace the complete
+`Plugins/{folder}` directory with the `{folder}` directory in this ZIP, and restart.
+For macOS, use the matching signed Intel or Apple Silicon app update from the
+same release and replace the entire .app. Copying files into an existing signed
+.app invalidates its signature.
+''' if plugin_id == 'synchronous-typing' and version == '1.4.2' else f'''Close DictationAssistant, replace the complete `Plugins/{folder}` directory with
+the `{folder}` directory in this ZIP, and restart.
+''')
     build_notes = f'''# {manifest['name']} {version}
 
 Release tag: `plugin-{plugin_id}-v{version}`
 Plugin source commit: `{head}`; compatible host release: `{app_tag}`.
 Host source commit: `{host_commit or head}`. The host is not included or rebuilt by this plugin package.
 
-Close DictationAssistant, replace the complete `Plugins/{folder}` directory with
-the `{folder}` directory in this ZIP, and restart. Do not copy just the DLL:
+{installation}
+Do not copy just the DLL:
 keep plugin.json, dependency metadata and all private dependencies together.
 The host must support plugin API {manifest['apiVersion']} and feature level
 {manifest.get('minimumHostFeatureLevel', 1)}, .NET 10 and the matching shared libraries.
@@ -556,7 +578,10 @@ not establish a new permission or legal clearance for that combination.
 '''
     (binary_root / 'INSTALL_AND_BUILD.md').write_text(build_notes, encoding='utf-8')
     if plugin_id == 'synchronous-typing':
-        if version == '1.4.1':
+        if version == '1.4.2':
+            summary = ('准备页新增“打乱顺序”，静音计时和播报后作答均可使用。提示、答案与原行来源整组重排，'
+                       '重复项保留；默认使用原顺序，开启后每轮重新排列，一轮中途不再变动。')
+        elif version == '1.4.1':
             summary = '练习中可以中途结算：已提交答案和当前非空输入计分，当前空白及后续题目不计入。界面提供“显示提示”和“编辑提示”。'
         elif version == '1.4.0':
             summary = ('从 Word / Excel 选择提示列和答案列，按同一行配对练习；默认显示离子式、拼写英文名称，'
@@ -643,6 +668,26 @@ not establish a new permission or legal clearance for that combination.
 配套宿主 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，具体声明与原始许可随附件保留。
 '''
         notes += f'\n对应提交：`{head}`；配套本体：`{app_tag}`。详细许可事项见 `RELEASE_REVIEW.json`。\n'
+    elif plugin_id == 'synchronous-typing' and version == '1.4.2':
+        notes = f'''# 背诵练习插件 1.4.2 · 随机词序补丁
+
+静音背诵也能打乱词序了。在练习准备页勾选“打乱顺序”，再开始练习即可。
+提示和答案会整组重排，重复项保留；不勾选时仍按原顺序，开始后本轮词序固定。
+播报后作答也使用同一设置，中途结算、提示和成绩导出继续保留。
+
+Windows 继续使用已公开的 R7（API 1、功能级别 5）：关闭程序，用 ZIP 中完整
+`SynchronousTyping/` 目录替换对应插件目录后重启。Windows 本体及 Word / Excel 导入插件保持原字节。
+Mac Intel 和 M 系列请选择同一发行中的对应整合更新包，替换整个 `.app`，不要直接修改已签名应用内的插件文件。
+原有练习设置和译文继续沿用。
+
+本次插件源码提交：`{head}`；补丁前源码基线：`{TYPING_PATCH_BASE_COMMIT}`。
+Windows 配套本体：`{app_tag}`，本体提交：`{host_commit}`。本次未重新构建 Windows 本体。
+Mac 更新的宿主来源、签名及验证范围另见各包的补丁记录。
+
+提供对应源码和 `SHA256SUMS`。本插件包的 Windows 兼容检查只确认插件加载与主窗口正常开闭，
+不能代替完整练习交互、输入法、真实在线翻译及密钥迁移验证。
+宿主 Avalonia/MS-PL 与 AGPL 组合授权事项仍未解决，具体声明与原始许可随附件保留。
+'''
     elif plugin_id == 'synchronous-typing' and version == '1.4.1':
         notes = f'''# 背诵练习插件 1.4.1
 
@@ -676,6 +721,10 @@ Windows 真实练习 GUI、原生音频、输入法和在线翻译未实测；�
     if compatibility is not None:
         source_paths.append('.github/workflows/release-importer-plugin.yml' if plugin_id == 'docx-vocabulary'
                             else '.github/workflows/release-typing-plugin.yml')
+    if plugin_id == 'synchronous-typing' and version == '1.4.2':
+        source_paths.extend(['scripts/prepare_typing_macos_patch.py', 'scripts/publish_typing_patch.py',
+                             'scripts/prepare_macos_release.py',
+                             '.github/workflows/release-typing-patch.yml'])
     if app_tag == R7_RELEASE_TAG and compatibility is None:
         source_paths.extend(['.github/workflows/build-typing-windows.yml', 'scripts/publish_release.py',
                              'scripts/prepare_release.py',

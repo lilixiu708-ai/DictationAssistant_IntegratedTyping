@@ -2,6 +2,8 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**背诵练习 1.4.2 三平台补丁正在准备，尚未发布。** 准备页新增“打乱顺序”，计划交付 Windows R7 独立插件，以及基于 Mac R8 的 Intel 和 M 系列整合更新包。既有 R7、R8 和 1.4.1 的下载、标签与附件保持不变。
+
 **[R8（`v4.0.0-typing.8`）macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** 需要 macOS 15+，Intel x64 与 Apple Silicon arm64 分包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应 .NET 运行环境。源码提交 `2c64325cbc14e2699aa0e3ea6f6d71599a25383e`；[构建 39425977259](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39425977259)与[发布 39426632441](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39426632441)均成功，6 份公开附件重新下载核验通过。Windows 当前发行仍为 R7，另有背诵练习 1.4.1 独立更新。
 
 **[背诵练习 1.4.1 已独立预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1)。** 标签对应源码提交 `551174f64e15929c648b178affc3a2ec4f2f5cf3`，[Windows CI 39413856150](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39413856150) 的构建与发布均成功。固定公开 R7 加载 1.4.1，核对 API 1 / 功能级别 5、原导入 1.2.0、15 项既有检查及主窗口正常开闭通过；Windows 真实练习 GUI、原生音频与输入法仍未实测。本次仅更新练习插件，R7 完整包仍内置 1.4.0，导入插件与历史发行资产不变。
@@ -69,6 +71,13 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 - `third-party/components.json` 的 `native_source_provenance`、`source_coverage` 和 `native_overrides` 记录来源及范围；包内 `third-party-sources/SOURCE_ARCHIVES.json` 记录实际归档及哈希。目录中的 `delivery=bundled` 条目须真的入包，引用索引不等于已经交付。
 - 下载字节按固定 SHA-256 验证；Gitiles 有动态归档元数据的条目按目录规定核验固定 canonical `tar-members-v1` 内容树哈希（路径、类型、权限、链接和文件字节），并记录该次归档的实际 SHA-256。不能因压缩字节不同跳过内容验证。
 - GitHub 自动源码 ZIP 不执行上述追加流程，不能称它与准备脚本产出的对应源码包相同。核对每个实际组件要求的交付内容，勿将所有原生源码覆盖一概标成未补齐，也勿把部分通过扩大为整个 App 已合规。
+
+## 背诵练习 1.4.2 三平台补丁：准备中
+
+- Windows 从固定哈希的公开 R7 暂存宿主，只替换背诵练习插件；本轮源码以补丁前的 `f277468443bf2d20c0803c39977d93cbe2c1ce13` 为基线，宿主、共享契约和导入插件不得新增改动。R7 实际文件仍按原发行哈希核对。
+- Mac 从固定的 R8 Intel / Apple Silicon 整合包暂存，只重新构建练习插件。替换后重新签名，允许外层签名记录和启动器签名变化；其余宿主文件、导入插件和原生依赖保留原字节。用户更新时替换整个 `.app`。
+- 使用 `release-typing-patch.yml` 在三个对应平台完成兼容检查，再将成功产物对应的提交固定为 `plugin-synchronous-typing-v1.4.2`。仅发布新的补丁附件，不覆盖历史 Release；补丁源码包含本次代码、构建与封包脚本、锁文件和私有依赖源码，另记录固定 R8 完整对应源码的地址与哈希。原始许可及既有 Avalonia 组合授权披露继续保留。
+- 当前仅 Linux 开发构建与本轮 48 项 headless 观察通过，覆盖既有路径、随机词序、静音整轮及配对一致性；Windows 和两种 Mac 的本轮 CI 仍待运行。正式公开后还需重新下载核对摘要、源码与平台记录，再更新下载入口。
 
 ## R7 与两个插件一起发布
 

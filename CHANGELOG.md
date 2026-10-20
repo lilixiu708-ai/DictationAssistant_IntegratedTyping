@@ -2,6 +2,13 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
+## 背诵练习插件 [1.4.2] - 准备中
+
+- 修复静音背诵没有打乱入口的问题，准备页新增“打乱顺序”；播报后作答也可使用。默认保持原顺序，勾选后开始一轮新练习时重排，本轮中途不再变化。
+- 提示、答案和原行来源整组移动，重复题保留；播报、译文提示与成绩使用同一题序，中途结算继续可用。
+- 准备 Windows R7 独立插件补丁，以及基于 Mac R8 的 Intel、M 系列整合更新包；只重新构建练习插件，宿主与 Word / Excel 导入插件不重新编译。Mac 包更换插件后重新签名，不要求用户手工修改 `.app`。
+- Linux 开发构建及本轮 48 项 headless 观察通过，含 31 项既有路径、17 项随机词序检查、Common Ions 25 题静音整轮，以及 1,000 次含重复题的重排。Windows 兼容检查和两种 Mac 的本轮封包、签名与运行检查仍待 CI 确认；尚未发布。
+
 ## [4.0.0-typing.8] - 2026-10-20
 
 **[R8 macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** Windows 继续使用 R7 和独立的背诵练习 1.4.1 更新。

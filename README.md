@@ -8,6 +8,8 @@
 
 **[R8 macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** 需要 macOS 15 或更新版本，Intel 和 M 系列电脑分别提供完整包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及 .NET 运行环境。[安装说明](docs/MACOS.md)。
 
+**背诵练习 1.4.2 补丁正在准备，尚未发布。** 准备页增加「打乱顺序」，静音背诵和播报后作答都可使用；提示与答案一起重排，默认仍按原顺序。计划提供 Windows 插件更新及 Mac Intel、M 系列整合更新包。[操作与验证进度](docs/同步打字插件使用说明.md#142-补丁准备中打乱顺序)。
+
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
 ## 功能
