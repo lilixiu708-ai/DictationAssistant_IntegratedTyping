@@ -64,7 +64,7 @@ def digest(path):
 
 def write_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 
 
 def project_version(path):
@@ -598,7 +598,8 @@ not establish a new permission or legal clearance for that combination.
         source_paths.append('.github/workflows/release-importer-plugin.yml' if plugin_id == 'docx-vocabulary'
                             else '.github/workflows/release-typing-plugin.yml')
     if app_tag == R7_RELEASE_TAG:
-        source_paths.extend(['.github/workflows/build-typing-windows.yml', 'scripts/prepare_release.py',
+        source_paths.extend(['.github/workflows/build-typing-windows.yml', 'scripts/publish_release.py',
+                             'scripts/prepare_release.py',
                              'scripts/verify_build.py', 'docs/PLUGIN_SDK.md'])
     if plugin_id == 'docx-vocabulary' and version in ('1.1.0', '1.2.0'):
         source_paths.append('docs/Excel导入验证.md')

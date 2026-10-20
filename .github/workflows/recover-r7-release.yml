@@ -1,0 +1,66 @@
+name: Resume publication of the verified R7 artifacts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: recover-r7-39398895391
+  cancel-in-progress: false
+
+jobs:
+  publish-verified-r7:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: v4.0.0-typing.7
+      SOURCE_COMMIT: 20251457f881d5efca52eb39dc832f8ae2e9f135
+      SOURCE_RUN_ID: '39398895391'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify the exact producer and its successful Windows build
+        shell: python {0}
+        run: |
+          import json, os, subprocess
+          repository, run_id, source = os.environ['GH_REPO'], os.environ['SOURCE_RUN_ID'], os.environ['SOURCE_COMMIT']
+          def api(path):
+              return json.loads(subprocess.check_output(['gh', 'api', path], text=True))
+          run = api(f'repos/{repository}/actions/runs/{run_id}')
+          if (repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping' or run_id != '39398895391'
+                  or source != '20251457f881d5efca52eb39dc832f8ae2e9f135'
+                  or run.get('head_sha') != source or run.get('event') != 'push'
+                  or run.get('path') != '.github/workflows/build-typing-windows.yml'
+                  or run.get('head_branch') != 'v4.0.0-typing.7' or run.get('status') != 'completed'):
+              raise SystemExit('This recovery accepts only the original completed R7 producer run')
+          pages = json.loads(subprocess.check_output(['gh', 'api', '--paginate', '--slurp',
+              f'repos/{repository}/actions/runs/{run_id}/jobs?filter=all&per_page=100'], text=True))
+          if not any(job.get('name') == 'windows-x64' and job.get('head_sha') == source
+                     and job.get('conclusion') == 'success' for page in pages for job in page['jobs']):
+              raise SystemExit('The original Windows build and artifact preparation did not succeed')
+          artifacts = api(f'repos/{repository}/actions/runs/{run_id}/artifacts?per_page=100')['artifacts']
+          for name in ('release-assets', 'plugin-release-assets'):
+              matches = [item for item in artifacts if item['name'] == name]
+              if (len(matches) != 1 or matches[0].get('expired') is not False
+                      or matches[0].get('workflow_run', {}).get('head_sha') != source):
+                  raise SystemExit(f'Missing or inconsistent verified producer artifact: {name}')
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: release
+          run-id: 39398895391
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: plugin-release-assets
+          path: plugin-release
+          run-id: 39398895391
+          github-token: ${{ github.token }}
+      - name: Publish the existing R7 application and plugin assets without rebuilding
+        run: python scripts/publish_release.py

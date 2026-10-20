@@ -1,0 +1,268 @@
+"""Validate and publish the selected immutable application and plugin releases.
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+Modified: 2026-10-20
+"""
+import argparse, hashlib, json, os, pathlib, re, subprocess, tempfile, zipfile
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--validate-only', action='store_true', help='Check the existing assets and remote refs without creating or publishing releases')
+args = parser.parse_args()
+repository = os.environ['GH_REPO']
+app_tag = os.environ['RELEASE_TAG']
+commit = os.environ.get('SOURCE_COMMIT', os.environ['GITHUB_SHA'])
+if 'SOURCE_COMMIT' in os.environ and (
+        repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping'
+        or app_tag != 'v4.0.0-typing.7'
+        or commit != '20251457f881d5efca52eb39dc832f8ae2e9f135'
+        or os.environ.get('SOURCE_RUN_ID') != '39398895391'):
+    raise SystemExit('Source override is restricted to the verified original R7 producer run')
+if app_tag not in {'v4.0.0-typing.5', 'v4.0.0-typing.6', 'v4.0.0-typing.7'} or not re.fullmatch(r'[0-9a-f]{40}', commit):
+    raise SystemExit('Unexpected release tag or build commit')
+
+def gh(*arguments):
+    return subprocess.check_output(['gh', *arguments], text=True)
+
+plans = {
+    'v4.0.0-typing.5': [
+        (app_tag, 'DictationAssistant Typing R5', pathlib.Path('release')),
+        ('plugin-synchronous-typing-v1.1.0', 'Synchronous Typing plugin 1.1.0',
+         pathlib.Path('plugin-release/synchronous-typing')),
+        ('plugin-docx-vocabulary-v1.0.1', 'Word vocabulary importer plugin 1.0.1',
+         pathlib.Path('plugin-release/docx-vocabulary')),
+    ],
+    'v4.0.0-typing.6': [
+        (app_tag, 'R6 本体：Windows x64 便携版（含插件）', pathlib.Path('release')),
+        ('plugin-synchronous-typing-v1.2.0', '插件更新：同步打字 1.2.0',
+         pathlib.Path('plugin-release/synchronous-typing')),
+    ],
+    'v4.0.0-typing.7': [
+        (app_tag, 'R7 · 听写与背诵练习（Windows x64）', pathlib.Path('release')),
+        ('plugin-synchronous-typing-v1.4.0', '背诵练习插件 1.4.0',
+         pathlib.Path('plugin-release/synchronous-typing')),
+        ('plugin-docx-vocabulary-v1.2.0', 'Word / Excel 词表导入插件 1.2.0',
+         pathlib.Path('plugin-release/docx-vocabulary')),
+    ],
+}[app_tag]
+expected_plugin_directories = {folder.name for tag, _, folder in plans if tag != app_tag}
+actual_plugin_directories = {path.name for path in pathlib.Path('plugin-release').iterdir()}
+if actual_plugin_directories != expected_plugin_directories:
+    raise SystemExit('The plugin artifact contains an unexpected or missing release directory')
+pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+existing = {item['tag_name'] for page in pages for item in page}
+application_review = json.loads(pathlib.Path('release/RELEASE_REVIEW.json').read_text(encoding='utf-8'))
+if app_tag == 'v4.0.0-typing.7':
+    host_review = application_review.get('release_review', {})
+    blockers = host_review.get('blocking_issues', [])
+    if (application_review.get('publication_decision') != 'explicitly_requested_publication_with_declared_unresolved_license_review'
+            or application_review.get('license_review_resolved') is not False
+            or application_review.get('acknowledged_issue_ids') != ['avalonia-mspl-agpl-compatibility']
+            or application_review.get('plugin_api_version') != 1 or application_review.get('host_feature_level') != 5
+            or application_review.get('bundled_plugins') != {'synchronous-typing': '1.4.0', 'docx-vocabulary': '1.2.0'}
+            or host_review.get('status') != 'blocked' or not isinstance(blockers, list) or not blockers
+            or any(not isinstance(item, dict) or item.get('id') != 'avalonia-mspl-agpl-compatibility'
+                   or not isinstance(item.get('reason'), str) or not item['reason'].strip() for item in blockers)):
+        raise SystemExit('R7 disclosure does not match the explicitly acknowledged existing license review')
+
+def verify_r7_zip_assets(tag, assets, review):
+    is_app = tag == app_tag
+    plugin_id = review.get('plugin_id')
+    folder = {'synchronous-typing': 'SynchronousTyping', 'docx-vocabulary': 'DocxVocabulary'}.get(plugin_id)
+    base = f'DictationAssistant-{app_tag.removeprefix("v")}' if is_app else f'{plugin_id}-{review["plugin_version"]}'
+    binary_name = base + ('-win-x64-portable.zip' if is_app else '.zip')
+    source_name = base + '-source.zip'
+    for name in (binary_name, source_name):
+        with zipfile.ZipFile(assets[name]) as package:
+            names = package.namelist()
+            if len(names) != len(set(names)) or package.testzip() is not None:
+                raise SystemExit(f'Duplicate or corrupt release ZIP member: {tag}/{name}')
+    source_prefix = base + '-source/' if is_app else ''
+    binary_prefix = '' if is_app else folder + '/'
+    with zipfile.ZipFile(assets[source_name]) as source, zipfile.ZipFile(assets[binary_name]) as binary:
+        # These generated JSON copies were emitted with CRLF by Windows
+        # write_text and LF by ZipFile.writestr. Compare only that known line
+        # ending difference; all uploaded files retain their original SHA-256.
+        review_bytes = assets['RELEASE_REVIEW.json'].read_bytes().replace(b'\r\n', b'\n')
+        if (source.read(source_prefix + 'RELEASE_REVIEW.json').replace(b'\r\n', b'\n') != review_bytes
+                or binary.read(binary_prefix + 'RELEASE_REVIEW.json').replace(b'\r\n', b'\n') != review_bytes):
+            raise SystemExit(f'The binary/source disclosure differs from the checksummed review: {tag}')
+        for path in ('src/DictationAssistant.Plugin.Abstractions/IPracticeDocumentHost.cs',
+                     'src/DictationAssistant.Plugin.Abstractions/IDocumentNotationImporter.cs',
+                     '.github/workflows/build-typing-windows.yml', 'docs/同步打字插件使用说明.md'):
+            if source_prefix + path not in source.namelist():
+                raise SystemExit(f'R7 corresponding source is incomplete: {tag}/{path}')
+        if not is_app:
+            manifest = json.loads(binary.read(binary_prefix + 'plugin.json'))
+            if (manifest.get('id') != plugin_id or manifest.get('version') != review['plugin_version']
+                    or manifest.get('apiVersion') != 1 or manifest.get('minimumHostFeatureLevel') != 5
+                    or f'{manifest["version"]}+{commit}'.encode('ascii') not in binary.read(binary_prefix + manifest['entryAssembly'])):
+                raise SystemExit(f'The plugin binary does not match its R7 release source: {tag}')
+            project_name = pathlib.PurePosixPath(manifest['entryAssembly']).stem
+            if source.read(f'plugins/{project_name}/plugin.json') != binary.read(binary_prefix + 'plugin.json'):
+                raise SystemExit(f'The plugin source and binary manifests differ: {tag}')
+            inventory = json.loads(source.read('PLUGIN_COMPONENTS.json'))
+            private_sources = json.loads(source.read('third-party-sources/SOURCE_ARCHIVES.json'))
+            if (inventory.get('source_commit') != commit or inventory.get('host_source_commit') != commit
+                    or inventory.get('host_release_tag') != app_tag
+                    or json.loads(binary.read(binary_prefix + 'PRIVATE_DEPENDENCY_SOURCES.json')) != private_sources):
+                raise SystemExit(f'The plugin source/dependency inventory differs: {tag}')
+            for item in private_sources['archives']:
+                if item.get('archive_path'):
+                    with source.open('third-party-sources/' + item['archive_path']) as stream:
+                        actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+                    if actual != item['sha256']:
+                        raise SystemExit(f'The bundled plugin dependency source differs: {tag}')
+prepared = []
+for tag, title, folder in plans:
+    # Never repurpose an older draft or overwrite a published release.
+    if tag in existing:
+        raise SystemExit(f'Refusing to replace an existing release/draft: {tag}')
+    assets = {path.name: path for path in folder.iterdir() if path.is_file()}
+    required = {'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
+    if not required <= assets.keys() or len(assets) != 5:
+        raise SystemExit(f'Incomplete release asset set: {tag}')
+    review = json.loads(assets['RELEASE_REVIEW.json'].read_text(encoding='utf-8'))
+    if review.get('source_commit') != commit:
+        raise SystemExit(f'Release review does not match the built commit: {tag}')
+    if tag == app_tag:
+        if review.get('tag') != app_tag or review.get('application_version') != app_tag.removeprefix('v'):
+            raise SystemExit('Application release review does not match the release tag')
+    elif (review.get('app_release_tag') != app_tag
+          or tag != f'plugin-{review.get("plugin_id")}-v{review.get("plugin_version")}'):
+        raise SystemExit(f'Plugin release review does not match the release tag: {tag}')
+    if tag == app_tag:
+        base = 'DictationAssistant-' + app_tag.removeprefix('v')
+        zip_names = {base + '-win-x64-portable.zip', base + '-source.zip'}
+    else:
+        base = f'{review["plugin_id"]}-{review["plugin_version"]}'
+        zip_names = {base + '.zip', base + '-source.zip'}
+    if set(assets) != required | zip_names:
+        raise SystemExit(f'Release asset names do not match the selected version: {tag}')
+    if app_tag == 'v4.0.0-typing.7' and tag != app_tag:
+        if (review.get('host_source_commit') != commit or review.get('plugin_api_version') != 1
+                or review.get('minimum_host_feature_level') != 5
+                or review.get('publication_scope') != 'combined-host-and-plugin-release'
+                or review.get('legal_clearance_claimed') is not False
+                or review.get('host_release_review') != application_review['release_review']):
+            raise SystemExit(f'Plugin metadata does not match the R7 host and declared review: {tag}')
+    checked = set()
+    for line in assets['SHA256SUMS'].read_text(encoding='ascii').splitlines():
+        expected, name = line.split('  ', 1)
+        if not re.fullmatch(r'[0-9a-f]{64}', expected) or name not in assets:
+            raise SystemExit(f'Invalid checksum entry: {tag}')
+        if name in checked:
+            raise SystemExit(f'Duplicate checksum entry: {tag}/{name}')
+        with assets[name].open('rb') as stream:
+            actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+        if actual != expected:
+            raise SystemExit(f'Asset checksum mismatch: {tag}/{name}')
+        checked.add(name)
+    if checked != set(assets) - {'SHA256SUMS'}:
+        raise SystemExit(f'Asset checksum coverage mismatch: {tag}')
+    if app_tag == 'v4.0.0-typing.7':
+        verify_r7_zip_assets(tag, assets, review)
+    refs = subprocess.check_output(['git', 'ls-remote', 'origin',
+                                    f'refs/tags/{tag}', f'refs/tags/{tag}^{{}}'], cwd=ROOT, text=True)
+    values = dict(line.split()[::-1] for line in refs.splitlines())
+    target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
+    if target is not None and target != commit:
+        raise SystemExit(f'Refusing to move an existing tag: {tag}')
+    if tag != app_tag and target is not None:
+        raise SystemExit(f'Refusing to reuse an existing plugin tag: {tag}')
+    if tag == app_tag and target != commit:
+        raise SystemExit('The application tag does not match the built commit')
+    prepared.append((tag, title, folder, assets))
+
+if app_tag == 'v4.0.0-typing.7':
+    app_binary = pathlib.Path('release/DictationAssistant-4.0.0-typing.7-win-x64-portable.zip')
+    with zipfile.ZipFile(app_binary) as host:
+        for _, _, folder, assets in prepared[1:]:
+            plugin_folder = {'synchronous-typing': 'SynchronousTyping', 'docx-vocabulary': 'DocxVocabulary'}[folder.name]
+            binary_path = next(path for name, path in assets.items() if name.endswith('.zip') and not name.endswith('-source.zip'))
+            prefix = f'Plugins/{plugin_folder}/'
+            with zipfile.ZipFile(binary_path) as plugin:
+                for member in host.infolist():
+                    path = member.filename.removeprefix('./')
+                    if path.startswith(prefix) and not member.is_dir():
+                        independent_path = plugin_folder + '/' + path.removeprefix(prefix)
+                        if host.read(member) != plugin.read(independent_path):
+                            raise SystemExit(f'Bundled and independent plugin files differ: {path}')
+
+if args.validate_only:
+    print(f'Validated {len(prepared)} complete release sets for {app_tag}, source {commit}; no release was changed.')
+    raise SystemExit(0)
+
+# Every selected asset set and ref is checked before creating any release.
+uploaded = {}
+verified_digests = {}
+for tag, title, folder, assets in prepared:
+    command = ['release', 'create', tag, '--draft', '--prerelease', '--latest=false',
+               '--title', title, '--notes-file', str(assets['RELEASE_NOTES.md']), '--target', commit]
+    if tag == app_tag:
+        command += ['--verify-tag']
+    gh(*command)
+    gh('release', 'upload', tag, *(str(path) for path in assets.values()))
+    # Tag endpoints may omit drafts; query the authenticated list by tag.
+    releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+    matches = [item for page in releases for item in page if item['tag_name'] == tag]
+    if len(matches) != 1 or not matches[0]['draft']:
+        raise SystemExit(f'Expected exactly one new draft: {tag}')
+    release = matches[0]
+    if release.get('tag_name') != tag or tag != app_tag and release.get('target_commitish') != commit:
+        raise SystemExit(f'Draft target does not match the built commit: {tag}')
+    expected_sizes = {name: path.stat().st_size for name, path in assets.items()}
+    if {item['name']: item['size'] for item in release['assets']} != expected_sizes:
+        raise SystemExit(f'Uploaded draft assets differ: {tag}')
+    asset_digests = {}
+    for item in release['assets']:
+        if item.get('state') != 'uploaded':
+            raise SystemExit(f'Uploaded asset is not complete: {tag}/{item["name"]}')
+        with assets[item['name']].open('rb') as stream:
+            expected_digest = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+        asset_digests[item['name']] = expected_digest
+        if item.get('digest'):
+            if item['digest'] != expected_digest:
+                raise SystemExit(f'Uploaded asset digest differs: {tag}/{item["name"]}')
+        else:
+            # Older API responses may omit digest; verify downloaded
+            # bytes rather than accepting file sizes as integrity proof.
+            with tempfile.TemporaryDirectory() as temporary:
+                downloaded = pathlib.Path(temporary) / 'asset'
+                with downloaded.open('wb') as destination:
+                    subprocess.run(['gh', 'api', f'repos/{repository}/releases/assets/{item["id"]}',
+                                    '-H', 'Accept: application/octet-stream'], stdout=destination, check=True)
+                with downloaded.open('rb') as stream:
+                    actual_digest = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+                if downloaded.stat().st_size != item['size'] or actual_digest != expected_digest:
+                    raise SystemExit(f'Downloaded draft asset differs: {tag}/{item["name"]}')
+    uploaded[tag] = release
+    verified_digests[tag] = asset_digests
+
+# Recheck every completed draft and tag after all uploads, before the
+# first public release. Only the selected new versions enter the plan;
+# no older application, plugin or native release is modified.
+for tag, _, _, _ in prepared:
+    saved = uploaded[tag]
+    current = json.loads(gh('api', f'repos/{repository}/releases/{saved["id"]}'))
+    if (not current.get('draft') or current.get('tag_name') != tag
+            or tag != app_tag and current.get('target_commitish') != commit):
+        raise SystemExit(f'Draft changed before publication: {tag}')
+    fields = lambda release: sorted((item['id'], item['name'], item['size'], item.get('state'))
+                                     for item in release['assets'])
+    if fields(current) != fields(saved):
+        raise SystemExit(f'Draft assets changed before publication: {tag}')
+    for item in current['assets']:
+        if item.get('digest') and item['digest'] != verified_digests[tag][item['name']]:
+            raise SystemExit(f'Draft asset digest changed before publication: {tag}/{item["name"]}')
+    refs = subprocess.check_output(['git', 'ls-remote', 'origin',
+                                    f'refs/tags/{tag}', f'refs/tags/{tag}^{{}}'], cwd=ROOT, text=True)
+    values = dict(line.split()[::-1] for line in refs.splitlines())
+    target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
+    if target not in (None, commit) or tag == app_tag and target != commit:
+        raise SystemExit(f'Tag changed before publication: {tag}')
+
+for tag, _, _, _ in prepared:
+    gh('release', 'edit', tag, '--tag', tag, '--target', commit,
+       '--draft=false', '--prerelease', '--latest=false')
+    print(gh('release', 'view', tag, '--json', 'url', '--jq', '.url').strip())
