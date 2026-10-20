@@ -8,6 +8,8 @@
 
 R6 标签指向提交 `0f008c72983b9d567612855498800886201572e6`，[发行构建记录 39377359747](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39377359747)成功完成：程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建通过，两个新 Release 已公开。后续文档更新不移动发行标签，也不替换已公开资产。
 
+公开后已重新下载两组各 5 份附件，`SHA256SUMS` 全部通过。本体包的 390 个文件、68 个组件及 40 个依赖源码归档通过复核；插件的 1 个私有依赖源码归档、源码独立构建及内置/独立 DLL 一致性均通过。源码逐项对应上述标签导出，原始声明保留原字节；7 个既有 Release 的页面、附件及原标签未被改动。
+
 此前代码提交 `0e7ecae` 的 [Windows CI 39375979975](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975) 保留为主分支验证记录。Windows DPAPI、旧配置迁移、跨机器/账户拒绝读取和真实在线翻译仍待验证，不能由构建及主窗口开闭结果推定通过。
 
 R5 本体与同步打字 1.1.0、Word 导入 1.0.1 已公开，来自提交 `ae1a23210df3f40c2527832bc1a0c55990f08b3f`；其 [Windows 构建 39363409555](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555) 记录仅作为该版本证据。后续文档和 R6 发布不改变历史标签、资产或 `typing.1`–`typing.3` 草稿状态。
