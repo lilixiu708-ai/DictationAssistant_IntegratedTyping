@@ -10,6 +10,8 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import urllib.parse
+import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -24,6 +26,16 @@ PLUGINS = (
 )
 KNOWN_REVIEW_ISSUES = {'avalonia-mspl-agpl-compatibility'}
 PROJECT_NOTICES = ('LICENSE.md', 'NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_NOTICES.md')
+HOST_RELEASE_TAG = 'v4.0.0-typing.6'
+HOST_SOURCE_COMMIT = '0f008c72983b9d567612855498800886201572e6'
+STANDALONE_PLUGIN_TAG = 'plugin-synchronous-typing-v1.3.0'
+HOST_SUMS_SHA256 = '625f9eb7fd1d7c67b46db4a704d792c3d55d27130431efefb633fb050aa4800d'
+HOST_ASSET_SHA256 = {
+    'DictationAssistant-4.0.0-typing.6-source.zip': '60754fd733e2a02d07b95f9220637d1c7165f2ba299cabca61a6e47fc1cc5ddc',
+    'DictationAssistant-4.0.0-typing.6-win-x64-portable.zip': '961c1e1f835c67e7381e98bd68781f06c87c24edc3f7a90ad78bbb7c8b6ef34c',
+    'RELEASE_NOTES.md': '9ec80bf3a1e1e4ede5813905c1e03b41bb19111971132d25181a02a0e2bc13da',
+    'RELEASE_REVIEW.json': '26873609737aa9915e322cdcc315fd07cd35bc2f286fa981dc2a17d0e5dc4aa9',
+}
 
 
 def git(*arguments):
@@ -49,6 +61,146 @@ def check_zip(path):
         names = archive.namelist()
         if len(names) != len(set(names)) or archive.testzip() is not None:
             raise ValueError(f'Duplicate or corrupt ZIP members: {path.name}')
+
+
+def host_cache():
+    return ROOT / 'artifacts/host-releases' / HOST_RELEASE_TAG
+
+
+def host_file_hashes(directory):
+    result = {}
+    for path in directory.rglob('*'):
+        if path.is_symlink():
+            raise ValueError('The compatibility host must not contain symlinks')
+        relative = path.relative_to(directory).as_posix()
+        if path.is_file() and not relative.startswith('Plugins/SynchronousTyping/'):
+            result[relative] = digest(path)
+    return result
+
+
+def verified_host_metadata():
+    cache = host_cache()
+    sums = cache / 'SHA256SUMS'
+    if digest(sums) != HOST_SUMS_SHA256:
+        raise ValueError('The published R6 checksum-file pin does not match')
+    recorded = {}
+    for line in sums.read_text(encoding='ascii').splitlines():
+        value, name = line.split('  ', 1)
+        if name in recorded:
+            raise ValueError('The R6 checksum file repeats an asset')
+        recorded[name] = value
+    if recorded != HOST_ASSET_SHA256:
+        raise ValueError('The R6 checksum file does not cover the exact four pinned release assets')
+    for name in ('RELEASE_REVIEW.json', 'DictationAssistant-4.0.0-typing.6-win-x64-portable.zip'):
+        if digest(cache / name) != HOST_ASSET_SHA256[name]:
+            raise ValueError(f'The published R6 host asset pin does not match: {name}')
+    disclosure = json.loads((cache / 'RELEASE_REVIEW.json').read_text(encoding='utf-8'))
+    review = disclosure.get('release_review', {})
+    blockers = review.get('blocking_issues')
+    if (disclosure.get('tag') != HOST_RELEASE_TAG or disclosure.get('source_commit') != HOST_SOURCE_COMMIT
+            or disclosure.get('application_version') != '4.0.0-typing.6'
+            or disclosure.get('publication_decision') != 'explicitly_requested_publication_with_declared_unresolved_license_review'
+            or disclosure.get('license_review_resolved') is not False
+            or set(disclosure.get('acknowledged_issue_ids', [])) != KNOWN_REVIEW_ISSUES
+            or review.get('status') != 'blocked' or not isinstance(blockers, list) or not blockers
+            or any(not isinstance(item, dict) or item.get('id') not in KNOWN_REVIEW_ISSUES
+                   or not isinstance(item.get('reason'), str) or not item['reason'].strip() for item in blockers)):
+        raise ValueError('The pinned R6 host disclosure or source commit is inconsistent')
+    return disclosure
+
+
+def prepare_host(tag):
+    if tag != HOST_RELEASE_TAG:
+        raise ValueError('Only the pinned published R6 host may be used for this standalone release')
+    cache = host_cache()
+    cache.mkdir(parents=True, exist_ok=True)
+    wanted = {'SHA256SUMS': HOST_SUMS_SHA256,
+              'RELEASE_REVIEW.json': HOST_ASSET_SHA256['RELEASE_REVIEW.json'],
+              'DictationAssistant-4.0.0-typing.6-win-x64-portable.zip':
+                  HOST_ASSET_SHA256['DictationAssistant-4.0.0-typing.6-win-x64-portable.zip']}
+    for name, expected in wanted.items():
+        destination = cache / name
+        if destination.is_file() and digest(destination) == expected:
+            continue
+        temporary = destination.with_suffix(destination.suffix + '.part')
+        url = f'https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/{tag}/{name}'
+        try:
+            request = urllib.request.Request(url, headers={'User-Agent': 'DictationAssistant-plugin-release/1'})
+            with urllib.request.urlopen(request, timeout=120) as response, temporary.open('wb') as stream:
+                if urllib.parse.urlsplit(response.geturl()).scheme != 'https':
+                    raise ValueError('The R6 host download redirected outside HTTPS')
+                shutil.copyfileobj(response, stream, 1024 * 1024)
+            if digest(temporary) != expected:
+                raise ValueError(f'The R6 host download failed its published SHA-256 pin: {name}')
+            temporary.replace(destination)
+        finally:
+            temporary.unlink(missing_ok=True)
+    disclosure = verified_host_metadata()
+    archive = cache / 'DictationAssistant-4.0.0-typing.6-win-x64-portable.zip'
+    check_zip(archive)
+    destination = ROOT / 'artifacts/Windows-x64'
+    if destination.exists():
+        shutil.rmtree(destination)
+    destination.mkdir(parents=True)
+    with zipfile.ZipFile(archive) as package:
+        seen = set()
+        for member in package.infolist():
+            path = pathlib.PurePosixPath(member.filename)
+            if path.is_absolute() or '..' in path.parts or '\\' in member.filename:
+                raise ValueError('Unsafe member path in the pinned R6 host archive')
+            normalized = path.as_posix()
+            if normalized == '.':
+                continue
+            if normalized.casefold() in seen or (member.external_attr >> 16) & 0o170000 == 0o120000:
+                raise ValueError('Duplicate or symlink member in the pinned R6 host archive')
+            seen.add(normalized.casefold())
+            target = destination.joinpath(*path.parts)
+            if member.is_dir():
+                target.mkdir(parents=True, exist_ok=True)
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with package.open(member) as source, target.open('wb') as output:
+                    shutil.copyfileobj(source, output)
+    embedded = json.loads((destination / 'RELEASE_REVIEW.json').read_text(encoding='utf-8'))
+    if embedded != disclosure or b'4.0.0-typing.6+0f008c72983b9d567612855498800886201572e6' not in (destination / 'DictationAssistant.App.dll').read_bytes():
+        raise ValueError('The extracted R6 application does not match the pinned release metadata')
+    write_json(cache / 'HOST_BASELINE.json', {
+        'host_release_tag': HOST_RELEASE_TAG, 'host_source_commit': HOST_SOURCE_COMMIT,
+        'files_outside_typing_plugin': host_file_hashes(destination),
+    })
+    print(f'Prepared pinned published R6 host without rebuilding it: {destination}')
+
+
+def standalone_context(args, head):
+    if (args.host_release_tag != HOST_RELEASE_TAG or args.plugin_release_tag != STANDALONE_PLUGIN_TAG
+            or args.plugin_id not in (None, ['synchronous-typing'])):
+        raise ValueError('Standalone publication is restricted to typing 1.3.0 with the published R6 host')
+    manifest = json.loads((ROOT / 'plugins/DictationAssistant.Practices.Typing/plugin.json').read_text(encoding='utf-8'))
+    if (manifest.get('version') != '1.3.0' or manifest.get('apiVersion') != 1
+            or manifest.get('minimumHostFeatureLevel') != 4):
+        raise ValueError('The standalone typing manifest must keep plugin API 1 and R6 host feature level 4')
+    if git('rev-parse', '--verify', f'refs/tags/{args.plugin_release_tag}^{{commit}}') != head:
+        raise ValueError('The exact standalone plugin release tag must match the current HEAD')
+    if git('rev-parse', '--verify', f'refs/tags/{HOST_RELEASE_TAG}^{{commit}}') != HOST_SOURCE_COMMIT:
+        raise ValueError('The existing R6 host tag moved from its pinned commit')
+    subprocess.run(['git', 'diff', '--quiet', HOST_SOURCE_COMMIT, head, '--',
+                    'src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Abstractions'], cwd=ROOT, check=True)
+    disclosure = verified_host_metadata()
+    baseline = json.loads((host_cache() / 'HOST_BASELINE.json').read_text(encoding='utf-8'))
+    if (baseline.get('host_release_tag') != HOST_RELEASE_TAG
+            or baseline.get('host_source_commit') != HOST_SOURCE_COMMIT
+            or baseline.get('files_outside_typing_plugin') != host_file_hashes(ROOT / 'artifacts/Windows-x64')):
+        raise ValueError('Files outside the selected typing plugin changed in the published R6 host')
+    compatibility = json.loads((host_cache() / 'PLUGIN_COMPATIBILITY.json').read_text(encoding='utf-8'))
+    dll = ROOT / 'artifacts/Windows-x64/Plugins/SynchronousTyping/DictationAssistant.Practices.Typing.dll'
+    expected = {'host_release_tag': HOST_RELEASE_TAG, 'host_source_commit': HOST_SOURCE_COMMIT,
+                'plugin_source_commit': head, 'plugin_version': '1.3.0', 'plugin_api_version': 1,
+                'host_feature_level': 4, 'word_plugin_version': '1.0.1',
+                'practice_and_configuration_loaded': True, 'main_window_opened_and_closed': True,
+                'plugin_dll_sha256': digest(dll)}
+    if any(compatibility.get(key) != value for key, value in expected.items()):
+        raise ValueError('Compatibility validation does not match the current standalone plugin and pinned R6 host')
+    return disclosure['release_review'], compatibility
 
 
 def plugin_dependencies(directory, assembly, version, catalog):
@@ -97,7 +249,8 @@ def plugin_dependencies(directory, assembly, version, catalog):
     return packages
 
 
-def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host_review):
+def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host_review,
+                   host_commit=None, compatibility=None):
     project_dir = ROOT / 'plugins' / project_name
     project = project_dir / f'{project_name}.csproj'
     manifest = json.loads((project_dir / 'plugin.json').read_text(encoding='utf-8'))
@@ -133,6 +286,7 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
         'plugin_version': version,
         'source_commit': head,
         'app_release_tag': app_tag,
+        'host_source_commit': host_commit or head,
         'status': 'published_with_declared_host_combination_review' if host_review['blocking_issues'] else 'ready',
         'legal_clearance_claimed': False,
         'host_release_review': host_review,
@@ -140,9 +294,14 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
         'unverified': ['Windows user/machine-bound encrypted translation profile persistence and cross-account rejection require real-machine validation.',
                        *(['Migration of an R5 single-binding credential file has not been validated on Windows.']
                          if version == '1.2.0' else []),
-                       'Live DeepL translation requires a valid user key; keys are never bundled.']
+                       *(['Migration of existing R5/R6 credential files has not been validated on Windows.']
+                         if version == '1.3.0' else []),
+                       'Live provider translation requires valid user credentials; keys are never bundled.']
                       if plugin_id == 'synchronous-typing' else [],
     }
+    if compatibility is not None:
+        review['publication_scope'] = 'standalone-plugin-update-existing-host'
+        review['host_compatibility'] = compatibility
     write_json(output / 'RELEASE_REVIEW.json', review)
     write_json(binary_root / 'RELEASE_REVIEW.json', review)
     components = []
@@ -180,6 +339,7 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
     source_cache = ROOT / 'artifacts/third-party-sources'
     source_index = collect(source_manifest_path, source_cache)
     inventory = {'schema_version': 1, 'plugin_id': plugin_id, 'version': version, 'source_commit': head,
+                 'host_release_tag': app_tag, 'host_source_commit': host_commit or head,
                  'private_components': components, 'host_provided_dependencies': host_dependencies,
                  'companion_source_asset': f'{plugin_id}-{version}-source.zip',
                  'files': [{'path': path.relative_to(binary_root).as_posix(), 'sha256': digest(path)}
@@ -189,7 +349,8 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
     build_notes = f'''# {manifest['name']} {version}
 
 Release tag: `plugin-{plugin_id}-v{version}`
-Source commit: `{head}`; companion host release: `{app_tag}`.
+Plugin source commit: `{head}`; compatible host release: `{app_tag}`.
+Host source commit: `{host_commit or head}`. The host is not included or rebuilt by this plugin package.
 
 Close DictationAssistant, replace the complete `Plugins/{folder}` directory with
 the `{folder}` directory in this ZIP, and restart. Do not copy just the DLL:
@@ -215,11 +376,16 @@ not establish a new permission or legal clearance for that combination.
 '''
     (binary_root / 'INSTALL_AND_BUILD.md').write_text(build_notes, encoding='utf-8')
     if plugin_id == 'synchronous-typing':
-        summary = ('新增多个命名的 DeepL Free / Pro 翻译配置、首选配置及本次任务切换；'
+        if version == '1.3.0':
+            summary = ('新增微软/Bing、Google、百度、有道、腾讯、阿里和火山翻译 API，保留 DeepL；'
+                       '在既有多配置、首选项和任务切换界面管理各服务凭据。仅更新插件，复用已发布 R6 本体；'
+                       '插件 API 1、宿主功能级别 4 不变，不重新发布本体、Word 导入或原生资产。')
+        else:
+            summary = ('新增多个命名的 DeepL Free / Pro 翻译配置、首选配置及本次任务切换；'
                    '可从宿主插件管理中的“配置…”入口统一管理。要求宿主功能级别 4（R6）；'
                    'Windows 加密绑定整份配置，其他平台仅保留至程序退出；切换配置不触发翻译。') \
-            if version == '1.2.0' else \
-            '新增预录译文、可隐藏翻译提示及 DeepL 提前翻译；独立 API 设置窗口支持 Windows 本机与当前账户绑定的加密保存。删除指定的统一评分提示文字。'
+                if version == '1.2.0' else \
+                '新增预录译文、可隐藏翻译提示及 DeepL 提前翻译；独立 API 设置窗口支持 Windows 本机与当前账户绑定的加密保存。删除指定的统一评分提示文字。'
     else:
         summary = '首次提供独立更新包，DOCX 表格/正文提取及列选择功能保持不变；可独立替换导入插件，无需重装宿主。'
     details = '\n'.join('- ' + item['reason'] for item in host_review['blocking_issues'])
@@ -228,7 +394,7 @@ not establish a new permission or legal clearance for that combination.
 {summary}
 
 - 独立标签：`plugin-{plugin_id}-v{version}`。
-- 对应提交：`{head}`；配套本体：`{app_tag}`。
+- 插件对应提交：`{head}`；配套本体：`{app_tag}`，本体提交：`{host_commit or head}`。
 - 关闭程序，将 ZIP 内完整 `{folder}` 文件夹放入 `Plugins/` 后重启。
 - 提供独立插件、对应源码及 SHA-256 校验，密钥和个人词表不在包内。
 
@@ -242,9 +408,11 @@ not establish a new permission or legal clearance for that combination.
 {details}
 '''
     if plugin_id == 'synchronous-typing':
-        notes += '\nWindows 本机/账户加密保存和跨机器拒绝读取仍需实机验证；真实 DeepL 翻译需用户自己的有效密钥，未在本发布中声称已验证。\n'
+        notes += '\nWindows 本机/账户加密保存和跨机器拒绝读取仍需实机验证；真实翻译需用户自己的有效服务凭据，未在本发布中声称已验证。\n'
         if version == '1.2.0':
             notes += 'R5 单绑定文件的 Windows 实机迁移尚未验证；1.2.0 需要 R6 或其他宿主功能级别 4 的版本，不能直接安装到 R5 本体。\n'
+        if compatibility is not None:
+            notes += '已将本插件装入固定哈希的已发布 R6 便携包，核对 API 1、功能级别 4、练习与配置能力加载以及生产主窗口正常开闭；R6 本体和 Word 1.0.1 文件保持原字节。此结果不代表真实在线翻译或 Windows 密钥迁移已验证。\n'
     (output / 'RELEASE_NOTES.md').write_text(notes, encoding='utf-8')
     binary = output / f'{plugin_id}-{version}.zip'
     with zipfile.ZipFile(binary, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -257,6 +425,8 @@ not establish a new permission or legal clearance for that combination.
                     *PROJECT_NOTICES, 'LICENSES', 'third-party/components.json',
                     'scripts/prepare_plugin_release.py', 'scripts/prepare_licenses.py',
                     'scripts/collect_third_party_sources.py', 'docs/同步打字插件使用说明.md']
+    if compatibility is not None:
+        source_paths.append('.github/workflows/release-typing-plugin.yml')
     subprocess.run(['git', 'archive', '--format=zip', f'--output={source}', head, '--', *source_paths],
                    cwd=ROOT, check=True)
     with zipfile.ZipFile(source, 'a', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -278,24 +448,48 @@ not establish a new permission or legal clearance for that combination.
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--app-release-tag', required=True)
+    parser.add_argument('--app-release-tag', help='Combined application/plugin release tag')
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument('--prepare-host', action='store_true', help='Download and extract the pinned public R6 host for compatibility checks')
+    modes.add_argument('--standalone', action='store_true', help='Package only typing 1.3.0 against the unchanged published R6 host')
+    parser.add_argument('--host-release-tag')
+    parser.add_argument('--plugin-release-tag')
     parser.add_argument('--plugin-id', action='append', choices=[item[0] for item in PLUGINS],
                         help='Package only this plugin (repeat to select several); R5 defaults to both, R6 to typing only')
     args = parser.parse_args()
     try:
+        if args.prepare_host:
+            if args.app_release_tag or args.plugin_release_tag or args.plugin_id:
+                raise ValueError('--prepare-host accepts only --host-release-tag')
+            prepare_host(args.host_release_tag)
+            return
+        if args.standalone:
+            if args.app_release_tag:
+                raise ValueError('Standalone publication must not prepare a new application release')
+        elif not args.app_release_tag or args.host_release_tag or args.plugin_release_tag:
+            raise ValueError('Combined publication requires --app-release-tag; standalone publication requires --standalone and host/plugin tags')
+        head = git('rev-parse', 'HEAD')
+        subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--'], cwd=ROOT, check=True)
+        if git('ls-files', '--others', '--exclude-standard'):
+            raise ValueError('Commit tracked changes and new source files before plugin packaging')
+        if args.standalone:
+            host_review, compatibility = standalone_context(args, head)
+            catalog = json.loads((ROOT / 'third-party/components.json').read_text(encoding='utf-8'))
+            output_root = ROOT / 'artifacts/plugin-releases'
+            if output_root.exists():
+                shutil.rmtree(output_root)
+            package_plugin(*PLUGINS[0], HOST_RELEASE_TAG, head, catalog, host_review,
+                           host_commit=HOST_SOURCE_COMMIT, compatibility=compatibility)
+            return
         selected = set(args.plugin_id or (
             ['synchronous-typing'] if args.app_release_tag == 'v4.0.0-typing.6'
             else [item[0] for item in PLUGINS]))
         if args.app_release_tag == 'v4.0.0-typing.6' and selected != {'synchronous-typing'}:
             raise ValueError('R6 publishes only the updated typing plugin; retain the existing Word importer release')
-        head = git('rev-parse', 'HEAD')
         if args.app_release_tag != 'v' + project_version(ROOT / 'src/DictationAssistant.App/DictationAssistant.App.csproj'):
             raise ValueError('App release tag must match the current application version')
         if git('rev-parse', '--verify', f'refs/tags/{args.app_release_tag}^{{commit}}') != head:
             raise ValueError('The exact application release tag must point to the current HEAD')
-        subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--'], cwd=ROOT, check=True)
-        if git('ls-files', '--others', '--exclude-standard'):
-            raise ValueError('Commit tracked changes and new source files before plugin packaging')
         app_output = ROOT / 'artifacts/Windows-x64'
         host_review = json.loads((app_output / 'THIRD_PARTY_SOURCES.json').read_text(encoding='utf-8'))['release_review']
         blockers = host_review['blocking_issues']

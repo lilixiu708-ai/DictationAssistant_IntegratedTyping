@@ -4,7 +4,9 @@
 
 **`v4.0.0-typing.6`（R6）本体与同步打字插件 1.2.0 预发布已公开。** Avalonia 保持 **11.3.12**，仍按既有发布授权披露未解决的 MS-PL/AGPL 组合事项，不将其表述为已获额外授权。原始许可、对应源码及完整性检查继续保留；R5 与同步打字 1.1.0 保留为历史版本。
 
-本次发行标签为 [`v4.0.0-typing.6`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) 与 [`plugin-synchronous-typing-v1.2.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)。新插件要求宿主功能级别 4，须与 R6 配套；Word 导入功能未变，继续复用已公开的 `plugin-docx-vocabulary-v1.0.1`，不移动该标签、不覆盖既有资产。
+**当前准备同步打字插件 1.3.0 的独立发布，尚未公开。** 本次只修改和发布插件，复用已公开的 R6 本体，Word 导入仍为 1.0.1；不增加本体版本，不覆盖 1.2.0 或其他历史 Release。新增官方翻译 API 适配没有引入新的 NuGet 依赖；本机凭据保护及宿主既有 Avalonia 披露保持不变，真实服务账户翻译仍待验证。
+
+R6 的发行标签为 [`v4.0.0-typing.6`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) 与 [`plugin-synchronous-typing-v1.2.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)。插件要求宿主功能级别 4，须与 R6 配套；Word 导入功能未变，继续复用已公开的 `plugin-docx-vocabulary-v1.0.1`，不移动该标签、不覆盖既有资产。
 
 R6 标签指向提交 `0f008c72983b9d567612855498800886201572e6`，[发行构建记录 39377359747](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39377359747)成功完成：程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建通过，两个新 Release 已公开。后续文档更新不移动发行标签，也不替换已公开资产。
 
@@ -46,9 +48,30 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 - 下载字节按固定 SHA-256 验证；Gitiles 有动态归档元数据的条目按目录规定核验固定 canonical `tar-members-v1` 内容树哈希（路径、类型、权限、链接和文件字节），并记录该次归档的实际 SHA-256。不能因压缩字节不同跳过内容验证。
 - GitHub 自动源码 ZIP 不执行上述追加流程，不能称它与准备脚本产出的对应源码包相同。核对每个实际组件要求的交付内容，勿将所有原生源码覆盖一概标成未补齐，也勿把部分通过扩大为整个 App 已合规。
 
-## 本体与独立插件发布步骤
+## 仅发布同步打字插件 1.3.0
 
-以下命令用于已提交、干净且版本与标签一致的构建；命令成功不等于 Release 已公开。
+使用 `.github/workflows/release-typing-plugin.yml` 的独立路径，触发标签为 `plugin-synchronous-typing-v1.3.0`。此流程不推送新的 App 标签，也不重发 R6、Word 或原生依赖资产。
+
+1. 在干净提交中仅更新插件及其构建、文档材料，保持插件 API 1、最低宿主功能级别 4。标签须与插件版本和实际提交一致，宿主继续使用 R6 原标签。
+2. 工作流从固定的公开 R6 下载地址取得宿主，校验固定哈希、`SHA256SUMS` 与披露材料后解压暂存；不从当前源码重建宿主。下载准备入口为：
+
+   ```text
+   python scripts/prepare_plugin_release.py --prepare-host --host-release-tag v4.0.0-typing.6
+   ```
+
+3. 在暂存 R6 中只替换同步打字插件，执行 Windows 兼容检查：既有 15 项逻辑检查、API 1 / 功能级别 4 下的插件加载、Word 1.0.1 保留及生产主窗口正常开闭。宿主和其他目录的文件哈希须保持不变；失败不进入发布。
+4. 兼容结果与当前插件 DLL 逐项匹配后，准备插件二进制 ZIP、对应源码、校验和及披露文件，共五份附件：
+
+   ```text
+   python scripts/prepare_plugin_release.py --standalone --host-release-tag v4.0.0-typing.6 --plugin-release-tag plugin-synchronous-typing-v1.3.0
+   ```
+
+   此命令依赖前述暂存宿主及 Windows 兼容结果，不是跳过检查的快捷方式。插件源码及实际私有依赖材料仍须完整交付；当前真实账户鉴权、翻译与未执行的 Windows 交互场景如实记录。
+5. 仅创建插件的新草稿，五份附件完整核对后公开；遇到已存在的同名 Release 或草稿时拒绝覆盖。公开后重新下载所有附件、验证 `SHA256SUMS`、源码与 DLL，再更新首页的当前插件下载。本体和 Word 的标签、版本及附件不变。
+
+## 本体版本更新时的发布步骤
+
+以下是本体版本更新流程，保留 R6 的实际命令作为记录；本次插件 1.3.0 使用上节独立路径。命令成功不等于 Release 已公开。
 
 1. 从干净提交重新构建、校验；核对新原生 DLL 的实际 DNG 排除、ABI/版本、上游 PNG 工具及 Windows 窗口检查结果，连同 App 其他许可问题分别记录。既有构建成功不替代该轮实物验证。
 2. 令 `v<Version>` 标签与项目版本和 HEAD 精确匹配；应用版本与插件版本/API 分别管理。不得移动或覆盖既有标签、资产，不误公开历史草稿。修正已发行内容使用新版本。

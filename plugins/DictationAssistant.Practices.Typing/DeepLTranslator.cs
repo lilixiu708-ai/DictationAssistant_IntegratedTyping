@@ -15,12 +15,6 @@ internal sealed class DeepLTranslator
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
-    // Redirects are unnecessary for these fixed HTTPS endpoints. Do not forward credentials.
-    private static readonly HttpClient Client = new(new HttpClientHandler { AllowAutoRedirect = false })
-    {
-        Timeout = TimeSpan.FromSeconds(60)
-    };
-
     public static async Task<IReadOnlyList<string>> TranslateAsync(IReadOnlyList<string> texts,
         string apiKey, bool useFreeApi, string? sourceLanguage, string targetLanguage,
         CancellationToken ct)
@@ -52,11 +46,7 @@ internal sealed class DeepLTranslator
                 request.Headers.Authorization = new AuthenticationHeaderValue("DeepL-Auth-Key", key);
                 request.Content = new ByteArrayContent(batch.Body);
                 request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" };
-                using var response = await Client.SendAsync(request, ct).ConfigureAwait(false);
-                if (!response.IsSuccessStatusCode)
-                    throw new InvalidOperationException(StatusMessage(response.StatusCode));
-                await using var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-                using var document = await JsonDocument.ParseAsync(stream, cancellationToken: ct).ConfigureAwait(false);
+                using var document = await TranslationHttp.SendAsync(request, "DeepL", ct, StatusMessage).ConfigureAwait(false);
                 if (document.RootElement.ValueKind != JsonValueKind.Object
                     || !document.RootElement.TryGetProperty("translations", out var items)
                     || items.ValueKind != JsonValueKind.Array || items.GetArrayLength() != batch.Count)

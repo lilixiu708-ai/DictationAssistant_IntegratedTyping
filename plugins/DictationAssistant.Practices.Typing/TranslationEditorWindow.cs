@@ -142,7 +142,7 @@ internal sealed class TranslationEditorWindow : Window
             if (!_closing)
             {
                 _status.Foreground = Brushes.IndianRed;
-                // DeepL errors are sanitized by the client and never include credentials/body.
+                // Service errors are sanitized by the clients and never include credentials/body.
                 _status.Text = ex.Message;
             }
         }
@@ -174,7 +174,7 @@ internal sealed class TranslationEditorWindow : Window
         TranslationEngineProviders.Validate(binding);
         _status.Text = $"正在提前翻译 {missing.Length} 个缺失项，可取消并关闭…";
         var englishToChinese = _direction.SelectedIndex == 0;
-        var translations = await DeepLTranslator.TranslateAsync(missing, binding.ApiKey, binding.Provider == "deepl-free",
+        var translations = await TranslationService.TranslateAsync(missing, binding,
             englishToChinese ? "EN" : "ZH", englishToChinese ? "ZH" : "EN", _cancellation.Token);
         _cancellation.Token.ThrowIfCancellationRequested();
         for (var i = 0; i < missing.Length; i++) parsed[missing[i]] = translations[i];

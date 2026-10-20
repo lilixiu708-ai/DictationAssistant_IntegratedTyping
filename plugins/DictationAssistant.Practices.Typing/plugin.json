@@ -1,8 +1,8 @@
 {
   "id": "synchronous-typing",
   "name": "同步打字听写",
-  "description": "完整播报后限时打字，支持预录翻译、可隐藏提示、多翻译配置及提前翻译，结束后查看成绩并导出 CSV。",
-  "version": "1.2.0",
+  "description": "完整播报后限时打字，支持预录译文、可隐藏提示及 DeepL、必应、Google、百度、有道与常见云服务提前翻译。",
+  "version": "1.3.0",
   "apiVersion": 1,
   "minimumHostFeatureLevel": 4,
   "kind": "practice",

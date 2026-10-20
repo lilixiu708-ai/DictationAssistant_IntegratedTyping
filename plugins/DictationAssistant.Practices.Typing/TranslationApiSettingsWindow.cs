@@ -20,14 +20,25 @@ internal sealed class TranslationApiSettingsWindow : Window
     private readonly TextBlock _preferred = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _formTitle = new() { FontSize = 18, FontWeight = FontWeight.SemiBold };
     private readonly TextBox _name = new() { Watermark = "例如：常用翻译、备用账户", MaxLength = 80 };
+    private readonly TextBlock _primaryLabel = new();
     private readonly TextBox _apiKey = new()
     {
         PasswordChar = '●', MinHeight = 36, MaxLength = 512,
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
+    private readonly TextBlock _secretLabel = new();
+    private readonly TextBox _secretKey = new()
+    {
+        PasswordChar = '●', MinHeight = 36, MaxLength = 512,
+        HorizontalAlignment = HorizontalAlignment.Stretch
+    };
+    private readonly TextBlock _regionLabel = new();
+    private readonly TextBox _region = new() { MaxLength = 64 };
+    private readonly TextBlock _providerHelp = new() { TextWrapping = TextWrapping.Wrap, Opacity = 0.8 };
     private readonly ComboBox _provider = new()
     {
-        ItemsSource = new[] { "DeepL API Free", "DeepL API Pro" }, MinWidth = 180, SelectedIndex = 0
+        ItemsSource = TranslationEngineProviders.Definitions, MinWidth = 180,
+        HorizontalAlignment = HorizontalAlignment.Stretch
     };
     private readonly Button _new = new() { Content = "新建绑定" };
     private readonly Button _remove = new() { Content = "移除绑定" };
@@ -43,6 +54,7 @@ internal sealed class TranslationApiSettingsWindow : Window
     };
     private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
     private TranslationEngineBinding? _editing;
+    private string? _displayedProviderId;
     private string? _preferredId;
     private Task? _operation;
     private bool _loaded;
@@ -72,7 +84,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         root.Children.Add(new TextBlock
         {
             Text = "管理已绑定的翻译引擎，并设置首选项。翻译准备页仍可为本次任务切换引擎。\n" +
-                "当前支持现有服务的多个 Free／Pro 绑定；配置不会发送翻译请求。",
+                "已支持多种常用翻译服务，可为同一服务添加多个绑定；配置不会发送翻译请求。",
             TextWrapping = TextWrapping.Wrap
         });
         var body = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*"), ColumnSpacing = 18 };
@@ -85,7 +97,7 @@ internal sealed class TranslationApiSettingsWindow : Window
             {
                 Text = binding is null ? string.Empty : binding.Name +
                     (binding.Id == _preferredId ? " · 首选" : string.Empty) + "\n" +
-                    (binding.Provider == "deepl-pro" ? "DeepL API Pro" : "DeepL API Free"),
+                    TranslationEngineProviders.DisplayName(binding.Provider),
                 TextWrapping = TextWrapping.Wrap, Margin = new Thickness(6)
             });
         Grid.SetRow(_engines, 1);
@@ -103,12 +115,20 @@ internal sealed class TranslationApiSettingsWindow : Window
         form.Children.Add(new TextBlock { Text = "绑定名称" });
         form.Children.Add(_name);
         form.Children.Add(new TextBlock { Text = "服务类型" });
+        _provider.ItemTemplate = new FuncDataTemplate<TranslationEngineProviderDefinition>((definition, _) =>
+            new TextBlock { Text = definition?.Name ?? string.Empty, TextWrapping = TextWrapping.Wrap });
         form.Children.Add(_provider);
-        form.Children.Add(new TextBlock { Text = "API 密钥" });
+        form.Children.Add(_providerHelp);
+        form.Children.Add(_primaryLabel);
         form.Children.Add(_apiKey);
+        form.Children.Add(_secretLabel);
+        form.Children.Add(_secretKey);
+        form.Children.Add(_regionLabel);
+        form.Children.Add(_region);
         form.Children.Add(new TextBlock
         {
-            Text = "已有密钥不会回填。编辑时留空可沿用同一服务类型的密钥；更换服务类型须重新填写。",
+            Text = "已有凭据不会回填。编辑时留空可沿用同一服务的凭据；切换服务会清空待填凭据，需重新输入。" +
+                "请使用官方开发者平台的 API 凭据，翻译网页的账户或网址不能直接绑定。",
             TextWrapping = TextWrapping.Wrap, Opacity = 0.8
         });
         var formActions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8 };
@@ -166,7 +186,9 @@ internal sealed class TranslationApiSettingsWindow : Window
         _engines.SelectionChanged += OnEngineSelected;
         _name.TextChanged += (_, _) => MarkDirty();
         _apiKey.TextChanged += (_, _) => MarkDirty();
-        _provider.SelectionChanged += (_, _) => MarkDirty();
+        _secretKey.TextChanged += (_, _) => MarkDirty();
+        _region.TextChanged += (_, _) => MarkDirty();
+        _provider.SelectionChanged += (_, _) => OnProviderSelected();
         _new.Click += (_, _) =>
         {
             if (!CanLeaveForm()) return;
@@ -200,6 +222,8 @@ internal sealed class TranslationApiSettingsWindow : Window
             _closing = true;
             _externalCancellationRegistration.Dispose();
             _apiKey.Text = string.Empty;
+            _secretKey.Text = string.Empty;
+            _region.Text = string.Empty;
             _name.Text = string.Empty;
             _editing = null;
             _bindings.Clear();
@@ -261,8 +285,48 @@ internal sealed class TranslationApiSettingsWindow : Window
 
     private bool IsFormDirty() =>
         !string.Equals(_name.Text ?? string.Empty, _editing?.Name ?? string.Empty, StringComparison.Ordinal)
-        || _provider.SelectedIndex != (_editing?.Provider == "deepl-pro" ? 1 : 0)
-        || !string.IsNullOrEmpty(_apiKey.Text);
+        || SelectedProvider.Id != (_editing?.Provider ?? TranslationEngineProviders.Definitions[0].Id)
+        || !string.IsNullOrEmpty(_apiKey.Text)
+        || !string.IsNullOrEmpty(_secretKey.Text)
+        || !string.Equals(_region.Text ?? string.Empty, _editing?.Region ?? string.Empty, StringComparison.Ordinal);
+
+    private TranslationEngineProviderDefinition SelectedProvider =>
+        _provider.SelectedItem as TranslationEngineProviderDefinition ?? TranslationEngineProviders.Definitions[0];
+
+    private void OnProviderSelected()
+    {
+        if (_populating || SelectedProvider.Id == _displayedProviderId) return;
+        _populating = true;
+        _apiKey.Text = string.Empty;
+        _secretKey.Text = string.Empty;
+        _region.Text = SelectedProvider.DefaultRegion ?? string.Empty;
+        RefreshProviderFields();
+        _populating = false;
+        MarkDirty();
+    }
+
+    private void RefreshProviderFields()
+    {
+        var definition = SelectedProvider;
+        _displayedProviderId = definition.Id;
+        var reuse = _editing?.Provider == definition.Id;
+        _primaryLabel.Text = definition.PrimaryLabel;
+        _apiKey.Watermark = reuse ? "已配置；留空沿用" : "输入" + definition.PrimaryLabel;
+        _secretLabel.Text = definition.SecretLabel;
+        _secretLabel.IsVisible = _secretKey.IsVisible = definition.SecretLabel is not null;
+        _secretKey.Watermark = reuse ? "已配置；留空沿用" : "输入" + definition.SecretLabel;
+        var hasRegion = definition.RequiresRegion || definition.Id == "microsoft-translator";
+        _regionLabel.IsVisible = _region.IsVisible = hasRegion;
+        _regionLabel.Text = definition.RequiresRegion ? "服务区域（必填）" : "服务区域（可选）";
+        _region.Watermark = definition.DefaultRegion ?? "按订阅资源填写，如 eastasia";
+        var apiHint = definition.Id switch
+        {
+            "microsoft-translator" => " 必应／微软翻译需绑定官方 Azure Translator API。",
+            "google-cloud" => " 此处使用 Google Cloud API，不是 Google 翻译网页。",
+            _ => string.Empty
+        };
+        _providerHelp.Text = (definition.HelpText ?? "填写该服务官方开发者平台提供的 API 凭据。") + apiHint;
+    }
 
     private bool CanLeaveForm()
     {
@@ -277,9 +341,12 @@ internal sealed class TranslationApiSettingsWindow : Window
         _populating = true;
         _editing = binding;
         _name.Text = binding?.Name ?? string.Empty;
-        _provider.SelectedIndex = binding?.Provider == "deepl-pro" ? 1 : 0;
+        _provider.SelectedItem = binding is null ? TranslationEngineProviders.Definitions[0]
+            : TranslationEngineProviders.Get(binding.Provider);
         _apiKey.Text = string.Empty;
-        _apiKey.Watermark = binding is null ? "输入服务密钥" : "已配置；留空沿用同类服务密钥";
+        _secretKey.Text = string.Empty;
+        _region.Text = binding?.Region ?? string.Empty;
+        RefreshProviderFields();
         _formTitle.Text = binding is null ? "新建绑定" : "修改已绑定引擎";
         _apply.Content = binding is null ? "添加绑定" : "应用修改";
         _dirty = IsFormDirty();
@@ -306,18 +373,35 @@ internal sealed class TranslationApiSettingsWindow : Window
         if (_bindings.Any(binding => binding.Id != _editing?.Id
             && string.Equals(binding.Name, name, StringComparison.OrdinalIgnoreCase)))
             return FormError("绑定名称已存在，请使用其他名称。");
-        var provider = _provider.SelectedIndex == 1 ? "deepl-pro" : "deepl-free";
+        var definition = SelectedProvider;
+        var provider = definition.Id;
+        var reuse = _editing?.Provider == provider;
         var typedKey = _apiKey.Text?.Trim();
-        if (string.IsNullOrEmpty(typedKey) && _editing is not null && _editing.Provider != provider)
-            return FormError("更换服务类型后，请重新输入对应密钥。");
-        var key = string.IsNullOrEmpty(typedKey) ? _editing?.ApiKey : typedKey;
+        var key = string.IsNullOrEmpty(typedKey) && reuse ? _editing?.ApiKey : typedKey;
         if (string.IsNullOrEmpty(key) || key.Length > 512 || key.Any(c => c is <= ' ' or >= '\u007f'))
-            return FormError("请输入有效的服务密钥，不要包含空格、换行或非英文字符。");
+            return FormError("请输入有效的" + definition.PrimaryLabel + "，不要包含空格、换行或非英文字符。");
+        string? secret = null;
+        if (definition.SecretLabel is not null)
+        {
+            var typedSecret = _secretKey.Text?.Trim();
+            secret = string.IsNullOrEmpty(typedSecret) && reuse ? _editing?.SecretKey : typedSecret;
+            if (string.IsNullOrEmpty(secret) || secret.Length > 512 || secret.Any(c => c is <= ' ' or >= '\u007f'))
+                return FormError("请输入有效的" + definition.SecretLabel + "，不要包含空格、换行或非英文字符。");
+        }
+        var region = _region.IsVisible ? _region.Text?.Trim() : null;
+        if (string.IsNullOrEmpty(region)) region = null;
+        if (definition.RequiresRegion && region is null)
+            return FormError("请填写服务区域。");
+        if (region is not null && (region.Length > 64
+            || region.Any(c => c is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '-')))
+            return FormError("服务区域须为 1–64 个小写英文字母、数字或连字符。");
         if (_editing is null && _bindings.Count >= 20)
             return FormError("最多可保存 20 个绑定，请先移除不再使用的绑定。");
 
         var binding = new TranslationEngineBinding(_editing?.Id ?? Guid.NewGuid().ToString("N"),
-            name, provider, key);
+            name, provider, key, secret, region);
+        try { TranslationEngineProviders.Validate(binding); }
+        catch (ArgumentException) { return FormError("绑定内容无效，请检查服务类型和所需凭据。"); }
         var index = _bindings.FindIndex(existing => existing.Id == binding.Id);
         if (index < 0) _bindings.Add(binding);
         else _bindings[index] = binding;
@@ -403,7 +487,8 @@ internal sealed class TranslationApiSettingsWindow : Window
     private void UpdateControls()
     {
         var enabled = _loaded && !_busy && !_closing;
-        _engines.IsEnabled = _new.IsEnabled = _name.IsEnabled = _apiKey.IsEnabled = _provider.IsEnabled = enabled;
+        _engines.IsEnabled = _new.IsEnabled = _name.IsEnabled = _apiKey.IsEnabled = _secretKey.IsEnabled =
+            _region.IsEnabled = _provider.IsEnabled = enabled;
         _apply.IsEnabled = enabled;
         _discard.IsEnabled = enabled && _dirty;
         _remove.IsEnabled = _makePreferred.IsEnabled = enabled && _editing is not null;

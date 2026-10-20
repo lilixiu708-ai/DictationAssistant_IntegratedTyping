@@ -1,12 +1,20 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: Multiple translation bindings and a shared plugin settings session.
+// Modified 2026-10-20: Multiple translation providers, credentials and a shared plugin settings session.
 using System.Text.Json.Serialization;
 
 namespace DictationAssistant.Practices.Typing;
 
-internal sealed record TranslationEngineBinding(string Id, string Name, string Provider, string ApiKey)
+internal sealed record TranslationEngineBinding(string Id, string Name, string Provider, string ApiKey,
+    string? SecretKey = null, string? Region = null)
 {
     // A record's generated string representation would include the credential.
+    public override string ToString() => Name;
+}
+
+internal sealed record TranslationEngineProviderDefinition(string Id, string Name, string PrimaryLabel,
+    string? SecretLabel = null, string? DefaultRegion = null, bool RequiresRegion = false,
+    string? HelpText = null)
+{
     public override string ToString() => Name;
 }
 
@@ -25,17 +33,40 @@ internal sealed record TranslationEngineConfiguration(
 
 internal static class TranslationEngineProviders
 {
+    public static IReadOnlyList<TranslationEngineProviderDefinition> Definitions { get; } =
+        Array.AsReadOnly(new[]
+        {
+            new TranslationEngineProviderDefinition("deepl-free", "DeepL API Free", "API 密钥",
+                HelpText: "使用 DeepL API Free 账户的密钥。"),
+            new TranslationEngineProviderDefinition("deepl-pro", "DeepL API Pro", "API 密钥",
+                HelpText: "使用 DeepL API Pro 账户的密钥。"),
+            new TranslationEngineProviderDefinition("microsoft-translator", "必应 / Microsoft Translator（Azure）", "订阅密钥",
+                HelpText: "使用 Azure Translator 密钥；区域资源或多服务资源须填写对应区域。"),
+            new TranslationEngineProviderDefinition("google-cloud", "Google 翻译（Cloud API）", "API 密钥",
+                HelpText: "启用 Cloud Translation Basic（v2），并使用允许调用该服务的 API 密钥。"),
+            new TranslationEngineProviderDefinition("baidu", "百度翻译", "APP ID", "密钥",
+                HelpText: "使用百度翻译开放平台通用文本翻译应用的 APP ID 与密钥。"),
+            new TranslationEngineProviderDefinition("youdao", "有道智云", "应用 ID（AppKey）", "应用密钥（AppSecret）",
+                HelpText: "使用有道智云自然语言翻译应用的凭据。"),
+            new TranslationEngineProviderDefinition("tencent", "腾讯云机器翻译", "SecretId", "SecretKey",
+                "ap-guangzhou", true, "使用已开通机器翻译服务的腾讯云访问密钥，并填写服务区域。"),
+            new TranslationEngineProviderDefinition("aliyun", "阿里云机器翻译", "AccessKey ID", "AccessKey Secret",
+                "cn-hangzhou", true, "使用已开通机器翻译服务的阿里云访问密钥，并填写服务区域。"),
+            new TranslationEngineProviderDefinition("volcengine", "火山引擎机器翻译", "Access Key ID", "Secret Access Key",
+                "cn-north-1", true, "使用已开通机器翻译服务的火山引擎访问密钥，并填写服务区域。")
+        });
+
     public static IReadOnlyList<string> Ids { get; } =
-        Array.AsReadOnly(new[] { "deepl-free", "deepl-pro" });
+        Array.AsReadOnly(Definitions.Select(definition => definition.Id).ToArray());
 
-    public static bool IsSupported(string provider) => provider is "deepl-free" or "deepl-pro";
+    public static bool IsSupported(string provider) => Definitions.Any(definition => definition.Id == provider);
 
-    public static string DisplayName(string provider) => provider switch
-    {
-        "deepl-free" => "DeepL API Free",
-        "deepl-pro" => "DeepL API Pro",
-        _ => "未知翻译引擎"
-    };
+    public static TranslationEngineProviderDefinition Get(string provider) =>
+        Definitions.FirstOrDefault(definition => definition.Id == provider)
+        ?? throw new ArgumentException("请选择受支持的翻译引擎。", nameof(provider));
+
+    public static string DisplayName(string provider) =>
+        Definitions.FirstOrDefault(definition => definition.Id == provider)?.Name ?? "未知翻译引擎";
 
     public static void Validate(TranslationEngineBinding binding)
     {
@@ -46,11 +77,17 @@ internal static class TranslationEngineProviders
         if (string.IsNullOrWhiteSpace(binding.Name) || binding.Name.Length > 80
             || binding.Name != binding.Name.Trim() || binding.Name.Any(char.IsControl))
             throw new ArgumentException("请填写 1 至 80 个字符的配置名称，不要包含首尾空格或控制字符。", nameof(binding));
-        if (!IsSupported(binding.Provider))
-            throw new ArgumentException("请选择受支持的翻译引擎。", nameof(binding));
-        if (string.IsNullOrEmpty(binding.ApiKey) || binding.ApiKey.Length > 512
-            || binding.ApiKey.Any(character => character is <= ' ' or >= '\u007f'))
-            throw new ArgumentException("请填写有效的 API 密钥，不要包含空格或换行。", nameof(binding));
+        var provider = Get(binding.Provider);
+        ValidateCredential(binding.ApiKey, provider.PrimaryLabel, required: true);
+        ValidateCredential(binding.SecretKey, provider.SecretLabel ?? "附加密钥", required: provider.SecretLabel is not null);
+        if (string.IsNullOrEmpty(binding.Region))
+        {
+            if (provider.RequiresRegion)
+                throw new ArgumentException("请填写翻译服务区域。", nameof(binding));
+        }
+        else if (binding.Region.Length > 64 || binding.Region.Any(character =>
+            character is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '-'))
+            throw new ArgumentException("服务区域最多 64 个字符，只能包含小写英文字母、数字和连字符。", nameof(binding));
     }
 
     public static void Validate(TranslationEngineConfiguration configuration)
@@ -82,6 +119,17 @@ internal static class TranslationEngineProviders
             Array.AsReadOnly(configuration.Bindings.ToArray()), configuration.PreferredEngineId);
         Validate(snapshot);
         return snapshot.Bindings.Count == 0 ? TranslationEngineConfiguration.Empty : snapshot;
+    }
+
+    private static void ValidateCredential(string? value, string label, bool required)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            if (required) throw new ArgumentException($"请填写{label}。");
+            return;
+        }
+        if (value.Length > 512 || value.Any(character => character is <= ' ' or >= '\u007f'))
+            throw new ArgumentException($"请填写有效的{label}，不要包含空格或换行。");
     }
 }
 
