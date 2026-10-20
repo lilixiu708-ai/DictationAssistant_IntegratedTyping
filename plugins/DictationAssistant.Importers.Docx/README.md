@@ -53,6 +53,8 @@ DTD 被禁止，外部 XML 资源解析被禁用。宿主传入的文件流保�
 
 ## 构建
 
+源码按读取流程划分：`DocxImporter` 负责格式分派和 Word 正文解析，`ExcelImporter` 负责工作表及单元格转换，`ExcelPackage` 负责包内 XML、解压预算与取消读取保护，`XlsbRecordValidator` 负责关系定位和二进制记录边界；两种格式共用 `ImportStreams` 的有界异步输入复制。
+
 在包含本项目和 `src/DictationAssistant.Plugin.Abstractions` 的完整源码目录中使用 .NET 10 SDK：
 
 ```sh

@@ -1,5 +1,6 @@
 // Word-order shuffle extension, 2026-10-19. Licensed under AGPL-3.0-or-later.
 using System.Text;
+using DictationAssistant.App.Helpers;
 
 namespace DictationAssistant.App.Extensions;
 
@@ -12,18 +13,7 @@ public static class WordListShuffle
     private const int MaximumShuffleAttempts = 32;
 
     /// <summary>Counts nonblank physical lines, including duplicate entries.</summary>
-    public static int CountEntries(string text)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-
-        int count = 0;
-        foreach (var line in ReadLines(text))
-        {
-            if (!text.AsSpan(line.Offset, line.Length).IsWhiteSpace())
-                count++;
-        }
-        return count;
-    }
+    public static int CountEntries(string text) => WordListText.CountEntries(text);
 
     /// <summary>
     /// Returns whether there are at least two nonblank lines with different

@@ -382,14 +382,7 @@ public static class ImportCommandLine
         {
             throw new CommandLineArgumentException($"--section 超出范围，文档共有 {document.Sections.Count} 个区域。");
         }
-        var indices = options.SectionIndex == -1
-            ? Enumerable.Range(0, document.Sections.Count).Where(index =>
-                document.Sections[index].Kind == ImportSectionKind.Table).ToArray()
-            : [options.SectionIndex];
-        if (indices.Length == 0)
-        {
-            indices = Enumerable.Range(0, document.Sections.Count).ToArray();
-        }
+        var indices = ImportPreviewBuilder.GetSelectedSectionIndices(document, options.SectionIndex);
         if (options.ColumnIndex >= 0 && indices.All(index =>
                 options.ColumnIndex >= document.Sections[index].Columns.Count))
         {

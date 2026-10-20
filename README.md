@@ -61,7 +61,7 @@ dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c
 
 ## 文档与扩展
 
-[文档索引](docs/README.md) · [插件开发](docs/插件开发指南.md) · [SDK 与可编译示例](docs/PLUGIN_SDK.md) · [贡献规则](CONTRIBUTING.md) · [代理约定](AGENTS.md) · [变更记录](CHANGELOG.md)
+[文档索引](docs/README.md) · [代码结构](docs/CODE_STRUCTURE.md) · [插件开发](docs/插件开发指南.md) · [SDK 与可编译示例](docs/PLUGIN_SDK.md) · [贡献规则](CONTRIBUTING.md) · [变更记录](CHANGELOG.md)
 
 主程序在 `src/DictationAssistant.App/`，共享契约在 `src/DictationAssistant.Plugin.Abstractions/`，插件在 `plugins/`，示例在 `sdk/examples/`。程序集保留 `DictationAssistant.*`，插件 ID/API 版本独立于应用版本。
 

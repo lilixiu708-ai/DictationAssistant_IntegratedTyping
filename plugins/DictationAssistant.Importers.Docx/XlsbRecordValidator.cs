@@ -7,20 +7,8 @@ namespace DictationAssistant.Importers.Docx;
 
 internal static class XlsbRecordValidator
 {
-    private const long MaximumPartBytes = 32L * 1024 * 1024;
     private const string TransitionalRelationships = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
     private const string StrictRelationships = "http://purl.oclc.org/ooxml/officeDocument/relationships/";
-
-    /// <summary>Recognizes conventional BIFF12 paths; relationship resolution remains authoritative.</summary>
-    public static bool IsWorkbookPart(string path)
-    {
-        var normalized = path.Replace('\\', '/');
-        return normalized.Equals("xl/workbook.bin", StringComparison.OrdinalIgnoreCase) ||
-            normalized.Equals("xl/styles.bin", StringComparison.OrdinalIgnoreCase) ||
-            normalized.Equals("xl/sharedStrings.bin", StringComparison.OrdinalIgnoreCase) ||
-            (normalized.StartsWith("xl/worksheets/", StringComparison.OrdinalIgnoreCase) &&
-             normalized.EndsWith(".bin", StringComparison.OrdinalIgnoreCase));
-    }
 
     /// <summary>
     /// Resolves binary parts through the same root/workbook relationships used by
@@ -92,14 +80,14 @@ internal static class XlsbRecordValidator
     /// <summary>Checks record headers and drains payloads with a fixed-size buffer; never rents the declared record size.</summary>
     public static void Validate(Stream stream, long declaredPartLength, CancellationToken token)
     {
-        if (declaredPartLength is < 0 or > MaximumPartBytes)
+        if (declaredPartLength is < 0 or > ExcelPackage.MaximumPartBytes)
             throw new InvalidDataException("Excel 二进制部件超过 32 MiB 或长度无效。");
         var consumed = 0L;
         var buffer = new byte[8192];
         while (ReadVariable(stream, ref consumed, declaredPartLength, token, allowEnd: true, out _))
         {
             ReadVariable(stream, ref consumed, declaredPartLength, token, allowEnd: false, out var length);
-            if (length > MaximumPartBytes || length > declaredPartLength - consumed)
+            if (length > ExcelPackage.MaximumPartBytes || length > declaredPartLength - consumed)
                 throw new InvalidDataException("Excel 二进制记录声明长度超过 32 MiB 或超出部件剩余内容。");
             var remaining = (long)length;
             while (remaining > 0)
@@ -143,13 +131,13 @@ internal static class XlsbRecordValidator
 
     private static IEnumerable<Relationship> ReadRelationships(ZipArchiveEntry entry, CancellationToken token)
     {
-        if (entry.Length > MaximumPartBytes)
+        if (entry.Length > ExcelPackage.MaximumPartBytes)
             throw new InvalidDataException("Excel 关系部件超过 32 MiB。");
         using var stream = entry.Open();
         using var reader = XmlReader.Create(stream, new XmlReaderSettings
         {
             DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null,
-            MaxCharactersInDocument = MaximumPartBytes, MaxCharactersFromEntities = 1024,
+            MaxCharactersInDocument = ExcelPackage.MaximumPartBytes, MaxCharactersFromEntities = 1024,
             IgnoreComments = true, IgnoreProcessingInstructions = true, CloseInput = false
         });
         while (reader.Read())

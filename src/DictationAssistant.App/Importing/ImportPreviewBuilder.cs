@@ -1,5 +1,6 @@
 // Common import preview rules, 2026-10-19. AGPL-3.0-or-later.
 using System.Text.RegularExpressions;
+using DictationAssistant.App.Helpers;
 using DictationAssistant.Plugin.Abstractions;
 
 namespace DictationAssistant.App.Importing;
@@ -27,29 +28,13 @@ public static partial class ImportPreviewBuilder
     // Column -1 uses the plugin's suggested column separately for each section.
     public static ImportPreviewResult Build(ImportDocument document, ImportPreviewOptions options)
     {
-        if (document.Sections.Count == 0)
-        {
-            return new ImportPreviewResult(string.Empty, 0, 0, 0, 0, 0);
-        }
-
-        IEnumerable<ImportSection> sections;
-        if (options.SectionIndex == -1)
-        {
-            var tables = document.Sections.Where(s => s.Kind == ImportSectionKind.Table).ToArray();
-            sections = tables.Length > 0 ? tables : document.Sections;
-        }
-        else
-        {
-            if (options.SectionIndex < 0 || options.SectionIndex >= document.Sections.Count)
-                throw new ArgumentOutOfRangeException(nameof(options), "所选文档区域不存在。");
-            sections = [document.Sections[options.SectionIndex]];
-        }
-
+        var selectedIndices = GetSelectedSectionIndices(document, options.SectionIndex);
         var entries = new List<string>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var seen = options.Deduplicate ? new HashSet<string>(StringComparer.Ordinal) : null;
         int candidateRows = 0, skippedHeaders = 0, skippedEmpty = 0, removedDuplicates = 0;
-        foreach (var section in sections)
+        foreach (var index in selectedIndices)
         {
+            var section = document.Sections[index];
             var column = options.ColumnIndex == -1 ? section.SuggestedColumnIndex : options.ColumnIndex;
             foreach (var row in section.Rows)
             {
@@ -70,7 +55,7 @@ public static partial class ImportPreviewBuilder
                     skippedEmpty++;
                     continue;
                 }
-                if (options.Deduplicate && !seen.Add(value))
+                if (seen is not null && !seen.Add(value))
                 {
                     removedDuplicates++;
                     continue;
@@ -89,8 +74,23 @@ public static partial class ImportPreviewBuilder
         return stripNumbering ? LeadingNumber().Replace(value, string.Empty).Trim() : value;
     }
 
-    public static int CountEntries(string text) => text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
-        .Count(line => !string.IsNullOrWhiteSpace(line));
+    public static int CountEntries(string text) => WordListText.CountEntries(text);
+
+    // The GUI's column choices, preview and CLI report must combine the same regions.
+    internal static int[] GetSelectedSectionIndices(ImportDocument document, int sectionIndex)
+    {
+        if (document.Sections.Count == 0)
+            return [];
+        if (sectionIndex == -1)
+        {
+            var tables = Enumerable.Range(0, document.Sections.Count)
+                .Where(index => document.Sections[index].Kind == ImportSectionKind.Table).ToArray();
+            return tables.Length > 0 ? tables : Enumerable.Range(0, document.Sections.Count).ToArray();
+        }
+        if (sectionIndex < 0 || sectionIndex >= document.Sections.Count)
+            throw new ArgumentOutOfRangeException(nameof(sectionIndex), "所选文档区域不存在。");
+        return [sectionIndex];
+    }
 
     [GeneratedRegex(@"\s+", RegexOptions.CultureInvariant)]
     private static partial Regex Whitespace();

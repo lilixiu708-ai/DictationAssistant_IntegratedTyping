@@ -1,5 +1,5 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: manage named translation bindings and the preferred engine.
+// Modified 2026-10-20: display binding drafts while shared model rules handle edits and validation.
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -15,7 +15,7 @@ internal sealed class TranslationApiSettingsWindow : Window
     private readonly TranslationEngineSession _session;
     private readonly CancellationTokenSource _cancellation;
     private readonly CancellationTokenRegistration _externalCancellationRegistration;
-    private readonly List<TranslationEngineBinding> _bindings = [];
+    private readonly TranslationEngineDraft _draft = new();
     private readonly ListBox _engines = new() { MinHeight = 150 };
     private readonly TextBlock _preferred = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _formTitle = new() { FontSize = 18, FontWeight = FontWeight.SemiBold };
@@ -55,7 +55,6 @@ internal sealed class TranslationApiSettingsWindow : Window
     private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
     private TranslationEngineBinding? _editing;
     private string? _displayedProviderId;
-    private string? _preferredId;
     private Task? _operation;
     private bool _loaded;
     private bool _busy;
@@ -96,7 +95,7 @@ internal sealed class TranslationApiSettingsWindow : Window
             new TextBlock
             {
                 Text = binding is null ? string.Empty : binding.Name +
-                    (binding.Id == _preferredId ? " · 首选" : string.Empty) + "\n" +
+                    (binding.Id == _draft.PreferredEngineId ? " · 首选" : string.Empty) + "\n" +
                     TranslationEngineProviders.DisplayName(binding.Provider),
                 TextWrapping = TextWrapping.Wrap, Margin = new Thickness(6)
             });
@@ -205,8 +204,7 @@ internal sealed class TranslationApiSettingsWindow : Window
             "无法应用引擎配置，请检查绑定内容后重试。");
         _resetUnreadable.Click += (_, _) =>
         {
-            _bindings.Clear();
-            _preferredId = null;
+            _draft.Reset();
             _loaded = true;
             _resetUnreadable.IsVisible = false;
             ShowBinding(null);
@@ -226,7 +224,7 @@ internal sealed class TranslationApiSettingsWindow : Window
             _region.Text = string.Empty;
             _name.Text = string.Empty;
             _editing = null;
-            _bindings.Clear();
+            _draft.Reset();
             _engines.ItemsSource = null;
             _cancellation.Cancel();
             _cancellation.Dispose();
@@ -243,14 +241,13 @@ internal sealed class TranslationApiSettingsWindow : Window
             _status.Text = "正在读取引擎配置…";
             var configuration = await _session.GetAsync(_cancellation.Token);
             _cancellation.Token.ThrowIfCancellationRequested();
-            _bindings.AddRange(configuration.Bindings);
-            _preferredId = configuration.PreferredEngineId;
+            _draft.Load(configuration);
             _loaded = true;
-            var selected = _bindings.FirstOrDefault(binding => binding.Id == _preferredId)
-                ?? _bindings.FirstOrDefault();
+            var selected = _draft.Bindings.FirstOrDefault(binding => binding.Id == _draft.PreferredEngineId)
+                ?? _draft.Bindings.FirstOrDefault();
             ShowBinding(selected);
             RefreshList(selected?.Id);
-            _status.Text = _bindings.Count == 0 ? "尚未绑定引擎，可新建绑定。" : "选择绑定可修改；首选引擎将用于新打开的翻译准备页。";
+            _status.Text = _draft.Bindings.Count == 0 ? "尚未绑定引擎，可新建绑定。" : "选择绑定可修改；首选引擎将用于新打开的翻译准备页。";
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception)
@@ -315,7 +312,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         _secretLabel.Text = definition.SecretLabel;
         _secretLabel.IsVisible = _secretKey.IsVisible = definition.SecretLabel is not null;
         _secretKey.Watermark = reuse ? "已配置；留空沿用" : "输入" + definition.SecretLabel;
-        var hasRegion = definition.RequiresRegion || definition.Id == "microsoft-translator";
+        var hasRegion = definition.SupportsRegion;
         _regionLabel.IsVisible = _region.IsVisible = hasRegion;
         _regionLabel.Text = definition.RequiresRegion ? "服务区域（必填）" : "服务区域（可选）";
         _region.Watermark = definition.DefaultRegion ?? "按订阅资源填写，如 eastasia";
@@ -357,9 +354,9 @@ internal sealed class TranslationApiSettingsWindow : Window
     private void RefreshList(string? selectedId)
     {
         _populating = true;
-        _engines.ItemsSource = _bindings.ToArray();
-        _engines.SelectedItem = _bindings.FirstOrDefault(binding => binding.Id == selectedId);
-        _preferred.Text = _bindings.FirstOrDefault(binding => binding.Id == _preferredId) is { } preferred
+        _engines.ItemsSource = _draft.Bindings.ToArray();
+        _engines.SelectedItem = _draft.Bindings.FirstOrDefault(binding => binding.Id == selectedId);
+        _preferred.Text = _draft.Bindings.FirstOrDefault(binding => binding.Id == _draft.PreferredEngineId) is { } preferred
             ? "首选引擎：" + preferred.Name : "首选引擎：未设置";
         _populating = false;
         UpdateControls();
@@ -367,45 +364,13 @@ internal sealed class TranslationApiSettingsWindow : Window
 
     private bool ApplyForm()
     {
-        var name = _name.Text?.Trim() ?? string.Empty;
-        if (name.Length is < 1 or > 80 || name.Any(char.IsControl))
-            return FormError("请输入 1–80 个字符的绑定名称。");
-        if (_bindings.Any(binding => binding.Id != _editing?.Id
-            && string.Equals(binding.Name, name, StringComparison.OrdinalIgnoreCase)))
-            return FormError("绑定名称已存在，请使用其他名称。");
-        var definition = SelectedProvider;
-        var provider = definition.Id;
-        var reuse = _editing?.Provider == provider;
-        var typedKey = _apiKey.Text?.Trim();
-        var key = string.IsNullOrEmpty(typedKey) && reuse ? _editing?.ApiKey : typedKey;
-        if (string.IsNullOrEmpty(key) || key.Length > 512 || key.Any(c => c is <= ' ' or >= '\u007f'))
-            return FormError("请输入有效的" + definition.PrimaryLabel + "，不要包含空格、换行或非英文字符。");
-        string? secret = null;
-        if (definition.SecretLabel is not null)
+        TranslationEngineBinding binding;
+        try
         {
-            var typedSecret = _secretKey.Text?.Trim();
-            secret = string.IsNullOrEmpty(typedSecret) && reuse ? _editing?.SecretKey : typedSecret;
-            if (string.IsNullOrEmpty(secret) || secret.Length > 512 || secret.Any(c => c is <= ' ' or >= '\u007f'))
-                return FormError("请输入有效的" + definition.SecretLabel + "，不要包含空格、换行或非英文字符。");
+            binding = _draft.Apply(_editing, _name.Text, SelectedProvider.Id,
+                _apiKey.Text, _secretKey.Text, _region.Text);
         }
-        var region = _region.IsVisible ? _region.Text?.Trim() : null;
-        if (string.IsNullOrEmpty(region)) region = null;
-        if (definition.RequiresRegion && region is null)
-            return FormError("请填写服务区域。");
-        if (region is not null && (region.Length > 64
-            || region.Any(c => c is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '-')))
-            return FormError("服务区域须为 1–64 个小写英文字母、数字或连字符。");
-        if (_editing is null && _bindings.Count >= 20)
-            return FormError("最多可保存 20 个绑定，请先移除不再使用的绑定。");
-
-        var binding = new TranslationEngineBinding(_editing?.Id ?? Guid.NewGuid().ToString("N"),
-            name, provider, key, secret, region);
-        try { TranslationEngineProviders.Validate(binding); }
-        catch (ArgumentException) { return FormError("绑定内容无效，请检查服务类型和所需凭据。"); }
-        var index = _bindings.FindIndex(existing => existing.Id == binding.Id);
-        if (index < 0) _bindings.Add(binding);
-        else _bindings[index] = binding;
-        _preferredId ??= binding.Id;
+        catch (InvalidDataException error) { return FormError(error.Message); }
         ShowBinding(binding);
         RefreshList(binding.Id);
         _status.Foreground = Brushes.DimGray;
@@ -423,12 +388,7 @@ internal sealed class TranslationApiSettingsWindow : Window
     {
         if (!CanLeaveForm()) return;
         if (_editing is null) { ShowError("请选择要移除的已绑定引擎。"); return; }
-        var id = _editing.Id;
-        var index = _bindings.FindIndex(binding => binding.Id == id);
-        if (index < 0) return;
-        _bindings.RemoveAt(index);
-        if (_preferredId == id) _preferredId = _bindings.FirstOrDefault()?.Id;
-        var selected = _bindings.Count > 0 ? _bindings[Math.Min(index, _bindings.Count - 1)] : null;
+        var selected = _draft.Remove(_editing.Id);
         ShowBinding(selected);
         RefreshList(selected?.Id);
         _status.Foreground = Brushes.DimGray;
@@ -439,7 +399,7 @@ internal sealed class TranslationApiSettingsWindow : Window
     {
         if (!CanLeaveForm()) return;
         if (_editing is null) { ShowError("请选择已绑定引擎后再设置首选。"); return; }
-        _preferredId = _editing.Id;
+        _draft.MakePreferred(_editing.Id);
         RefreshList(_editing.Id);
         _status.Foreground = Brushes.DimGray;
         _status.Text = "首选项已调整，保存或应用后用于新的翻译准备页。";
@@ -450,7 +410,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         if (persist && !TranslationApiSettings.CanPersist) return;
         MarkDirty();
         if (_dirty && !ApplyForm()) return;
-        var configuration = new TranslationEngineConfiguration(_bindings.ToArray(), _preferredId);
+        var configuration = _draft.Snapshot();
         _status.Text = persist ? "正在加密保存引擎配置…" : "正在应用本次引擎配置…";
         await _session.SetAsync(configuration, persist, _cancellation.Token);
         if (_closing) return;

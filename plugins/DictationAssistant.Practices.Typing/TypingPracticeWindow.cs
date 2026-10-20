@@ -1,7 +1,7 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
+// Modified 2026-10-20: delegate result scoring, serialization and recycled rows to focused types.
 using System.Diagnostics;
 using System.Globalization;
-using System.Text;
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
@@ -88,7 +88,7 @@ internal sealed class TypingPracticeWindow : Window
     {
         BorderThickness = new Thickness(0),
         ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel { CacheLength = 0.5 }),
-        ItemTemplate = new FuncDataTemplate<TypedResult>(static (_, _) => new ResultRow(), supportsRecycling: true)
+        ItemTemplate = new FuncDataTemplate<TypedResult>(static (_, _) => new TypingResultRow(), supportsRecycling: true)
     };
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(100) };
     private readonly Stopwatch _clock = new();
@@ -417,7 +417,7 @@ internal sealed class TypingPracticeWindow : Window
             }
             ct.ThrowIfCancellationRequested();
             _phaseTitle.Text = "正在汇总成绩";
-            var correct = await Task.Run(() => ScoreRecords(ct), ct);
+            var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct), ct);
             ct.ThrowIfCancellationRequested();
             ShowFinalResults(correct);
         }
@@ -529,18 +529,6 @@ internal sealed class TypingPracticeWindow : Window
         }
     }
 
-    private int ScoreRecords(CancellationToken ct)
-    {
-        var correct = 0;
-        foreach (var record in _records)
-        {
-            ct.ThrowIfCancellationRequested();
-            record.Correct = TypingEvaluation.IsCorrect(record.Expected, record.Entered, _ignoreCaseSnapshot);
-            if (record.Correct) correct++;
-        }
-        return correct;
-    }
-
     private void ShowFinalResults(int correct)
     {
         _phase = Phase.Completed;
@@ -575,15 +563,7 @@ internal sealed class TypingPracticeWindow : Window
             });
             if (file is null) return;
             await using var stream = await file.OpenWriteAsync();
-            stream.SetLength(0);
-            await using var writer = new StreamWriter(stream, new UTF8Encoding(true));
-            await writer.WriteLineAsync("序号,正确词条,输入内容,是否正确,是否超时,耗时秒");
-            foreach (var row in _records)
-            {
-                await writer.WriteLineAsync(string.Create(CultureInfo.InvariantCulture,
-                    $"{row.Index},{TypingEvaluation.CsvCell(row.Expected)},{TypingEvaluation.CsvCell(row.Entered)},{(row.Correct ? "正确" : "错误")},{(row.TimedOut ? "是" : "否")},{row.ElapsedSeconds:F2}"));
-            }
-            await writer.FlushAsync();
+            await TypingResults.WriteCsvAsync(stream, _records);
             _error.Text = "已导出成绩 CSV。";
         }
         catch (Exception ex)
@@ -672,55 +652,5 @@ internal sealed class TypingPracticeWindow : Window
     }
 
     private sealed record TypedAnswer(string Value, bool TimedOut, TimeSpan Elapsed);
-    private sealed record TypedResult(int Index, string Expected, string Entered, bool TimedOut, double ElapsedSeconds)
-    {
-        public bool Correct { get; set; }
-    }
-
-    private sealed class ResultRow : Grid
-    {
-        private readonly TextBlock _number = new();
-        private readonly TextBlock _expected = new() { TextWrapping = TextWrapping.Wrap };
-        private readonly TextBlock _entered = new() { TextWrapping = TextWrapping.Wrap, Opacity = 0.8 };
-        private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
-
-        public ResultRow()
-        {
-            ColumnDefinitions = new ColumnDefinitions("40,*,64");
-            RowDefinitions = new RowDefinitions("Auto,Auto");
-            ColumnSpacing = 12;
-            RowSpacing = 4;
-            Grid.SetRowSpan(_number, 2);
-            Grid.SetColumn(_expected, 1);
-            Grid.SetColumn(_entered, 1);
-            Grid.SetRow(_entered, 1);
-            Grid.SetColumn(_status, 2);
-            Grid.SetRowSpan(_status, 2);
-            Children.Add(_number);
-            Children.Add(_expected);
-            Children.Add(_entered);
-            Children.Add(_status);
-        }
-
-        protected override void OnDataContextChanged(EventArgs e)
-        {
-            base.OnDataContextChanged(e);
-            if (DataContext is not TypedResult record)
-            {
-                _number.Text = _expected.Text = _entered.Text = _status.Text = null;
-                return;
-            }
-
-            // Virtualized rows are recycled; update every field for the new item.
-            // Format only visible rows instead of retaining one string/control per word.
-            _number.Text = record.Index.ToString(CultureInfo.InvariantCulture);
-            _expected.Text = "正确：" + record.Expected;
-            _entered.Text = "输入：" + (string.IsNullOrEmpty(record.Entered) ? "（空白）" : record.Entered);
-            _status.Text = record.Correct
-                ? (record.TimedOut ? "✓ 正确\n到时" : "✓ 正确")
-                : (record.TimedOut ? "✗ 超时" : "✗ 错误");
-            _status.Foreground = record.Correct ? Brushes.SeaGreen : Brushes.IndianRed;
-        }
-    }
     private enum Phase { Setup, Playing, Typing, Committing, Completed, Error }
 }

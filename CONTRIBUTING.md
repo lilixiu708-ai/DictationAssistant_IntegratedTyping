@@ -20,6 +20,8 @@
 
 主程序放在 `src/DictationAssistant.App/`，共享接口放在 `src/DictationAssistant.Plugin.Abstractions/`，独立插件放在 `plugins/`，示例放在 `sdk/examples/`。不要将构建输出、便携 ZIP、个人词表、账号信息或本机配置提交到仓库；生成物使用已忽略的 `artifacts/`、`bin/`、`obj/`。
 
+各功能的修改入口与宿主/插件数据流见[代码结构](docs/CODE_STRUCTURE.md)。新增代码优先放到负责该功能的现有项目；UI 调用业务方法，配置校验与导入规则保持单一入口。
+
 ## 修改原则
 
 - 一次修改解决一个明确问题，保持数据流和取消、释放逻辑清楚。

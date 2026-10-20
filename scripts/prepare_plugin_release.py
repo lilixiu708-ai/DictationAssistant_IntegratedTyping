@@ -539,7 +539,8 @@ not establish a new permission or legal clearance for that combination.
                     'Directory.Build.props', 'global.json', 'AGENTS.md', 'CONTRIBUTING.md',
                     *PROJECT_NOTICES, 'LICENSES', 'third-party/components.json',
                     'scripts/prepare_plugin_release.py', 'scripts/prepare_licenses.py',
-                    'scripts/collect_third_party_sources.py', 'docs/同步打字插件使用说明.md']
+                    'scripts/collect_third_party_sources.py', 'docs/同步打字插件使用说明.md',
+                    'docs/CODE_STRUCTURE.md']
     if compatibility is not None:
         source_paths.append('.github/workflows/release-importer-plugin.yml' if plugin_id == 'docx-vocabulary'
                             else '.github/workflows/release-typing-plugin.yml')

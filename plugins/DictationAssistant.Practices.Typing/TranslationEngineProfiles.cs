@@ -15,6 +15,8 @@ internal sealed record TranslationEngineProviderDefinition(string Id, string Nam
     string? SecretLabel = null, string? DefaultRegion = null, bool RequiresRegion = false,
     string? HelpText = null)
 {
+    public bool SupportsRegion => RequiresRegion || Id == "microsoft-translator";
+
     public override string ToString() => Name;
 }
 
@@ -71,23 +73,35 @@ internal static class TranslationEngineProviders
     public static void Validate(TranslationEngineBinding binding)
     {
         ArgumentNullException.ThrowIfNull(binding);
+        if (GetValidationError(binding) is { } error)
+            throw new ArgumentException(error, nameof(binding));
+    }
+
+    // The editor and persistence boundary use the same rules without exposing credential values.
+    public static string? GetValidationError(TranslationEngineBinding binding)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
         if (string.IsNullOrEmpty(binding.Id) || binding.Id.Length > 64
             || binding.Id.Any(character => !char.IsAsciiLetterOrDigit(character) && character is not '_' and not '-'))
-            throw new ArgumentException("翻译引擎配置标识无效。", nameof(binding));
+            return "翻译引擎配置标识无效。";
         if (string.IsNullOrWhiteSpace(binding.Name) || binding.Name.Length > 80
             || binding.Name != binding.Name.Trim() || binding.Name.Any(char.IsControl))
-            throw new ArgumentException("请填写 1 至 80 个字符的配置名称，不要包含首尾空格或控制字符。", nameof(binding));
-        var provider = Get(binding.Provider);
-        ValidateCredential(binding.ApiKey, provider.PrimaryLabel, required: true);
-        ValidateCredential(binding.SecretKey, provider.SecretLabel ?? "附加密钥", required: provider.SecretLabel is not null);
+            return "请填写 1 至 80 个字符的配置名称，不要包含首尾空格或控制字符。";
+        var provider = Definitions.FirstOrDefault(definition => definition.Id == binding.Provider);
+        if (provider is null) return "请选择受支持的翻译引擎。";
+        if (CredentialError(binding.ApiKey, provider.PrimaryLabel, required: true) is { } primaryError)
+            return primaryError;
+        if (CredentialError(binding.SecretKey, provider.SecretLabel ?? "附加密钥",
+            required: provider.SecretLabel is not null) is { } secretError)
+            return secretError;
         if (string.IsNullOrEmpty(binding.Region))
         {
-            if (provider.RequiresRegion)
-                throw new ArgumentException("请填写翻译服务区域。", nameof(binding));
+            if (provider.RequiresRegion) return "请填写翻译服务区域。";
         }
         else if (binding.Region.Length > 64 || binding.Region.Any(character =>
             character is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '-'))
-            throw new ArgumentException("服务区域最多 64 个字符，只能包含小写英文字母、数字和连字符。", nameof(binding));
+            return "服务区域最多 64 个字符，只能包含小写英文字母、数字和连字符。";
+        return null;
     }
 
     public static void Validate(TranslationEngineConfiguration configuration)
@@ -121,15 +135,12 @@ internal static class TranslationEngineProviders
         return snapshot.Bindings.Count == 0 ? TranslationEngineConfiguration.Empty : snapshot;
     }
 
-    private static void ValidateCredential(string? value, string label, bool required)
+    private static string? CredentialError(string? value, string label, bool required)
     {
         if (string.IsNullOrEmpty(value))
-        {
-            if (required) throw new ArgumentException($"请填写{label}。");
-            return;
-        }
-        if (value.Length > 512 || value.Any(character => character is <= ' ' or >= '\u007f'))
-            throw new ArgumentException($"请填写有效的{label}，不要包含空格或换行。");
+            return required ? $"请填写{label}。" : null;
+        return value.Length > 512 || value.Any(character => character is <= ' ' or >= '\u007f')
+            ? $"请填写有效的{label}，不要包含空格或换行。" : null;
     }
 }
 

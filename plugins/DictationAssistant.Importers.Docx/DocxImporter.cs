@@ -1,5 +1,4 @@
 // Word vocabulary document importer, 2026-10-19. AGPL-3.0-or-later.
-using System.Buffers;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
@@ -59,7 +58,7 @@ public sealed class DocxImporter : IDocumentImporter
 
         // Copy with an actual byte limit, including when the host provides a non-seekable stream.
         // Neither the input stream nor files referenced by the document are opened or modified here.
-        using var package = await CopyBoundedAsync(
+        using var package = await ImportStreams.CopyBoundedAsync(
             content, MaxPackageBytes, "DOCX 文件超过 64 MiB。", cancellationToken).ConfigureAwait(false);
         using var archive = new ZipArchive(package, ZipArchiveMode.Read, leaveOpen: true);
         if (archive.Entries.Count > MaxArchiveEntries)
@@ -75,7 +74,7 @@ public sealed class DocxImporter : IDocumentImporter
             throw new InvalidDataException("Word 正文 XML 超过 32 MiB，无法导入。");
 
         await using var entryStream = documentEntry.Open();
-        using var documentBytes = await CopyBoundedAsync(
+        using var documentBytes = await ImportStreams.CopyBoundedAsync(
             entryStream, MaxDocumentBytes, "Word 正文 XML 超过 32 MiB，无法导入。", cancellationToken)
             .ConfigureAwait(false);
         var settings = new XmlReaderSettings
@@ -372,35 +371,5 @@ public sealed class DocxImporter : IDocumentImporter
         if (used > remaining)
             throw new InvalidDataException(message);
         remaining -= used;
-    }
-
-    private static async Task<MemoryStream> CopyBoundedAsync(
-        Stream input, long maximum, string error, CancellationToken cancellationToken)
-    {
-        var output = new MemoryStream();
-        var buffer = ArrayPool<byte>.Shared.Rent(81920);
-        try
-        {
-            while (true)
-            {
-                var count = await input.ReadAsync(buffer.AsMemory(), cancellationToken).ConfigureAwait(false);
-                if (count == 0)
-                    break;
-                if (output.Length + count > maximum)
-                    throw new InvalidDataException(error);
-                output.Write(buffer, 0, count);
-            }
-            output.Position = 0;
-            return output;
-        }
-        catch
-        {
-            output.Dispose();
-            throw;
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
     }
 }

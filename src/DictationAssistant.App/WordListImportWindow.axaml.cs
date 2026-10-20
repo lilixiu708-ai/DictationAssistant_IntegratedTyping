@@ -197,19 +197,11 @@ public partial class WordListImportWindow : Window
         if (_document is null || SectionComboBox.SelectedItem is not SectionChoice sectionChoice)
             return;
 
-        IReadOnlyList<ImportSection> sections;
-        if (sectionChoice.Index == -1)
-        {
-            var tables = _document.Sections.Where(section => section.Kind == ImportSectionKind.Table).ToArray();
-            sections = tables.Length > 0 ? tables : _document.Sections;
-        }
-        else
-        {
-            sections = [_document.Sections[sectionChoice.Index]];
-        }
+        var sections = ImportPreviewBuilder.GetSelectedSectionIndices(_document, sectionChoice.Index)
+            .Select(index => _document.Sections[index]).ToArray();
 
         var choices = new List<ColumnChoice> { new(-1, "自动选择推荐列") };
-        var columnCount = sections.Count == 0 ? 0 : sections.Max(section => section.Columns.Count);
+        var columnCount = sections.Length == 0 ? 0 : sections.Max(section => section.Columns.Count);
         for (var index = 0; index < columnCount; index++)
         {
             var labels = sections.Where(section => index < section.Columns.Count)
