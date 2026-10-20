@@ -40,6 +40,7 @@ internal static class ProcessRunner
         string? stdin,
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var startInfo = new ProcessStartInfo
         {
             FileName = fileName,
@@ -58,21 +59,40 @@ internal static class ProcessRunner
         using var process = new Process { StartInfo = startInfo };
         process.Start();
 
-        if (stdin is not null)
-        {
-            await process.StandardInput.WriteAsync(stdin.AsMemory(), cancellationToken).ConfigureAwait(false);
-            await process.StandardInput.FlushAsync().ConfigureAwait(false);
-            process.StandardInput.Close();
-        }
-
+        // Drain both pipes before writing input: a synthesizer may produce
+        // output while it is still reading a long phrase from stdin.
         var outputTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
         var errorTask = process.StandardError.ReadToEndAsync(cancellationToken);
+        try
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (stdin is not null)
+            {
+                await process.StandardInput.WriteAsync(stdin.AsMemory(), cancellationToken).ConfigureAwait(false);
+                await process.StandardInput.FlushAsync(cancellationToken).ConfigureAwait(false);
+                process.StandardInput.Close();
+            }
 
-        await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+            await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+            var output = await outputTask.ConfigureAwait(false);
+            var error = await errorTask.ConfigureAwait(false);
 
-        var output = await outputTask.ConfigureAwait(false);
-        var error = await errorTask.ConfigureAwait(false);
-
-        return (output, process.ExitCode, error, process.ExitCode == 0);
+            return (output, process.ExitCode, error, process.ExitCode == 0);
+        }
+        catch
+        {
+            // Canceling WaitForExitAsync does not stop the child. In particular,
+            // say must finish before its temporary AIFF file can be removed.
+            try
+            {
+                if (!process.HasExited) process.Kill(entireProcessTree: true);
+            }
+            catch (InvalidOperationException) { /* The process exited before Kill. */ }
+            await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
+            try { await Task.WhenAll(outputTask, errorTask).ConfigureAwait(false); }
+            catch (IOException) { /* Preserve the original failure after draining both pipes. */ }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
+            throw;
+        }
     }
 }

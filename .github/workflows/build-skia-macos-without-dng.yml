@@ -1,0 +1,69 @@
+name: Build pinned SkiaSharp without DNG (macOS)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skia-macos-no-dng-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            arch: x64
+          - runner: macos-15
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: artifacts/macos-native-cache
+          key: macos-skia-source-${{ hashFiles('third-party/skia-no-dng-build.json', 'third-party/skia-no-dng-macos-build.json') }}
+      - name: Build and verify the native library on its matching Mac architecture
+        run: >-
+          python scripts/build_skia_macos_without_dng.py
+          --arch ${{ matrix.arch }}
+          --output-dir artifacts/skia-macos-${{ matrix.arch }}
+          --work-dir artifacts/skia-macos-work-${{ matrix.arch }}
+          --cache-dir artifacts/macos-native-cache
+          --build-commit ${{ github.sha }}
+          --jobs 3
+      - name: Upload the verified native binary and corresponding source pair for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkiaSharp-2.88.9-no-dng-osx-${{ matrix.arch }}
+          path: |
+            artifacts/skia-macos-${{ matrix.arch }}/SkiaSharp-*.zip
+            artifacts/skia-macos-${{ matrix.arch }}/native-build.json
+            artifacts/skia-macos-${{ matrix.arch }}/NOTICE-NATIVE.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkiaSharp-macos-${{ matrix.arch }}-diagnostics
+          path: |
+            artifacts/skia-macos-${{ matrix.arch }}/logs
+            artifacts/skia-macos-${{ matrix.arch }}/source-preparation.json
+          if-no-files-found: warn
+          compression-level: 6
+          retention-days: 30

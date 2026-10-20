@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "artifact_id_prefix": "skiasharp-2.88.9-nodng-osx-",
+  "source_lock": "third-party/skia-no-dng-build.json",
+  "source_lock_sha256": "9626ae4099262601627333d17868a538620702942b11fb3b3a96893a31788902",
+  "scope": "Native macOS x64 and arm64 builds from the same fixed SkiaSharp 2.88.9 / Skia sources and six non-DNG codec dependencies. Both GN graphs and actual input closures must be verified independently.",
+  "runtime_identifiers": [
+    "osx-x64",
+    "osx-arm64"
+  ],
+  "minimum_macos_version": "15.0",
+  "tools": {
+    "gn_source": {
+      "name": "GN",
+      "repository": "https://gn.googlesource.com/gn",
+      "commit": "9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0",
+      "revision": "9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0",
+      "url": "https://gn.googlesource.com/gn/+archive/9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "50859dccd5c2a175b83e75a69011a4109ecc07e019896b0c3e4202fecca55bd6",
+      "strip_root": false
+    },
+    "ninja": {
+      "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.1/ninja-mac.zip",
+      "bytes": 314009,
+      "sha256": "da7797794153629aca5570ef7c813342d0be214ba84632af886856e8f0063dd9",
+      "version": "1.13.1"
+    }
+  },
+  "official_package": {
+    "package": "SkiaSharp.NativeAssets.macOS",
+    "version": "2.88.9",
+    "url": "https://api.nuget.org/v3-flatcontainer/skiasharp.nativeassets.macos/2.88.9/skiasharp.nativeassets.macos.2.88.9.nupkg",
+    "sha256": "aaf1ae0268d71a318a33338f06f3fd55645538809219beda3557a353494b7bf8",
+    "bytes": 6830677
+  },
+  "macos_patch": {
+    "path": "third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch",
+    "sha256": "30c847ac0ceb88fed5a00a1c568d567f8bc1bb8e371ecdd6725bdd941b445eff"
+  }
+}

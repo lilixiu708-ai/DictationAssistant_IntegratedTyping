@@ -1,0 +1,76 @@
+Subject: Emit a macOS SkiaSharp dylib with explicit Apple framework switches
+Base-Repository: https://github.com/mono/skia
+Base-Commit: 4bed689c9c9eb77a120c6a9d54af6a572c85d1c2
+Scope: the native macOS no-DNG producer only; existing Windows builds are unchanged.
+The generic GN shared-library tool otherwise selects a .so filename, and does not
+set the Apple framework switches required by this direct GN/Ninja build.
+The deployment target follows the producer's min_macos_version for both CPUs.
+
+diff --git a/BUILD.gn b/BUILD.gn
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -3077,6 +3077,9 @@
+ # SkiaSharp + HarfBuzzSharp
+ 
+ skiasharp_build("SkiaSharp") {
++  if (is_mac) {
++    output_extension = "dylib"
++  }
+   public_configs = [ ":skia_public" ]
+   configs += skia_library_configs
+ 
+diff --git a/gn/BUILD.gn b/gn/BUILD.gn
+--- a/gn/BUILD.gn
++++ b/gn/BUILD.gn
+@@ -374,6 +374,7 @@ config("default") {
+       asmflags += [
+         "-isysroot",
+         xcode_sysroot,
++        "-mmacosx-version-min=$min_macos_version",
+       ]
+       cflags += [
+         "-isysroot",
+@@ -383,7 +384,7 @@ config("default") {
+       ldflags += [
+         "-isysroot",
+         xcode_sysroot,
+-        "-Wl,macosx_version_min=$min_macos_version",
++        "-mmacosx-version-min=$min_macos_version",
+       ]
+     }
+ 
+@@ -399,15 +400,15 @@ config("default") {
+     if (current_cpu == "arm64") {
+       asmflags += [
+         "-target",
+-        "arm64-apple-macos11",
++        "arm64-apple-macos$min_macos_version",
+       ]
+       cflags += [
+         "-target",
+-        "arm64-apple-macos11",
++        "arm64-apple-macos$min_macos_version",
+       ]
+       ldflags += [
+         "-target",
+-        "arm64-apple-macos11",
++        "arm64-apple-macos$min_macos_version",
+       ]
+     }
+   }
+ 
+diff --git a/gn/toolchain/BUILD.gn b/gn/toolchain/BUILD.gn
+--- a/gn/toolchain/BUILD.gn
++++ b/gn/toolchain/BUILD.gn
+@@ -255,6 +255,11 @@ template("gcc_like_toolchain") {
+     link = invoker.link
+     lib_switch = "-l"
+     lib_dir_switch = "-L"
++    if (is_mac || is_ios) {
++      framework_switch = "-framework "
++      weak_framework_switch = "-weak_framework "
++      framework_dir_switch = "-F"
++    }
+ 
+     tool("cc") {
+       depfile = "{{output}}.d"

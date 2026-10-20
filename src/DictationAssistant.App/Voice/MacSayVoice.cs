@@ -1,6 +1,7 @@
 using DictationAssistant.App.Abstractions;
 using DictationAssistant.App.Audio;
 using DictationAssistant.App.Models;
+using System.Text.RegularExpressions;
 
 namespace DictationAssistant.App.Voice;
 
@@ -50,6 +51,7 @@ public sealed class MacSayVoice : IVoice
             await ProcessRunner.RunAsync("say", args, text, cancellationToken).ConfigureAwait(false);
             return await File.ReadAllBytesAsync(tempFile, cancellationToken).ConfigureAwait(false);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch
         {
             return null;
@@ -85,6 +87,10 @@ public sealed class MacSayVoiceFactory : IVoiceFactory
 
 public sealed class MacSayVoiceFactoryProvider : IVoiceFactoryProvider
 {
+    private static readonly Regex VoiceLine = new(
+        @"^(?<name>.+?)\s+(?<locale>[A-Za-z]{2,3}(?:[_-][A-Za-z0-9]+)+)\s+#",
+        RegexOptions.CultureInvariant);
+
     public async Task<IReadOnlyList<IVoiceFactory>> GetFactoriesAsync(CancellationToken cancellationToken)
     {
         if (!OperatingSystem.IsMacOS())
@@ -99,32 +105,31 @@ public sealed class MacSayVoiceFactoryProvider : IVoiceFactoryProvider
             string? line;
             while ((line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false)) is not null)
             {
-                var trimmed = line.Trim();
-                if (string.IsNullOrWhiteSpace(trimmed))
-                {
-                    continue;
-                }
-
-                var tokens = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                if (tokens.Length == 0)
-                {
-                    continue;
-                }
-
-                var info = new VoiceInfo
-                {
-                    Id = $"say:{tokens[0]}",
-                    DisplayName = tokens[0],
-                    LocaleOrLanguage = tokens.Length > 1 ? tokens[1] : null,
-                };
-                voices.Add(new MacSayVoiceFactory(info));
+                if (ParseVoiceLine(line) is { } info)
+                    voices.Add(new MacSayVoiceFactory(info));
             }
 
             return voices;
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch
         {
             return [];
         }
+    }
+
+    private static VoiceInfo? ParseVoiceLine(string line)
+    {
+        // Newer macOS voice names can include spaces and parenthesized language
+        // names. The locale column, followed by '#', marks the end of the name.
+        var match = VoiceLine.Match(line.Trim());
+        if (!match.Success) return null;
+        var name = match.Groups["name"].Value.Trim();
+        return new VoiceInfo
+        {
+            Id = $"say:{name}",
+            DisplayName = name,
+            LocaleOrLanguage = match.Groups["locale"].Value,
+        };
     }
 }

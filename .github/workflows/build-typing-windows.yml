@@ -3,7 +3,7 @@ name: Windows desktop app with preinstalled typing plugin
 on:
   push:
     branches: ['main', 'master']
-    tags: ['v*']
+    tags: ['v*', '!v4.0.0-typing.8']
   workflow_dispatch:
 
 permissions:
