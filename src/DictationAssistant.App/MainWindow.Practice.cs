@@ -129,8 +129,8 @@ public partial class MainWindow
                 FilePickerFileTypes.All
             ]
         });
-        token.ThrowIfCancellationRequested();
         using var file = files.FirstOrDefault();
+        token.ThrowIfCancellationRequested();
         if (file is null) return null;
         var fileName = file.Name;
         var importer = _pluginCatalog.GetImportersForFile(fileName).FirstOrDefault()
