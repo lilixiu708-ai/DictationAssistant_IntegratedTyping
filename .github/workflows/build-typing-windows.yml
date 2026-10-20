@@ -14,6 +14,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install .NET 10 SDK on CI runner
         uses: actions/setup-dotnet@v4
         with:
@@ -28,6 +30,23 @@ jobs:
       - name: Validate portable archive and DLL content
         shell: cmd
         run: python scripts\verify_build.py
+      - name: Start and close the production Windows application
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $executable = Join-Path $env:GITHUB_WORKSPACE 'artifacts/Windows-x64/DictationAssistant.App.exe'
+          $process = Start-Process $executable -WorkingDirectory (Split-Path $executable) -PassThru
+          try {
+            Start-Sleep -Seconds 8
+            $process.Refresh()
+            if ($process.HasExited) { throw "The production App exited during renderer startup: $($process.ExitCode)" }
+            if ($process.MainWindowHandle -eq 0) { throw 'The production App did not create a window.' }
+            $null = $process.CloseMainWindow()
+            if (-not $process.WaitForExit(10000)) { throw 'The production window did not close normally.' }
+            if ($process.ExitCode -ne 0) { throw "The production App exited unsuccessfully: $($process.ExitCode)" }
+          } finally {
+            if (-not $process.HasExited) { $process.Kill() }
+          }
       - name: Check whether license review permits distributing artifacts
         id: license-review
         shell: python {0}
@@ -37,10 +56,22 @@ jobs:
           review = json.loads(manifest.read_text(encoding='utf-8')).get('release_review', {})
           blockers = review.get('blocking_issues', [])
           ready = review.get('status') == 'ready' and not blockers
+          # R5 is explicitly authorized for distribution with the known licensing
+          # issue disclosed. This does not mark that issue as resolved, and does
+          # not waive missing notices/source, unknown issues or integrity checks.
+          acknowledged_r5 = (
+              os.environ.get('GITHUB_REF') == 'refs/tags/v4.0.0-typing.5'
+              and review.get('status') == 'blocked'
+              and isinstance(blockers, list) and bool(blockers)
+              and all(isinstance(item, dict) and item.get('id') == 'avalonia-mspl-agpl-compatibility'
+                      for item in blockers)
+          )
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
               output.write(f'ready={str(ready).lower()}\n')
+              output.write(f'distribution_allowed={str(ready or acknowledged_r5).lower()}\n')
           if not ready:
-              print('Binary artifacts are withheld while license/source review remains unresolved.')
+              print('R5 distribution retains the unresolved licensing declaration.' if acknowledged_r5
+                    else 'Binary artifacts are withheld while license/source review remains unresolved.')
               print(json.dumps(blockers, ensure_ascii=False, indent=2))
       - name: Build SDK extension examples
         shell: cmd
@@ -52,11 +83,19 @@ jobs:
           dotnet build sdk\examples\GainEffect\GainEffect.csproj -c Release
           if errorlevel 1 exit /b 1
       - name: Prepare versioned release assets
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v4.0.0-typing.5'
         shell: cmd
         run: python scripts\prepare_release.py "%GITHUB_REF_NAME%"
+      - name: Prepare R5 application and independent plugin assets with disclosures
+        if: github.ref == 'refs/tags/v4.0.0-typing.5'
+        shell: cmd
+        run: |
+          python scripts\prepare_release.py "%GITHUB_REF_NAME%" --acknowledge-license-review
+          if errorlevel 1 exit /b 1
+          python scripts\prepare_plugin_release.py --app-release-tag "%GITHUB_REF_NAME%"
+          if errorlevel 1 exit /b 1
       - name: Upload portable Windows archive
-        if: steps.license-review.outputs.ready == 'true'
+        if: steps.license-review.outputs.distribution_allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: DictationAssistant-Integrated-Typing-Windows-x64
@@ -65,11 +104,20 @@ jobs:
           retention-days: 30
           compression-level: 0
       - name: Upload release assets
-        if: startsWith(github.ref, 'refs/tags/v') && steps.license-review.outputs.ready == 'true'
+        if: startsWith(github.ref, 'refs/tags/v') && steps.license-review.outputs.distribution_allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: release-assets
           path: artifacts/release/${{ github.ref_name }}/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload independent R5 plugin release assets
+        if: github.ref == 'refs/tags/v4.0.0-typing.5' && steps.license-review.outputs.distribution_allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-release-assets
+          path: artifacts/plugin-releases/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
@@ -86,7 +134,13 @@ jobs:
         with:
           name: release-assets
           path: release
+      - uses: actions/download-artifact@v4
+        if: github.ref == 'refs/tags/v4.0.0-typing.5'
+        with:
+          name: plugin-release-assets
+          path: plugin-release
       - name: Publish validated tagged release
+        if: github.ref != 'refs/tags/v4.0.0-typing.5'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -106,3 +160,90 @@ jobs:
           if [[ "$RELEASE_TAG" == *-* ]]; then prerelease=true; fi
           gh release edit "$RELEASE_TAG" --draft=false --prerelease="$prerelease"
           gh release view "$RELEASE_TAG" --json url --jq .url
+      - name: Publish R5 application and independent plugin prereleases
+        if: github.ref == 'refs/tags/v4.0.0-typing.5'
+        shell: python {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          import hashlib, json, os, pathlib, re, subprocess
+
+          repository = os.environ['GH_REPO']
+          commit = os.environ['GITHUB_SHA']
+          app_tag = os.environ['RELEASE_TAG']
+          if app_tag != 'v4.0.0-typing.5' or not re.fullmatch(r'[0-9a-f]{40}', commit):
+              raise SystemExit('Unexpected release tag or build commit')
+
+          def gh(*arguments):
+              return subprocess.check_output(['gh', *arguments], text=True)
+
+          plans = [
+              (app_tag, 'DictationAssistant Typing R5', pathlib.Path('release')),
+              ('plugin-synchronous-typing-v1.1.0', 'Synchronous Typing plugin 1.1.0',
+               pathlib.Path('plugin-release/synchronous-typing')),
+              ('plugin-docx-vocabulary-v1.0.1', 'Word vocabulary importer plugin 1.0.1',
+               pathlib.Path('plugin-release/docx-vocabulary')),
+          ]
+          pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+          existing = {item['tag_name'] for page in pages for item in page}
+          prepared = []
+          for tag, title, folder in plans:
+              # Never repurpose an older draft or overwrite a published release.
+              if tag in existing:
+                  raise SystemExit(f'Refusing to replace an existing release/draft: {tag}')
+              assets = {path.name: path for path in folder.iterdir() if path.is_file()}
+              required = {'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
+              if not required <= assets.keys() or len(assets) != 5:
+                  raise SystemExit(f'Incomplete release asset set: {tag}')
+              checked = set()
+              for line in assets['SHA256SUMS'].read_text(encoding='ascii').splitlines():
+                  expected, name = line.split('  ', 1)
+                  if not re.fullmatch(r'[0-9a-f]{64}', expected) or name not in assets:
+                      raise SystemExit(f'Invalid checksum entry: {tag}')
+                  if name in checked:
+                      raise SystemExit(f'Duplicate checksum entry: {tag}/{name}')
+                  with assets[name].open('rb') as stream:
+                      actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+                  if actual != expected:
+                      raise SystemExit(f'Asset checksum mismatch: {tag}/{name}')
+                  checked.add(name)
+              if checked != set(assets) - {'SHA256SUMS'}:
+                  raise SystemExit(f'Asset checksum coverage mismatch: {tag}')
+              refs = subprocess.check_output(['git', 'ls-remote', 'origin',
+                                              f'refs/tags/{tag}', f'refs/tags/{tag}^{{}}'], text=True)
+              values = dict(line.split()[::-1] for line in refs.splitlines())
+              target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
+              if target is not None and target != commit:
+                  raise SystemExit(f'Refusing to move an existing tag: {tag}')
+              if tag == app_tag and target != commit:
+                  raise SystemExit('The application tag does not match the built commit')
+              prepared.append((tag, title, folder, assets))
+
+          # All three asset sets and refs are checked before creating any release.
+          for tag, title, folder, assets in prepared:
+              command = ['release', 'create', tag, '--draft', '--prerelease', '--latest=false',
+                         '--title', title, '--notes-file', str(assets['RELEASE_NOTES.md'])]
+              command += ['--verify-tag'] if tag == app_tag else ['--target', commit]
+              gh(*command)
+              gh('release', 'upload', tag, *(str(path) for path in assets.values()))
+              # Tag endpoints may omit drafts; query the authenticated list by tag.
+              releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+              matches = [item for page in releases for item in page if item['tag_name'] == tag]
+              if len(matches) != 1 or not matches[0]['draft']:
+                  raise SystemExit(f'Expected exactly one new draft: {tag}')
+              release = matches[0]
+              expected_sizes = {name: path.stat().st_size for name, path in assets.items()}
+              if {item['name']: item['size'] for item in release['assets']} != expected_sizes:
+                  raise SystemExit(f'Uploaded draft assets differ: {tag}')
+              for item in release['assets']:
+                  if item.get('digest'):
+                      with assets[item['name']].open('rb') as stream:
+                          expected_digest = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+                      if item['digest'] != expected_digest:
+                          raise SystemExit(f'Uploaded asset digest differs: {tag}/{item["name"]}')
+
+          for tag, _, _, _ in prepared:
+              gh('release', 'edit', tag, '--draft=false', '--prerelease', '--latest=false')
+              print(gh('release', 'view', tag, '--json', 'url', '--jq', '.url').strip())

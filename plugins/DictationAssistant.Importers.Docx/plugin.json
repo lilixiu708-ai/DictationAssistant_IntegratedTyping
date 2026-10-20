@@ -2,7 +2,7 @@
   "id": "docx-vocabulary",
   "name": "Word 词表导入",
   "description": "从 Word .docx 表格和正文提取词表，支持选择区域与列。",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "apiVersion": 1,
   "extensions": [".docx"],
   "entryAssembly": "DictationAssistant.Importers.Docx.dll",

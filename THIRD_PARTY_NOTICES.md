@@ -2,7 +2,7 @@
 
 本文件是许可索引。第三方组件保留各自的版权和许可；本项目的 AGPL-3.0-or-later 不会把它们重新许可。原始 LICENSE、NOTICE、附加条款及免责声明保存在 `LICENSES/third-party/`，原文件字节与 SHA-256 记录在 [组件目录](third-party/components.json)。摘要不能代替原文，也不表示自动完成了法律兼容性认证。
 
-当前 App 为源码预览，尚未公开发布。下表索引拟用的 Windows 依赖、原 NuGet 包及历史审计材料；原 NuGet DLL 与已构建验证通过的无 DNG 替代按实际哈希区分。正式包的实际依赖与所带原文以 `THIRD_PARTY_COMPONENTS.json` 为准，固定源码和内联源码以匹配的 `THIRD_PARTY_SOURCES.json` 与源码交付内容为准；目录列出不等于已经发行。
+当前正在准备 R5 本体及插件独立预发布；仍未解决的 Avalonia/MS-PL 组合授权事项将在发行说明中披露，原始许可和未解决记录继续保留。下表索引 Windows 依赖、原 NuGet 包及历史审计材料；原 NuGet DLL 与已构建验证通过的无 DNG 替代按实际哈希区分。正式包的实际依赖与所带原文以 `THIRD_PARTY_COMPONENTS.json` 为准，固定源码和内联源码以匹配的 `THIRD_PARTY_SOURCES.json` 与源码交付内容为准；目录列出不等于已经发行。
 
 ## 应用依赖
 
@@ -19,6 +19,7 @@
 | MicroCom.Runtime 0.11.0 | 2021 Nikita Tsukanov | MIT；[LICENSE.txt](LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt) | [7e773759cfc1](https://github.com/kekekeks/MicroCom/tree/7e773759cfc1012a5d080d4129c4718a662884b0) |
 | NCalc.Core / NCalcSync 5.12.0 | 2011 Sebastien Ros | MIT；[LICENSE.txt](LICENSES/third-party/ncalc-5.12.0/LICENSE.txt) | [bd0afe72c1b5](https://github.com/ncalc/ncalc/tree/bd0afe72c1b5a5679255e91f902f35021acbb48a) |
 | Parlot 1.5.7 | 2020 Sébastien Ros | BSD-3-Clause；[LICENSE.txt](LICENSES/third-party/parlot-1.5.7/LICENSE.txt) | [c268ebf6b794](https://github.com/sebastienros/parlot/tree/c268ebf6b794de6bb11d64661fd080e8fc379b9b) |
+| System.Security.Cryptography.ProtectedData 10.0.0 | Microsoft；.NET Foundation and Contributors | MIT；Windows DPAPI 托管绑定；[LICENSE.TXT](LICENSES/third-party/protecteddata-10.0.0/LICENSE.TXT)、[THIRD-PARTY-NOTICES.TXT](LICENSES/third-party/protecteddata-10.0.0/THIRD-PARTY-NOTICES.TXT) | [包记录的 VMR b0f34d51fccc](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa)；对应 [runtime 60629d14374c](https://github.com/dotnet/runtime/tree/60629d14374c56f1cb51819049ad1fa529307f8d)，映射依据见组件目录 |
 | Tmds.DBus.Protocol 0.21.2 | 2006 Alp Toker；2010 Other Contributors；2016 Tom Deseyn | MIT；[LICENSE.txt](LICENSES/third-party/tmds-dbus-0.21.2/LICENSE.txt) | [f0b2c29f57bd](https://github.com/tmds/Tmds.DBus/tree/f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7) |
 | HexaGen.Runtime 1.1.24 | 2023 Juna Meinhold | MIT；[LICENSE.txt](LICENSES/third-party/hexagen-runtime-1.1.24/LICENSE.txt) | [e8cde045ae0b](https://github.com/JunaMeinhold/HexaGen/tree/e8cde045ae0b15284cddd8f79b491af4a8afc420) |
 | Hexa.NET.SDL2 1.2.17（托管绑定） | 2024 Juna Meinhold | MIT；SDL2 本体另列；[LICENSE.txt](LICENSES/third-party/hexa-net-sdl2-1.2.17/LICENSE.txt) | [15fc3406e473](https://github.com/HexaEngine/Hexa.NET.SDL/tree/15fc3406e473759a2bcddd9c3ea24b8006916fbd) |
@@ -47,7 +48,7 @@ Microsoft.Extensions 的 NuGet 包声明来自 `dotnet/dotnet@44525024595742ebe0
 
 > This product includes DNG technology under license by Adobe Systems Incorporated.
 
-no-RAW/no-DNG 替代已通过 [Windows CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 的实际编译、1,124 输入与实现排除检查、941 导出/88.1 版本核对、上游 PNG 和 Windows App 窗口开闭。实际 DLL SHA-256 为 `e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e`，完整记录及两 ZIP 哈希见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)。旧 DLL 归属和历史证据仍保留；独立 Skia 资产不含 Avalonia，源码闭包复核后拟单独发布，当前未公开。App 仍因 Avalonia/MS-PL 组合授权路径未解决而暂停发布。
+no-RAW/no-DNG 替代已通过 [Windows CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 的实际编译、1,124 输入与实现排除检查、941 导出/88.1 版本核对、上游 PNG 和 Windows App 窗口开闭。实际 DLL SHA-256 为 `e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e`，完整记录及两 ZIP 哈希见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)。旧 DLL 归属和历史证据仍保留；不含 Avalonia 的独立 Skia 二进制与匹配源码已公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。App 的 Avalonia/MS-PL 组合授权路径仍未解决，R5 按本次发布决定披露该事实，不声明已获得额外授权或完成兼容性证明。
 
 libgifcodec 的原始多选许可和各版权声明完整保留。本次分发对其中可选的 `SkGifImageReader` 部分选择 GPL-2.0-or-later 的第 3 版，其他 BSD 部分继续适用其原许可；GPLv3 与 AGPLv3 组合的规则见 GPLv3 第 13 节。对应固定修订的 9 个上游文件以原字节保存在 [内联源码目录](third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/)，附有 Git blob / SHA-256 校验及单独的 downstream notice。
 

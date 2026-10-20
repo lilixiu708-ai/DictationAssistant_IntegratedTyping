@@ -1,6 +1,6 @@
 # 文档索引
 
-当前为 **`v4.0.0-typing.4` 源码预览，公开发布暂停**。保留 Avalonia 11，不含 Adobe DNG SDK 的原生依赖仍在重建；构建与许可、对应源码交付核对未完成，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。
+当前正在准备 **`v4.0.0-typing.5`（R5）预发布**，同步打字 1.1.0 与 Word 导入 1.0.1 另备独立更新包。无 DNG 原生依赖已独立发布；Avalonia 11.3.12 的 MS-PL/AGPL 组合授权路径仍未解决，本次发行将明确披露并保留原始许可和对应源码材料，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。
 
 使用与开发从[项目首页](../README.md)开始。桌面便携包优先通过 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases) 分发，无需仅为本应用下载启用 GitHub Packages。历史 `typing.1`–`typing.3` 已暂时撤回为草稿；插件版本与接口版本独立管理。
 

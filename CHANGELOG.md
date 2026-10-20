@@ -2,9 +2,19 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
+## [4.0.0-typing.5] - 2026-10-20
+
+**R5 预发布版本。** 本体与插件分别提供二进制、对应源码及校验文件。Avalonia 维持 11.3.12；MS-PL/AGPL 组合授权路径仍未解决，本次按发布决定明确披露，保留原始许可与核查记录，不声明已完成授权修复。独立无 DNG 原生资产已公开为 `native-skia-2.88.9-no-dng.1`。
+
+- 同步打字插件更新为 **1.1.0**：提前录入成对译文并本地保存，支持打字阶段显示或隐藏翻译提示；原词播报、正确答案及评分规则保持不变。
+- 可选 DeepL Free / Pro 在练习前补全缺失译文，支持英译中、中译英，结果校对后保存；独立 API 设置窗口支持 Windows 当前账户与本机绑定的加密保存、仅本次使用及删除绑定，练习过程中不调用翻译服务。
+- 删除成绩摘要中的“已在整轮结束后统一评分”提示；新增翻译界面与真实 DeepL 调用的验证范围以本次实际记录为准，尚未完成 Windows 实机核对。
+- Word 导入插件以 **1.0.1** 准备独立交付，导入功能未变；同步打字插件以 **1.1.0** 独立更新。插件接口仍为 API 1，版本不随宿主版本统一递增。
+- 已通过 Linux 构建、15 项既有逻辑检查、翻译及 API 设置窗口交互和插件源码包独立构建；Windows DPAPI 保存、跨机器/账户拒绝读取及真实 DeepL 鉴权翻译仍待实机验证。
+
 ## [4.0.0-typing.4] - 2026-10-20
 
-**源码预览，App 尚未公开发布。** Avalonia 保持 11.3.12，不升级；no-RAW/no-DNG 原生替代已通过真实 Windows CI 和实物核验，App 因 Avalonia/MS-PL 组合授权路径未解决继续暂停公开发行。独立原生资产待源码闭包复核后另行发布，当前未公开。
+**历史源码预览，App 当时未公开发布。** Avalonia 保持 11.3.12；no-RAW/no-DNG 原生替代已通过真实 Windows CI 和实物核验，App 当时因 Avalonia/MS-PL 组合授权路径未解决暂停公开发行。此处保留该版本的审核状态，后续 R5 发布决定不追溯改变历史结论。
 
 - 恢复上游 `Copyright (C) 2013-2026 alampy.com` 和完整 AGPL 简短声明，保留原许可证全文，补齐修改记录、AI 辅助开发说明及源码来源。
 - “关于”界面显示原作者、完整 AGPL、第三方许可摘要和与程序提交对应的源码地址。
@@ -92,3 +102,4 @@
 [4.0.0-typing.2]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.2
 [4.0.0-typing.3]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.3
 [4.0.0-typing.4]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.4
+[4.0.0-typing.5]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5

@@ -5,9 +5,9 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/DictationAssistant.Plugin.Abstractions/DictationAssistant.Plugin.Abstractions.csproj">
@@ -16,6 +16,7 @@
     </ProjectReference>
     <!-- The host provides desktop startup and native graphics libraries. -->
     <PackageReference Include="Avalonia" Version="11.3.12" ExcludeAssets="runtime" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0" />
     <None Update="plugin.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

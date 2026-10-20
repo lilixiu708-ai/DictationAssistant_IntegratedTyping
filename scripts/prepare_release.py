@@ -17,8 +17,11 @@ from collect_third_party_sources import collect
 root = pathlib.Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('tag', help='Release tag, for example v4.0.0-typing.1')
-parser.add_argument('--draft', action='store_true',
-                    help='Generate review assets under release-drafts while retaining unresolved source/license issues; never use these as public release assets')
+review_mode = parser.add_mutually_exclusive_group()
+review_mode.add_argument('--draft', action='store_true',
+                        help='Generate review assets under release-drafts while retaining unresolved source/license issues; never use these as public release assets')
+review_mode.add_argument('--acknowledge-license-review', action='store_true',
+                        help='Publish with a disclosure of the known Avalonia/MS-PL combination review; does not waive source, notice, binary or checksum verification')
 args = parser.parse_args()
 
 project = root / 'src/DictationAssistant.App/DictationAssistant.App.csproj'
@@ -48,9 +51,21 @@ with zipfile.ZipFile(archive) as zf:
 
 review = json.loads(source_manifest_bytes).get('release_review', {})
 blocking = review.get('blocking_issues')
-if blocking is None:
+if not isinstance(blocking, list):
     raise SystemExit('The binary source manifest has no release review; rebuild with the current license preparation script')
-if not args.draft and (blocking or review.get('status') != 'ready'):
+unresolved = bool(blocking) or review.get('status') != 'ready'
+acknowledged = False
+if not args.draft and unresolved and args.acknowledge_license_review:
+    # An explicit publication decision records this known unresolved review; it
+    # must not silently approve a new issue, absent source or changed native DLL.
+    allowed = {'avalonia-mspl-agpl-compatibility'}
+    if review.get('status') != 'blocked' or not blocking or any(
+            not isinstance(item, dict) or item.get('id') not in allowed
+            or not isinstance(item.get('reason'), str) or not item['reason'].strip()
+            for item in blocking):
+        raise SystemExit('Only the explicitly acknowledged Avalonia/MS-PL review can be disclosed for publication; other unresolved license/source issues remain blocking')
+    acknowledged = True
+if not args.draft and unresolved and not acknowledged:
     details = '\n'.join('- ' + (item.get('reason', item.get('id', 'Unresolved issue')) if isinstance(item, dict) else str(item))
                         for item in blocking)
     raise SystemExit('Public release preparation is blocked by unresolved license/source review:\n' + (details or '- Release review is not marked ready'))
@@ -95,8 +110,61 @@ with zipfile.ZipFile(source, 'a', compression=zipfile.ZIP_DEFLATED) as zf:
                                                           ensure_ascii=False, indent=2) + '\n')
 source_manifest.unlink()
 
+assets = [portable, source]
+if acknowledged:
+    disclosure = {
+        'schema_version': 1,
+        'tag': args.tag,
+        'application_version': version,
+        'source_commit': head,
+        'publication_decision': 'explicitly_requested_publication_with_declared_unresolved_license_review',
+        'license_review_resolved': False,
+        'acknowledged_issue_ids': sorted({item['id'] for item in blocking}),
+        'release_review': review,
+        'notice': 'Publication does not establish legal clearance or resolve the recorded combination authorization issue. Original licenses, notices, fixed source archives and integrity checks remain applicable.',
+    }
+    review_asset = output / 'RELEASE_REVIEW.json'
+    review_bytes = (json.dumps(disclosure, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+    review_asset.write_bytes(review_bytes)
+    changes = []
+    in_version = False
+    for line in (root / 'CHANGELOG.md').read_text(encoding='utf-8').splitlines():
+        if line.startswith('## '):
+            if in_version:
+                break
+            in_version = line.startswith(f'## [{version}]')
+            continue
+        if in_version:
+            changes.append(line)
+    details = '\n'.join(f'- `{item["id"]}`：{item["reason"]}' for item in blocking)
+    notes = (
+        f'# DictationAssistant Typing {args.tag}\n\n'
+        f'对应提交：`{head}`。Windows x64 便携包自带 .NET；插件也提供独立版本。\n\n'
+        '## 更新\n\n' + ('\n'.join(changes).strip() or '详见同一提交的 CHANGELOG.md。') + '\n\n'
+        '## 许可与来源声明\n\n'
+        '本次按维护者明确要求，在保留原始许可证、归属声明、匹配源码及完整性检查的前提下发布。'
+        '以下授权组合核查事项仍未解决；发布不等于已获得新的授权，也不构成法律合规结论。\n\n'
+        + details + '\n\n'
+        '具体核查状态保留在 `RELEASE_REVIEW.json` 和包内 `THIRD_PARTY_SOURCES.json`。'
+        '第三方组件保留自身许可，第一方 AGPL 声明不替代其授权条件。\n\n'
+        '请下载对应源码包及 `SHA256SUMS`；GitHub 自动生成的源码 ZIP 不包含本次额外收集的第三方源码归档。\n'
+    )
+    notes_asset = output / 'RELEASE_NOTES.md'
+    notes_bytes = notes.encode('utf-8')
+    notes_asset.write_bytes(notes_bytes)
+    # Include the same disclosure with the actual artifacts, while retaining
+    # the original unresolved review in the build manifests.
+    with zipfile.ZipFile(portable, 'a', compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr('RELEASE_REVIEW.json', review_bytes)
+        zf.writestr('RELEASE_NOTES.md', notes_bytes)
+    with zipfile.ZipFile(source, 'a', compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr(prefix + 'RELEASE_REVIEW.json', review_bytes)
+        zf.writestr(prefix + 'RELEASE_NOTES.md', notes_bytes)
+    subprocess.run([sys.executable, str(root / 'scripts/verify_build.py'), '--archive', str(portable)], check=True)
+    assets.extend((review_asset, notes_asset))
+
 checksums = []
-for asset in (portable, source):
+for asset in assets:
     digest = hashlib.sha256()
     with asset.open('rb') as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b''):

@@ -1,8 +1,8 @@
 {
   "id": "synchronous-typing",
   "name": "同步打字听写",
-  "description": "按自动播报次数完整读完后，开启限时打字；整轮结束统一展示成绩并可导出 CSV。",
-  "version": "1.0.1",
+  "description": "完整播报后限时打字，支持预录翻译、可隐藏提示及 DeepL 提前翻译，结束后查看成绩并导出 CSV。",
+  "version": "1.1.0",
   "apiVersion": 1,
   "minimumHostFeatureLevel": 3,
   "kind": "practice",

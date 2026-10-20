@@ -47,6 +47,21 @@ internal sealed class TypingPracticeWindow : Window
         Content = "评分时忽略英文大小写", IsChecked = true, FontSize = 18,
         HorizontalAlignment = HorizontalAlignment.Center
     };
+    private readonly CheckBox _showTranslation = new()
+    {
+        Content = "显示翻译提示", IsChecked = false, FontSize = 18,
+        HorizontalAlignment = HorizontalAlignment.Center
+    };
+    private readonly TextBlock _translationHint = new()
+    {
+        FontSize = 22, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center,
+        HorizontalAlignment = HorizontalAlignment.Center, IsVisible = false
+    };
+    private readonly Button _translationsButton = new()
+    {
+        Content = "录入／提前翻译", MinWidth = 140, IsEnabled = false,
+        HorizontalAlignment = HorizontalAlignment.Center
+    };
     private readonly Button _startButton = new()
     {
         Content = "开始练习", MinWidth = 112, FontSize = 18,
@@ -81,6 +96,8 @@ internal sealed class TypingPracticeWindow : Window
     private TaskCompletionSource<TypedAnswer>? _pendingAnswer;
     private Task? _readTask;
     private Task? _sessionTask;
+    private Task? _translationTask;
+    private Dictionary<string, string> _translations = new(StringComparer.Ordinal);
     private IReadOnlyList<string> _words = Array.Empty<string>();
     private int _expectedWordCount;
     private Phase _phase = Phase.Setup;
@@ -142,6 +159,8 @@ internal sealed class TypingPracticeWindow : Window
         };
         Grid.SetRow(card, 1);
         root.Children.Add(card);
+        content.Children.Add(_showTranslation);
+        content.Children.Add(_translationHint);
         content.Children.Add(_countdown);
         content.Children.Add(_answer);
         content.Children.Add(_setupPanel);
@@ -186,6 +205,7 @@ internal sealed class TypingPracticeWindow : Window
         });
         _setupPanel.Children.Add(secondsRow);
         _setupPanel.Children.Add(_ignoreCase);
+        _setupPanel.Children.Add(_translationsButton);
         _setupPanel.Children.Add(_startButton);
         _phaseDetail.Text = "设定作答时限后开始。Enter 可提前提交；到时自动记录当前输入。";
         _progress.Text = "正在读取词表…";
@@ -193,6 +213,18 @@ internal sealed class TypingPracticeWindow : Window
         _closeButton.Click += async (_, _) => await CancelAndCloseAsync();
         _startButton.Click += (_, _) => StartPractice();
         _exportButton.Click += async (_, _) => await ExportCsvAsync();
+        _translationsButton.Click += async (_, _) =>
+        {
+            if (_translationTask is { IsCompleted: false }) return;
+            _translationTask = EditTranslationsAsync();
+            await _translationTask;
+        };
+        _showTranslation.IsCheckedChanged += (_, _) =>
+        {
+            RefreshTranslationHint();
+            if (_sessionTask is not null) SavePreferences();
+            if (_phase == Phase.Typing) _answer.Focus();
+        };
         // Capture Enter/KeyUp even when the textbox itself handles the key.
         AddHandler(InputElement.KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel,
             handledEventsToo: true);
@@ -258,6 +290,17 @@ internal sealed class TypingPracticeWindow : Window
             _sessionProgress.Maximum = expected;
             _progress.Text = $"已读取 {actual} / {expected} 条";
             _wordListSummary.Text = $"词表：{actual} 条，每词播报 {_host.TimesPerWord} 次，重复间隔：{_host.IntervalDescription} 秒。";
+            try { _translations = await PracticeTranslations.LoadAsync(ct); }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+            catch (Exception)
+            {
+                _error.Text = "本地翻译读取失败，可继续无提示练习；请检查插件数据目录中的 translations.json。";
+                // Do not let editing overwrite an unreadable saved file with an empty map.
+                _startButton.IsEnabled = true;
+                return;
+            }
+            if (_closing) return;
+            _translationsButton.IsEnabled = true;
             _startButton.IsEnabled = true;
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
@@ -272,6 +315,43 @@ internal sealed class TypingPracticeWindow : Window
             _closeButton.Content = "关闭";
             await SaveCrashLogAsync("word-list-read", actual, expected, failedIndex, ex);
         }
+    }
+
+    private async Task EditTranslationsAsync()
+    {
+        if (_closing || _phase != Phase.Setup || _words.Count == 0) return;
+        _translationsButton.IsEnabled = _startButton.IsEnabled = false;
+        try
+        {
+            var editor = new TranslationEditorWindow(_words, _translations, _cancellation.Token);
+            var saved = await editor.ShowDialog<Dictionary<string, string>?>(this);
+            if (!_closing && saved is not null)
+            {
+                _translations = saved;
+                var count = _words.Count(word => saved.ContainsKey(word));
+                _wordListSummary.Text = $"词表：{_words.Count} 条，每词播报 {_host.TimesPerWord} 次，重复间隔：{_host.IntervalDescription} 秒。\n已录入翻译：{count} / {_words.Count} 条。";
+                _error.Text = string.Empty;
+            }
+        }
+        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            if (!_closing) _error.Text = $"打开翻译编辑器失败：{ex.Message}";
+        }
+        finally
+        {
+            if (!_closing && _phase == Phase.Setup)
+                _translationsButton.IsEnabled = _startButton.IsEnabled = true;
+        }
+    }
+
+    private void RefreshTranslationHint()
+    {
+        var show = _phase == Phase.Typing && _showTranslation.IsChecked == true
+            && _index < _words.Count;
+        _translationHint.Text = show && _translations.TryGetValue(_words[_index], out var translation)
+            ? translation : string.Empty;
+        _translationHint.IsVisible = !string.IsNullOrEmpty(_translationHint.Text);
     }
 
     private async Task SaveCrashLogAsync(string stage, int actual, int expected, int? failedIndex, Exception exception)
@@ -290,7 +370,8 @@ internal sealed class TypingPracticeWindow : Window
 
     private void StartPractice()
     {
-        if (_closing || _sessionTask is not null || _phase != Phase.Setup || _words.Count == 0 ||
+        if (_closing || _sessionTask is not null || _translationTask is { IsCompleted: false }
+            || _phase != Phase.Setup || _words.Count == 0 ||
             _readTask is not { IsCompletedSuccessfully: true }) return;
         if (!int.TryParse(_seconds.Text?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var secs)
             || secs is < 1 or > 300)
@@ -344,6 +425,7 @@ internal sealed class TypingPracticeWindow : Window
         catch (Exception ex)
         {
             _phase = Phase.Error;
+            RefreshTranslationHint();
             _timer.Stop();
             _answer.IsVisible = false;
             _phaseTitle.Text = "播放或练习失败";
@@ -358,6 +440,7 @@ internal sealed class TypingPracticeWindow : Window
     private void ShowPlaying(int repeat, int maxRepeat, bool waiting)
     {
         _phase = Phase.Playing;
+        RefreshTranslationHint();
         _progress.Text = $"第 {_index + 1} / {_words.Count} 词";
         _phaseTitle.Text = "播放中";
         _phaseDetail.Text = waiting
@@ -371,6 +454,7 @@ internal sealed class TypingPracticeWindow : Window
     private async Task<TypedAnswer> AwaitTypingAsync(CancellationToken ct)
     {
         _phase = Phase.Typing;
+        RefreshTranslationHint();
         _phaseTitle.Text = "请打字";
         _phaseDetail.Text = "完整播放已结束。输入后按 Enter 提交，或等待倒计时结束。";
         _answer.Text = string.Empty;
@@ -433,6 +517,7 @@ internal sealed class TypingPracticeWindow : Window
         if (pending.TrySetResult(new TypedAnswer(_answer.Text ?? string.Empty, timedOut, elapsed)))
         {
             _phase = Phase.Committing;
+            RefreshTranslationHint();
             _timer.Stop();
             _answer.IsVisible = false;
             _phaseTitle.Text = "已记录";
@@ -460,7 +545,8 @@ internal sealed class TypingPracticeWindow : Window
         var count = _records.Count;
         var wrong = count - correct;
         _phaseTitle.Text = $"正确率 {TypingEvaluation.Accuracy(correct, count):F1}%";
-        _phaseDetail.Text = $"完成 {count} 词 · 正确 {correct} · 错误或漏答 {wrong}。已在整轮结束后统一评分。";
+        _phaseDetail.Text = $"完成 {count} 词 · 正确 {correct} · 错误或漏答 {wrong}。";
+        RefreshTranslationHint();
         _progress.Text = $"已完成 · {count} / {_words.Count}";
         _countdown.Text = string.Empty;
         _answer.IsVisible = false;
@@ -510,6 +596,11 @@ internal sealed class TypingPracticeWindow : Window
         _closing = true;
         _cancellation.Cancel();
         _pendingAnswer?.TrySetCanceled();
+        if (_translationTask is not null)
+        {
+            try { await _translationTask; }
+            catch (OperationCanceledException) { }
+        }
         if (_readTask is not null)
         {
             try { await _readTask; }
@@ -531,7 +622,8 @@ internal sealed class TypingPracticeWindow : Window
     private async void OnClosing(object? sender, WindowClosingEventArgs e)
     {
         if (_allowClose || (_readTask is null || _readTask.IsCompleted) &&
-            (_sessionTask is null || _sessionTask.IsCompleted)) return;
+            (_sessionTask is null || _sessionTask.IsCompleted) &&
+            (_translationTask is null || _translationTask.IsCompleted)) return;
         e.Cancel = true;
         await CancelAndCloseAsync();
     }
@@ -549,6 +641,7 @@ internal sealed class TypingPracticeWindow : Window
             if (saved is null) return;
             _seconds.Text = Math.Clamp(saved.TypingSeconds, 1, 300).ToString(CultureInfo.InvariantCulture);
             _ignoreCase.IsChecked = saved.IgnoreCase;
+            _showTranslation.IsChecked = saved.ShowTranslation;
         }
         catch (Exception) { /* Settings failure must never prevent launching an exercise. */ }
     }
@@ -560,7 +653,8 @@ internal sealed class TypingPracticeWindow : Window
             Directory.CreateDirectory(Path.GetDirectoryName(PreferencesPath)!);
             File.WriteAllText(PreferencesPath, JsonSerializer.Serialize(new PracticePreferences
             {
-                TypingSeconds = _typingSeconds, IgnoreCase = _ignoreCaseSnapshot
+                TypingSeconds = _typingSeconds, IgnoreCase = _ignoreCaseSnapshot,
+                ShowTranslation = _showTranslation.IsChecked == true
             }));
         }
         catch (Exception) { /* The session still works if user config is read-only. */ }
@@ -571,6 +665,7 @@ internal sealed class TypingPracticeWindow : Window
         public PracticePreferences() { }
         public int TypingSeconds { get; set; } = 10;
         public bool IgnoreCase { get; set; } = true;
+        public bool ShowTranslation { get; set; }
     }
 
     private sealed record TypedAnswer(string Value, bool TimedOut, TimeSpan Elapsed);
