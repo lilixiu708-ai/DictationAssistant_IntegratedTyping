@@ -28,7 +28,7 @@ KNOWN_REVIEW_ISSUES = {'avalonia-mspl-agpl-compatibility'}
 PROJECT_NOTICES = ('LICENSE.md', 'NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_NOTICES.md')
 HOST_RELEASE_TAG = 'v4.0.0-typing.6'
 HOST_SOURCE_COMMIT = '0f008c72983b9d567612855498800886201572e6'
-STANDALONE_PLUGIN_TAG = 'plugin-synchronous-typing-v1.3.0'
+STANDALONE_PLUGIN_TAG = 'plugin-synchronous-typing-v1.3.1'
 HOST_SUMS_SHA256 = '625f9eb7fd1d7c67b46db4a704d792c3d55d27130431efefb633fb050aa4800d'
 HOST_ASSET_SHA256 = {
     'DictationAssistant-4.0.0-typing.6-source.zip': '60754fd733e2a02d07b95f9220637d1c7165f2ba299cabca61a6e47fc1cc5ddc',
@@ -36,6 +36,13 @@ HOST_ASSET_SHA256 = {
     'RELEASE_NOTES.md': '9ec80bf3a1e1e4ede5813905c1e03b41bb19111971132d25181a02a0e2bc13da',
     'RELEASE_REVIEW.json': '26873609737aa9915e322cdcc315fd07cd35bc2f286fa981dc2a17d0e5dc4aa9',
 }
+HOST_DOCUMENTATION_PATH_ADAPTATIONS = [{
+    'original_archive_path': './??????????.md',
+    'staged_path': 'R6_PLUGIN_GUIDE.md',
+    'bytes': 14711,
+    'archive_flag_bits': 8,
+    'sha256': '1d83b102d4ba612ebd7e2c21837f259b137cd421509e4ccf537aebfc474b7e28',
+}]
 
 
 def git(*arguments):
@@ -61,6 +68,19 @@ def check_zip(path):
         names = archive.namelist()
         if len(names) != len(set(names)) or archive.testzip() is not None:
             raise ValueError(f'Duplicate or corrupt ZIP members: {path.name}')
+
+
+def verify_git_archive_names(path, head, source_paths):
+    # Git writes ZIP names directly from UTF-8 tree paths. Detect any platform
+    # encoding damage before publishing source; never guess a lost filename.
+    raw = subprocess.check_output(['git', 'ls-tree', '-rz', '--name-only', head, '--', *source_paths], cwd=ROOT)
+    expected = {name.decode('utf-8') for name in raw.split(b'\0') if name}
+    with zipfile.ZipFile(path) as archive:
+        actual = {item.filename for item in archive.infolist() if not item.is_dir()}
+        if actual != expected:
+            raise ValueError('The source ZIP filenames do not exactly match the UTF-8 Git tree paths')
+        if any(not item.filename.isascii() and not item.flag_bits & 0x800 for item in archive.infolist()):
+            raise ValueError('A non-ASCII source ZIP filename is missing the UTF-8 ZIP flag')
 
 
 def host_cache():
@@ -142,12 +162,25 @@ def prepare_host(tag):
     if destination.exists():
         shutil.rmtree(destination)
     destination.mkdir(parents=True)
+    adaptations = []
     with zipfile.ZipFile(archive) as package:
         seen = set()
         for member in package.infolist():
             path = pathlib.PurePosixPath(member.filename)
             if path.is_absolute() or '..' in path.parts or '\\' in member.filename:
                 raise ValueError('Unsafe member path in the pinned R6 host archive')
+            documentation = HOST_DOCUMENTATION_PATH_ADAPTATIONS[0]
+            if member.filename == documentation['original_archive_path']:
+                content = package.read(member)
+                if (member.is_dir() or member.flag_bits != documentation['archive_flag_bits']
+                        or len(content) != documentation['bytes']
+                        or hashlib.sha256(content).hexdigest() != documentation['sha256']):
+                    raise ValueError('The legacy R6 guide does not match its exact member metadata and byte pin')
+                # This one already-published ZIP member has literal '?' bytes in
+                # its filename. Adapt only its staging path for Windows; retain
+                # its exact content and leave the original release untouched.
+                path = pathlib.PurePosixPath(documentation['staged_path'])
+                adaptations.append(dict(documentation))
             normalized = path.as_posix()
             if normalized == '.':
                 continue
@@ -161,12 +194,19 @@ def prepare_host(tag):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with package.open(member) as source, target.open('wb') as output:
                     shutil.copyfileobj(source, output)
+    if adaptations != HOST_DOCUMENTATION_PATH_ADAPTATIONS:
+        raise ValueError('The pinned R6 archive did not contain exactly the declared legacy guide adaptation')
     embedded = json.loads((destination / 'RELEASE_REVIEW.json').read_text(encoding='utf-8'))
     if embedded != disclosure or b'4.0.0-typing.6+0f008c72983b9d567612855498800886201572e6' not in (destination / 'DictationAssistant.App.dll').read_bytes():
         raise ValueError('The extracted R6 application does not match the pinned release metadata')
+    files = host_file_hashes(destination)
+    if len(files) != 385:
+        raise ValueError('The staged R6 host must preserve all 385 files outside the typing plugin')
     write_json(cache / 'HOST_BASELINE.json', {
         'host_release_tag': HOST_RELEASE_TAG, 'host_source_commit': HOST_SOURCE_COMMIT,
-        'files_outside_typing_plugin': host_file_hashes(destination),
+        'files_outside_typing_plugin': files,
+        'documentation_path_adaptations': adaptations,
+        'staging_note': 'Only the pinned legacy guide filename is adapted for Windows; its bytes and all other R6 files are unchanged. The published R6 archive is not modified.',
     })
     print(f'Prepared pinned published R6 host without rebuilding it: {destination}')
 
@@ -174,9 +214,9 @@ def prepare_host(tag):
 def standalone_context(args, head):
     if (args.host_release_tag != HOST_RELEASE_TAG or args.plugin_release_tag != STANDALONE_PLUGIN_TAG
             or args.plugin_id not in (None, ['synchronous-typing'])):
-        raise ValueError('Standalone publication is restricted to typing 1.3.0 with the published R6 host')
+        raise ValueError('Standalone publication is restricted to typing 1.3.1 with the published R6 host')
     manifest = json.loads((ROOT / 'plugins/DictationAssistant.Practices.Typing/plugin.json').read_text(encoding='utf-8'))
-    if (manifest.get('version') != '1.3.0' or manifest.get('apiVersion') != 1
+    if (manifest.get('version') != '1.3.1' or manifest.get('apiVersion') != 1
             or manifest.get('minimumHostFeatureLevel') != 4):
         raise ValueError('The standalone typing manifest must keep plugin API 1 and R6 host feature level 4')
     if git('rev-parse', '--verify', f'refs/tags/{args.plugin_release_tag}^{{commit}}') != head:
@@ -189,14 +229,18 @@ def standalone_context(args, head):
     baseline = json.loads((host_cache() / 'HOST_BASELINE.json').read_text(encoding='utf-8'))
     if (baseline.get('host_release_tag') != HOST_RELEASE_TAG
             or baseline.get('host_source_commit') != HOST_SOURCE_COMMIT
+            or baseline.get('documentation_path_adaptations') != HOST_DOCUMENTATION_PATH_ADAPTATIONS
+            or len(baseline.get('files_outside_typing_plugin', {})) != 385
             or baseline.get('files_outside_typing_plugin') != host_file_hashes(ROOT / 'artifacts/Windows-x64')):
         raise ValueError('Files outside the selected typing plugin changed in the published R6 host')
     compatibility = json.loads((host_cache() / 'PLUGIN_COMPATIBILITY.json').read_text(encoding='utf-8'))
     dll = ROOT / 'artifacts/Windows-x64/Plugins/SynchronousTyping/DictationAssistant.Practices.Typing.dll'
     expected = {'host_release_tag': HOST_RELEASE_TAG, 'host_source_commit': HOST_SOURCE_COMMIT,
-                'plugin_source_commit': head, 'plugin_version': '1.3.0', 'plugin_api_version': 1,
+                'plugin_source_commit': head, 'plugin_version': '1.3.1', 'plugin_api_version': 1,
                 'host_feature_level': 4, 'word_plugin_version': '1.0.1',
                 'practice_and_configuration_loaded': True, 'main_window_opened_and_closed': True,
+                'host_documentation_path_adaptations': HOST_DOCUMENTATION_PATH_ADAPTATIONS,
+                'host_non_typing_file_count': 385,
                 'plugin_dll_sha256': digest(dll)}
     if any(compatibility.get(key) != value for key, value in expected.items()):
         raise ValueError('Compatibility validation does not match the current standalone plugin and pinned R6 host')
@@ -295,7 +339,7 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
                        *(['Migration of an R5 single-binding credential file has not been validated on Windows.']
                          if version == '1.2.0' else []),
                        *(['Migration of existing R5/R6 credential files has not been validated on Windows.']
-                         if version == '1.3.0' else []),
+                         if version == '1.3.1' else []),
                        'Live provider translation requires valid user credentials; keys are never bundled.']
                       if plugin_id == 'synchronous-typing' else [],
     }
@@ -376,7 +420,7 @@ not establish a new permission or legal clearance for that combination.
 '''
     (binary_root / 'INSTALL_AND_BUILD.md').write_text(build_notes, encoding='utf-8')
     if plugin_id == 'synchronous-typing':
-        if version == '1.3.0':
+        if version == '1.3.1':
             summary = ('新增微软/Bing、Google、百度、有道、腾讯、阿里和火山翻译 API，保留 DeepL；'
                        '在既有多配置、首选项和任务切换界面管理各服务凭据。仅更新插件，复用已发布 R6 本体；'
                        '插件 API 1、宿主功能级别 4 不变，不重新发布本体、Word 导入或原生资产。')
@@ -429,6 +473,7 @@ not establish a new permission or legal clearance for that combination.
         source_paths.append('.github/workflows/release-typing-plugin.yml')
     subprocess.run(['git', 'archive', '--format=zip', f'--output={source}', head, '--', *source_paths],
                    cwd=ROOT, check=True)
+    verify_git_archive_names(source, head, source_paths)
     with zipfile.ZipFile(source, 'a', compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr('PLUGIN_BUILD.md', build_notes)
         archive.writestr('RELEASE_REVIEW.json', json.dumps(review, ensure_ascii=False, indent=2) + '\n')
@@ -451,7 +496,7 @@ def main():
     parser.add_argument('--app-release-tag', help='Combined application/plugin release tag')
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument('--prepare-host', action='store_true', help='Download and extract the pinned public R6 host for compatibility checks')
-    modes.add_argument('--standalone', action='store_true', help='Package only typing 1.3.0 against the unchanged published R6 host')
+    modes.add_argument('--standalone', action='store_true', help='Package only typing 1.3.1 against the unchanged published R6 host')
     parser.add_argument('--host-release-tag')
     parser.add_argument('--plugin-release-tag')
     parser.add_argument('--plugin-id', action='append', choices=[item[0] for item in PLUGINS],

@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build-plugin:
-    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.0'
+    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.1'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
           import json, os, pathlib, subprocess, xml.etree.ElementTree as ET
           tag = os.environ['GITHUB_REF_NAME']
           head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-          if tag != 'plugin-synchronous-typing-v1.3.0' or head != os.environ['GITHUB_SHA']:
+          if tag != 'plugin-synchronous-typing-v1.3.1' or head != os.environ['GITHUB_SHA']:
               raise SystemExit('Unexpected independent plugin release tag or commit')
           tagged = subprocess.check_output(['git', 'rev-parse', '--verify', f'refs/tags/{tag}^{{commit}}'], text=True).strip()
           host = '0f008c72983b9d567612855498800886201572e6'
@@ -43,8 +43,8 @@ jobs:
           folder = pathlib.Path('plugins/DictationAssistant.Practices.Typing')
           manifest = json.loads((folder / 'plugin.json').read_text(encoding='utf-8'))
           version = ET.parse(folder / 'DictationAssistant.Practices.Typing.csproj').findtext('.//Version')
-          if (manifest.get('id') != 'synchronous-typing' or manifest.get('version') != '1.3.0'
-                  or version != '1.3.0' or manifest.get('apiVersion') != 1
+          if (manifest.get('id') != 'synchronous-typing' or manifest.get('version') != '1.3.1'
+                  or version != '1.3.1' or manifest.get('apiVersion') != 1
                   or manifest.get('minimumHostFeatureLevel') != 4):
               raise SystemExit('The update must keep plugin API 1 and R6 host feature level 4')
       - name: Download and verify the unchanged published R6 host
@@ -82,7 +82,7 @@ jobs:
           typing = plugins['synchronous-typing']
           word = plugins['docx-vocabulary']
           if (not typing.get('IsLoaded') or typing.get('Error') is not None
-                  or typing['Manifest'].get('Version') != '1.3.0'
+                  or typing['Manifest'].get('Version') != '1.3.1'
                   or typing['Manifest'].get('ApiVersion') != 1
                   or typing['Manifest'].get('MinimumHostFeatureLevel') != 4
                   or not {'practice', 'configuration'} <= set(typing.get('Capabilities', []))):
@@ -91,7 +91,7 @@ jobs:
               raise SystemExit('The unchanged Word 1.0.1 plugin no longer loads')
           destination = pathlib.Path('artifacts/host-releases/v4.0.0-typing.6/plugin-discovery.json')
           destination.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
-          print('Published R6 loaded typing 1.3.0 practice/configuration and unchanged Word 1.0.1.')
+          print('Published R6 loaded typing 1.3.1 practice/configuration and unchanged Word 1.0.1.')
       - name: Start and close the published R6 production application
         shell: pwsh
         run: |
@@ -117,6 +117,7 @@ jobs:
           cache = pathlib.Path('artifacts/host-releases/v4.0.0-typing.6')
           discovery = json.loads((cache / 'plugin-discovery.json').read_text(encoding='utf-8'))
           window = json.loads((cache / 'window-smoke.json').read_text(encoding='utf-8-sig'))
+          baseline = json.loads((cache / 'HOST_BASELINE.json').read_text(encoding='utf-8'))
           plugin = pathlib.Path('artifacts/Windows-x64/Plugins/SynchronousTyping/DictationAssistant.Practices.Typing.dll')
           with plugin.open('rb') as stream:
               checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
@@ -124,11 +125,14 @@ jobs:
               'host_release_tag': 'v4.0.0-typing.6',
               'host_source_commit': '0f008c72983b9d567612855498800886201572e6',
               'plugin_source_commit': os.environ['GITHUB_SHA'],
-              'plugin_version': '1.3.0', 'plugin_api_version': discovery['ApiVersion'],
+              'plugin_version': '1.3.1', 'plugin_api_version': discovery['ApiVersion'],
               'host_feature_level': discovery['HostFeatureLevel'], 'word_plugin_version': '1.0.1',
               'practice_and_configuration_loaded': True,
               'main_window_opened_and_closed': window.get('main_window_opened_and_closed') is True,
               'plugin_dll_sha256': checksum,
+              'host_documentation_path_adaptations': baseline['documentation_path_adaptations'],
+              'host_non_typing_file_count': len(baseline['files_outside_typing_plugin']),
+              'host_staging_note': baseline['staging_note'],
               'scope': 'Existing published R6 host, plugin discovery and normal main-window open/close only. No live provider credentials were used; real translation, credential migration and cross-account encryption are not claimed verified.',
           }
           (cache / 'PLUGIN_COMPATIBILITY.json').write_text(json.dumps(compatibility, ensure_ascii=False, indent=2), encoding='utf-8')
@@ -144,7 +148,7 @@ jobs:
           compression-level: 0
 
   publish-plugin:
-    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.0'
+    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.1'
     needs: build-plugin
     runs-on: ubuntu-latest
     permissions:
@@ -166,7 +170,7 @@ jobs:
           repository = os.environ['GH_REPO']
           commit = os.environ['GITHUB_SHA']
           tag = os.environ['RELEASE_TAG']
-          if tag != 'plugin-synchronous-typing-v1.3.0' or not re.fullmatch(r'[0-9a-f]{40}', commit):
+          if tag != 'plugin-synchronous-typing-v1.3.1' or not re.fullmatch(r'[0-9a-f]{40}', commit):
               raise SystemExit('Unexpected independent plugin release scope')
 
           def gh(*arguments):
@@ -184,7 +188,7 @@ jobs:
               raise SystemExit('Refusing to replace an existing public release or draft')
           folder = pathlib.Path('release')
           assets = {path.name: path for path in folder.iterdir() if path.is_file()}
-          expected_names = {'synchronous-typing-1.3.0.zip', 'synchronous-typing-1.3.0-source.zip',
+          expected_names = {'synchronous-typing-1.3.1.zip', 'synchronous-typing-1.3.1-source.zip',
                             'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
           if set(assets) != expected_names:
               raise SystemExit('The independent plugin asset set is incomplete or contains an unrelated asset')
@@ -209,7 +213,7 @@ jobs:
           blockers = host_review.get('blocking_issues', [])
           compatibility = review.get('host_compatibility', {})
           if (review.get('source_commit') != commit or review.get('plugin_id') != 'synchronous-typing'
-                  or review.get('plugin_version') != '1.3.0' or review.get('app_release_tag') != 'v4.0.0-typing.6'
+                  or review.get('plugin_version') != '1.3.1' or review.get('app_release_tag') != 'v4.0.0-typing.6'
                   or review.get('host_source_commit') != '0f008c72983b9d567612855498800886201572e6'
                   or review.get('publication_scope') != 'standalone-plugin-update-existing-host'
                   or review.get('legal_clearance_claimed') is not False
@@ -219,10 +223,15 @@ jobs:
                   or compatibility.get('plugin_source_commit') != commit
                   or compatibility.get('plugin_api_version') != 1 or compatibility.get('host_feature_level') != 4
                   or compatibility.get('practice_and_configuration_loaded') is not True
-                  or compatibility.get('main_window_opened_and_closed') is not True):
+                  or compatibility.get('main_window_opened_and_closed') is not True
+                  or compatibility.get('host_non_typing_file_count') != 385
+                  or compatibility.get('host_documentation_path_adaptations') != [{
+                      'original_archive_path': './??????????.md', 'staged_path': 'R6_PLUGIN_GUIDE.md',
+                      'bytes': 14711, 'archive_flag_bits': 8,
+                      'sha256': '1d83b102d4ba612ebd7e2c21837f259b137cd421509e4ccf537aebfc474b7e28'}]):
               raise SystemExit('The plugin disclosure, source or compatibility metadata is inconsistent')
           gh('release', 'create', tag, '--draft', '--prerelease', '--latest=false', '--verify-tag',
-             '--target', commit, '--title', '插件更新：同步打字 1.3.0（多翻译服务）',
+             '--target', commit, '--title', '插件更新：同步打字 1.3.1（多翻译服务）',
              '--notes-file', str(assets['RELEASE_NOTES.md']))
           gh('release', 'upload', tag, *(str(path) for path in assets.values()))
           releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
