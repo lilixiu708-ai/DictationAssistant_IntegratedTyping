@@ -679,7 +679,7 @@ def main():
                         help='Exact macOS producer commit from an independently checked workflow run; review-archive mode only')
     args = parser.parse_args()
     try:
-        if args.native_review_build_commit and not args.native_review_archive:
+        if args.native_review_build_commit is not None and not args.native_review_archive:
             raise ValueError('--native-review-build-commit requires --native-review-archive')
         if args.install_native_overrides or args.native_review_archive:
             install_native_overrides(args.publish_dir.resolve(), args.catalog.resolve(),

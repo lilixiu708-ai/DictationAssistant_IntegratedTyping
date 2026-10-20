@@ -301,6 +301,11 @@ def build(args):
         'sources': {key: {'repository': item['repository'], 'commit': item['commit'], 'archive_sha256': item['sha256']}
                     for key, item in source_lock['sources'].items()},
         'dependencies': downloaded[2:], 'patches': patches, 'gn_args': arguments,
+        'downstream_modifications': [
+            'RAW/DNG and PIEX are disabled and their optional source checkouts are omitted.',
+            'macOS toolchain/platform compatibility changes (including modern Apple zlib platform detection) '
+            f'are in {mac_patch["path"]}; original upstream archives and copyright notices are preserved.',
+        ],
         'tools': lock['tools'], 'gn_source_archive': gn_source,
         'compiler_binary_sha256': file_digest(compiler), 'compiler_version': compiler_version,
         'native_versions': versions, 'upstream_native_utility': png,
@@ -320,6 +325,9 @@ def build(args):
     write_json(output / 'native-build.json', metadata)
     shutil.copyfile(binary, output / binary.name)
     notice = ('SkiaSharp 2.88.9 for macOS, rebuilt without RAW/DNG and PIEX.\n'
+              'This is a modified native build. macOS toolchain/platform compatibility changes '
+              '(including modern Apple zlib platform detection) are in '
+              f'{mac_patch["path"]} in the paired source archive.\n'
               'Original copyright, license grants and disclaimers are retained in LICENSES/.\n'
               'This software is based in part on the work of the Independent JPEG Group.\n'
               'The libgifcodec MPL/GPL/LGPL alternative is elected under GPL-2.0-or-later, version 3; '

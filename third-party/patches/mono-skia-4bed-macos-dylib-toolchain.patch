@@ -1,10 +1,13 @@
 Subject: Emit a macOS SkiaSharp dylib with explicit Apple framework switches
 Base-Repository: https://github.com/mono/skia
 Base-Commit: 4bed689c9c9eb77a120c6a9d54af6a572c85d1c2
+Dependency-Repository: https://chromium.googlesource.com/chromium/src/third_party/zlib
+Dependency-Commit: 3ca9f16f02950edffa391ec19cea856090158e9e
 Scope: the native macOS no-DNG producer only; existing Windows builds are unchanged.
 The generic GN shared-library tool otherwise selects a .so filename, and does not
 set the Apple framework switches required by this direct GN/Ninja build.
 The deployment target follows the producer's min_macos_version for both CPUs.
+The fixed zlib dependency must not select the classic-Mac fdopen stub on Darwin.
 
 diff --git a/BUILD.gn b/BUILD.gn
 --- a/BUILD.gn
@@ -74,3 +77,16 @@ diff --git a/gn/toolchain/BUILD.gn b/gn/toolchain/BUILD.gn
  
      tool("cc") {
        depfile = "{{output}}.d"
+diff --git a/third_party/externals/zlib/zutil.h b/third_party/externals/zlib/zutil.h
+--- a/third_party/externals/zlib/zutil.h
++++ b/third_party/externals/zlib/zutil.h
+@@ -152,7 +152,8 @@
+ #  endif
+ #endif
+ 
+-#if defined(MACOS) || defined(TARGET_OS_MAC)
++/* Darwin provides fdopen; its SDK also defines the classic TARGET_OS_MAC. */
++#if (defined(MACOS) || defined(TARGET_OS_MAC)) && !defined(__APPLE__)
+ #  define OS_CODE  7
+ #  ifndef Z_SOLO
+ #    if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
