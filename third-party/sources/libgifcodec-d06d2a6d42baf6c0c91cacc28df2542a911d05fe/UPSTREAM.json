@@ -1,0 +1,87 @@
+{
+  "component": "libgifcodec",
+  "repository": "https://skia.googlesource.com/libgifcodec/",
+  "revision": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+  "upstream_tree": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/",
+  "source_origin": "SkiaSharp.NativeAssets.Win32 2.88.9 -> mono/SkiaSharp@9699cdf046a989423a5e5eca68e7fd813486d81c -> externals/skia@4bed689c9c9eb77a120c6a9d54af6a572c85d1c2 -> DEPS libgifcodec",
+  "retrieved_utc_date": "2026-10-20",
+  "modifications_to_upstream_files": "None; original bytes and original license choices preserved. UPSTREAM.json and DOWNSTREAM-NOTICE.md are downstream metadata.",
+  "git_blob_verification": "All original file bytes checked against upstream Git tree blob IDs.",
+  "selected_alternative": "For the MPL/GPL/LGPL alternatives, this distribution elects GPL-2.0-or-later at version 3; other BSD portions retain their terms. See DOWNSTREAM-NOTICE.md.",
+  "files": [
+    {
+      "file": "LICENSE.md",
+      "git_blob": "d1f576354a56cdcdac39a87a72c5b4cf4f378738",
+      "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625",
+      "bytes": 4996,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md?format=TEXT"
+    },
+    {
+      "file": "README.chromium",
+      "git_blob": "1ee6a0d8365f9ccaa59308cf1be664ce9897c96c",
+      "sha256": "45b2b40383fa323f75dcc8a2504a1e77bdcb346c8d04f620a93426f8f5c77eea",
+      "bytes": 287,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/README.chromium?format=TEXT"
+    },
+    {
+      "file": "README.md",
+      "git_blob": "0acefc6065b90d673ee404c4a9f6050ea50ede6c",
+      "sha256": "997201881818f13c3f52a2ea4457ae4c197eccf107753b8cb948d890c773a4e3",
+      "bytes": 619,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/README.md?format=TEXT"
+    },
+    {
+      "file": "SkGifCodec.h",
+      "git_blob": "532e7b1aecd68bee06a7ea3cf096fd5da90b12b0",
+      "sha256": "ef3006cbaac08e0da93ad55614059c6e7876d547a01312ab2e88b4564f6def52",
+      "bytes": 613,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/SkGifCodec.h?format=TEXT"
+    },
+    {
+      "file": "SkGifImageReader.cpp",
+      "git_blob": "c5900b311a21c2b7e569d39508bef4025d18cb15",
+      "sha256": "d80a4794f43b08c9e8f8dbe3b11294a6416edc63600dc4de1e4473dca6710977",
+      "bytes": 39333,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/SkGifImageReader.cpp?format=TEXT"
+    },
+    {
+      "file": "SkGifImageReader.h",
+      "git_blob": "9b0225594b0f62881be8fd340827f04da4258f01",
+      "sha256": "a6577168767c8992ea4d5b245baed496cd1d37fdb7cd71bb49d63a99046a8ad2",
+      "bytes": 12837,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/SkGifImageReader.h?format=TEXT"
+    },
+    {
+      "file": "SkLibGifCodec.cpp",
+      "git_blob": "b9d1799d03e9187b77bbc4fdceacef588d66c255",
+      "sha256": "98dc1ffb40c1f6b422a79f18c4938e3cd8b57471c8bba90b3904fbff7bebbe58",
+      "bytes": 22072,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/SkLibGifCodec.cpp?format=TEXT"
+    },
+    {
+      "file": "SkLibGifCodec.h",
+      "git_blob": "014df5f7b5d7d1a9729de382a23b450ea3a2ca8b",
+      "sha256": "e92526f2af84b0d82338fd9773d423aef2bf5b41d7a0e970acfd3b31b75bb1b3",
+      "bytes": 5951,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/SkLibGifCodec.h?format=TEXT"
+    },
+    {
+      "file": "libgifcodec.gni",
+      "git_blob": "aa94603b8e639c73c8dd6507e5032e0c2a72541b",
+      "sha256": "3ab3a6ef4be0e1a0247a15af67b0037404b5a93ea83739de8a37d2a7bbc955d6",
+      "bytes": 304,
+      "url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/libgifcodec.gni?format=TEXT"
+    }
+  ],
+  "license_copies": [
+    {
+      "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+      "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625"
+    },
+    {
+      "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+      "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
+      "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/GPL-3.0-or-later.txt"
+    }
+  ]
+}

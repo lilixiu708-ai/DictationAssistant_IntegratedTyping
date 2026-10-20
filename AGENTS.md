@@ -20,7 +20,7 @@
 
 ## P/Invoke 原则
 
-- 使用 NuGet 库（如 ManagedBass, Hexa.NET.SDL2）而非直接 DllImport
+- 使用 NuGet 库（如 NAudio、Hexa.NET.SDL2）而非直接 DllImport
 - 封装平台差异，不在业务代码中直接调用 native 方法
 
 ## 仓库与发布约定

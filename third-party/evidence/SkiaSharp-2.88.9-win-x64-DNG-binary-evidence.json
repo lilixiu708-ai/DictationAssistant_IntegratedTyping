@@ -1,0 +1,697 @@
+{
+  "observed_utc_date": "2026-10-20",
+  "package_id": "SkiaSharp.NativeAssets.Win32",
+  "package_version": "2.88.9",
+  "binary_path": "runtimes/win-x64/native/libSkiaSharp.dll",
+  "sha256": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd",
+  "bytes": 9414216,
+  "method": "ASCII strings extracted directly from exact signed NuGet native payload; MSVC RTTI type descriptors and implementation strings, not a broad THIRD-PARTY-NOTICES text match. No Windows runtime execution performed.",
+  "native_dng_build_parameter": {
+    "repository": "https://github.com/mono/SkiaSharp",
+    "revision": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+    "path": "native/windows/build.cake",
+    "url": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/windows/build.cake",
+    "line_42": "skia_use_dng_sdk=true",
+    "line_44": "skia_use_piex=true"
+  },
+  "pe_sections": [
+    {
+      "name": ".text",
+      "rva_hex": "0x1000",
+      "file_offset_hex": "0x400",
+      "raw_size": 7430656
+    },
+    {
+      "name": ".rdata",
+      "rva_hex": "0x718000",
+      "file_offset_hex": "0x716600",
+      "raw_size": 1574400
+    },
+    {
+      "name": ".data",
+      "rva_hex": "0x899000",
+      "file_offset_hex": "0x896c00",
+      "raw_size": 54272
+    },
+    {
+      "name": ".pdata",
+      "rva_hex": "0x8ad000",
+      "file_offset_hex": "0x8a4000",
+      "raw_size": 313344
+    },
+    {
+      "name": ".00cfg",
+      "rva_hex": "0x8fa000",
+      "file_offset_hex": "0x8f0800",
+      "raw_size": 512
+    },
+    {
+      "name": ".gehcont",
+      "rva_hex": "0x8fb000",
+      "file_offset_hex": "0x8f0a00",
+      "raw_size": 512
+    },
+    {
+      "name": ".tls",
+      "rva_hex": "0x8fc000",
+      "file_offset_hex": "0x8f0c00",
+      "raw_size": 512
+    },
+    {
+      "name": ".voltbl",
+      "rva_hex": "0x8fd000",
+      "file_offset_hex": "0x8f0e00",
+      "raw_size": 512
+    },
+    {
+      "name": "_RDATA",
+      "rva_hex": "0x8fe000",
+      "file_offset_hex": "0x8f1000",
+      "raw_size": 512
+    },
+    {
+      "name": ".reloc",
+      "rva_hex": "0x8ff000",
+      "file_offset_hex": "0x8f1200",
+      "raw_size": 27648
+    }
+  ],
+  "matching_strings": [
+    {
+      "file_offset_hex": "0x770cca",
+      "string": "dng_priority_manager::fMutex",
+      "section": ".rdata",
+      "rva_hex": "0x7726ca"
+    },
+    {
+      "file_offset_hex": "0x773277",
+      "string": "Trim is not support by this dng_image subclass",
+      "section": ".rdata",
+      "rva_hex": "0x774c77"
+    },
+    {
+      "file_offset_hex": "0x7732a6",
+      "string": "Rotate is not support by this dng_image subclass",
+      "section": ".rdata",
+      "rva_hex": "0x774ca6"
+    },
+    {
+      "file_offset_hex": "0x7732d7",
+      "string": "Clone is not supported by this dng_image subclass",
+      "section": ".rdata",
+      "rva_hex": "0x774cd7"
+    },
+    {
+      "file_offset_hex": "0x7747b1",
+      "string": "Overflow in dng_rect constructor",
+      "section": ".rdata",
+      "rva_hex": "0x7761b1"
+    },
+    {
+      "file_offset_hex": "0x777c49",
+      "string": "dng_jpeg_image_find_digest_task",
+      "section": ".rdata",
+      "rva_hex": "0x779649"
+    },
+    {
+      "file_offset_hex": "0x777c69",
+      "string": "dng_read_tiles_task",
+      "section": ".rdata",
+      "rva_hex": "0x779669"
+    },
+    {
+      "file_offset_hex": "0x777ee6",
+      "string": "dng_ref_counted_block",
+      "section": ".rdata",
+      "rva_hex": "0x7798e6"
+    },
+    {
+      "file_offset_hex": "0x787859",
+      "string": "dng_negative::DefloatStage2",
+      "section": ".rdata",
+      "rva_hex": "0x789259"
+    },
+    {
+      "file_offset_hex": "0x787f8e",
+      "string": "Empty source area in dng_filter_warp.",
+      "section": ".rdata",
+      "rva_hex": "0x78998e"
+    },
+    {
+      "file_offset_hex": "0x898460",
+      "string": ".?AV<lambda_1>@?0??PerformAreaTask@SkDngHost@?A0xF6A5C5CA@@UEAAXAEAVdng_area_task@@AEBVdng_rect@@@Z@",
+      "section": ".data",
+      "rva_hex": "0x89a860"
+    },
+    {
+      "file_offset_hex": "0x8984e0",
+      "string": ".?AVdng_exception@@",
+      "section": ".data",
+      "rva_hex": "0x89a8e0"
+    },
+    {
+      "file_offset_hex": "0x8a0de0",
+      "string": ".?AVdng_pixel_buffer@@",
+      "section": ".data",
+      "rva_hex": "0x8a31e0"
+    },
+    {
+      "file_offset_hex": "0x8a0e10",
+      "string": ".?AVdng_tile_buffer@@",
+      "section": ".data",
+      "rva_hex": "0x8a3210"
+    },
+    {
+      "file_offset_hex": "0x8a0e40",
+      "string": ".?AVdng_const_tile_buffer@@",
+      "section": ".data",
+      "rva_hex": "0x8a3240"
+    },
+    {
+      "file_offset_hex": "0x8a0e70",
+      "string": ".?AVdng_dirty_tile_buffer@@",
+      "section": ".data",
+      "rva_hex": "0x8a3270"
+    },
+    {
+      "file_offset_hex": "0x8a0ea0",
+      "string": ".?AVdng_image@@",
+      "section": ".data",
+      "rva_hex": "0x8a32a0"
+    },
+    {
+      "file_offset_hex": "0x8a0ec0",
+      "string": ".?AVdng_host@@",
+      "section": ".data",
+      "rva_hex": "0x8a32c0"
+    },
+    {
+      "file_offset_hex": "0x8a0ee0",
+      "string": ".?AVdng_metadata@@",
+      "section": ".data",
+      "rva_hex": "0x8a32e0"
+    },
+    {
+      "file_offset_hex": "0x8a0f10",
+      "string": ".?AVdng_negative@@",
+      "section": ".data",
+      "rva_hex": "0x8a3310"
+    },
+    {
+      "file_offset_hex": "0x8a0f40",
+      "string": ".?AVdng_area_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a3340"
+    },
+    {
+      "file_offset_hex": "0x8a0fc0",
+      "string": ".?AVdng_find_new_raw_image_digest_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a33c0"
+    },
+    {
+      "file_offset_hex": "0x8a1000",
+      "string": ".?AVdng_md5_printer_stream@@",
+      "section": ".data",
+      "rva_hex": "0x8a3400"
+    },
+    {
+      "file_offset_hex": "0x8a1030",
+      "string": ".?AVdng_stream@@",
+      "section": ".data",
+      "rva_hex": "0x8a3430"
+    },
+    {
+      "file_offset_hex": "0x8a1060",
+      "string": ".?AVdng_md5_printer@@",
+      "section": ".data",
+      "rva_hex": "0x8a3460"
+    },
+    {
+      "file_offset_hex": "0x8a1090",
+      "string": ".?AVdng_mosaic_info@@",
+      "section": ".data",
+      "rva_hex": "0x8a3490"
+    },
+    {
+      "file_offset_hex": "0x8a10c0",
+      "string": ".?AVdng_noise_function@@",
+      "section": ".data",
+      "rva_hex": "0x8a34c0"
+    },
+    {
+      "file_offset_hex": "0x8a10f0",
+      "string": ".?AVdng_1d_function@@",
+      "section": ".data",
+      "rva_hex": "0x8a34f0"
+    },
+    {
+      "file_offset_hex": "0x8a1120",
+      "string": ".?AVdng_function_exposure_ramp@@",
+      "section": ".data",
+      "rva_hex": "0x8a3520"
+    },
+    {
+      "file_offset_hex": "0x8a1160",
+      "string": ".?AVdng_function_exposure_tone@@",
+      "section": ".data",
+      "rva_hex": "0x8a3560"
+    },
+    {
+      "file_offset_hex": "0x8a11a0",
+      "string": ".?AVdng_tone_curve_acr3_default@@",
+      "section": ".data",
+      "rva_hex": "0x8a35a0"
+    },
+    {
+      "file_offset_hex": "0x8a11e0",
+      "string": ".?AVdng_render_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a35e0"
+    },
+    {
+      "file_offset_hex": "0x8a1210",
+      "string": ".?AVdng_filter_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a3610"
+    },
+    {
+      "file_offset_hex": "0x8a1240",
+      "string": ".?AVdng_render@@",
+      "section": ".data",
+      "rva_hex": "0x8a3640"
+    },
+    {
+      "file_offset_hex": "0x8a1280",
+      "string": ".?AVdng_function_GammaEncode_sRGB@@",
+      "section": ".data",
+      "rva_hex": "0x8a3680"
+    },
+    {
+      "file_offset_hex": "0x8a12c0",
+      "string": ".?AVdng_function_GammaEncode_1_8@@",
+      "section": ".data",
+      "rva_hex": "0x8a36c0"
+    },
+    {
+      "file_offset_hex": "0x8a1300",
+      "string": ".?AVdng_function_GammaEncode_2_2@@",
+      "section": ".data",
+      "rva_hex": "0x8a3700"
+    },
+    {
+      "file_offset_hex": "0x8a1340",
+      "string": ".?AVdng_color_space@@",
+      "section": ".data",
+      "rva_hex": "0x8a3740"
+    },
+    {
+      "file_offset_hex": "0x8a1370",
+      "string": ".?AVdng_space_sRGB@@",
+      "section": ".data",
+      "rva_hex": "0x8a3770"
+    },
+    {
+      "file_offset_hex": "0x8a13a0",
+      "string": ".?AVdng_space_ProPhoto@@",
+      "section": ".data",
+      "rva_hex": "0x8a37a0"
+    },
+    {
+      "file_offset_hex": "0x8a13d0",
+      "string": ".?AVdng_info@@",
+      "section": ".data",
+      "rva_hex": "0x8a37d0"
+    },
+    {
+      "file_offset_hex": "0x8a1480",
+      "string": ".?AVdng_malloc_block@@",
+      "section": ".data",
+      "rva_hex": "0x8a3880"
+    },
+    {
+      "file_offset_hex": "0x8a14b0",
+      "string": ".?AVdng_memory_block@@",
+      "section": ".data",
+      "rva_hex": "0x8a38b0"
+    },
+    {
+      "file_offset_hex": "0x8a14e0",
+      "string": ".?AVdng_memory_allocator@@",
+      "section": ".data",
+      "rva_hex": "0x8a38e0"
+    },
+    {
+      "file_offset_hex": "0x8a1ec0",
+      "string": ".?AVNullFunctor@?A0xEDAE4EF6@binary_parse@piex@@",
+      "section": ".data",
+      "rva_hex": "0x8a42c0"
+    },
+    {
+      "file_offset_hex": "0x8a2080",
+      "string": ".?AVdng_exif@@",
+      "section": ".data",
+      "rva_hex": "0x8a4480"
+    },
+    {
+      "file_offset_hex": "0x8a20a0",
+      "string": ".?AVdng_shared@@",
+      "section": ".data",
+      "rva_hex": "0x8a44a0"
+    },
+    {
+      "file_offset_hex": "0x8a20d0",
+      "string": ".?AVdng_ifd@@",
+      "section": ".data",
+      "rva_hex": "0x8a44d0"
+    },
+    {
+      "file_offset_hex": "0x8a20f0",
+      "string": ".?AVdng_simple_image@@",
+      "section": ".data",
+      "rva_hex": "0x8a44f0"
+    },
+    {
+      "file_offset_hex": "0x8a2120",
+      "string": ".?AVdng_warp_params@@",
+      "section": ".data",
+      "rva_hex": "0x8a4520"
+    },
+    {
+      "file_offset_hex": "0x8a2150",
+      "string": ".?AVdng_warp_params_rectilinear@@",
+      "section": ".data",
+      "rva_hex": "0x8a4550"
+    },
+    {
+      "file_offset_hex": "0x8a2190",
+      "string": ".?AVdng_warp_params_fisheye@@",
+      "section": ".data",
+      "rva_hex": "0x8a4590"
+    },
+    {
+      "file_offset_hex": "0x8a21c0",
+      "string": ".?AVdng_filter_warp@@",
+      "section": ".data",
+      "rva_hex": "0x8a45c0"
+    },
+    {
+      "file_offset_hex": "0x8a21f0",
+      "string": ".?AVdng_opcode_WarpRectilinear@@",
+      "section": ".data",
+      "rva_hex": "0x8a45f0"
+    },
+    {
+      "file_offset_hex": "0x8a2230",
+      "string": ".?AVdng_opcode@@",
+      "section": ".data",
+      "rva_hex": "0x8a4630"
+    },
+    {
+      "file_offset_hex": "0x8a2260",
+      "string": ".?AVdng_opcode_WarpFisheye@@",
+      "section": ".data",
+      "rva_hex": "0x8a4660"
+    },
+    {
+      "file_offset_hex": "0x8a2290",
+      "string": ".?AVdng_opcode_FixVignetteRadial@@",
+      "section": ".data",
+      "rva_hex": "0x8a4690"
+    },
+    {
+      "file_offset_hex": "0x8a22d0",
+      "string": ".?AVdng_inplace_opcode@@",
+      "section": ".data",
+      "rva_hex": "0x8a46d0"
+    },
+    {
+      "file_offset_hex": "0x8a2300",
+      "string": ".?AVdng_vignette_radial_function@@",
+      "section": ".data",
+      "rva_hex": "0x8a4700"
+    },
+    {
+      "file_offset_hex": "0x8a2340",
+      "string": ".?AVdng_opcode_Unknown@@",
+      "section": ".data",
+      "rva_hex": "0x8a4740"
+    },
+    {
+      "file_offset_hex": "0x8a2370",
+      "string": ".?AVdng_filter_opcode@@",
+      "section": ".data",
+      "rva_hex": "0x8a4770"
+    },
+    {
+      "file_offset_hex": "0x8a23a0",
+      "string": ".?AVdng_filter_opcode_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a47a0"
+    },
+    {
+      "file_offset_hex": "0x8a23d0",
+      "string": ".?AVdng_inplace_opcode_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a47d0"
+    },
+    {
+      "file_offset_hex": "0x8a2400",
+      "string": ".?AVdng_opcode_FixBadPixelsConstant@@",
+      "section": ".data",
+      "rva_hex": "0x8a4800"
+    },
+    {
+      "file_offset_hex": "0x8a2440",
+      "string": ".?AVdng_opcode_FixBadPixelsList@@",
+      "section": ".data",
+      "rva_hex": "0x8a4840"
+    },
+    {
+      "file_offset_hex": "0x8a2480",
+      "string": ".?AVdng_opcode_TrimBounds@@",
+      "section": ".data",
+      "rva_hex": "0x8a4880"
+    },
+    {
+      "file_offset_hex": "0x8a24b0",
+      "string": ".?AVdng_opcode_MapTable@@",
+      "section": ".data",
+      "rva_hex": "0x8a48b0"
+    },
+    {
+      "file_offset_hex": "0x8a24e0",
+      "string": ".?AVdng_opcode_MapPolynomial@@",
+      "section": ".data",
+      "rva_hex": "0x8a48e0"
+    },
+    {
+      "file_offset_hex": "0x8a2510",
+      "string": ".?AVdng_opcode_DeltaPerRow@@",
+      "section": ".data",
+      "rva_hex": "0x8a4910"
+    },
+    {
+      "file_offset_hex": "0x8a2540",
+      "string": ".?AVdng_opcode_DeltaPerColumn@@",
+      "section": ".data",
+      "rva_hex": "0x8a4940"
+    },
+    {
+      "file_offset_hex": "0x8a2570",
+      "string": ".?AVdng_opcode_ScalePerRow@@",
+      "section": ".data",
+      "rva_hex": "0x8a4970"
+    },
+    {
+      "file_offset_hex": "0x8a25a0",
+      "string": ".?AVdng_opcode_ScalePerColumn@@",
+      "section": ".data",
+      "rva_hex": "0x8a49a0"
+    },
+    {
+      "file_offset_hex": "0x8a25d0",
+      "string": ".?AVdng_opcode_GainMap@@",
+      "section": ".data",
+      "rva_hex": "0x8a49d0"
+    },
+    {
+      "file_offset_hex": "0x8a2600",
+      "string": ".?AVdng_resample_coords@@",
+      "section": ".data",
+      "rva_hex": "0x8a4a00"
+    },
+    {
+      "file_offset_hex": "0x8a2630",
+      "string": ".?AVdng_resample_weights@@",
+      "section": ".data",
+      "rva_hex": "0x8a4a30"
+    },
+    {
+      "file_offset_hex": "0x8a2660",
+      "string": ".?AVdng_resample_weights_2d@@",
+      "section": ".data",
+      "rva_hex": "0x8a4a60"
+    },
+    {
+      "file_offset_hex": "0x8a2690",
+      "string": ".?AVdng_resample_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a4a90"
+    },
+    {
+      "file_offset_hex": "0x8a26c0",
+      "string": ".?AVdng_resample_bicubic@@",
+      "section": ".data",
+      "rva_hex": "0x8a4ac0"
+    },
+    {
+      "file_offset_hex": "0x8a26f0",
+      "string": ".?AVdng_resample_function@@",
+      "section": ".data",
+      "rva_hex": "0x8a4af0"
+    },
+    {
+      "file_offset_hex": "0x8a27c0",
+      "string": ".?AVdng_matrix@@",
+      "section": ".data",
+      "rva_hex": "0x8a4bc0"
+    },
+    {
+      "file_offset_hex": "0x8a27f0",
+      "string": ".?AVdng_matrix_3by3@@",
+      "section": ".data",
+      "rva_hex": "0x8a4bf0"
+    },
+    {
+      "file_offset_hex": "0x8a2820",
+      "string": ".?AVdng_vector@@",
+      "section": ".data",
+      "rva_hex": "0x8a4c20"
+    },
+    {
+      "file_offset_hex": "0x8a2850",
+      "string": ".?AVdng_vector_3@@",
+      "section": ".data",
+      "rva_hex": "0x8a4c50"
+    },
+    {
+      "file_offset_hex": "0x8a2890",
+      "string": ".?AVdng_camera_profile@@",
+      "section": ".data",
+      "rva_hex": "0x8a4c90"
+    },
+    {
+      "file_offset_hex": "0x8a28c0",
+      "string": ".?AVdng_color_spec@@",
+      "section": ".data",
+      "rva_hex": "0x8a4cc0"
+    },
+    {
+      "file_offset_hex": "0x8a28f0",
+      "string": ".?AVdng_jpeg_image_find_digest_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a4cf0"
+    },
+    {
+      "file_offset_hex": "0x8a2930",
+      "string": ".?AVdng_linearize_image@@",
+      "section": ".data",
+      "rva_hex": "0x8a4d30"
+    },
+    {
+      "file_offset_hex": "0x8a2960",
+      "string": ".?AVdng_linearization_info@@",
+      "section": ".data",
+      "rva_hex": "0x8a4d60"
+    },
+    {
+      "file_offset_hex": "0x8a2990",
+      "string": ".?AVdng_fast_interpolator@@",
+      "section": ".data",
+      "rva_hex": "0x8a4d90"
+    },
+    {
+      "file_offset_hex": "0x8a29c0",
+      "string": ".?AVdng_1d_table@@",
+      "section": ".data",
+      "rva_hex": "0x8a4dc0"
+    },
+    {
+      "file_offset_hex": "0x8a29f0",
+      "string": ".?AVdng_1d_identity@@",
+      "section": ".data",
+      "rva_hex": "0x8a4df0"
+    },
+    {
+      "file_offset_hex": "0x8a2a20",
+      "string": ".?AVdng_1d_concatenate@@",
+      "section": ".data",
+      "rva_hex": "0x8a4e20"
+    },
+    {
+      "file_offset_hex": "0x8a2a50",
+      "string": ".?AVdng_1d_inverse@@",
+      "section": ".data",
+      "rva_hex": "0x8a4e50"
+    },
+    {
+      "file_offset_hex": "0x8a2a80",
+      "string": ".?AVdng_hue_sat_map@@",
+      "section": ".data",
+      "rva_hex": "0x8a4e80"
+    },
+    {
+      "file_offset_hex": "0x8a2ab0",
+      "string": ".?AVdng_spline_solver@@",
+      "section": ".data",
+      "rva_hex": "0x8a4eb0"
+    },
+    {
+      "file_offset_hex": "0x8a2e20",
+      "string": ".?AVdng_mutex@@",
+      "section": ".data",
+      "rva_hex": "0x8a5220"
+    },
+    {
+      "file_offset_hex": "0x8a2e40",
+      "string": ".?AVdng_row_interleaved_image@@",
+      "section": ".data",
+      "rva_hex": "0x8a5240"
+    },
+    {
+      "file_offset_hex": "0x8a2e70",
+      "string": ".?AVdng_image_spooler@@",
+      "section": ".data",
+      "rva_hex": "0x8a5270"
+    },
+    {
+      "file_offset_hex": "0x8a2ea0",
+      "string": ".?AVdng_spooler@@",
+      "section": ".data",
+      "rva_hex": "0x8a52a0"
+    },
+    {
+      "file_offset_hex": "0x8a2ed0",
+      "string": ".?AVdng_read_image@@",
+      "section": ".data",
+      "rva_hex": "0x8a52d0"
+    },
+    {
+      "file_offset_hex": "0x8a2f00",
+      "string": ".?AVdng_read_tiles_task@@",
+      "section": ".data",
+      "rva_hex": "0x8a5300"
+    }
+  ],
+  "native_source_build_graph": {
+    "repository": "https://github.com/mono/skia",
+    "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+    "raw_codec_target": "BUILD.gn lines1022-1036: enabled=skia_use_dng_sdk && skia_use_libjpeg_turbo_decode && skia_use_piex; deps include //third_party/dng_sdk; source src/codec/SkRawCodec.cpp",
+    "dng_target": "third_party/dng_sdk/BUILD.gn lines12,37-177 compile actual source/dng_*.cpp; RTTI is explicitly enabled by configs -= //gn:no_rtti",
+    "source_urls": [
+      "https://raw.githubusercontent.com/mono/skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/BUILD.gn",
+      "https://raw.githubusercontent.com/mono/skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/third_party/dng_sdk/BUILD.gn"
+    ]
+  }
+}

@@ -7,7 +7,11 @@ namespace DictationAssistant.App.Voice;
 
 public sealed class ImprovedVoice : IVoice, IPreloadableVoice
 {
-    private static readonly string[] AudioFileExtensions = ["wav", "flac", "ape", "m4a", "opus", "aac", "mp3", "mp2", "mp1", "ogg", "wma", "aif", "mp4"];
+    // WAV/MPEG/AIFF use managed decoders on every platform. The remaining formats
+    // depend on Windows Media Foundation and the codecs installed on that machine.
+    private static readonly string[] AudioFileExtensions =
+        ["wav", "mp3", "mp2", "mp1", "aif", "aiff", "aifc", "flac", "m4a", "aac", "ogg", "opus", "wma", "mp4", "ape"];
+    private const int PortableFormatCount = 7;
 
     private readonly IVoice _inner;
     private readonly string _resourceDirectory;
@@ -37,7 +41,7 @@ public sealed class ImprovedVoice : IVoice, IPreloadableVoice
         {
             try
             {
-                return BassDecoder.FromFile(filePath);
+                return OpenAudioDecoder.FromFile(filePath);
             }
             catch (Exception ex)
             {
@@ -63,7 +67,8 @@ public sealed class ImprovedVoice : IVoice, IPreloadableVoice
 
         var basePath = Path.Combine(_resourceDirectory, sanitized);
 
-        foreach (var ext in AudioFileExtensions)
+        var count = OperatingSystem.IsWindows() ? AudioFileExtensions.Length : PortableFormatCount;
+        foreach (var ext in AudioFileExtensions.AsSpan(0, count))
         {
             var fullPath = basePath + "." + ext;
             if (File.Exists(fullPath))

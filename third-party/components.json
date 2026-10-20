@@ -1,0 +1,3995 @@
+{
+  "schema_version": 1,
+  "scope": "Reviewed package source and original legal notice catalog. Actual published dependencies and runtime-pack versions are resolved from .deps.json by prepare_licenses.py; this catalog does not relicense any upstream work.",
+  "packages": [
+    {
+      "id": "ALampy.XamlFontPicker.Avalonia",
+      "version": "2.0.1",
+      "family": "xamlfontpicker-2.0.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "ALampy",
+      "copyright": null,
+      "nuget_url": "https://www.nuget.org/packages/ALampy.XamlFontPicker.Avalonia/2.0.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/ArcticLampyrid/XamlFontPicker",
+        "commit": "6925f9aa7ce689b8c70bfacb288de0b362b1494c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/xamlfontpicker-2.0.1/LICENSE.txt",
+          "sha256": "5975f2fc0fa0ccc032e65243c0e374e441615691b621573857b4759f8f379a52"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/ArcticLampyrid/XamlFontPicker",
+        "commit": "6925f9aa7ce689b8c70bfacb288de0b362b1494c"
+      },
+      "nuget_content_hash": "nDdYr35Uf4IuVaZm9TlmRMQEibGw99MqToOC2gPFH2UYcJ+YVcMAZsA1NpvkzEh2d+lu8zGKahrv3Fyn5BVVCQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/xamlfontpicker-2.0.1/LICENSE.txt",
+          "sha256": "5975f2fc0fa0ccc032e65243c0e374e441615691b621573857b4759f8f379a52",
+          "source_url": "https://raw.githubusercontent.com/ArcticLampyrid/XamlFontPicker/6925f9aa7ce689b8c70bfacb288de0b362b1494c/LICENSE",
+          "source_revision": "6925f9aa7ce689b8c70bfacb288de0b362b1494c"
+        }
+      ],
+      "source_repository": "https://github.com/ArcticLampyrid/XamlFontPicker",
+      "source_ref": "6925f9aa7ce689b8c70bfacb288de0b362b1494c",
+      "source_archive_url": "https://codeload.github.com/ArcticLampyrid/XamlFontPicker/tar.gz/6925f9aa7ce689b8c70bfacb288de0b362b1494c"
+    },
+    {
+      "id": "Avalonia",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "CHB0gXMSba8gTXqTrO9lS1te9ejH52ngHPm+0i/RfXFzqHXHPQ3yciFc/GfGnXUBjqjwH85J1rhYNl4/EujP0w==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.Angle.Windows.Natives",
+      "version": "2.1.25547.20250602",
+      "family": "avalonia-angle-2.1.25547.20250602",
+      "primary_spdx_expression": "BSD-3-Clause",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2025 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Angle.Windows.Natives/2.1.25547.20250602",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/angle",
+        "commit": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-angle-2.1.25547.20250602/LICENSE",
+          "sha256": "54aff7276217df9f6b5181613999d208c9e40d2b1d51bf55217837e6871a4a63"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/angle/",
+        "commit": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+      },
+      "nuget_content_hash": "ZL0VLc4s9rvNNFt19Pxm5UNAkmKNylugAwJPX9ulXZ6JWs/l6XZihPWWTyezaoNOVyEPU8YbURtW7XMAtqXH5A==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-angle-2.1.25547.20250602/LICENSE",
+          "sha256": "54aff7276217df9f6b5181613999d208c9e40d2b1d51bf55217837e6871a4a63",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/avalonia.angle.windows.natives/2.1.25547.20250602/avalonia.angle.windows.natives.2.1.25547.20250602.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/angle",
+      "source_ref": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+    },
+    {
+      "id": "Avalonia.AvaloniaEdit",
+      "version": "11.3.0",
+      "family": "avaloniaedit-11.3.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2017-2025 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.AvaloniaEdit/11.3.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/AvaloniaEdit",
+        "commit": "583f2f8279cf50830eb7fd79c73dec554a232abf"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avaloniaedit-11.3.0/LICENSE.txt",
+          "sha256": "8a13531b616df7e9cd5d58bd8588da2288e14fab9e6785d1aead5c87e0a507d0"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/AvaloniaEdit/",
+        "commit": "583f2f8279cf50830eb7fd79c73dec554a232abf"
+      },
+      "nuget_content_hash": "9M/jJb4DPqQmKtNMZn6+vpqlf+ZGMtK8vEBpPVP3De1xRCu1hv4ZAtoA8hY6bYj2hgv/luete3ixoOsEQ++YJQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avaloniaedit-11.3.0/LICENSE.txt",
+          "sha256": "8a13531b616df7e9cd5d58bd8588da2288e14fab9e6785d1aead5c87e0a507d0",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/AvaloniaEdit/583f2f8279cf50830eb7fd79c73dec554a232abf/LICENSE",
+          "source_revision": "583f2f8279cf50830eb7fd79c73dec554a232abf"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/AvaloniaEdit",
+      "source_ref": "583f2f8279cf50830eb7fd79c73dec554a232abf",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/AvaloniaEdit/tar.gz/583f2f8279cf50830eb7fd79c73dec554a232abf"
+    },
+    {
+      "id": "Avalonia.BuildServices",
+      "version": "11.3.2",
+      "family": "avalonia-buildservices-11.3.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2023-2025 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.BuildServices/11.3.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia.BuildServices",
+        "commit": "777f975b0a0cecf0311273711d56697212c558c0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-buildservices-11.3.2/LICENSE.txt",
+          "sha256": "94162c40c663bd96ec1b870e6aba6ef0a43f44c9eb500807e7965e7078f6dc47"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": true,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia.BuildServices",
+        "commit": "777f975b0a0cecf0311273711d56697212c558c0"
+      },
+      "nuget_content_hash": "qHDToxto1e3hci5YqbG9n0Ty8mlp3zBUN5wT66wKqaDVzXyQ0do3EnRILd4Ke9jpvsktaPpgE0YjEk7hornryQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-buildservices-11.3.2/LICENSE.txt",
+          "sha256": "94162c40c663bd96ec1b870e6aba6ef0a43f44c9eb500807e7965e7078f6dc47",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia.BuildServices/777f975b0a0cecf0311273711d56697212c558c0/LICENSE",
+          "source_revision": "777f975b0a0cecf0311273711d56697212c558c0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia.BuildServices",
+      "source_ref": "777f975b0a0cecf0311273711d56697212c558c0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia.BuildServices/tar.gz/777f975b0a0cecf0311273711d56697212c558c0"
+    },
+    {
+      "id": "Avalonia.Desktop",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Desktop/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "zwtEFNvXB60z7rHD92oISkCQq0PcFyttfAW+cgcfALECegtNkd9P9/UXIuE0GvMVBVUPTRUQeSB6/jhwZKqqRQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.FreeDesktop",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.FreeDesktop/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "R1UdslorpUSmAt1SKNmmypkUPj993WpE4iUm5KvPd0mL0NQbIFra2DYYGb8GCtLOsupnA4pyNOU2FXumB2EGKA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.Native",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Native/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "28q2DUSGUBVRpEQWYBo0crokZabPyI7KmA68++nm/qAe/9Zxmxythk/F36swAkI4pIU2ouLIKK0yxiFBy+xvNw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.Remote.Protocol",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Remote.Protocol/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "zaWTPaBKxGfHxqQfPh1WP+vWy3iVAwYWW/7FGlz63/wT1b+3b7Wn37H6c9C2E/M3cgllrW5/cirye516QUDZiA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.Skia",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Skia/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "rlVMl2obc5hy4CHfLwA4+Lyu7KU+l5iSmj8leugoWofjgGDyUPa281VCo5FSH4+SkU1+EIXVJZubx2o02gp9nw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.Themes.Fluent",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Themes.Fluent/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "umclBVVjbKdbh6i+dAtbDlVIPS8A83S222fxgC1w0zqWvJrk9NwfFsnIQVBHxN/1hLPVMcUfp5Gxu2FOPWjDaQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.Win32",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.Win32/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "3Z8gSpWMU0NWR0fI/m8d9b6d9fms1MJ6eZJ7IU4CdU/zCrPiFTjtPfc2VRaRD/0H4tsR3VgP+iTMGZn5nBWljg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "Avalonia.X11",
+      "version": "11.3.12",
+      "family": "avalonia-11.3.12",
+      "primary_spdx_expression": "MIT",
+      "authors": "Avalonia Team",
+      "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
+      "nuget_url": "https://www.nuget.org/packages/Avalonia.X11/11.3.12",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia/",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "nuget_content_hash": "HR0zf0si52uu/hxPTIOI7gW68kPwz8D/fPYgioxISXAR+Yf6BH/TY/F/zrlu3LbptqU3ySoUmqkA9QJpXz04BQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/licence.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md",
+          "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+      "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+    },
+    {
+      "id": "CommunityToolkit.Mvvm",
+      "version": "8.4.0",
+      "family": "communitytoolkit-mvvm-8.4.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "(c) .NET Foundation and Contributors. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/CommunityToolkit.Mvvm/8.4.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/CommunityToolkit/dotnet",
+        "commit": "638b41dad30dffabb123a39aa38eabc7e3721371"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/communitytoolkit-mvvm-8.4.0/License.md",
+          "sha256": "651997ef19dbb9ecb8dd660dbc86444a65af21f18cfe08daa69bf201cd5cfdfc"
+        },
+        {
+          "path": "LICENSES/third-party/communitytoolkit-mvvm-8.4.0/ThirdPartyNotices.txt",
+          "sha256": "7774f8b0ab66bfb47ec154ce24a2d6d574febc44a74d940b8a037d1c56756163"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/CommunityToolkit/dotnet",
+        "commit": "638b41dad30dffabb123a39aa38eabc7e3721371"
+      },
+      "nuget_content_hash": "tqVU8yc/ADO9oiTRyTnwhFN68hCwvkliMierptWOudIAvWY1mWCh5VFh+guwHJmpMwfg0J0rY+yyd5Oy7ty9Uw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/communitytoolkit-mvvm-8.4.0/License.md",
+          "sha256": "651997ef19dbb9ecb8dd660dbc86444a65af21f18cfe08daa69bf201cd5cfdfc",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.mvvm/8.4.0/communitytoolkit.mvvm.8.4.0.nupkg",
+          "source_revision": null
+        },
+        {
+          "path": "LICENSES/third-party/communitytoolkit-mvvm-8.4.0/ThirdPartyNotices.txt",
+          "sha256": "7774f8b0ab66bfb47ec154ce24a2d6d574febc44a74d940b8a037d1c56756163",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.mvvm/8.4.0/communitytoolkit.mvvm.8.4.0.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/CommunityToolkit/dotnet",
+      "source_ref": "638b41dad30dffabb123a39aa38eabc7e3721371",
+      "source_archive_url": "https://codeload.github.com/CommunityToolkit/dotnet/tar.gz/638b41dad30dffabb123a39aa38eabc7e3721371"
+    },
+    {
+      "id": "DialogHost.Avalonia",
+      "version": "0.8.1",
+      "family": "dialoghost-0.8.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "SKProCH",
+      "copyright": null,
+      "nuget_url": "https://www.nuget.org/packages/DialogHost.Avalonia/0.8.1",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/AvaloniaUtils/DialogHost.Avalonia",
+        "commit": "61f074f96675240a3cbc99005f7c67c4dc4e48ec"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dialoghost-0.8.1/LICENSE.txt",
+          "sha256": "b4ced122a34fcbb3ef1cfe3e81a9ad1e486f8fe96c836a63c87629a568ad07e9"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "Git",
+        "url": "https://github.com/AvaloniaUtils/DialogHost.Avalonia.git",
+        "commit": "61f074f96675240a3cbc99005f7c67c4dc4e48ec"
+      },
+      "nuget_content_hash": "RLBOMqjJPgSmwe0i1pzX3Q7Pn0i4xE/E1b774krd4VyEkaorz1AYMdYQHyIfuhtQv5NntZyS0MuQbxJl/PhzBg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dialoghost-0.8.1/LICENSE.txt",
+          "sha256": "b4ced122a34fcbb3ef1cfe3e81a9ad1e486f8fe96c836a63c87629a568ad07e9",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUtils/DialogHost.Avalonia/61f074f96675240a3cbc99005f7c67c4dc4e48ec/LICENSE",
+          "source_revision": "61f074f96675240a3cbc99005f7c67c4dc4e48ec"
+        }
+      ],
+      "source_repository": "https://github.com/AvaloniaUtils/DialogHost.Avalonia",
+      "source_ref": "61f074f96675240a3cbc99005f7c67c4dc4e48ec",
+      "source_archive_url": "https://codeload.github.com/AvaloniaUtils/DialogHost.Avalonia/tar.gz/61f074f96675240a3cbc99005f7c67c4dc4e48ec"
+    },
+    {
+      "id": "EdgeTTS.DotNet",
+      "version": "0.4.0",
+      "family": "edgetts-dotnet-0.4.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Curry",
+      "copyright": null,
+      "nuget_url": "https://www.nuget.org/packages/EdgeTTS.DotNet/0.4.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/twn39/EdgeTTS.DotNet",
+        "commit": "bf43ca26d5db85e856fb16f4fc0e1b83dab424e3"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/edgetts-dotnet-0.4.0/LICENSE.txt",
+          "sha256": "f49fef18acfc754830a4e86d7e4425b286176b4a2140d4e0a49e5e94a2c85251"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/twn39/EdgeTTS.DotNet",
+        "commit": "bf43ca26d5db85e856fb16f4fc0e1b83dab424e3"
+      },
+      "nuget_content_hash": "9Ku0YBcXIP3/U3sjEMbbpBIYWjGk5KyOMTvUuHnsn6A4KI8kU3KthkMCm4rGjaxRMZZP9hlRupVB3TNMKpF2Yg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/edgetts-dotnet-0.4.0/LICENSE.txt",
+          "sha256": "f49fef18acfc754830a4e86d7e4425b286176b4a2140d4e0a49e5e94a2c85251",
+          "source_url": "https://raw.githubusercontent.com/twn39/EdgeTTS.DotNet/bf43ca26d5db85e856fb16f4fc0e1b83dab424e3/LICENSE",
+          "source_revision": "bf43ca26d5db85e856fb16f4fc0e1b83dab424e3"
+        }
+      ],
+      "source_repository": "https://github.com/twn39/EdgeTTS.DotNet",
+      "source_ref": "bf43ca26d5db85e856fb16f4fc0e1b83dab424e3",
+      "source_archive_url": "https://codeload.github.com/twn39/EdgeTTS.DotNet/tar.gz/bf43ca26d5db85e856fb16f4fc0e1b83dab424e3"
+    },
+    {
+      "id": "ExtendedNumerics.BigDecimal",
+      "version": "3003.0.0.346",
+      "family": "bigdecimal-3003.0.0.346",
+      "primary_spdx_expression": "MIT",
+      "authors": "Adam White, Jan Christoph Bernack, Rick Harker",
+      "copyright": "Adam White. MIT License. See License.",
+      "nuget_url": "https://www.nuget.org/packages/ExtendedNumerics.BigDecimal/3003.0.0.346",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AdamWhiteHat/BigDecimal",
+        "commit": "6a2759de671b8a909ae6706f49fc869ae856b249"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/bigdecimal-3003.0.0.346/LICENSE.txt",
+          "sha256": "b64442e1584dc870a95be5f923244107b6c43f91178406311c0aa6e195503712"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/AdamWhiteHat/BigDecimal",
+        "commit": "6a2759de671b8a909ae6706f49fc869ae856b249"
+      },
+      "nuget_content_hash": "o6qdyacVFNvDKX6T0sDEdhMKppdCiTwpj22kdgNfQlIviLSAiLqv/i4G/gYL4ZzqBYzR/o3t8wDWCX21Tt/i1A==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/bigdecimal-3003.0.0.346/LICENSE.txt",
+          "sha256": "b64442e1584dc870a95be5f923244107b6c43f91178406311c0aa6e195503712",
+          "source_url": "https://raw.githubusercontent.com/AdamWhiteHat/BigDecimal/6a2759de671b8a909ae6706f49fc869ae856b249/LICENSE.txt",
+          "source_revision": "6a2759de671b8a909ae6706f49fc869ae856b249"
+        }
+      ],
+      "source_repository": "https://github.com/AdamWhiteHat/BigDecimal",
+      "source_ref": "6a2759de671b8a909ae6706f49fc869ae856b249",
+      "source_archive_url": "https://codeload.github.com/AdamWhiteHat/BigDecimal/tar.gz/6a2759de671b8a909ae6706f49fc869ae856b249"
+    },
+    {
+      "id": "HarfBuzzSharp",
+      "version": "8.3.1.1",
+      "family": "harfbuzzsharp-8.3.1.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/HarfBuzzSharp/8.3.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://go.microsoft.com/fwlink/?linkid=868515",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "nuget_content_hash": "tLZN66oe/uiRPTZfrCU4i8ScVGwqHNh5MHrXj0yVf4l7Mz0FhTGnQ71RGySROTmdognAs0JtluHkL41pIabWuQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+    },
+    {
+      "id": "HarfBuzzSharp.NativeAssets.Linux",
+      "version": "8.3.1.1",
+      "family": "harfbuzzsharp-8.3.1.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.Linux/8.3.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://go.microsoft.com/fwlink/?linkid=868515",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "nuget_content_hash": "3EZ1mpIiKWRLL5hUYA82ZHteeDIVaEA/Z0rA/wU6tjx6crcAkJnBPwDXZugBSfo8+J3EznvRJf49uMsqYfKrHg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+    },
+    {
+      "id": "HarfBuzzSharp.NativeAssets.macOS",
+      "version": "8.3.1.1",
+      "family": "harfbuzzsharp-8.3.1.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.macOS/8.3.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://go.microsoft.com/fwlink/?linkid=868515",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "nuget_content_hash": "jbtCsgftcaFLCA13tVKo5iWdElJScrulLTKJre36O4YQTIlwDtPPqhRZNk+Y0vv4D1gxbscasGRucUDfS44ofQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+    },
+    {
+      "id": "HarfBuzzSharp.NativeAssets.WebAssembly",
+      "version": "8.3.1.1",
+      "family": "harfbuzzsharp-8.3.1.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.WebAssembly/8.3.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://go.microsoft.com/fwlink/?linkid=868515",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "nuget_content_hash": "loJweK2u/mH/3C2zBa0ggJlITIszOkK64HLAZB7FUT670dTg965whLFYHDQo69NmC4+d9UN0icLC9VHidXaVCA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+    },
+    {
+      "id": "HarfBuzzSharp.NativeAssets.Win32",
+      "version": "8.3.1.1",
+      "family": "harfbuzzsharp-8.3.1.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.Win32/8.3.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://go.microsoft.com/fwlink/?linkid=868515",
+        "branch": "release/3.119.0",
+        "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      },
+      "nuget_content_hash": "UsJtQsfAJoFDZrXc4hCUfRPMqccfKZ0iumJ/upcUjz/cmsTgVFGNEL5yaJWmkqsuFYdMWbj/En5/kS4PFl9hBA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+    },
+    {
+      "id": "Hexa.NET.SDL2",
+      "version": "1.2.17",
+      "family": "hexa-net-sdl2-1.2.17",
+      "primary_spdx_expression": "MIT",
+      "authors": "Juna Meinhold",
+      "copyright": "Copyright (c) 2023 Juna Meinhold",
+      "nuget_url": "https://www.nuget.org/packages/Hexa.NET.SDL2/1.2.17",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/HexaEngine/Hexa.NET.SDL",
+        "commit": "15fc3406e473759a2bcddd9c3ea24b8006916fbd"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/hexa-net-sdl2-1.2.17/LICENSE.txt",
+          "sha256": "66a09819ef5b9b36cdb2363870c9a96c49ce855f17e9bf18e219cb548d26b733"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/HexaEngine/Hexa.NET.SDL",
+        "commit": "15fc3406e473759a2bcddd9c3ea24b8006916fbd"
+      },
+      "nuget_content_hash": "ti+KQOQHAIAorOSOmNhq+sPa+Oj/MRPYHvWSt6ZIF35nNVQHE59kiUBZTKOA6D1+4vjjNDnr/KMAom+51vEvqg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/hexa-net-sdl2-1.2.17/LICENSE.txt",
+          "sha256": "66a09819ef5b9b36cdb2363870c9a96c49ce855f17e9bf18e219cb548d26b733",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/hexa.net.sdl2/1.2.17/hexa.net.sdl2.1.2.17.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/HexaEngine/Hexa.NET.SDL",
+      "source_ref": "15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+      "source_archive_url": "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd"
+    },
+    {
+      "id": "HexaGen.Runtime",
+      "version": "1.1.24",
+      "family": "hexagen-runtime-1.1.24",
+      "primary_spdx_expression": "MIT",
+      "authors": "Juna Meinhold",
+      "copyright": "Copyright (c) 2024 Juna Meinhold",
+      "nuget_url": "https://www.nuget.org/packages/HexaGen.Runtime/1.1.24",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/JunaMeinhold/HexaGen",
+        "commit": "e8cde045ae0b15284cddd8f79b491af4a8afc420"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/hexagen-runtime-1.1.24/LICENSE.txt",
+          "sha256": "14c7f3bdb1cb325dffb0ccca7288a8edd0338231615a50c8321fadb64d143453"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/JunaMeinhold/HexaGen",
+        "commit": "e8cde045ae0b15284cddd8f79b491af4a8afc420"
+      },
+      "nuget_content_hash": "1P5IA09EL514OeKGyJ3mSI5F9MGAId27CoSR0SzVz3Jj6m/7tn/GdONoWEUYacRSc41y+CbR6tVGcZNAldsehA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/hexagen-runtime-1.1.24/LICENSE.txt",
+          "sha256": "14c7f3bdb1cb325dffb0ccca7288a8edd0338231615a50c8321fadb64d143453",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/hexagen.runtime/1.1.24/hexagen.runtime.1.1.24.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/JunaMeinhold/HexaGen",
+      "source_ref": "e8cde045ae0b15284cddd8f79b491af4a8afc420",
+      "source_archive_url": "https://codeload.github.com/JunaMeinhold/HexaGen/tar.gz/e8cde045ae0b15284cddd8f79b491af4a8afc420"
+    },
+    {
+      "id": "ManagedBass",
+      "version": "3.0.0",
+      "family": "managedbass-3.0.0-historical",
+      "primary_spdx_expression": "MIT",
+      "authors": "MathewSachin",
+      "copyright": "(c) 2016 Mathew Sachin",
+      "nuget_url": "https://www.nuget.org/packages/ManagedBass/3.0.0",
+      "repository": {},
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/managedbass-3.0.0-historical/LICENSE.txt",
+          "sha256": "056be86defd73b62b8a9ba5562277bae37ade5c9f9fe47e3d574a0c78b1f2a4c"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": null,
+      "nuget_content_hash": "ieVHpRzSVJO5MQvSE2qlGhNrDdLPYFkkpqeNc6DJdGtQI/LP4uiMkzHX8sDUy8yF5u2Eg2aLrPvbF8+XKBfBgQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/managedbass-3.0.0-historical/LICENSE.txt",
+          "sha256": "056be86defd73b62b8a9ba5562277bae37ade5c9f9fe47e3d574a0c78b1f2a4c",
+          "source_url": "https://raw.githubusercontent.com/ManagedBass/Home/041f81ba7ab58082f9f50c8640c3d21c6bf8e3df/LICENSE.md",
+          "source_revision": "041f81ba7ab58082f9f50c8640c3d21c6bf8e3df"
+        }
+      ],
+      "historical_only": true,
+      "release_blocked": true,
+      "source_unresolved": true,
+      "source_note": "Removed from the current release. The pinned Home repository license is license evidence only; it is not the source revision of the historical 3.0.0 binary. Its wrapper MIT license does not license native BASS binaries."
+    },
+    {
+      "id": "MessageBox.Avalonia",
+      "version": "3.3.1.1",
+      "family": "messagebox-3.3.1.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Lary",
+      "copyright": null,
+      "nuget_url": "https://www.nuget.org/packages/MessageBox.Avalonia/3.3.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/CreateLab/MessageBox.Avalonia",
+        "commit": "c0cb96704e2b5db62bfdfa043dcaf3e177475716"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/messagebox-3.3.1.1/LICENSE.txt",
+          "sha256": "c33b241a9cf8a83783708b4fcf2d85786313192660afec3bc21bda5d8ce5305e"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "messagebox.avalonia",
+        "commit": "c0cb96704e2b5db62bfdfa043dcaf3e177475716"
+      },
+      "nuget_content_hash": "a0NocLvE0ipg0REevrMtilNI+ud+tFTJW7YrPtploeM93ew8S3Y6hEybqZ7W9q5Yqa9u+xOrOjAlG1lTihWhnQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/messagebox-3.3.1.1/LICENSE.txt",
+          "sha256": "c33b241a9cf8a83783708b4fcf2d85786313192660afec3bc21bda5d8ce5305e",
+          "source_url": "https://raw.githubusercontent.com/CreateLab/MessageBox.Avalonia/c0cb96704e2b5db62bfdfa043dcaf3e177475716/LICENSE",
+          "source_revision": "c0cb96704e2b5db62bfdfa043dcaf3e177475716"
+        }
+      ],
+      "source_repository": "https://github.com/CreateLab/MessageBox.Avalonia",
+      "source_ref": "c0cb96704e2b5db62bfdfa043dcaf3e177475716",
+      "source_archive_url": "https://codeload.github.com/CreateLab/MessageBox.Avalonia/tar.gz/c0cb96704e2b5db62bfdfa043dcaf3e177475716"
+    },
+    {
+      "id": "MicroCom.Runtime",
+      "version": "0.11.0",
+      "family": "microcom-runtime-0.11.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "MicroCom.Runtime",
+      "copyright": "Copyright 2021 © Nikita Tsukanov",
+      "nuget_url": "https://www.nuget.org/packages/MicroCom.Runtime/0.11.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/kekekeks/MicroCom",
+        "commit": "7e773759cfc1012a5d080d4129c4718a662884b0"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt",
+          "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/kekekeks/MicroCom"
+      },
+      "nuget_content_hash": "MEnrZ3UIiH40hjzMDsxrTyi8dtqB5ziv3iBeeU4bXsL/7NLSal9F1lZKpK+tfBRnUoDSdtcW3KufE4yhATOMCA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt",
+          "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9",
+          "source_url": "https://raw.githubusercontent.com/kekekeks/MicroCom/7e773759cfc1012a5d080d4129c4718a662884b0/LICENSE",
+          "source_revision": "7e773759cfc1012a5d080d4129c4718a662884b0"
+        }
+      ],
+      "source_repository": "https://github.com/kekekeks/MicroCom",
+      "source_ref": "7e773759cfc1012a5d080d4129c4718a662884b0",
+      "source_archive_url": "https://codeload.github.com/kekekeks/MicroCom/tar.gz/7e773759cfc1012a5d080d4129c4718a662884b0",
+      "source_provenance": {
+        "method": "Official source version change to 0.11.0 immediately preceding NuGet publication, with no intervening code commit",
+        "version_file_url": "https://raw.githubusercontent.com/kekekeks/MicroCom/7e773759cfc1012a5d080d4129c4718a662884b0/Directory.Build.props",
+        "version_file_path": "third-party/evidence/microcom-0.11.0-Directory.Build.props",
+        "nuget_registration_url": "https://api.nuget.org/v3/registration5-gz-semver2/microcom.runtime/0.11.0.json",
+        "source_commit_time_utc": "2022-11-02T09:38:44Z",
+        "nuget_published_utc": "2022-11-02T09:43:43.637Z"
+      }
+    },
+    {
+      "id": "Microsoft.Build.Tasks.Git",
+      "version": "8.0.0",
+      "family": "sourcelink-8.0.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Build.Tasks.Git/8.0.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/sourcelink",
+        "commit": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/sourcelink-8.0.0/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": true,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/sourcelink",
+        "commit": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+      },
+      "nuget_content_hash": "bZKfSIKJRXLTuSzLudMFte/8CempWjVamNUR5eHJizsy+iuOuO/k2gnh7W0dHJmYY0tBf+gUErfluCv5mySAOQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/sourcelink-8.0.0/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/sourcelink/ce7339775f8ada5b16c72a874f591c8cd5722c6b/License.txt",
+          "source_revision": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+        }
+      ],
+      "source_repository": "https://github.com/dotnet/sourcelink",
+      "source_ref": "ce7339775f8ada5b16c72a874f591c8cd5722c6b",
+      "source_archive_url": "https://codeload.github.com/dotnet/sourcelink/tar.gz/ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "Lws+o4DFw6p5NquRoYA3d5QVvi49ugNw7TxbW4QGLsL8F1LCCyJqWFy0+RMQ/hzUuS9aKV5NJ/XGAF5N9/RQcQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.Abstractions",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Abstractions/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "KC5PslaTDnTuTvyke0KYAVBYdZ7IVTsU3JhHe69BpEbHLcj1YThP3bIGtZNOkZfast2AuLnul5lk4rZKxAdUGQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.Binder",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Binder/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "/SdW50prUuenglSy7MXU3eVQkOk4/J4fjc+GIhv4NkTmaZOQyTqpVAYi8nRjNtOKHzCy7g5cSlOSgkbT7clLwQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.DependencyInjection",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "J/Zmp6fY93JbaiZ11ckWvcyxMPjD6XVwIHQXBjryTBgn7O6O20HYg9uVLFcZlNfgH78MnreE/7EH+hjfzn7VyA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection.Abstractions/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "zOIurr59+kUf9vNcsUkCvKWZv+fPosUZXURZesYkJCvl0EzTc9F7maAO4Cd2WEV7ZJJ0AZrFQvuH6Npph9wdBw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Logging",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Logging/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "a0EWuBs6D3d7XMGroDXm+WsAi5CVVfjOJvyxurzWnuhBN9CO+1qHKcrKV1JK7H/T4ZtHIoVCOX/YyWM8K87qtw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.Abstractions",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "RZkez/JjpnO+MZ6efKkSynN6ZztLpw3WbxNzjLCPBd97wWj1S9ZYPWi0nmT4kWBRa6atHsdM1ydGkUr8GudyDQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.Configuration",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "XVtNJfLZVTDmQS5RCUjIr7QEAgGhJ3yQ0L3PduN7rE4aijmqYl0pIF09ZSU8jgnxml91Mw59ze220g8S7anaOg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.Console",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "Z6gBfpHqJsz2hGH+eUQUQI+DSHsDNhTKt8toHAtDhYFRlxUN1FKPKzNmTgSrAz1gtDTOBjDU5lQZ50463Ehw7A==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.TraceSource",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.TraceSource/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "t4nIJs3BySHuGM97/Xu9fKShytl9HdQsBTnCN/D8p9BwuWXOeUHNFn825dehkh0siOync3cL9McTSCVYPtStAA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Options",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Options/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "1De2LJjmxdqopI5AYC5dIhoZQ79AR5ayywxNF1rXrXFtKQfbQOV9+n/IsZBa7qWlr0MqoGpW8+OY2v/57udZOA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Options.ConfigurationExtensions/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "8njGDg0OdDBM4Zox0ybuUOJZkQ8HcH49F+POZBlG+nsfzEyqOCHyHEkWeRVI62qsssiugUVEKqUttT1ZbV0aJQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.Extensions.Primitives",
+      "version": "10.0.2",
+      "family": "dotnet-extensions-10.0.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.Extensions.Primitives/10.0.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/dotnet",
+        "commit": "44525024595742ebe09023abe709df51de65009b"
+      },
+      "nuget_content_hash": "QmSiO+oLBEooGgB3i0GRXyeYRDHjllqt3k365jwfZlYWhvSHA3UL2NEVV5m8aZa041eIlblo6KMI5txvTMpTwA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/LICENSE.TXT",
+          "source_revision": "44525024595742ebe09023abe709df51de65009b"
+        },
+        {
+          "path": "LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/10.0.2/microsoft.extensions.configuration.10.0.2.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "runtime",
+          "repository": "https://github.com/dotnet/runtime",
+          "revision": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "url": "https://codeload.github.com/dotnet/runtime/tar.gz/9ffface2f3fa6fbbb427793c3230b1626a1fdd84",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": {
+        "nuget_repository": "https://github.com/dotnet/dotnet",
+        "nuget_repository_commit": "44525024595742ebe09023abe709df51de65009b",
+        "manifest_url": "https://raw.githubusercontent.com/dotnet/dotnet/44525024595742ebe09023abe709df51de65009b/src/source-manifest.json",
+        "manifest_path": "third-party/evidence/microsoft-extensions-10.0.2-source-manifest.json",
+        "entry_path": "runtime",
+        "upstream_repository": "https://github.com/dotnet/runtime",
+        "upstream_commit": "9ffface2f3fa6fbbb427793c3230b1626a1fdd84"
+      }
+    },
+    {
+      "id": "Microsoft.SourceLink.Common",
+      "version": "8.0.0",
+      "family": "sourcelink-8.0.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.SourceLink.Common/8.0.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/sourcelink",
+        "commit": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/sourcelink-8.0.0/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": true,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/sourcelink",
+        "commit": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+      },
+      "nuget_content_hash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/sourcelink-8.0.0/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/sourcelink/ce7339775f8ada5b16c72a874f591c8cd5722c6b/License.txt",
+          "source_revision": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+        }
+      ],
+      "source_repository": "https://github.com/dotnet/sourcelink",
+      "source_ref": "ce7339775f8ada5b16c72a874f591c8cd5722c6b",
+      "source_archive_url": "https://codeload.github.com/dotnet/sourcelink/tar.gz/ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+    },
+    {
+      "id": "Microsoft.SourceLink.GitHub",
+      "version": "8.0.0",
+      "family": "sourcelink-8.0.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/Microsoft.SourceLink.GitHub/8.0.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dotnet/sourcelink",
+        "commit": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/sourcelink-8.0.0/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": true,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/dotnet/sourcelink",
+        "commit": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+      },
+      "nuget_content_hash": "G5q7OqtwIyGTkeIOAc3u2ZuV/kicQaec5EaRnc0pIeSnh9LUjj+PYQrJYBURvDt7twGl2PKA7nSN0kz1Zw5bnQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/sourcelink-8.0.0/LICENSE.txt",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+          "source_url": "https://raw.githubusercontent.com/dotnet/sourcelink/ce7339775f8ada5b16c72a874f591c8cd5722c6b/License.txt",
+          "source_revision": "ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+        }
+      ],
+      "source_repository": "https://github.com/dotnet/sourcelink",
+      "source_ref": "ce7339775f8ada5b16c72a874f591c8cd5722c6b",
+      "source_archive_url": "https://codeload.github.com/dotnet/sourcelink/tar.gz/ce7339775f8ada5b16c72a874f591c8cd5722c6b"
+    },
+    {
+      "id": "NAudio.Core",
+      "version": "2.2.1",
+      "family": "naudio-2.2.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Mark Heath",
+      "copyright": "© Mark Heath 2023",
+      "nuget_url": "https://www.nuget.org/packages/NAudio.Core/2.2.1",
+      "repository": {
+        "url": "https://github.com/naudio/NAudio",
+        "commit": "b5d5ff83fd378f046398891fe5cd99426ce44732"
+      },
+      "source_repository": "https://github.com/naudio/NAudio",
+      "source_ref": "b5d5ff83fd378f046398891fe5cd99426ce44732",
+      "source_archive_url": "https://codeload.github.com/naudio/NAudio/tar.gz/b5d5ff83fd378f046398891fe5cd99426ce44732",
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/naudio-2.2.1/LICENSE.txt",
+          "sha256": "303e01786b271eb464b3f43d18a375f2f17d37bc708a37c2fdf45b289fb5bfaa"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_package_sha256": "794645dbfd30e4880663d52d9d9224d55c301fa54228ff623c95d572c7887347",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/naudio-2.2.1/LICENSE.txt",
+          "sha256": "303e01786b271eb464b3f43d18a375f2f17d37bc708a37c2fdf45b289fb5bfaa",
+          "source_url": "https://raw.githubusercontent.com/naudio/NAudio/b5d5ff83fd378f046398891fe5cd99426ce44732/license.txt",
+          "source_revision": "b5d5ff83fd378f046398891fe5cd99426ce44732"
+        }
+      ],
+      "source_provenance": {
+        "method": "Upstream official v2.2.1 Git tag",
+        "tag": "v2.2.1",
+        "commit": "b5d5ff83fd378f046398891fe5cd99426ce44732"
+      }
+    },
+    {
+      "id": "NAudio.Wasapi",
+      "version": "2.2.1",
+      "family": "naudio-2.2.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Mark Heath",
+      "copyright": "© Mark Heath 2023",
+      "nuget_url": "https://www.nuget.org/packages/NAudio.Wasapi/2.2.1",
+      "repository": {
+        "url": "https://github.com/naudio/NAudio",
+        "commit": "b5d5ff83fd378f046398891fe5cd99426ce44732"
+      },
+      "source_repository": "https://github.com/naudio/NAudio",
+      "source_ref": "b5d5ff83fd378f046398891fe5cd99426ce44732",
+      "source_archive_url": "https://codeload.github.com/naudio/NAudio/tar.gz/b5d5ff83fd378f046398891fe5cd99426ce44732",
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/naudio-2.2.1/LICENSE.txt",
+          "sha256": "303e01786b271eb464b3f43d18a375f2f17d37bc708a37c2fdf45b289fb5bfaa"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_package_sha256": "c8396b8dbab86a2619edfd9158beaf18c21cb86677099b5594950fd8651b9d1a",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/naudio-2.2.1/LICENSE.txt",
+          "sha256": "303e01786b271eb464b3f43d18a375f2f17d37bc708a37c2fdf45b289fb5bfaa",
+          "source_url": "https://raw.githubusercontent.com/naudio/NAudio/b5d5ff83fd378f046398891fe5cd99426ce44732/license.txt",
+          "source_revision": "b5d5ff83fd378f046398891fe5cd99426ce44732"
+        }
+      ],
+      "source_provenance": {
+        "method": "Upstream official v2.2.1 Git tag",
+        "tag": "v2.2.1",
+        "commit": "b5d5ff83fd378f046398891fe5cd99426ce44732"
+      }
+    },
+    {
+      "id": "NCalc.Core",
+      "version": "5.12.0",
+      "family": "ncalc-5.12.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Sebastien Ros and contributors",
+      "copyright": "Sebastien Ros and contributors",
+      "nuget_url": "https://www.nuget.org/packages/NCalc.Core/5.12.0",
+      "repository": {
+        "type": "git",
+        "commit": "bd0afe72c1b5a5679255e91f902f35021acbb48a",
+        "url": "https://github.com/ncalc/ncalc"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/ncalc-5.12.0/LICENSE.txt",
+          "sha256": "42ada0a669c9bdd4e6b3480ceb052a1476b1d24a6ed7ea6f0d0705ee1e3f6120"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "commit": "bd0afe72c1b5a5679255e91f902f35021acbb48a"
+      },
+      "nuget_content_hash": "fk9NN0fgquopSYylD3xcAZCDX43B4btI1WkmBWud4CV6wP7dg7PDb2YAu20fmnEZd8IM3qfQmdcii69YdlRn+g==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/ncalc-5.12.0/LICENSE.txt",
+          "sha256": "42ada0a669c9bdd4e6b3480ceb052a1476b1d24a6ed7ea6f0d0705ee1e3f6120",
+          "source_url": "https://raw.githubusercontent.com/ncalc/ncalc/bd0afe72c1b5a5679255e91f902f35021acbb48a/LICENSE",
+          "source_revision": "bd0afe72c1b5a5679255e91f902f35021acbb48a"
+        }
+      ],
+      "source_repository": "https://github.com/ncalc/ncalc",
+      "source_ref": "bd0afe72c1b5a5679255e91f902f35021acbb48a",
+      "source_archive_url": "https://codeload.github.com/ncalc/ncalc/tar.gz/bd0afe72c1b5a5679255e91f902f35021acbb48a"
+    },
+    {
+      "id": "NCalcSync",
+      "version": "5.12.0",
+      "family": "ncalc-5.12.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "Sebastien Ros and contributors",
+      "copyright": "Sebastien Ros and contributors",
+      "nuget_url": "https://www.nuget.org/packages/NCalcSync/5.12.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/ncalc/ncalc",
+        "commit": "bd0afe72c1b5a5679255e91f902f35021acbb48a"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/ncalc-5.12.0/LICENSE.txt",
+          "sha256": "42ada0a669c9bdd4e6b3480ceb052a1476b1d24a6ed7ea6f0d0705ee1e3f6120"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/ncalc/ncalc.git",
+        "commit": "bd0afe72c1b5a5679255e91f902f35021acbb48a"
+      },
+      "nuget_content_hash": "gG1FolD+vQ6+kCXmVWzxuKLt5v6kpyoHo/ALvo1aYmvUITZ8j53qCAqCQZJHdvbiOeasWXQWpEAE7hmqnKtkUg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/ncalc-5.12.0/LICENSE.txt",
+          "sha256": "42ada0a669c9bdd4e6b3480ceb052a1476b1d24a6ed7ea6f0d0705ee1e3f6120",
+          "source_url": "https://raw.githubusercontent.com/ncalc/ncalc/bd0afe72c1b5a5679255e91f902f35021acbb48a/LICENSE",
+          "source_revision": "bd0afe72c1b5a5679255e91f902f35021acbb48a"
+        }
+      ],
+      "source_repository": "https://github.com/ncalc/ncalc",
+      "source_ref": "bd0afe72c1b5a5679255e91f902f35021acbb48a",
+      "source_archive_url": "https://codeload.github.com/ncalc/ncalc/tar.gz/bd0afe72c1b5a5679255e91f902f35021acbb48a"
+    },
+    {
+      "id": "NLayer",
+      "version": "2.0.1",
+      "family": "nlayer-2.0.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Mark Heath, Andrew Ward",
+      "copyright": "© Mark Heath 2026",
+      "nuget_url": "https://www.nuget.org/packages/NLayer/2.0.1",
+      "repository": {
+        "url": "https://github.com/naudio/NLayer",
+        "commit": "191c104a9fef8be13521d3956e537599b493a573"
+      },
+      "source_repository": "https://github.com/naudio/NLayer",
+      "source_ref": "191c104a9fef8be13521d3956e537599b493a573",
+      "source_archive_url": "https://codeload.github.com/naudio/NLayer/tar.gz/191c104a9fef8be13521d3956e537599b493a573",
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/nlayer-2.0.1/LICENSE.txt",
+          "sha256": "5c0358c3876d9655bc5b2d6555030516266c996c0efffb678807d53ade152850"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_package_sha256": "6af44837bd87249ef12b537f7a3129819ff7ed4f0d5227540925716cde7549d8",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/nlayer-2.0.1/LICENSE.txt",
+          "sha256": "5c0358c3876d9655bc5b2d6555030516266c996c0efffb678807d53ade152850",
+          "source_url": "https://raw.githubusercontent.com/naudio/NLayer/191c104a9fef8be13521d3956e537599b493a573/LICENSE",
+          "source_revision": "191c104a9fef8be13521d3956e537599b493a573"
+        }
+      ],
+      "source_provenance": {
+        "method": "NuGet package repository commit",
+        "commit": "191c104a9fef8be13521d3956e537599b493a573"
+      }
+    },
+    {
+      "id": "NLayer.NAudioSupport",
+      "version": "2.0.1",
+      "family": "nlayer-2.0.1",
+      "primary_spdx_expression": "MIT",
+      "authors": "Mark Heath, Andrew Ward",
+      "copyright": "© Mark Heath 2026",
+      "nuget_url": "https://www.nuget.org/packages/NLayer.NAudioSupport/2.0.1",
+      "repository": {
+        "url": "https://github.com/naudio/NLayer",
+        "commit": "191c104a9fef8be13521d3956e537599b493a573"
+      },
+      "source_repository": "https://github.com/naudio/NLayer",
+      "source_ref": "191c104a9fef8be13521d3956e537599b493a573",
+      "source_archive_url": "https://codeload.github.com/naudio/NLayer/tar.gz/191c104a9fef8be13521d3956e537599b493a573",
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/nlayer-2.0.1/LICENSE.txt",
+          "sha256": "5c0358c3876d9655bc5b2d6555030516266c996c0efffb678807d53ade152850"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_package_sha256": "ff01891ab02ae1aa5229f6f6c4ac76f32af7a6696782c109391643db0501a0f7",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/nlayer-2.0.1/LICENSE.txt",
+          "sha256": "5c0358c3876d9655bc5b2d6555030516266c996c0efffb678807d53ade152850",
+          "source_url": "https://raw.githubusercontent.com/naudio/NLayer/191c104a9fef8be13521d3956e537599b493a573/LICENSE",
+          "source_revision": "191c104a9fef8be13521d3956e537599b493a573"
+        }
+      ],
+      "source_provenance": {
+        "method": "NuGet package repository commit",
+        "commit": "191c104a9fef8be13521d3956e537599b493a573"
+      }
+    },
+    {
+      "id": "Parlot",
+      "version": "1.5.7",
+      "family": "parlot-1.5.7",
+      "primary_spdx_expression": "BSD-3-Clause",
+      "authors": "Sebastien Ros",
+      "copyright": "Sebastien Ros",
+      "nuget_url": "https://www.nuget.org/packages/Parlot/1.5.7",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/sebastienros/parlot",
+        "commit": "c268ebf6b794de6bb11d64661fd080e8fc379b9b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/parlot-1.5.7/LICENSE.txt",
+          "sha256": "dbf8fa1817eb2ab450c55b86ec85898d62a4bce0dd84cb127ce49c3d77e14d41"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/sebastienros/parlot",
+        "commit": "c268ebf6b794de6bb11d64661fd080e8fc379b9b"
+      },
+      "nuget_content_hash": "D0PhSypMx1JJVTQUqB8ebwcJxH4NAvdn1d8eKi9lLoNz8c1+8qHw+/Sq5/6HaJFgOaqy1VJBpvYFCIC4I2uvqQ==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/parlot-1.5.7/LICENSE.txt",
+          "sha256": "dbf8fa1817eb2ab450c55b86ec85898d62a4bce0dd84cb127ce49c3d77e14d41",
+          "source_url": "https://raw.githubusercontent.com/sebastienros/parlot/c268ebf6b794de6bb11d64661fd080e8fc379b9b/LICENSE",
+          "source_revision": "c268ebf6b794de6bb11d64661fd080e8fc379b9b"
+        }
+      ],
+      "source_repository": "https://github.com/sebastienros/parlot",
+      "source_ref": "c268ebf6b794de6bb11d64661fd080e8fc379b9b",
+      "source_archive_url": "https://codeload.github.com/sebastienros/parlot/tar.gz/c268ebf6b794de6bb11d64661fd080e8fc379b9b"
+    },
+    {
+      "id": "SkiaSharp",
+      "version": "2.88.9",
+      "family": "skiasharp-2.88.9",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/SkiaSharp/2.88.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "nuget_content_hash": "3MD5VHjXXieSHCleRLuaTXmL2pD0mB7CcOB1x2kA1I4bhptf4e3R27iM93264ZYuAq6mkUyX5XbcxnZvMJYc1Q==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "embedded_license_note": "The original THIRD-PARTY-NOTICES and native-component entries preserve the Skia dependency licenses, including Adobe DNG additional terms and libgifcodec license alternatives; the wrapper MIT license does not replace them."
+    },
+    {
+      "id": "SkiaSharp.NativeAssets.Linux",
+      "version": "2.88.9",
+      "family": "skiasharp-2.88.9",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.Linux/2.88.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "nuget_content_hash": "cWSaJKVPWAaT/WIn9c8T5uT/l4ETwHxNJTkEOtNKjphNo8AW6TF9O32aRkxqw3l8GUdUo66Bu7EiqtFh/XG0Zg==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "embedded_license_note": "The original THIRD-PARTY-NOTICES and native-component entries preserve the Skia dependency licenses, including Adobe DNG additional terms and libgifcodec license alternatives; the wrapper MIT license does not replace them."
+    },
+    {
+      "id": "SkiaSharp.NativeAssets.macOS",
+      "version": "2.88.9",
+      "family": "skiasharp-2.88.9",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.macOS/2.88.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "nuget_content_hash": "Nv5spmKc4505Ep7oUoJ5vp3KweFpeNqxpyGDWyeEPTX2uR6S6syXIm3gj75dM0YJz7NPvcix48mR5laqs8dPuA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "embedded_license_note": "The original THIRD-PARTY-NOTICES and native-component entries preserve the Skia dependency licenses, including Adobe DNG additional terms and libgifcodec license alternatives; the wrapper MIT license does not replace them."
+    },
+    {
+      "id": "SkiaSharp.NativeAssets.WebAssembly",
+      "version": "2.88.9",
+      "family": "skiasharp-2.88.9",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.WebAssembly/2.88.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "distributed_in_windows_release": false,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "nuget_content_hash": "kt06RccBHSnAs2wDYdBSfsjIDbY3EpsOVqnlDgKdgvyuRA8ZFDaHRdWNx1VHjGgYzmnFCGiTJBnXFl5BqGwGnA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "embedded_license_note": "The original THIRD-PARTY-NOTICES and native-component entries preserve the Skia dependency licenses, including Adobe DNG additional terms and libgifcodec license alternatives; the wrapper MIT license does not replace them."
+    },
+    {
+      "id": "SkiaSharp.NativeAssets.Win32",
+      "version": "2.88.9",
+      "family": "skiasharp-2.88.9",
+      "primary_spdx_expression": "MIT",
+      "authors": "Microsoft",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "nuget_url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.Win32/2.88.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/mono/SkiaSharp",
+        "branch": "release/2.88.9",
+        "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c"
+      },
+      "nuget_content_hash": "wb2kYgU7iy84nQLYZwMeJXixvK++GoIuECjU4ECaUKNuflyRlJKyiRhN1MAHswvlvzuvkrjRWlK0Za6+kYQK7w==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+          "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "source_revision": null
+        }
+      ],
+      "source_repository": "https://github.com/mono/SkiaSharp",
+      "source_ref": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "embedded_license_note": "The original THIRD-PARTY-NOTICES and native-component entries preserve the Skia dependency licenses, including Adobe DNG additional terms and libgifcodec license alternatives; the wrapper MIT license does not replace them."
+    },
+    {
+      "id": "Tmds.DBus.Protocol",
+      "version": "0.21.2",
+      "family": "tmds-dbus-0.21.2",
+      "primary_spdx_expression": "MIT",
+      "authors": "Tom Deseyn",
+      "copyright": "Tom Deseyn",
+      "nuget_url": "https://www.nuget.org/packages/Tmds.DBus.Protocol/0.21.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/tmds/Tmds.DBus",
+        "branch": "refs/heads/main",
+        "commit": "f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/tmds-dbus-0.21.2/LICENSE.txt",
+          "sha256": "aca3b49277abcc7886ccb2f115603a9f5b15fc3f96019a10c00f2974098b210c"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/tmds/Tmds.DBus.git",
+        "branch": "refs/heads/main",
+        "commit": "f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7"
+      },
+      "nuget_content_hash": "ScSMrUrrw8px4kK1Glh0fZv/HQUlg1078bNXNPfRPKQ3WbRzV9HpsydYEOgSoMK5LWICMf2bMwIFH0pGjxjcMA==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/tmds-dbus-0.21.2/LICENSE.txt",
+          "sha256": "aca3b49277abcc7886ccb2f115603a9f5b15fc3f96019a10c00f2974098b210c",
+          "source_url": "https://raw.githubusercontent.com/tmds/Tmds.DBus/f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7/COPYING",
+          "source_revision": "f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7"
+        }
+      ],
+      "source_repository": "https://github.com/tmds/Tmds.DBus",
+      "source_ref": "f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7",
+      "source_archive_url": "https://codeload.github.com/tmds/Tmds.DBus/tar.gz/f0b2c29f57bdc7efaeccaa61ca9f13e9a0eebff7"
+    }
+  ],
+  "native_components": [
+    {
+      "id": "SDL2",
+      "version": "2.32.10",
+      "files": [
+        "SDL2.dll"
+      ],
+      "primary_spdx_expression": "Zlib",
+      "repository": {
+        "url": "https://github.com/libsdl-org/SDL",
+        "commit": "5d249570393f7a37e037abf22cd6012a4cc56a71"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/SDL2-2.32.10/LICENSE.txt",
+          "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127"
+        }
+      ],
+      "binary_sha256": {
+        "SDL2.dll": "abf871f9ef7621647a82619aef3a06f7d2db42da0c748e5650d81ac2d45fb084"
+      },
+      "source_provenance": "Hexa.NET.SDL2 1.2.17 native binary version 2.32.10.0; official release-2.32.10 annotated tag resolved to source commit.",
+      "source_archives": [
+        {
+          "name": "SDL2",
+          "repository": "https://github.com/libsdl-org/SDL",
+          "revision": "5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "url": "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "delivery": "bundled"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/SDL2-2.32.10/LICENSE.txt",
+          "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127",
+          "source_url": "https://raw.githubusercontent.com/libsdl-org/SDL/5d249570393f7a37e037abf22cd6012a4cc56a71/LICENSE.txt",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only; source completeness of the containing native binary and its other inputs is reviewed separately.",
+        "evidence": [
+          "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71"
+        ]
+      }
+    },
+    {
+      "id": "HarfBuzz",
+      "version": "8.3.1",
+      "files": [
+        "libHarfBuzzSharp.dll"
+      ],
+      "primary_spdx_expression": "MIT",
+      "repository": {
+        "url": "https://github.com/harfbuzz/harfbuzz",
+        "commit": "2b3631a866b3077d9d675caa4ec9010b342b5a7c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-COPYING",
+          "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+        }
+      ],
+      "binary_sha256": {
+        "libHarfBuzzSharp.dll": "eb76238c9e8e41d44b5a5b18167c4c5b39ca5db4277af5dbe92d730f0fc14a7d"
+      },
+      "source_provenance": "HarfBuzzSharp 8.3.1.1 -> mono/SkiaSharp@64f24b1cddb68d30ec0ac6b661964178fc21d5ec -> externals/skia@30abf4a0dcd3006f3a555e46906151e486f87b6e -> DEPS harfbuzz@2b3631a866b3077d9d675caa4ec9010b342b5a7c; official 8.3.1 tag resolves to this source commit.",
+      "source_archives": [
+        {
+          "name": "HarfBuzz",
+          "repository": "https://github.com/harfbuzz/harfbuzz",
+          "revision": "2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "url": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "delivery": "bundled"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-COPYING",
+          "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64",
+          "source_url": "https://raw.githubusercontent.com/harfbuzz/harfbuzz/2b3631a866b3077d9d675caa4ec9010b342b5a7c/COPYING",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only; source completeness of the containing native binary and its other inputs is reviewed separately.",
+        "evidence": [
+          "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/2b3631a866b3077d9d675caa4ec9010b342b5a7c"
+        ]
+      }
+    },
+    {
+      "id": "libgifcodec",
+      "version": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "(MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later) AND BSD-3-Clause AND BSD-2-Clause",
+      "repository": {
+        "url": "https://skia.googlesource.com/libgifcodec/",
+        "commit": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+          "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625"
+        },
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+          "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [],
+      "vendored_source_paths": [
+        "third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      ],
+      "selected_alternative": "For the alternatively licensed SkGifImageReader files, this distribution elects GPL-2.0-or-later at version 3. Original alternatives and copyright notices remain intact; other BSD portions retain their own terms.",
+      "source_provenance": "SkiaSharp.NativeAssets.Win32 2.88.9 -> mono/SkiaSharp@9699cdf046a989423a5e5eca68e7fd813486d81c -> externals/skia@4bed689c9c9eb77a120c6a9d54af6a572c85d1c2 -> DEPS libgifcodec.",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+          "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625",
+          "source_url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+          "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/GPL-3.0-or-later.txt",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only; source completeness of the containing native binary and its other inputs is reviewed separately.",
+        "evidence": [
+          "third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+        ]
+      }
+    },
+    {
+      "id": "Skia",
+      "version": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause",
+      "repository": {
+        "url": "https://github.com/mono/skia",
+        "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_provenance": "SkiaSharp.NativeAssets.Win32 2.88.9 -> mono/SkiaSharp@9699cdf046a989423a5e5eca68e7fd813486d81c -> externals/skia gitlink. Other native dependencies retain their licenses in the original notices and separate component entries.",
+      "source_archives": [
+        {
+          "name": "Skia",
+          "repository": "https://github.com/mono/skia",
+          "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "delivery": "bundled"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd",
+          "source_url": "https://raw.githubusercontent.com/mono/skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+          "original_bytes": true
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "original_bytes": true
+        }
+      ]
+    },
+    {
+      "id": "Adobe DNG SDK",
+      "version": "1.4.0",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "LicenseRef-Adobe-DNG-SDK-1.4",
+      "repository": {
+        "url": "https://android.googlesource.com/platform/external/dng_sdk",
+        "commit": "c8d0c9b1d16bfda56f15165d39e0ffa360a11123"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE",
+          "sha256": "012e875468ac2f9a2070ee25a950588afa2735b4b2d961f491e3d72c8f572306"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.source_code",
+          "sha256": "0c993758dd78dbb15ce6aae8aee79639b428d8ebeca6d416019939dc90fdc08f"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.technology",
+          "sha256": "4731d85e841e1d8b5dbf7e0ba07e0b524c012f9371db3508551f996cb40c8fe6"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/README.version",
+          "sha256": "e1180750782d144f35aea3aba3b2c7787271d831138f4b680da71e5494b23380"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/NOTICE",
+          "sha256": "b60660d2a5a3ee1a49366400e7e9b01c1872356d6f08942f095d356a44deb5f6"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/PATENTS",
+          "sha256": "bd958835863f42d8479457503a7ed716424d35b6e76ef76db06b72b109696ec4"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "adobe-dng-sdk",
+          "repository": "https://android.googlesource.com/platform/external/dng_sdk",
+          "revision": "c8d0c9b1d16bfda56f15165d39e0ffa360a11123",
+          "url": "https://android.googlesource.com/platform/external/dng_sdk/+archive/c8d0c9b1d16bfda56f15165d39e0ffa360a11123.tar.gz",
+          "delivery": "bundled",
+          "reference_download_sha256": "bbb7ea74213f29cab3fd6af671b590a9b5c6ebae09c329c1a6ffca344ce0a2a6",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "9851a449e84bf955b7b314513f5e96a195ff636373821b5c24017bcfd9ecb45d",
+          "archive_metadata_note": "The fixed Gitiles commit response injects per-request mtime/PAX mtime headers, so compressed archive bytes vary. Independently compared 155-member downloads contain identical paths/types/modes/sizes/link targets and file bytes. The reviewed canonical source-tree hash is enforced; each acquired archive SHA-256 is recorded separately.",
+          "upstream_git_tree": "c864ee4d828656ce93b2714d32218f8f94172627",
+          "content_tree_basis": {
+            "authoritative_commit_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123?format=JSON",
+            "verification": "The reviewed canonical tree was independently verified against the authoritative Git tree by rebuilding Git blob and tree object IDs from four archive responses; all matched the recorded upstream_git_tree."
+          }
+        }
+      ],
+      "source_provenance": "SkiaSharp.NativeAssets.Win32 2.88.9 -> mono/skia@4bed689c9c9eb77a120c6a9d54af6a572c85d1c2 -> DEPS dng_sdk; compiled DNG symbols confirmed in libSkiaSharp.dll.",
+      "license_note": "The DNG SDK has separate Adobe software/document/technology patent terms, including conditions for commercial redistribution; it is not the MIT license of the SkiaSharp wrapper.",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE",
+          "sha256": "012e875468ac2f9a2070ee25a950588afa2735b4b2d961f491e3d72c8f572306",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/LICENSE?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.source_code",
+          "sha256": "0c993758dd78dbb15ce6aae8aee79639b428d8ebeca6d416019939dc90fdc08f",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/LICENSE.source_code?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.technology",
+          "sha256": "4731d85e841e1d8b5dbf7e0ba07e0b524c012f9371db3508551f996cb40c8fe6",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/LICENSE.technology?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/README.version",
+          "sha256": "e1180750782d144f35aea3aba3b2c7787271d831138f4b680da71e5494b23380",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/README.version?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/NOTICE",
+          "sha256": "b60660d2a5a3ee1a49366400e7e9b01c1872356d6f08942f095d356a44deb5f6",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/NOTICE?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/PATENTS",
+          "sha256": "bd958835863f42d8479457503a7ed716424d35b6e76ef76db06b72b109696ec4",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/PATENTS?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream DNG component only. This does not resolve AGPL/GPL license compatibility, the containing Skia binary, or source completeness of its other inputs.",
+        "evidence": [
+          "https://android.googlesource.com/platform/external/dng_sdk/+archive/c8d0c9b1d16bfda56f15165d39e0ffa360a11123.tar.gz",
+          "Verified 155-member canonical tar-members-v1 SHA-256 9851a449e84bf955b7b314513f5e96a195ff636373821b5c24017bcfd9ecb45d against independently reconstructed upstream Git tree c864ee4d828656ce93b2714d32218f8f94172627."
+        ]
+      }
+    }
+  ],
+  "runtime_pack_policy": {
+    "source": "Actual .deps.json and NuGet runtimepack cache for each build",
+    "license_evidence": "Copy LICENSE.TXT and THIRD-PARTY-NOTICES.TXT from that exact runtimepack version, never the local baseline version",
+    "source_delivery": "system-library-reference"
+  },
+  "notice_file_policy": "Original upstream/package bytes retained. SHA-256 paths in this catalog are checked before packaging. Additional downstream metadata is separate from the original legal files.",
+  "release_review": {
+    "status": "blocked",
+    "blocking_issues": [
+      {
+        "id": "adobe-dng-agpl-compatibility",
+        "component": "Adobe DNG SDK/1.4.0",
+        "reason": "The shipped libSkiaSharp.dll contains Adobe DNG SDK code under separate software, document and technology patent terms. Compatibility with the combined AGPL/GPL distribution is unresolved; do not publish until resolved. Original notices and exact source were preserved, but attribution alone does not resolve compatibility."
+      }
+    ],
+    "scope_note": "Fixed top-level sources and legal notice evidence do not prove that all native git submodules and DEPS archives required for Corresponding Source are present. Native source coverage must be independently reviewed before publication."
+  },
+  "native_source_provenance": {
+    "skiasharp": {
+      "package_version": "2.88.9",
+      "repository": "https://github.com/mono/SkiaSharp",
+      "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "git_submodules": [
+        {
+          "path": "docs",
+          "repository": "https://github.com/mono/SkiaSharp-API-docs",
+          "commit": "55b444d6e1df3a0a6865aff2d813192e067bb280"
+        },
+        {
+          "path": "externals/depot_tools",
+          "repository": "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+          "commit": "42cf2acbaee8f149fdc08661eece63aaf271b4bc"
+        },
+        {
+          "path": "externals/skia",
+          "repository": "https://github.com/mono/skia.git",
+          "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+        }
+      ],
+      "native_skia_repository": "https://github.com/mono/skia",
+      "native_skia_commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "native_skia_archive_url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "native_skia_deps_file": "https://raw.githubusercontent.com/mono/skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/DEPS",
+      "native_skia_direct_git_deps": [
+        {
+          "path": "buildtools",
+          "repository": "https://chromium.googlesource.com/chromium/buildtools.git",
+          "commit": "505de88083136eefd056e5ee4ca0f01fe9b33de8"
+        },
+        {
+          "path": "common",
+          "repository": "https://skia.googlesource.com/common.git",
+          "commit": "9737551d7a52c3db3262db5856e6bcd62c462b92"
+        },
+        {
+          "path": "third_party/externals/angle2",
+          "repository": "https://chromium.googlesource.com/angle/angle.git",
+          "commit": "47b3db22be33213eea4ad58f2453ee1088324ceb"
+        },
+        {
+          "path": "third_party/externals/brotli",
+          "repository": "https://skia.googlesource.com/external/github.com/google/brotli.git",
+          "commit": "e61745a6b7add50d380cfd7d3883dd6c62fc2c71"
+        },
+        {
+          "path": "third_party/externals/d3d12allocator",
+          "repository": "https://skia.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git",
+          "commit": "169895d529dfce00390a20e69c2f516066fe7a3b"
+        },
+        {
+          "path": "third_party/externals/dawn",
+          "repository": "https://dawn.googlesource.com/dawn.git",
+          "commit": "f3c829047220ec1305c6a3202ee3e067e10512c9"
+        },
+        {
+          "path": "third_party/externals/glslang",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang",
+          "commit": "4dcc12d1a441b29d5901bc708bb1343d29d6459f"
+        },
+        {
+          "path": "third_party/externals/jinja2",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/jinja2",
+          "commit": "a82a4944a7f2496639f34a89c9923be5908b80aa"
+        },
+        {
+          "path": "third_party/externals/markupsafe",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/markupsafe",
+          "commit": "0944e71f4b2cb9a871bcbe353f95e889b64a611a"
+        },
+        {
+          "path": "third_party/externals/shaderc",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/shaderc",
+          "commit": "011139094ec790ff7f32ea2d80286255fc9ed18b"
+        },
+        {
+          "path": "third_party/externals/dng_sdk",
+          "repository": "https://android.googlesource.com/platform/external/dng_sdk.git",
+          "commit": "c8d0c9b1d16bfda56f15165d39e0ffa360a11123"
+        },
+        {
+          "path": "third_party/externals/egl-registry",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/EGL-Registry",
+          "commit": "a0bca08de07c7d7651047bedc0b653cfaaa4f2ae"
+        },
+        {
+          "path": "third_party/externals/expat",
+          "repository": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+          "commit": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3"
+        },
+        {
+          "path": "third_party/externals/freetype",
+          "repository": "https://skia.googlesource.com/third_party/freetype2.git",
+          "commit": "40c5681ab92e7db1298273ccf3c816e6a1498260"
+        },
+        {
+          "path": "third_party/externals/harfbuzz",
+          "repository": "https://github.com/harfbuzz/harfbuzz.git",
+          "commit": "4584bcdc326564829d3cee3572386c90e4fd1974"
+        },
+        {
+          "path": "third_party/externals/icu",
+          "repository": "https://chromium.googlesource.com/chromium/deps/icu.git",
+          "commit": "dbd3825b31041d782c5b504c59dcfb5ac7dda08c"
+        },
+        {
+          "path": "third_party/externals/imgui",
+          "repository": "https://skia.googlesource.com/external/github.com/ocornut/imgui.git",
+          "commit": "9418dcb69355558f70de260483424412c5ca2fce"
+        },
+        {
+          "path": "third_party/externals/libgifcodec",
+          "repository": "https://skia.googlesource.com/libgifcodec",
+          "commit": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+        },
+        {
+          "path": "third_party/externals/libjpeg-turbo",
+          "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+          "commit": "9b894306ec3b28cea46e84c32b56773a98c483da"
+        },
+        {
+          "path": "third_party/externals/libpng",
+          "repository": "https://skia.googlesource.com/third_party/libpng.git",
+          "commit": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551"
+        },
+        {
+          "path": "third_party/externals/libwebp",
+          "repository": "https://github.com/webmproject/libwebp.git",
+          "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760"
+        },
+        {
+          "path": "third_party/externals/lua",
+          "repository": "https://skia.googlesource.com/external/github.com/lua/lua.git",
+          "commit": "e354c6355e7f48e087678ec49e340ca0696725b1"
+        },
+        {
+          "path": "third_party/externals/microhttpd",
+          "repository": "https://android.googlesource.com/platform/external/libmicrohttpd",
+          "commit": "748945ec6f1c67b7efc934ab0808e1d32f2fb98d"
+        },
+        {
+          "path": "third_party/externals/oboe",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/oboe.git",
+          "commit": "b02a12d1dd821118763debec6b83d00a8a0ee419"
+        },
+        {
+          "path": "third_party/externals/opencl-lib",
+          "repository": "https://skia.googlesource.com/external/github.com/GPUOpen-Tools/common-lib-amd-APPSDK-3.0",
+          "commit": "4e6d30e406d2e5a65e1d65e404fe6df5f772a32b"
+        },
+        {
+          "path": "third_party/externals/opencl-registry",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/OpenCL-Registry",
+          "commit": "932ed55c85f887041291cef8019e54280c033c35"
+        },
+        {
+          "path": "third_party/externals/opengl-registry",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry",
+          "commit": "14b80ebeab022b2c78f84a573f01028c96075553"
+        },
+        {
+          "path": "third_party/externals/piex",
+          "repository": "https://android.googlesource.com/platform/external/piex.git",
+          "commit": "bb217acdca1cc0c16b704669dd6f91a1b509c406"
+        },
+        {
+          "path": "third_party/externals/sdl",
+          "repository": "https://skia.googlesource.com/third_party/sdl",
+          "commit": "5d7cfcca344034aff9327f77fc181ae3754e7a90"
+        },
+        {
+          "path": "third_party/externals/sfntly",
+          "repository": "https://chromium.googlesource.com/external/github.com/googlei18n/sfntly.git",
+          "commit": "b55ff303ea2f9e26702b514cf6a3196a2e3e2974"
+        },
+        {
+          "path": "third_party/externals/spirv-cross",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross",
+          "commit": "bdbef7b1f3982fe99a62d076043036abe6dd6d80"
+        },
+        {
+          "path": "third_party/externals/spirv-headers",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers.git",
+          "commit": "c0df742ec0b8178ad58c68cff3437ad4b6a06e26"
+        },
+        {
+          "path": "third_party/externals/spirv-tools",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools.git",
+          "commit": "e95fbfb1f509ad7a7fdfb72ac35fe412d72fc4a4"
+        },
+        {
+          "path": "third_party/externals/swiftshader",
+          "repository": "https://swiftshader.googlesource.com/SwiftShader",
+          "commit": "019feda602ec90e99c448256e1ce11f6fdb622e8"
+        },
+        {
+          "path": "third_party/externals/wuffs",
+          "repository": "https://skia.googlesource.com/external/github.com/google/wuffs.git",
+          "commit": "00cc8a50aa0c86b6bcb37e9ece8fb100047cc17b"
+        },
+        {
+          "path": "third_party/externals/zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "commit": "3ca9f16f02950edffa391ec19cea856090158e9e"
+        }
+      ],
+      "verified_windows_build_inputs": {
+        "wrapper_build_file": "https://raw.githubusercontent.com/mono/SkiaSharp/9699cdf046a989423a5e5eca68e7fd813486d81c/native/windows/build.cake",
+        "explicit_flags": {
+          "skia_use_dng_sdk": true,
+          "skia_use_piex": true,
+          "skia_use_icu": false,
+          "skia_use_sfntly": false,
+          "skia_use_system_expat": false,
+          "skia_use_system_libjpeg_turbo": false,
+          "skia_use_system_libpng": false,
+          "skia_use_system_libwebp": false,
+          "skia_use_system_zlib": false,
+          "skia_enable_skottie": true
+        },
+        "build_lines": {
+          "skia_use_dng_sdk": 42,
+          "skia_use_piex": 44,
+          "skia_use_icu": 43,
+          "skia_enable_skottie": 51
+        },
+        "raw_codec_dependency_chain": [
+          {
+            "file": "BUILD.gn",
+            "line": 3079,
+            "finding": "SkiaSharp target depends on :skia and modules/skottie"
+          },
+          {
+            "file": "BUILD.gn",
+            "line": 1179,
+            "finding": ":skia depends on :raw"
+          },
+          {
+            "file": "BUILD.gn",
+            "line": 1023,
+            "finding": ":raw enabled = skia_use_dng_sdk && skia_use_libjpeg_turbo_decode && skia_use_piex"
+          },
+          {
+            "file": "gn/skia.gni",
+            "line": 57,
+            "finding": "skia_use_libjpeg_turbo_decode defaults true; wrapper leaves it enabled"
+          },
+          {
+            "file": "BUILD.gn",
+            "line": 1027,
+            "finding": ":raw depends on //third_party/dng_sdk"
+          },
+          {
+            "file": "BUILD.gn",
+            "line": 1029,
+            "finding": ":raw depends on //third_party/piex"
+          },
+          {
+            "file": "BUILD.gn",
+            "line": 1036,
+            "finding": ":raw compiles src/codec/SkRawCodec.cpp"
+          },
+          {
+            "file": "third_party/dng_sdk/BUILD.gn",
+            "line": 37,
+            "finding": "DNG target enumerates source files from ../externals/dng_sdk/source/*.cpp"
+          },
+          {
+            "file": "third_party/piex/BUILD.gn",
+            "line": 16,
+            "finding": "PIEX target enumerates source files from ../externals/piex/src/*.cc"
+          }
+        ],
+        "harfbuzz_condition_note": "gn/skia.gni defaults skia_use_harfbuzz=true, but the inspected pdf and skshaper dependency paths additionally require skia_use_icu=true. This Windows wrapper explicitly sets ICU false; therefore the old native HarfBuzz DEPS revision is not asserted to be linked into libSkiaSharp. The separately built HarfBuzzSharp package has its own exact native source mapping."
+      }
+    },
+    "harfbuzzsharp": {
+      "package_version": "8.3.1.1",
+      "repository": "https://github.com/mono/SkiaSharp",
+      "nuspec_repository_url": "https://go.microsoft.com/fwlink/?linkid=868515",
+      "commit": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "git_submodules": [
+        {
+          "path": "docs",
+          "repository": "https://github.com/mono/SkiaSharp-API-docs",
+          "commit": "726b6ce666ad66b16bfd2ab1b4fcba5b4d468bc8"
+        },
+        {
+          "path": "externals/depot_tools",
+          "repository": "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+          "commit": "8fecc592a290769242d5098666cee8d29b7f0523"
+        },
+        {
+          "path": "externals/skia",
+          "repository": "https://github.com/mono/skia.git",
+          "commit": "30abf4a0dcd3006f3a555e46906151e486f87b6e"
+        }
+      ],
+      "native_skia_repository": "https://github.com/mono/skia",
+      "native_skia_commit": "30abf4a0dcd3006f3a555e46906151e486f87b6e",
+      "native_skia_archive_url": "https://codeload.github.com/mono/skia/tar.gz/30abf4a0dcd3006f3a555e46906151e486f87b6e",
+      "native_skia_deps_file": "https://raw.githubusercontent.com/mono/skia/30abf4a0dcd3006f3a555e46906151e486f87b6e/DEPS",
+      "native_harfbuzz": {
+        "path": "third_party/externals/harfbuzz",
+        "repository": "https://chromium.googlesource.com/external/github.com/harfbuzz/harfbuzz.git",
+        "commit": "2b3631a866b3077d9d675caa4ec9010b342b5a7c"
+      },
+      "native_skia_direct_git_deps": [
+        {
+          "path": "buildtools",
+          "repository": "https://chromium.googlesource.com/chromium/src/buildtools.git",
+          "commit": "b138e6ce86ae843c42a1a08f37903207bebcca75"
+        },
+        {
+          "path": "third_party/externals/brotli",
+          "repository": "https://skia.googlesource.com/external/github.com/google/brotli.git",
+          "commit": "6d03dfbedda1615c4cba1211f8d81735575209c8"
+        },
+        {
+          "path": "third_party/externals/d3d12allocator",
+          "repository": "https://skia.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git",
+          "commit": "169895d529dfce00390a20e69c2f516066fe7a3b"
+        },
+        {
+          "path": "third_party/externals/abseil-cpp",
+          "repository": "https://skia.googlesource.com/external/github.com/abseil/abseil-cpp.git",
+          "commit": "cb436cf0142b4cbe47aae94223443df7f82e2920"
+        },
+        {
+          "path": "third_party/externals/dng_sdk",
+          "repository": "https://android.googlesource.com/platform/external/dng_sdk.git",
+          "commit": "c8d0c9b1d16bfda56f15165d39e0ffa360a11123"
+        },
+        {
+          "path": "third_party/externals/egl-registry",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/EGL-Registry",
+          "commit": "b055c9b483e70ecd57b3cf7204db21f5a06f9ffe"
+        },
+        {
+          "path": "third_party/externals/expat",
+          "repository": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+          "commit": "2691aff4304a6d7e053199c205620136481b9dd1"
+        },
+        {
+          "path": "third_party/externals/freetype",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/freetype2.git",
+          "commit": "83af801b552111e37d9466a887e1783a0fb5f196"
+        },
+        {
+          "path": "third_party/externals/harfbuzz",
+          "repository": "https://chromium.googlesource.com/external/github.com/harfbuzz/harfbuzz.git",
+          "commit": "2b3631a866b3077d9d675caa4ec9010b342b5a7c"
+        },
+        {
+          "path": "third_party/externals/highway",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/highway.git",
+          "commit": "424360251cdcfc314cfc528f53c872ecd63af0f0"
+        },
+        {
+          "path": "third_party/externals/imgui",
+          "repository": "https://skia.googlesource.com/external/github.com/ocornut/imgui.git",
+          "commit": "55d35d8387c15bf0cfd71861df67af8cfbda7456"
+        },
+        {
+          "path": "third_party/externals/libavif",
+          "repository": "https://skia.googlesource.com/external/github.com/AOMediaCodec/libavif.git",
+          "commit": "f49462dc93784bf34148715eee36ab6697ca0b35"
+        },
+        {
+          "path": "third_party/externals/libgav1",
+          "repository": "https://chromium.googlesource.com/codecs/libgav1.git",
+          "commit": "0fb779c1e169fe6c229cd1fa9cc6ea6feeb441da"
+        },
+        {
+          "path": "third_party/externals/libgrapheme",
+          "repository": "https://skia.googlesource.com/external/github.com/FRIGN/libgrapheme/",
+          "commit": "c0cab63c5300fa12284194fbef57aa2ed62a94c0"
+        },
+        {
+          "path": "third_party/externals/libjpeg-turbo",
+          "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+          "commit": "927aabfcd26897abb9776ecf2a6c38ea5bb52ab6"
+        },
+        {
+          "path": "third_party/externals/libjxl",
+          "repository": "https://chromium.googlesource.com/external/gitlab.com/wg1/jpeg-xl.git",
+          "commit": "a205468bc5d3a353fb15dae2398a101dff52f2d3"
+        },
+        {
+          "path": "third_party/externals/libpng",
+          "repository": "https://skia.googlesource.com/third_party/libpng.git",
+          "commit": "f5e92d76973a7a53f517579bc95d61483bf108c0"
+        },
+        {
+          "path": "third_party/externals/libwebp",
+          "repository": "https://chromium.googlesource.com/webm/libwebp.git",
+          "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760"
+        },
+        {
+          "path": "third_party/externals/libyuv",
+          "repository": "https://chromium.googlesource.com/libyuv/libyuv.git",
+          "commit": "d248929c059ff7629a85333699717d7a677d8d96"
+        },
+        {
+          "path": "third_party/externals/microhttpd",
+          "repository": "https://android.googlesource.com/platform/external/libmicrohttpd",
+          "commit": "748945ec6f1c67b7efc934ab0808e1d32f2fb98d"
+        },
+        {
+          "path": "third_party/externals/oboe",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/oboe.git",
+          "commit": "b02a12d1dd821118763debec6b83d00a8a0ee419"
+        },
+        {
+          "path": "third_party/externals/opengl-registry",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry",
+          "commit": "14b80ebeab022b2c78f84a573f01028c96075553"
+        },
+        {
+          "path": "third_party/externals/piex",
+          "repository": "https://android.googlesource.com/platform/external/piex.git",
+          "commit": "bb217acdca1cc0c16b704669dd6f91a1b509c406"
+        },
+        {
+          "path": "third_party/externals/vulkanmemoryallocator",
+          "repository": "https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+          "commit": "c788c52156f3ef7bc7ab769cb03c110a53ac8fcb"
+        },
+        {
+          "path": "third_party/externals/vulkan-deps",
+          "repository": "https://chromium.googlesource.com/vulkan-deps",
+          "commit": "1e40b8e966f5dbac2e886e5ba1eb30f660cd5cf9"
+        },
+        {
+          "path": "third_party/externals/spirv-cross",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross",
+          "commit": "6e1fb9b09efadee38748e0fd0e6210d329087e89"
+        },
+        {
+          "path": "third_party/externals/spirv-headers",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers.git",
+          "commit": "79743b899fde5c954897b2694291002626358fac"
+        },
+        {
+          "path": "third_party/externals/spirv-tools",
+          "repository": "https://skia.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools.git",
+          "commit": "1bc0e6f59abc3c9cd75f93baef47e9612a448045"
+        },
+        {
+          "path": "third_party/externals/vello",
+          "repository": "https://skia.googlesource.com/external/github.com/linebender/vello.git",
+          "commit": "ee3a076b291d206c361431cc841407adf265c692"
+        },
+        {
+          "path": "third_party/externals/vulkan-headers",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers",
+          "commit": "7e691380166fb1cd9b193ac9db896bc23a4ea9ad"
+        },
+        {
+          "path": "third_party/externals/vulkan-tools",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools",
+          "commit": "3a19c1973f0e4732b8f3746593aee2ac425ecb78"
+        },
+        {
+          "path": "third_party/externals/vulkan-utility-libraries",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries",
+          "commit": "2169a0849e3df4e2133b728dec67d3b16bd30263"
+        },
+        {
+          "path": "third_party/externals/wuffs",
+          "repository": "https://skia.googlesource.com/external/github.com/google/wuffs-mirror-release-c.git",
+          "commit": "e3f919ccfe3ef542cfc983a82146070258fb57f8"
+        },
+        {
+          "path": "third_party/externals/zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "commit": "3ca9f16f02950edffa391ec19cea856090158e9e"
+        }
+      ]
+    },
+    "angle": {
+      "package_version": "2.1.25547.20250602",
+      "repository": "https://github.com/AvaloniaUI/angle",
+      "commit": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "archive_url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "tree_was_truncated": false,
+      "git_submodule_count": 74,
+      "git_submodules": [
+        {
+          "path": "build",
+          "repository": "https://chromium.googlesource.com/chromium/src/build",
+          "commit": "69dc3b19a1c8707994411ae29dcaddf3330965b3",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "buildtools",
+          "repository": "https://chromium.googlesource.com/chromium/src/buildtools",
+          "commit": "cd169314af80e77a75eb25e2c0df8798f35bc04a",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "testing",
+          "repository": "https://chromium.googlesource.com/chromium/src/testing",
+          "commit": "6a20ae4677a3ee6ed783b576a8586f2566356d22",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/EGL-Registry/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry",
+          "commit": "7dea2ed79187cd13f76183c4b9100159b9e3e071",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/OpenCL-CTS/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-CTS",
+          "commit": "e0a31a03fc8f816d59fd8b3051ac6a61d3fa50c6",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/OpenCL-Docs/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-Docs",
+          "commit": "774114e8761920b976d538d47fad8178d05984ec",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/OpenCL-ICD-Loader/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-ICD-Loader",
+          "commit": "9b5e3849b49a1448996c8b96ba086cd774d987db",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/OpenGL-Registry/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry",
+          "commit": "200cea4030cb49d3e40677379e6368a5f0e8c27b",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/Python-Markdown",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/Python-Markdown",
+          "commit": "0f4473546172a64636f5d841410c564c0edad625",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/SwiftShader",
+          "repository": "https://swiftshader.googlesource.com/SwiftShader",
+          "commit": "a8133cbb3c8969e3c1e6b3cea2c02ec8312ef9ca",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/VK-GL-CTS/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/VK-GL-CTS",
+          "commit": "7be6d4540af28ed9fd82cf7609f4e0442f44043e"
+        },
+        {
+          "path": "third_party/abseil-cpp",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp",
+          "commit": "2401283880a451e9ea10787920117fb67695abb4",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/android_build_tools",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/android_build_tools",
+          "commit": "18bc289fc31335791d66cc163916573cc68d8b80",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/android_deps",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/android_deps",
+          "commit": "4333e5ba900bdefb9cb6e25d60bc35aa6205e95d",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/android_platform",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/android_platform",
+          "commit": "98aee46efb1cc4e09fa0e3ecaa6b19dc258645fa",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/android_sdk",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/android_sdk",
+          "commit": "20cf331dc72b447e9178bc10c53069f42cea45bb",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/astc-encoder/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/ARM-software/astc-encoder",
+          "commit": "2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/catapult",
+          "repository": "https://chromium.googlesource.com/catapult",
+          "commit": "938fc9953b4159851a52022b4f2a90cddedba2fc",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/cherry",
+          "repository": "https://android.googlesource.com/platform/external/cherry",
+          "commit": "4f8fb08d33ca5ff05a1c638f04c85bbb8d8b52cc",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/clang-format/script",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format",
+          "commit": "37f6e68a107df43b7d7e044fd36a13cbae3413f2",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/clspv/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/clspv",
+          "commit": "60f822e8123ca414dddc0e0f944440c99cb3c04d",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/colorama/src",
+          "repository": "https://chromium.googlesource.com/external/colorama",
+          "commit": "3de9f013df4b470069d03d250224062e8cf15c49",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/cpu_features/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/cpu_features",
+          "commit": "936b9ab5515dead115606559502e3864958f7f6e",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/dawn",
+          "repository": "https://dawn.googlesource.com/dawn",
+          "commit": "7a8946456d4957dedd0137278f2198e02066b319",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/depot_tools",
+          "repository": "https://chromium.googlesource.com/chromium/tools/depot_tools",
+          "commit": "f73c587323cae09c7b82f149b9d30c70218fff01",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/flatbuffers/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/google/flatbuffers",
+          "commit": "8db59321d9f02cdffa30126654059c7d02f70c32",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/gles1_conform",
+          "repository": "https://chrome-internal.googlesource.com/angle/es-cts",
+          "commit": "dc9f502f709c9cd88d7f8d3974f1c77aa246958e",
+          "condition": "checkout_angle_internal"
+        },
+        {
+          "path": "third_party/glmark2/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/glmark2/glmark2",
+          "commit": "6edcf02205fd1e8979dc3f3964257a81959b80c8"
+        },
+        {
+          "path": "third_party/glslang/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang",
+          "commit": "be4ee7d0e3bfd151bfda7b3a8e03f8c49c55ed7b",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/googletest",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/googletest",
+          "commit": "17bbed2084d3127bd7bcd27283f18d7a5861bea8",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/ijar",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/ijar",
+          "commit": "4b6f53ee6268ff3b8ffe0279e334aa5110249b65",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/jinja2",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/jinja2",
+          "commit": "5e1ee241ab04b38889f8d517f2da8b3df7cfbd9a",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/jsoncpp",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/jsoncpp",
+          "commit": "f62d44704b4da6014aa231cfc116e7fd29617d2a",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/libc++/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx",
+          "commit": "a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/libc++abi/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi",
+          "commit": "9810fb23f6ba666f017c2b67c67de2bcac2b44bd",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/libdrm/src",
+          "repository": "https://chromium.googlesource.com/chromiumos/third_party/libdrm",
+          "commit": "ad78bb591d02162d3b90890aa4d0a238b2a37cde",
+          "condition": "checkout_angle_mesa or not build_with_chromium"
+        },
+        {
+          "path": "third_party/libjpeg_turbo",
+          "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo",
+          "commit": "e14cbfaa85529d47f9f55b0f104a579c1061f9ad",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/libpng/src",
+          "repository": "https://android.googlesource.com/platform/external/libpng",
+          "commit": "8cc222cd3e79fa5190f3aa039a03a4cbea6cfbe7",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/libunwind/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind",
+          "commit": "8575f4ae4fcf8892938bd9766cf1a5c90a0ed04e",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/llvm-libc/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc",
+          "commit": "9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/llvm/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project",
+          "commit": "1fd8d3fea53e6e4573cdce55bd38ef0a7813a442",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/lunarg-vulkantools/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/LunarG/VulkanTools",
+          "commit": "4841ea0a48c4ea07e9f24db3322f31541a25a101",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/markupsafe",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/markupsafe",
+          "commit": "9f8efc8637f847ab1ba984212598e6fb9cf1b3d4",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/mesa/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/Mesa3D/mesa",
+          "commit": "0a6aa58acae2a5b27ef783c22e976ec9b0d33ddc",
+          "condition": "checkout_angle_mesa"
+        },
+        {
+          "path": "third_party/meson",
+          "repository": "https://chromium.googlesource.com/external/github.com/mesonbuild/meson",
+          "commit": "9fd5eb605674067ce6f8876dc27e5e116024e8a6",
+          "condition": "checkout_angle_mesa"
+        },
+        {
+          "path": "third_party/nasm",
+          "repository": "https://chromium.googlesource.com/chromium/deps/nasm",
+          "commit": "9f916e90e6fc34ec302573f6ce147e43e33d68ca",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/perfetto",
+          "repository": "https://android.googlesource.com/platform/external/perfetto",
+          "commit": "5c17fc6e089cecec6bd75073875f57c99dcd2f02",
+          "condition": "not build_with_chromium and checkout_angle_perfetto"
+        },
+        {
+          "path": "third_party/protobuf",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/protobuf",
+          "commit": "d30c1f18b8a49bc41139916771493f12362c37d8",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/rapidjson/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/Tencent/rapidjson",
+          "commit": "781a4e667d84aeedbeb8184b7b62425ea66ec59f"
+        },
+        {
+          "path": "third_party/requests/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/kennethreitz/requests",
+          "commit": "c7e0fc087ceeadb8b4c84a0953a422c474093d6d",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/rust",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/rust",
+          "commit": "b7156762f0a760d6c85099729000321c7154ce89",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/six",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/six",
+          "commit": "580980eb7d380150995b82cd18e1254ab5eff77f",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "third_party/spirv-cross/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross",
+          "commit": "b8fcf307f1f347089e3c46eb4451d27f32ebc8d3",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/spirv-headers/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers",
+          "commit": "9a46274d2ef215d3c258ed4d1863bff4514fa316",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/spirv-tools/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools",
+          "commit": "a9d7fde99e73a619bbdda648473eff5895ead273",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan-deps",
+          "repository": "https://chromium.googlesource.com/vulkan-deps",
+          "commit": "84aa8fdf32d01c9c5e2b25f4410765c1f8c296da",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan-headers/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers",
+          "commit": "75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan-loader/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader",
+          "commit": "c913466fdc5004584890f89ff91121bdb2ffd4ba",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan-tools/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools",
+          "commit": "60b640cb931814fcc6dabe4fc61f4738c56579f6",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan-utility-libraries/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries",
+          "commit": "49ac28931f28bffaa3cd73dc4ad997284d574962",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan-validation-layers/src",
+          "repository": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers",
+          "commit": "e2d41fdd5ac2b0138112b61bd6eed0e0bb0ea693",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/vulkan_memory_allocator",
+          "repository": "https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+          "commit": "56300b29fbfcc693ee6609ddad3fdd5b7a449a21",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "third_party/wayland",
+          "repository": "https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland",
+          "commit": "75c1a93e2067220fa06208f20f8f096bb463ec08",
+          "condition": "not build_with_chromium and host_os == \"linux\""
+        },
+        {
+          "path": "third_party/zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "commit": "e8ff3f35551275330696606d7fef3a2a0f73a831",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/android",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/android",
+          "commit": "60453178b6a6b3ad24a664dc27833de530596c88",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "tools/clang",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/clang",
+          "commit": "61859fe79ee01e45549377277f988c02ae148f42",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/mb",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/mb",
+          "commit": "afcd61ed9a3f7cd3cced3cb5d10c668f3f1e309d",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/md_browser",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/md_browser",
+          "commit": "6cc8e58a83412dc31de6fb7614fadb0b51748d4b",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/memory",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/memory",
+          "commit": "cc38b4b04fbf942926366f420c43afb9e9ab364b",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/perf",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/perf",
+          "commit": "ddbe6fbaf9458b81b4d73e1ddb411dcd949fa275",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/protoc_wrapper",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper",
+          "commit": "502dcad5230ec1da544e7720b15d91782f040d9f",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/python",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/python",
+          "commit": "64dd0e593f8e438764ced983a9f3f96061df748c",
+          "condition": "checkout_android and not build_with_chromium"
+        },
+        {
+          "path": "tools/rust",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/rust",
+          "commit": "d88ef9e4de74106c16f10b05c74cf101c521f1d4",
+          "condition": "not build_with_chromium"
+        },
+        {
+          "path": "tools/valgrind",
+          "repository": "https://chromium.googlesource.com/chromium/src/tools/valgrind",
+          "commit": "6e97bd1a16cc012119f9f30d771bbeba07b403b3",
+          "condition": "not build_with_chromium"
+        }
+      ],
+      "deps_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/DEPS",
+      "limitation": "gitlinks are exact repository dependency provenance, not a claim that all 74 conditional dependencies are compiled into the Windows runtime DLLs. DEPS also contains CIPD/tool dependencies and nested dependency instructions; first-level gitlink index is not a complete build manifest."
+    },
+    "scope_note": "Fixed gitlink/DEPS source directions for review; these entries are not a claim that all required native source archives have been included or license compatibility has been established."
+  }
+}

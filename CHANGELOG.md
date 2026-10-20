@@ -2,6 +2,17 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
+## [4.0.0-typing.4] - 2026-10-20
+
+- 恢复上游 `Copyright (C) 2013-2026 alampy.com` 和完整 AGPL 简短声明，保留原许可证全文，补齐修改记录、AI 辅助开发说明及源码来源。
+- “关于”界面显示原作者、完整 AGPL、第三方许可摘要和与程序提交对应的源码地址。
+- 完整许可正文按行虚拟化，避免长文一次性排版造成高内存占用；实际修复 WAV 扩展头的 PCM/浮点编码识别，防止可解码的本地录音错误回退网络语音。
+- 删除 BASS 原生库及其绑定，改用 MIT 许可的 NAudio/NLayer 流式解码；通用支持 WAV、MP3/MPEG、AIFF，Windows 其他格式依赖系统解码器。非定位输入使用有上限且自动清理的临时文件。
+- 根据实际发布依赖附带许可证原文、组件及文件哈希清单、固定版本源码来源和源码归档；缺失声明、未知二进制或遗留 BASS 会阻止打包。
+- 旧 `typing.1`、`typing.2`、`typing.3` Release 因已确认的授权和声明缺口暂撤为草稿，保留原标签及资产。
+- Adobe DNG 的商业分发补偿条款与 AGPL 的兼容性仍无确定结论；原生依赖的完整对应源码需结合固定 DEPS/子模块索引核验。本次补齐技术性缺失，不宣称获得所有用途的法律合规认证。
+- 已通过完整构建、15 项既有检查、双插件加载和 Windows 包工程校验；Linux 虚拟会话完成 24 位 WAV、MP3、AIFF 三词练习及关于窗口版权/AGPL 浏览。虚拟音频设备不能证明真实扬声器或 Windows 系统解码器正常。
+
 ## [4.0.0-typing.3] - 2026-10-20
 
 - 进入打字练习时后台核对词表，成功显示实际读取/理论读取条数，保留重复词条并忽略空行；取消“准备就绪 · 0 / N”。
@@ -77,3 +88,4 @@
 [4.0.0-typing.1]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.1
 [4.0.0-typing.2]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.2
 [4.0.0-typing.3]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.3
+[4.0.0-typing.4]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.4

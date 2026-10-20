@@ -1,4 +1,4 @@
-<!-- Modified 2026-10-19: shared document plugin API and reproducible Windows build. -->
+<!-- Modified 2026-10-20: open audio decoders and embedded copyright/license notices. -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
@@ -14,7 +14,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="EdgeTTS.DotNet" Version="0.4.0" />
     <PackageReference Include="HexaGen.Runtime" Version="1.1.24" />
-    <PackageReference Include="ManagedBass" Version="3.0.0" />
+    <PackageReference Include="NAudio.Core" Version="2.2.1" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+    <PackageReference Include="NLayer.NAudioSupport" Version="2.0.1" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.3.1.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -30,6 +32,9 @@
 
   <ItemGroup>
     <AvaloniaResource Include="..\..\deploy\shared\EULA.txt" Link="Resources\EULA.txt" />
+    <AvaloniaResource Include="..\..\NOTICE.md" Link="Resources\NOTICE.md" />
+    <AvaloniaResource Include="..\..\LICENSE.md" Link="Resources\LICENSE.md" />
+    <AvaloniaResource Include="..\..\THIRD_PARTY_NOTICES.md" Link="Resources\THIRD_PARTY_NOTICES.md" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -43,7 +48,7 @@
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <Version>4.0.0-typing.3</Version>
+    <Version>4.0.0-typing.4</Version>
     <ApplicationIcon>Assets\DictationAssistant.ico</ApplicationIcon>
     <RollForward>Major</RollForward>
   </PropertyGroup>
@@ -54,24 +59,6 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\DictationAssistant.ico" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
-    <Content Include="BassRuntimeAssets/**/*">
-      <Visible>False</Visible>
-      <PublishState>Included</PublishState>
-      <TargetPath>runtimes/%(RecursiveDir)/%(Filename)%(Extension)</TargetPath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(RuntimeIdentifier)' != ''">
-    <Content Include="BassRuntimeAssets/$(RuntimeIdentifier)/native/*">
-      <Visible>False</Visible>
-      <PublishState>Included</PublishState>
-      <TargetPath>%(Filename)%(Extension)</TargetPath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

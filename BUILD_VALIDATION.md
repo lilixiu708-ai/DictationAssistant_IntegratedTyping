@@ -1,21 +1,18 @@
-Verified source-only checks:
-- PASS: All .csproj files parse as XML
-- PASS: Solution file parses as XML
-- PASS: Plugin manifests and SDK global.json parse as JSON
-- PASS: IPracticeHost exposes awaitable playback and interval settings
-- PASS: Host loads actual practice DLLs through managed interface
-- PASS: Modal exercise enters through existing Avalonia host
-- PASS: UI awaits complete repetition sequence before creating input
-- PASS: Scoring after all words; typed answers recorded in-loop
-- PASS: Typing controls hidden during playback and shown after playback
-- PASS: Sequencer awaits last audio and all requested gaps
-- PASS: SDL callback pinned before device starts
-- PASS: Audio device closed before callback unpinned
-- PASS: Empty synthesized audio must not start typing
-- PASS: CMD build script performs compilation without invoking PowerShell
-- PASS: Build script publishes host/plugins and runs behavioral smoke tests
-- PASS: GitHub Actions produces an uploaded Windows portable artifact
-- PASS: Behavioral test program included
-- PASS: Complete C# source tree present (81 source files)
+# 构建与许可验证
 
-UNVERIFIED: .NET 10 compilation, Windows launch, SAPI output, SDL device audio, full GUI behavior, GitHub Actions execution.
+更新日期：2026-10-20。当前源码版本：`4.0.0-typing.4`，公开发布暂停。
+
+已在 Linux 云环境完成：
+
+- .NET 10 解决方案构建、现有 15 项打字逻辑检查及两个内置插件加载。
+- Windows x64 锁定还原与自包含交叉发布，两个插件发布。
+- 实际发布目录许可准备：51 个组件、250 个二进制及资源文件，Windows ZIP 305 个文件；完整性、依赖归属和许可证哈希校验通过，无 BASS 残留。
+- 105 项原始许可引用的 SHA-256 核对；项目 `LICENSE.md` 与上游 `v4.0.0` 原字节一致。
+- 24 份固定第三方源码归档实际下载及 SHA-256 复核；DNG 动态 tar 元数据按固定内容树验证，没有跳过失败的归档检查。
+- Linux 虚拟图形会话：24 位扩展格式 WAV、MP3、AIFF 三词练习完成并结算，播放阶段无网络回退；关于窗口可见原版权及完整 AGPL，正文按行虚拟化。使用虚拟音频设备，未进行真实扬声器试听。
+
+打包校验通过仅表示这些工程检查通过。SkiaSharp 中实际包含的 Adobe DNG 条款与 AGPL/GPL 的组合兼容性，以及完整原生对应源码覆盖仍未解决。`prepare_release.py` 的公开发行路径阻断，CI 不上传有未解除事项的二进制产物；`--draft` 仅生成本地审核材料。证据与处理边界见[许可审计](docs/版权与许可审计.md)。
+
+构建仍报告既有 NuGet 安全告警：`Microsoft.Build.Tasks.Git` 8.0.0、`NCalc.Core` / `NCalcSync` 5.12.0、`Tmds.DBus.Protocol` 0.21.2，以及两个既有 Avalonia 运行时加载器提示。本次仅为许可修复需要替换音频依赖，未进行这些依赖的安全升级，不能将本记录视为安全审计通过。
+
+尚未在 Windows 实机确认图形窗口、Media Foundation 额外格式、扬声器音频、中文输入法，以及 CPU / 内存降幅。交叉构建和虚拟图形会话不能代替实机验证。

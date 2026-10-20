@@ -1,2 +1,5 @@
 * text=auto eol=lf
 *.cmd text eol=crlf
+# Preserve upstream bytes, including original whitespace, for their recorded hashes.
+LICENSES/** -text -whitespace
+third-party/sources/** -text -whitespace

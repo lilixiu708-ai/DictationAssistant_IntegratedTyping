@@ -1,6 +1,6 @@
 # 文档索引
 
-本仓库当前版本为 **`v4.0.0-typing.3` 预览版**，对应应用的同步打字练习与通用插件扩展。当前入口是 [项目首页](../README.md) 与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases)。插件版本与接口版本独立管理。
+本仓库当前为 **`v4.0.0-typing.4` 源码预览，公开发布暂停**，包含同步打字练习与通用插件扩展。已确认的 Adobe DNG SDK 条款兼容性与原生对应源码交付仍有未解除事项，详见[审计记录](版权与许可审计.md)与[发布规范](RELEASING.md)。入口为[项目首页](../README.md)与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases)；历史 `typing.1`、`typing.2`、`typing.3` 已暂时撤回为草稿。插件版本与接口版本独立管理。
 
 ## 当前文档
 
@@ -10,6 +10,10 @@
 | [Windows 验证清单](同步打字验证清单.md) | Windows 界面、输入、音频、长列表与资源占用的实机检查 |
 | [插件开发指南](插件开发指南.md) | 文档导入接口、插件清单、练习接口及 SDK 示例 |
 | [插件扩展 SDK](PLUGIN_SDK.md) | 功能级别 2 的命令、词表观察、生命周期、语音、音效及可编译示例 |
+| [版权与来源声明](../NOTICE.md) | 原作者版权、许可适用范围和 AI 辅助修改说明 |
+| [修改声明与文件范围](../MODIFICATIONS.md) | 上游基准、修改日期及逐文件范围 |
+| [版权与许可审计](版权与许可审计.md) | 已核对内容、补齐事项及尚未解决的第三方授权问题 |
+| [第三方组件声明](../THIRD_PARTY_NOTICES.md) | 第三方归属、原始许可与来源索引 |
 | [贡献规则](../CONTRIBUTING.md) | 目录、命名、开发与验证约定 |
 | [发布说明](RELEASING.md) | 版本、发布流程和资产校验 |
 | [变更记录](../CHANGELOG.md) | 当前版本改动与限制 |

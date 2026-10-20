@@ -1,3 +1,4 @@
+<!-- Modified 2026-10-20: virtualize complete legal notices to bound text layout and memory. -->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -26,10 +27,26 @@
       <Button Width="88" IsDefault="True" Click="OkButton_Click" Content="确定" HorizontalContentAlignment="Center" />
     </StackPanel>
 
-    <TextBox Text="{Binding EulaText}"
-             IsReadOnly="True"
-             AcceptsReturn="True"
-             TextWrapping="Wrap"
-             ScrollViewer.VerticalScrollBarVisibility="Visible" />
+    <ListBox ItemsSource="{Binding NoticeLines}"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             ScrollViewer.VerticalScrollBarVisibility="Auto">
+      <ListBox.Styles>
+        <Style Selector="ListBoxItem">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          <Setter Property="MinHeight" Value="0" />
+          <Setter Property="Padding" Value="4,0" />
+        </Style>
+      </ListBox.Styles>
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <VirtualizingStackPanel CacheLength="0.5" />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="x:String">
+          <SelectableTextBlock Text="{Binding}" TextWrapping="Wrap" MinHeight="18" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
   </DockPanel>
 </Window>

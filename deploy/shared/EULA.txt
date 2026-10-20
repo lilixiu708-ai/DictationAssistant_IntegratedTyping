@@ -1,31 +1,33 @@
-﻿自动默写（DictationAssistant）用户协议 / 使用说明
+自动默写（DictationAssistant）许可与使用说明
+修改日期：2026-10-20
 
-请您在安装、运行、分发或修改本软件前仔细阅读本说明。继续使用本软件，即表示您理解并接受以下内容。
+一、来源与版权
+Copyright (C) 2013-2026 alampy.com
 
-一、软件现状
-1. 本软件用于辅助单词、短语、句子等内容的默写练习。
-2. 软件名称、图标、文档及相关标识的著作权归原作者与贡献者所有。
+本定制版本基于 ArcticLampyrid/DictationAssistant v4.0.0 修改，由 lilixiu708-ai 维护。
+上游：https://github.com/ArcticLampyrid/DictationAssistant
+定制版本：https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping
+修改范围、日期及 AI 工具使用说明见 NOTICE.md 和 MODIFICATIONS.md。原有版权归属保持不变。
 
-二、许可证
-1. 本项目源代码以 AGPL-3.0-or-later 授权；完整条款以仓库中的 LICENSE.md 为准。
-2. 您可以在遵守 AGPL-3.0-or-later 及相关第三方许可证的前提下使用、研究、修改与分发本软件。
-3. 您在再分发本软件或其修改版本时，应保留现有版权声明、许可证文本与必要的来源说明。
+二、本项目的许可证
+本项目源代码以 GNU Affero General Public License version 3 or later
+（SPDX: AGPL-3.0-or-later）授权。完整条款随程序附在 LICENSE.md，亦在“关于”窗口提供。
+本说明用于介绍许可证，不构成对 AGPL 所授予权利的额外限制，也不要求另行接受一份替代许可证。
 
-三、第三方组件
-1. 本软件使用或随附多个第三方组件。它们仍然受各自上游许可证约束。
-2. 当前版本涉及的组件包括但不限于：Avalonia、AvaloniaEdit、CommunityToolkit.Mvvm、ALampy.XamlFontPicker.Avalonia、EdgeTTS.DotNet、ManagedBass / BASS、Hexa.NET.SDL2 / SDL2、NCalcSync、MessageBox.Avalonia、SkiaSharp、HarfBuzzSharp 等。
-3. 若您分发本软件，请同时遵守这些第三方组件的许可证要求。
-4. 特别地，BASS 及其相关运行时库的授权条款由上游单独规定；如涉及商业使用、再分发或其他受限场景，请您自行核实并确保合规。
-5. 某些在线语音能力依赖第三方在线服务；其可用性、服务条款与隐私政策不由本项目控制。
+您可以在许可证条件下运行、研究、修改和再分发本软件。修改和再分发时保留必要的版权、许可证与修改通知。
+分发目标程序时按 AGPL 第 6 节提供对应源码、构建脚本及获取说明；若作为修改后的网络服务运行，另须遵守第 13 节。
+公开发行时，须同时提供与程序版本、提交相符的源码包及校验文件。开发分支或不匹配版本的源码不能替代该程序的对应源码。
+当前 typing.4 为源码预览，公开发布暂停：SkiaSharp 内 Adobe DNG 条款的组合兼容性与完整原生对应源码交付仍待解决。
+下载入口：https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases
 
-四、使用限制与责任
-1. 除非适用法律或相应许可证明确允许，否则您不得删除或篡改软件中的版权、许可证与归属信息。
-2. 您应自行评估本软件是否适合您的使用场景，并自行承担使用、修改、分发所带来的风险。
-3. 本软件按“现状”提供，不附带任何明示或默示担保，包括但不限于适销性、特定用途适用性与不侵权担保。
-4. 在适用法律允许的最大范围内，作者与贡献者不对因使用、无法使用、错误配置、数据丢失、服务中断或第三方组件/服务变动所导致的任何损失承担责任。
+三、第三方组件与源码
+第三方组件保持各自许可证与版权归属，不因同包分发而全部改为 AGPL。
+程序包附 THIRD_PARTY_NOTICES.md、THIRD_PARTY_COMPONENTS.json 和 LICENSES/ 中的原始许可及通知。
+对应第三方源码的位置和固定版本见 THIRD_PARTY_SOURCES.json 及随发行源码包提供的来源索引。
+本版本移除了 BASS、BASS 插件与 ManagedBass，音频解码采用开源组件；其他格式的可用性可能取决于操作系统安装的编解码器。
+第三方通知可能包含额外的子组件条款，请同时阅读完整原文；自动文件检查不代替对具体商业分发方案的授权审核。
 
-五、补充说明
-1. 如本说明与 LICENSE.md 或第三方原始许可证文本冲突，以后者为准。
-2. 若软件后续版本的功能、打包方式或依赖关系发生变化，本说明也可能随版本调整。
-
-感谢您使用自动默写。
+四、无担保
+本软件按“现状”提供。AGPL 第 15、16 节及各第三方许可证中的免责、责任限制按各自条款适用。
+在适用法律允许的范围内，不提供适销性或特定用途适用性等担保。
+在线语音服务的可用性、服务条款和隐私政策由相应服务提供者规定，本项目不授予这些服务的额外使用权。

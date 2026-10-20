@@ -93,7 +93,7 @@ public sealed class EdgeTtsVoice : IPreloadableVoice
 
     private static PcmAudio DecodeMp3ToPcm(byte[] mp3Bytes)
     {
-        return BassDecoder.FromStream(new MemoryStream(mp3Bytes));
+        return OpenAudioDecoder.FromStream(new MemoryStream(mp3Bytes));
     }
 
     private readonly record struct CacheKey(string Text, int Rate);

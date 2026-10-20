@@ -18,12 +18,30 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - name: Install Python for license and package verification
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Build desktop application and sideloaded DLLs
         shell: cmd
         run: call build-windows-typing.cmd
       - name: Validate portable archive and DLL content
         shell: cmd
         run: python scripts\verify_build.py
+      - name: Check whether license review permits distributing artifacts
+        id: license-review
+        shell: python {0}
+        run: |
+          import json, os, pathlib
+          manifest = pathlib.Path('artifacts/Windows-x64/THIRD_PARTY_SOURCES.json')
+          review = json.loads(manifest.read_text(encoding='utf-8')).get('release_review', {})
+          blockers = review.get('blocking_issues', [])
+          ready = review.get('status') == 'ready' and not blockers
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write(f'ready={str(ready).lower()}\n')
+          if not ready:
+              print('Binary artifacts are withheld while license/source review remains unresolved.')
+              print(json.dumps(blockers, ensure_ascii=False, indent=2))
       - name: Build SDK extension examples
         shell: cmd
         run: |
@@ -38,6 +56,7 @@ jobs:
         shell: cmd
         run: python scripts\prepare_release.py "%GITHUB_REF_NAME%"
       - name: Upload portable Windows archive
+        if: steps.license-review.outputs.ready == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: DictationAssistant-Integrated-Typing-Windows-x64
@@ -46,7 +65,7 @@ jobs:
           retention-days: 30
           compression-level: 0
       - name: Upload release assets
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') && steps.license-review.outputs.ready == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: release-assets

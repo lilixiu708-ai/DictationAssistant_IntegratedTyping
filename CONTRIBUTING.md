@@ -6,7 +6,7 @@
 
 | 对象 | 规则与示例 |
 | --- | --- |
-| GitHub 仓库 | 当前保留 `lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady`；新仓库通常采用小写短横线（lower-kebab-case） |
+| GitHub 仓库 | 当前保留 `lilixiu708-ai/DictationAssistant_IntegratedTyping`；新仓库通常采用小写短横线（lower-kebab-case） |
 | 产品名称 | 文档与发布说明使用 `DictationAssistant Typing` |
 | C# 项目、程序集、命名空间 | 保持 `DictationAssistant.*`；按职责命名，例如 `DictationAssistant.Practices.Typing` |
 | C# 类型、公开成员与文件 | 使用现有 PascalCase 风格；文件名与主要类型一致 |
@@ -16,7 +16,7 @@
 | 分支 | `feat/<主题>`、`fix/<主题>`、`docs/<主题>`、`chore/<主题>` |
 | 新增文档 | 面向使用者放在 `docs/`，使用能说明内容的名称，并加入文档索引 |
 
-应用发布标签使用 `v<SemVer>`，当前系列为 `v4.0.0-typing.1` 预览版。插件包版本、插件 ID 和 `apiVersion` 分别管理；应用升级不自动增加插件 API 版本，也不将应用版本写成插件版本。
+应用发布标签使用 `v<SemVer>`，当前系列为 `v4.0.0-typing.N` 预览版。插件包版本、插件 ID 和 `apiVersion` 分别管理；应用升级不自动增加插件 API 版本，也不将应用版本写成插件版本。
 
 主程序放在 `src/DictationAssistant.App/`，共享接口放在 `src/DictationAssistant.Plugin.Abstractions/`，独立插件放在 `plugins/`，示例放在 `sdk/examples/`。不要将构建输出、便携 ZIP、个人词表、账号信息或本机配置提交到仓库；生成物使用已忽略的 `artifacts/`、`bin/`、`obj/`。
 
@@ -63,4 +63,10 @@ Release 指向已验证的具体提交；预览版本勾选 pre-release。上传
 
 发布资产使用包含应用名、版本、平台与架构的名称；本地构建脚本可保留固定输出名，由发布步骤生成版本化资产。历史报告只作记录，不覆盖当前验证状态；新增记录注明版本和对应提交。具体发布流程见 [发布说明](docs/RELEASING.md)。
 
-贡献内容沿用项目的 [AGPL-3.0-or-later](LICENSE.md) 许可。保留上游来源、作者与第三方组件声明；引入素材或依赖前确认其许可与项目兼容。
+第一方贡献沿用项目的 [AGPL-3.0-or-later](LICENSE.md) 许可，并保留 [NOTICE.md](NOTICE.md) 中的上游 `Copyright (C) 2013-2026 alampy.com`、授权和无担保通知。记录真实修改日期及范围，更新 [MODIFICATIONS.md](MODIFICATIONS.md) 或对应修改记录；不要凭空添加作者、版权转让或独占权声明，也不要把未改动的上游文件标为本 fork 原创。
+
+引入第三方代码、二进制、图标、字体或示例素材前，应记录固定版本、原始来源、版权通知、完整许可证及实际分发范围，更新 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)、[`LICENSES/`](LICENSES/) 和 [`third-party/components.json`](third-party/components.json)。构建依赖与随包交付组件应分别标明；原始第三方材料保留自身许可，不得统一重新授权为 AGPL。收集许可证文本并不自动解决许可证兼容性、商业授权或对应源码义务。
+
+分发二进制时，提供同一提交/标签的对应源码、构建脚本、项目与锁文件，并保留必要的第三方源码或固定版本来源入口。Skia/ANGLE 等 `DEPS` 和子模块需按实际构建继续核对；应用源码 ZIP 与来源索引不自动等于完整原生对应源码。当前 `typing.4` 公开发布暂停，DNG 商业赔偿条款与 AGPL 的组合兼容性尚无权利人例外或权威结论。按[版权与许可审计](docs/版权与许可审计.md)和[发布规范](docs/RELEASING.md)处理未解除事项，不能以免责声明或自动构建通过替代必要授权与交付材料。
+
+使用 AI 辅助生成、修改或构建时，可如实披露本 fork 的使用范围。不要把上游原作或第三方材料说成 AI 生成，不声明没有完成的人工审查、实机验证或素材授权。

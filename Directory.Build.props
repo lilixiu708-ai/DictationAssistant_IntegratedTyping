@@ -1,0 +1,12 @@
+<Project>
+  <!-- Metadata for this repository's projects only; third-party components retain their own licenses. -->
+  <PropertyGroup>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'DictationAssistant.App'">
+    <Copyright>Copyright (C) 2013-2026 alampy.com. Original notices retained; see NOTICE.md for this distribution.</Copyright>
+  </PropertyGroup>
+</Project>

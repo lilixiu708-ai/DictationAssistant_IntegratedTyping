@@ -22,7 +22,7 @@ public sealed class EspeakNgVoice : IVoice
         {
             return PcmAudio.Empty;
         }
-        return BassDecoder.FromStream(new MemoryStream(wavBytes));
+        return OpenAudioDecoder.FromStream(new MemoryStream(wavBytes));
     }
 
     private async Task<byte[]?> SynthesizeWavAsync(string text, VoiceSynthesisOptions options, CancellationToken cancellationToken)

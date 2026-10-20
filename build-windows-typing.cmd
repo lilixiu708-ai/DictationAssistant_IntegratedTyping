@@ -7,6 +7,16 @@ if errorlevel 1 (
   echo [ERROR] .NET 10 SDK not found. For a no-install build use GitHub Actions.
   exit /b 1
 )
+where python >nul 2>&1
+if errorlevel 1 (
+  echo [ERROR] Python 3.11 or newer is required for license and package verification.
+  exit /b 1
+)
+python -c "import sys; sys.exit(sys.version_info < (3, 11))"
+if errorlevel 1 (
+  echo [ERROR] Python 3.11 or newer is required for license and package verification.
+  exit /b 1
+)
 for /f "usebackq delims=" %%v in (`dotnet --version`) do set "SDKVER=%%v"
 if not "%SDKVER:~0,3%"=="10." (
   echo [ERROR] .NET 10 SDK is required; installed: %SDKVER%
@@ -46,6 +56,10 @@ if errorlevel 1 goto :failed
 copy /y "LICENSE.md" "%OUTPUT%\LICENSE.md" >nul
 copy /y "deploy\shared\EULA.txt" "%OUTPUT%\EULA.txt" >nul
 copy /y "docs\同步打字插件使用说明.md" "%OUTPUT%\同步打字插件使用说明.md" >nul
+REM Collect notices for the exact published package/runtime versions. Unknown
+REM components or missing original license texts must stop the release build.
+python scripts\prepare_licenses.py --publish-dir "%OUTPUT%"
+if errorlevel 1 goto :failed
 
 echo [6/6] Create portable ZIP...
 if exist "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip" del "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip"
