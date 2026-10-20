@@ -2,12 +2,16 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
-## 背诵练习插件 [1.4.2] - 准备中
+## 背诵练习插件 [1.4.2] - 2026-10-20
+
+**[三平台随机词序补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。**
 
 - 修复静音背诵没有打乱入口的问题，准备页新增“打乱顺序”；播报后作答也可使用。默认保持原顺序，勾选后开始一轮新练习时重排，本轮中途不再变化。
 - 提示、答案和原行来源整组移动，重复题保留；播报、译文提示与成绩使用同一题序，中途结算继续可用。
-- 准备 Windows R7 独立插件补丁，以及基于 Mac R8 的 Intel、M 系列整合更新包；只重新构建练习插件，宿主与 Word / Excel 导入插件不重新编译。Mac 包更换插件后重新签名，不要求用户手工修改 `.app`。
-- Linux 开发构建及本轮 48 项 headless 观察通过，含 31 项既有路径、17 项随机词序检查、Common Ions 25 题静音整轮，以及 1,000 次含重复题的重排。Windows 兼容检查和两种 Mac 的本轮封包、签名与运行检查仍待 CI 确认；尚未发布。
+- 提供 Windows R7 独立插件补丁，以及基于 Mac R8 的 Intel、M 系列整合更新包；只重新构建练习插件，宿主与 Word / Excel 导入插件不重新编译。Mac 包更换插件后重新签名，不要求用户手工修改 `.app`。
+- Linux 开发构建及本轮 48 项 headless 观察通过，含 31 项既有路径、17 项随机词序检查、Common Ions 25 题静音整轮，以及 1,000 次含重复题的重排。[三平台构建 39437145026](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39437145026)通过固定宿主的双插件加载、既有逻辑检查和主窗口开闭；Mac 两包另通过严格签名校验、系统语音合成与 SDL dummy 播放。[发布 39437870903](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39437870903)复用这批验证产物，7 份公开附件重新下载核验通过。真实练习界面、输入法、扬声器和在线翻译仍未实测。
+
+- 本次源码提交 `3e6730ddf9239ee92f41ec408ea5b9421af6cf11`。补丁源码与固定的 R8 完整源码共同提供 Mac 整合更新的对应源码，宿主及导入插件不重编，原始许可与已有组合授权披露继续保留。
 
 ## [4.0.0-typing.8] - 2026-10-20
 

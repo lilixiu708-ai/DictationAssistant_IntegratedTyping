@@ -1,6 +1,6 @@
 # macOS 安装与构建
 
-[R8（`v4.0.0-typing.8`）已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。需要 **macOS 15 及更新版本**，完整包自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 和 .NET 运行环境，无需另装插件或 .NET。Windows 继续使用 R7 和背诵练习 1.4.1 独立更新。
+[背诵练习 1.4.2 整合补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。沿用 R8 本体，只更新练习插件，加入“打乱顺序”。需要 **macOS 15 及更新版本**，自带 Word / Excel 导入 1.2.0 和 .NET，首次安装也可直接使用。原 [R8（内置 1.4.1）](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)保留供查阅；Windows 使用 R7 加 1.4.2 插件补丁。
 
 ## 选择与安装
 
@@ -8,20 +8,22 @@
 
 | 电脑 | 对应包 |
 | --- | --- |
-| Intel 处理器 | [x64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/DictationAssistant-4.0.0-typing.8-macos-x64.zip) |
-| Apple M 系列芯片 | [arm64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/DictationAssistant-4.0.0-typing.8-macos-arm64.zip) |
+| Intel 处理器 | [x64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.2/DictationAssistant-R8-typing-1.4.2-macos-x64.zip) |
+| Apple M 系列芯片 | [arm64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.2/DictationAssistant-R8-typing-1.4.2-macos-arm64.zip) |
 
-先核对 [Release](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8) 来源与 [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/SHA256SUMS)，解压后打开 `payload` 文件夹，将 `DictationAssistant.app` 拖到“应用程序”，再打开。更新前退出程序并备份用户数据，替换整个应用包。
+先核对 [Release](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2) 来源与 [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.2/SHA256SUMS)，解压后打开 `payload` 文件夹，将 `DictationAssistant.app` 拖到“应用程序”，再打开。更新前退出程序并备份用户数据，替换整个应用包。
 
 应用采用 **ad-hoc 签名**，尚未使用 Developer ID 签名，也未经过 Apple 公证。首次打开若被系统拦截，核对下载来源后，在“系统设置 → 隐私与安全性”允许打开这个应用。不要全局关闭 Gatekeeper；若系统仍报告损坏或签名校验失败，保留报错并反馈，勿跳过校验。
 
 ## 练习与翻译
 
-从“插件 → 背诵练习”选择文档，选好提示和答案列后，可静音计时或使用系统语音播报；练习中可点“结算成绩”提前结束。详细操作见[背诵练习说明](同步打字插件使用说明.md)。
+从“插件 → 背诵练习”选择文档，选好提示和答案列后，可静音计时或使用系统语音播报；需要随机出题时，在准备页勾选“打乱顺序”，提示与答案一起移动，整轮保持固定；不勾选则按原顺序。练习中可点“结算成绩”提前结束。详细操作见[背诵练习说明](同步打字插件使用说明.md)。
 
 翻译引擎在“插件管理 → 背诵练习 → 配置…”中设置，也可在准备页临时切换。**macOS 的翻译凭据仅用于当前程序会话，退出后需重新输入。** 当前未使用 Keychain 持久保存，也不提供机器码绑定。请下载后在本地输入服务商凭据；提前补全并校对译文，练习过程中不调用翻译服务。
 
 ## 验证范围
+
+1.4.2 的[三平台构建 39437145026](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39437145026)已通过；两个 Mac 任务分别验证固定 R8 来源、331 个不可变应用文件、严格签名、双插件加载、既有逻辑检查、系统语音、SDL dummy 播放和主窗口正常开闭。[发布 39437870903](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39437870903)复用原验证文件，未重新构建本体。以下 R8 记录保留用于说明原本体的来源。
 
 系统语音调用已修正取消清理：取消时终止进程树并等待退出；先读取输出再写入输入，避免管道阻塞。语音列表按语言列识别，保留含空格和括号的完整名称。
 
@@ -33,7 +35,16 @@
 
 ## 源码构建
 
-在与目标架构一致的 macOS 机器上安装 .NET 10 SDK（遵循 `global.json`）和 Python 3.11+，运行其中一条：
+当前补丁在与目标架构一致的 Mac 上，仅构建练习插件并重新封包签名。安装 .NET 10 SDK（遵循 `global.json`）和 Python 3.11+，在干净的 Git checkout 中切到 `plugin-synchronous-typing-v1.4.2` 标签后运行（Intel 将两条命令中的 `osx-arm64` 都改为 `osx-x64`）：
+
+```bash
+python3 scripts/prepare_typing_macos_patch.py --build --rid osx-arm64 --output-dir artifacts/typing-patch/osx-arm64
+python3 scripts/prepare_typing_macos_patch.py --validate --rid osx-arm64 --output-dir artifacts/typing-patch/osx-arm64
+```
+
+补丁源码包含这次完整 Git 版本和私有依赖源码；未改动的宿主及原生库对应源码仍在固定的 [R8 完整源码包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/DictationAssistant-4.0.0-typing.8-macos-source.zip)，地址与哈希同时记录在补丁的 `HOST_SOURCE_REFERENCES.json`。
+
+下面的旧构建入口用于 **R8 原版标签 `v4.0.0-typing.8` 的源码**，请勿在 1.4.2 补丁源码中运行它：
 
 ```bash
 bash build-macos-typing.sh --rid osx-arm64
@@ -44,6 +55,6 @@ bash build-macos-typing.sh --rid osx-arm64
 
 正式 NuGet 依赖已固定：宿主、共享契约、两个插件及既有逻辑检查项目，各有 `osx-x64` 和 `osx-arm64` 锁文件，共 10 份。构建和既有检查均以 `--locked-mode` 还原，依赖变化时直接失败。Linux 上的依赖解析检查不代表 Mac 运行验证。
 
-[macOS 工作流](../.github/workflows/build-typing-macos.yml)只接受手动触发（`workflow_dispatch`）。正式发布先在 `main` 触发普通构建，留空 `native_run_id`，使用已公开并固定的原生资产；两个 Mac 任务通过后，核对提交并在同一提交创建 R8 标签，再针对该标签触发工作流，令 `build_run_id` 指向原成功运行。发布直接复用这批已验证应用包，收集完整配套源码、核对附件摘要后公开；推送标签不会重复构建。审核用的 `native_run_id` 不能进入正式发布。
+本次补丁使用[三平台补丁工作流](../.github/workflows/release-typing-patch.yml)，流程见[发布规范](RELEASING.md)。以下保留 R8 原版的构建记录：[macOS 工作流](../.github/workflows/build-typing-macos.yml)只接受手动触发（`workflow_dispatch`）。正式发布先在 `main` 触发普通构建，留空 `native_run_id`，使用已公开并固定的原生资产；两个 Mac 任务通过后，核对提交并在同一提交创建 R8 标签，再针对该标签触发工作流，令 `build_run_id` 指向原成功运行。发布直接复用这批已验证应用包，收集完整配套源码、核对附件摘要后公开；推送标签不会重复构建。审核用的 `native_run_id` 不能进入正式发布。
 
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，继续随发行披露；ad-hoc 签名和技术检查不改变这一状态。
