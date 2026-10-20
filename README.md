@@ -4,9 +4,7 @@
 
 **当前公开版本：R6（`v4.0.0-typing.6`）预发布。** Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
-同步打字插件 **1.2.0 已独立发布**：插件管理新增逐插件「配置…」，翻译可管理多个 DeepL Free / Pro 命名绑定和首选项，并在准备页为本次翻译切换。新插件要求宿主功能级别 4，须配套 R6，不能直接用于 R5；Word 导入继续使用现有 1.0.1，不重发其独立资产。
-
-**同步打字插件 1.3.1 正在准备独立发布。** 源码新增必应 / Microsoft（Azure）、Google Cloud、百度、有道、腾讯云、阿里云和火山引擎翻译 API，继续支持 DeepL Free / Pro。只更新插件，沿用已发布的 R6 本体和 Word 1.0.1；下方当前插件下载仍为 1.2.0。
+同步打字插件 **1.3.1 已独立发布**，支持 DeepL Free / Pro、必应 / Microsoft（Azure）、Google Cloud、百度、有道、腾讯云、阿里云和火山引擎翻译 API，可管理多个命名绑定、首选项并在准备页临时切换。只需更新插件，沿用 R6 本体和 Word 1.0.1；最低宿主功能级别仍为 4，不能直接用于 R5。
 
 ## 功能
 
@@ -18,12 +16,12 @@
 
 ## 下载与使用
 
-首次安装下载本体即可，已包含 .NET 运行环境、同步打字和 Word 导入插件。完整解压到新文件夹，运行 `DictationAssistant.App.exe`。
+首次安装先下载 R6 本体，已包含 .NET 运行环境、同步打字 1.2.0 和 Word 导入插件；需要新增翻译服务时，再安装下方的同步打字 1.3.1 独立包。完整解压到新文件夹，运行 `DictationAssistant.App.exe`。
 
 | 用途 | 版本与下载 | 选择的附件 |
 | --- | --- | --- |
 | 安装或更新完整程序 | [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) | `*-win-x64-portable.zip` |
-| 单独更新同步打字 | [插件 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0) | `synchronous-typing-1.2.0.zip` |
+| 单独更新同步打字 | [插件 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.3.1/synchronous-typing-1.3.1.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.3.1/synchronous-typing-1.3.1-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.3.1/SHA256SUMS) |
 | 单独更新 Word 导入 | [插件 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1) | `docx-vocabulary-1.0.1.zip` |
 
 更新插件前关闭程序，将 ZIP 内完整插件目录替换到 `Plugins/` 后重启。源码开发选择对应 Release 的 `*-source.zip`；`SHA256SUMS` 用于校验下载，GitHub 自动生成的源码附件不包含额外收集的依赖源码。

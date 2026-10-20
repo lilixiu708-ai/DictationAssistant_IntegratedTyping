@@ -4,9 +4,13 @@
 
 **`v4.0.0-typing.6`（R6）本体与同步打字插件 1.2.0 预发布已公开。** Avalonia 保持 **11.3.12**，仍按既有发布授权披露未解决的 MS-PL/AGPL 组合事项，不将其表述为已获额外授权。原始许可、对应源码及完整性检查继续保留；R5 与同步打字 1.1.0 保留为历史版本。
 
-**当前准备同步打字插件 1.3.1 的独立发布，尚未公开。** 本次只修改和发布插件，复用已公开的 R6 本体，Word 导入仍为 1.0.1；不增加本体版本，不覆盖 1.2.0 或其他历史 Release。新增官方翻译 API 适配没有引入新的 NuGet 依赖；本机凭据保护及宿主既有 Avalonia 披露保持不变，真实服务账户翻译仍待验证。
+**[同步打字插件 1.3.1 已独立公开发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1)。** 本次只修改和发布插件，复用已公开的 R6 本体，Word 导入仍为 1.0.1；不增加本体版本，不覆盖 1.2.0 或其他历史 Release。新增官方翻译 API 适配没有引入新的 NuGet 依赖；本机凭据保护及宿主既有 Avalonia 披露保持不变，真实服务账户翻译仍待验证。
+
+插件标签对应提交 `418501c1a7be64bd1e81dd4dd9816e4ce822c4e2`，[独立 Windows 工作流 39381852561](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39381852561) 的构建与发布均成功：暂存的公开 R6 宿主加载新插件、15 项既有检查和主窗口开闭通过。五份发行附件已重新下载，哈希、插件版本、DLL 提交及 R6 兼容记录核对通过；9 个既有 Release、38 份附件及旧标签保持不变。Windows DPAPI、旧配置迁移和真实账户翻译仍未验证。
 
 首次候选 1.3.0 在准备兼容宿主时，因既有 R6 ZIP 中一个说明文件名含 Windows 非法字符 `?` 而失败，未公开任何附件。保留该候选标签，不移动标签重试，改用 1.3.1；修复仅在暂存副本中更名该说明文件并保留原字节，不修改已公开的 R6 ZIP。
+
+下载的插件源码包另经独立复核：166 个选定文件与标签导出逐字节一致，124 份原始许可证及一份私有依赖源码归档保持完整；从下载源码包独立还原、Release 发布构建成功。
 
 R6 的发行标签为 [`v4.0.0-typing.6`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) 与 [`plugin-synchronous-typing-v1.2.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)。插件要求宿主功能级别 4，须与 R6 配套；Word 导入功能未变，继续复用已公开的 `plugin-docx-vocabulary-v1.0.1`，不移动该标签、不覆盖既有资产。
 
