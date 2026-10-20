@@ -72,7 +72,8 @@ if errorlevel 1 goto :failed
 
 echo [6/6] Create portable ZIP...
 if exist "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip" del "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip"
-tar.exe -a -c -f "artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip" -C "%OUTPUT%" .
+REM Select ZIP explicitly; tar.exe behavior depends on the executable found in PATH.
+python -c "import shutil, sys; shutil.make_archive(sys.argv[1], 'zip', sys.argv[2])" "artifacts\DictationAssistant_IntegratedTyping_Windows_x64" "%OUTPUT%"
 if errorlevel 1 goto :failed
 echo [OK] artifacts\DictationAssistant_IntegratedTyping_Windows_x64.zip
 exit /b 0
