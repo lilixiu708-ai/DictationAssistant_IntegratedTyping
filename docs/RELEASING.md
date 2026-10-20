@@ -2,11 +2,13 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
-**正在准备 `v4.0.0-typing.6`（R6）本体与同步打字插件 1.2.0 预发布。** Avalonia 保持 **11.3.12**，仍按既有发布授权披露未解决的 MS-PL/AGPL 组合事项，不将其表述为已获额外授权。原始许可、对应源码及完整性检查继续保留。公开确认前，现有下载仍为 R5 与同步打字 1.1.0。
+**`v4.0.0-typing.6`（R6）本体与同步打字插件 1.2.0 预发布已公开。** Avalonia 保持 **11.3.12**，仍按既有发布授权披露未解决的 MS-PL/AGPL 组合事项，不将其表述为已获额外授权。原始许可、对应源码及完整性检查继续保留；R5 与同步打字 1.1.0 保留为历史版本。
 
-本次预定标签为 [`v4.0.0-typing.6`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) 与 [`plugin-synchronous-typing-v1.2.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)。新插件要求宿主功能级别 4，须与 R6 配套；Word 导入功能未变，继续复用已公开的 `plugin-docx-vocabulary-v1.0.1`，不移动该标签、不覆盖既有资产。
+本次发行标签为 [`v4.0.0-typing.6`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) 与 [`plugin-synchronous-typing-v1.2.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)。新插件要求宿主功能级别 4，须与 R6 配套；Word 导入功能未变，继续复用已公开的 `plugin-docx-vocabulary-v1.0.1`，不移动该标签、不覆盖既有资产。
 
-代码提交 `0e7ecae` 的 [Windows CI 39375979975](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975) 已通过完整程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建。这是主分支验证，最终 R6 发行提交须另行核对；Windows DPAPI、旧配置迁移、跨机器/账户拒绝读取和真实在线翻译仍待验证。
+R6 标签指向提交 `0f008c72983b9d567612855498800886201572e6`，[发行构建记录 39377359747](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39377359747)成功完成：程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建通过，两个新 Release 已公开。后续文档更新不移动发行标签，也不替换已公开资产。
+
+此前代码提交 `0e7ecae` 的 [Windows CI 39375979975](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975) 保留为主分支验证记录。Windows DPAPI、旧配置迁移、跨机器/账户拒绝读取和真实在线翻译仍待验证，不能由构建及主窗口开闭结果推定通过。
 
 R5 本体与同步打字 1.1.0、Word 导入 1.0.1 已公开，来自提交 `ae1a23210df3f40c2527832bc1a0c55990f08b3f`；其 [Windows 构建 39363409555](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555) 记录仅作为该版本证据。后续文档和 R6 发布不改变历史标签、资产或 `typing.1`–`typing.3` 草稿状态。
 

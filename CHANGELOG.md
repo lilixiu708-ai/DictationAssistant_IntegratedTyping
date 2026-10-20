@@ -12,6 +12,7 @@
 - 修正配置、练习及插件 UI 调度的异步等待：宿主等待内部任务和模态窗口实际结束后再释放运行状态，避免提前标记调用完成。
 - 已通过本轮 Linux Release 构建、15 项既有检查及多绑定/首选项/准备页切换/会话重启清理的图形核对；代码提交 `0e7ecae` 的 [Windows CI 39375979975](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975) 通过程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建。该主分支结果不替代最终发行提交验证；Windows 加密与旧配置迁移、真实在线翻译和完整边界校验仍待验证。
 - R5 本体与同步打字 1.1.0 作为历史版本保留；Word 导入 **1.0.1** 复用既有独立 Release，本次不覆盖其标签和资产。
+- R6 本体和同步打字 **1.2.0** 已公开为预发布，来自提交 `0f008c72983b9d567612855498800886201572e6`；[发行工作流 39377359747](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39377359747) 成功完成。Windows DPAPI、配置迁移及真实在线翻译的未验证范围保持不变。
 
 ## [4.0.0-typing.5] - 2026-10-20
 

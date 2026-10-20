@@ -2,9 +2,9 @@
 
 面向单词、短语和句子听写的 Windows x64 桌面程序，基于 C#、.NET 10 与 Avalonia 11，在上游 DictationAssistant v4.0.0 上扩展。
 
-**当前公开版本：R5（`v4.0.0-typing.5`）预发布。** Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
+**当前公开版本：R6（`v4.0.0-typing.6`）预发布。** Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
-下一版 **R6（`v4.0.0-typing.6`）与同步打字插件 `1.2.0` 正在准备发布**：插件管理新增逐插件「配置…」，翻译可管理多个 DeepL Free / Pro 命名绑定和首选项，并在准备页为本次翻译切换。新插件要求宿主功能级别 4，须配套 R6，不能直接用于 R5；Word 导入继续使用现有 1.0.1，不重发其独立资产。
+同步打字插件 **1.2.0 已独立发布**：插件管理新增逐插件「配置…」，翻译可管理多个 DeepL Free / Pro 命名绑定和首选项，并在准备页为本次翻译切换。新插件要求宿主功能级别 4，须配套 R6，不能直接用于 R5；Word 导入继续使用现有 1.0.1，不重发其独立资产。
 
 ## 功能
 
@@ -20,11 +20,9 @@
 
 | 用途 | 版本与下载 | 选择的附件 |
 | --- | --- | --- |
-| 安装或更新完整程序 | [R5 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5) | `*-win-x64-portable.zip` |
-| 单独更新同步打字 | [插件 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.1.0) | `synchronous-typing-1.1.0.zip` |
+| 安装或更新完整程序 | [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) | `*-win-x64-portable.zip` |
+| 单独更新同步打字 | [插件 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0) | `synchronous-typing-1.2.0.zip` |
 | 单独更新 Word 导入 | [插件 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1) | `docx-vocabulary-1.0.1.zip` |
-
-R6 的预定入口为 [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6)与[同步打字 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)，尚未公开；发布前使用上表现有版本。
 
 更新插件前关闭程序，将 ZIP 内完整插件目录替换到 `Plugins/` 后重启。源码开发选择对应 Release 的 `*-source.zip`；`SHA256SUMS` 用于校验下载，GitHub 自动生成的源码附件不包含额外收集的依赖源码。
 
@@ -55,7 +53,7 @@ dotnet build DictationAssistant.slnx -c Release --no-restore
 dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c Release --no-build --no-restore
 ```
 
-窗口运行需要图形会话及本机音频依赖。本轮代码提交 `0e7ecae` 已通过 [Windows CI 构建、包校验、15 项逻辑检查及主窗口正常开闭](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975)；这不是 R6 发布标签的最终构建记录。本地设置加密、旧配置迁移、在线翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
+窗口运行需要图形会话及本机音频依赖。R6 已通过 [Windows 发行构建、包校验、15 项逻辑检查及主窗口正常开闭](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39377359747)，发行提交为 `0f008c72983b9d567612855498800886201572e6`。本地设置加密、旧配置迁移、在线翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
 
 ## 文档与扩展
 

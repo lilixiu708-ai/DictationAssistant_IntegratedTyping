@@ -26,3 +26,7 @@
 ## 仓库与发布约定
 
 命名、目录、贡献和验证规则见 [CONTRIBUTING.md](CONTRIBUTING.md)。版本、标签、源码与发行资产的对应关系见 [发布规范](docs/RELEASING.md)。保持已有程序集名称及插件接口版本独立于应用发行版本。
+
+## 云环境
+
+Linux 安装与验证运行 `bash .codex/setup.sh`；新 shell 的工具激活及启动步骤见 [云环境指南](docs/CLOUD_ENVIRONMENT.md)。复用当前 checkout 和工具缓存，不将个人翻译服务配置添加为环境前置条件。
