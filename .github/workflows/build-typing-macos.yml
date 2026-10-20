@@ -1,12 +1,14 @@
 name: macOS integrated app (Intel and Apple Silicon)
 
 on:
-  push:
-    tags: ['v4.0.0-typing.8']
   workflow_dispatch:
     inputs:
       native_run_id:
         description: 'Optional completed native producer run ID; review artifacts only, never a release'
+        required: false
+        type: string
+      build_run_id:
+        description: 'Publish existing verified macOS artifacts from this successful run; dispatch on the R8 tag'
         required: false
         type: string
 
@@ -19,7 +21,39 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  dispatch-mode:
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+    steps:
+      - name: Select a build or promotion without rebuilding the release tag
+        id: mode
+        env:
+          BUILD_RUN_ID: ${{ inputs.build_run_id }}
+          NATIVE_RUN_ID: ${{ inputs.native_run_id }}
+        shell: python {0}
+        run: |
+          import os, re
+          build, native = os.environ['BUILD_RUN_ID'], os.environ['NATIVE_RUN_ID']
+          if os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch':
+              raise SystemExit('This workflow requires an explicit dispatch.')
+          if build:
+              if (not re.fullmatch(r'[1-9][0-9]*', build) or native
+                      or os.environ['GITHUB_REF'] != 'refs/tags/v4.0.0-typing.8'):
+                  raise SystemExit('Promotion requires the R8 tag, a positive build run ID and no native review input.')
+              mode = 'publish'
+          else:
+              if os.environ['GITHUB_REF'].startswith('refs/tags/'):
+                  raise SystemExit('A tagged dispatch must promote an existing verified build; it cannot rebuild.')
+              if native and not re.fullmatch(r'[1-9][0-9]*', native):
+                  raise SystemExit('The native review run ID must be a positive integer.')
+              mode = 'build'
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write(f'mode={mode}\n')
+
   native-macos:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'build'
     strategy:
       fail-fast: false
       matrix:
@@ -111,8 +145,8 @@ jobs:
           retention-days: 30
 
   publish-macos:
-    if: github.event_name == 'push' && github.ref == 'refs/tags/v4.0.0-typing.8'
-    needs: native-macos
+    if: needs.dispatch-mode.outputs.mode == 'publish' && github.ref == 'refs/tags/v4.0.0-typing.8'
+    needs: dispatch-mode
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -125,14 +159,46 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify the original successful build has the exact tagged source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_RUN_ID: ${{ inputs.build_run_id }}
+        shell: python {0}
+        run: |
+          import json, os, re, subprocess
+          run_id, repository = os.environ['BUILD_RUN_ID'], os.environ['GH_REPO']
+          if (not re.fullmatch(r'[1-9][0-9]*', run_id) or run_id == os.environ['GITHUB_RUN_ID']
+                  or os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch'
+                  or os.environ['GITHUB_REF'] != 'refs/tags/v4.0.0-typing.8'
+                  or repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping'):
+              raise SystemExit('Invalid macOS artifact promotion request.')
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          tagged = subprocess.check_output(['git', 'rev-parse', 'refs/tags/v4.0.0-typing.8^{commit}'], text=True).strip()
+          source = json.loads(subprocess.check_output(['gh', 'api', f'repos/{repository}/actions/runs/{run_id}']))
+          if (source.get('id') != int(run_id) or source.get('status') != 'completed'
+                  or source.get('conclusion') != 'success' or source.get('event') != 'workflow_dispatch'
+                  or source.get('path') != '.github/workflows/build-typing-macos.yml'
+                  or source.get('repository', {}).get('full_name') != repository
+                  or source.get('head_repository', {}).get('full_name') != repository
+                  or not re.fullmatch(r'[0-9a-f]{40}', head)
+                  or not (source.get('head_sha') == os.environ['GITHUB_SHA'] == head == tagged)):
+              raise SystemExit('Promotion requires a successful macOS dispatch from this repository and the exact R8 commit.')
+          print(f'Promoting verified macOS artifacts from run {run_id}, commit {head}.')
       - uses: actions/download-artifact@v4
         with:
           name: macos-build-osx-x64
           path: artifacts/macos/parts/osx-x64
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
       - uses: actions/download-artifact@v4
         with:
           name: macos-build-osx-arm64
           path: artifacts/macos/parts/osx-arm64
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
       - name: Verify both packages and collect their complete corresponding source
         run: >-
           python3 scripts/prepare_macos_release.py --assemble
@@ -149,6 +215,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          MACOS_BUILD_RUN_ID: ${{ inputs.build_run_id }}
         run: >-
           python3 scripts/prepare_macos_release.py --publish
           --tag '${{ github.ref_name }}' --output-dir artifacts/macos/release

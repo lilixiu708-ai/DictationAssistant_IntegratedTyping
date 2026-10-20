@@ -40,4 +40,8 @@ bash build-macos-typing.sh --rid osx-arm64
 
 脚本构建宿主与两个插件，准备原始许可和 `.app` 目录。正式构建需要先完成 macOS 无 DNG 原生资产复核并固定下载来源与哈希；当前该资产尚在准备，因此上述入口暂不代表可完成正式发行包。[原生构建说明](NATIVE_BUILD.md)和[发布规范](RELEASING.md)记录对应材料与交付步骤。
 
+正式 NuGet 依赖已固定：宿主、共享契约、两个插件及既有逻辑检查项目，各有 `osx-x64` 和 `osx-arm64` 锁文件，共 10 份。构建和既有检查均以 `--locked-mode` 还原，依赖变化时直接失败。Linux 上的依赖解析检查不代表 Mac 运行验证。
+
+[macOS 工作流](../.github/workflows/build-typing-macos.yml)只接受手动触发（`workflow_dispatch`）。正式发布先在 `main` 触发普通构建，留空 `native_run_id`，使用已公开并固定的原生资产；两个 Mac 任务通过后，核对提交并在同一提交创建 R8 标签，再针对该标签触发工作流，令 `build_run_id` 指向原成功运行。发布直接复用这批已验证应用包，收集完整配套源码、核对附件摘要后公开；推送标签不会重复构建。审核用的 `native_run_id` 不能进入正式发布。
+
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，继续随发行披露；ad-hoc 签名和技术检查不改变这一状态。

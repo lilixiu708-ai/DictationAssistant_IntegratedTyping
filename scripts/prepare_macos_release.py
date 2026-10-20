@@ -501,8 +501,12 @@ Avalonia/MS-PL 与 AGPL 的组合授权事项仍未解决，原始许可、配�
 
 def publish(args):
     head = git('rev-parse', 'HEAD')
-    if args.tag != TAG or git('rev-parse', f'refs/tags/{TAG}^{{commit}}') != head or os.environ.get('GITHUB_SHA') != head:
-        raise ValueError('Only the exact tagged R8 CI source can be published')
+    source_run = os.environ.get('MACOS_BUILD_RUN_ID', '')
+    if (args.tag != TAG or git('rev-parse', f'refs/tags/{TAG}^{{commit}}') != head
+            or os.environ.get('GITHUB_SHA') != head or os.environ.get('GITHUB_EVENT_NAME') != 'workflow_dispatch'
+            or os.environ.get('GITHUB_REF') != 'refs/tags/' + TAG
+            or not re.fullmatch('[1-9][0-9]*', source_run) or source_run == os.environ.get('GITHUB_RUN_ID')):
+        raise ValueError('Only an explicit R8 tag dispatch promoting a prior verified build can be published')
     repository = os.environ['GH_REPO']
     if repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping':
         raise ValueError('Unexpected release repository')
