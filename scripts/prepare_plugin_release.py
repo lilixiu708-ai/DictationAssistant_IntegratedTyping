@@ -29,6 +29,12 @@ PROJECT_NOTICES = ('LICENSE.md', 'NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_N
 HOST_RELEASE_TAG = 'v4.0.0-typing.6'
 HOST_SOURCE_COMMIT = '0f008c72983b9d567612855498800886201572e6'
 STANDALONE_PLUGIN_TAG = 'plugin-synchronous-typing-v1.3.1'
+STANDALONE_IMPORTER_TAG = 'plugin-docx-vocabulary-v1.1.0'
+PRESERVED_TYPING_TAG = 'plugin-synchronous-typing-v1.3.1'
+PRESERVED_TYPING_COMMIT = '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'
+IMPORTER_EXTENSIONS = ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm']
+IMPORTER_BASELINE_FILE = 'HOST_BASELINE-docx-vocabulary.json'
+IMPORTER_COMPATIBILITY_FILE = 'PLUGIN_COMPATIBILITY-docx-vocabulary.json'
 HOST_SUMS_SHA256 = '625f9eb7fd1d7c67b46db4a704d792c3d55d27130431efefb633fb050aa4800d'
 HOST_ASSET_SHA256 = {
     'DictationAssistant-4.0.0-typing.6-source.zip': '60754fd733e2a02d07b95f9220637d1c7165f2ba299cabca61a6e47fc1cc5ddc',
@@ -87,13 +93,13 @@ def host_cache():
     return ROOT / 'artifacts/host-releases' / HOST_RELEASE_TAG
 
 
-def host_file_hashes(directory):
+def host_file_hashes(directory, excluded_plugin_folder='SynchronousTyping'):
     result = {}
     for path in directory.rglob('*'):
         if path.is_symlink():
             raise ValueError('The compatibility host must not contain symlinks')
         relative = path.relative_to(directory).as_posix()
-        if path.is_file() and not relative.startswith('Plugins/SynchronousTyping/'):
+        if path.is_file() and not relative.startswith(f'Plugins/{excluded_plugin_folder}/'):
             result[relative] = digest(path)
     return result
 
@@ -129,9 +135,14 @@ def verified_host_metadata():
     return disclosure
 
 
-def prepare_host(tag):
+def prepare_host(tag, plugin_id='synchronous-typing'):
     if tag != HOST_RELEASE_TAG:
         raise ValueError('Only the pinned published R6 host may be used for this standalone release')
+    selected = next((item for item in PLUGINS if item[0] == plugin_id), None)
+    if selected is None:
+        raise ValueError('The pinned host preparation requires one known plugin ID')
+    excluded_folder = selected[2]
+    expected_count = 385 if plugin_id == 'synchronous-typing' else 386
     cache = host_cache()
     cache.mkdir(parents=True, exist_ok=True)
     wanted = {'SHA256SUMS': HOST_SUMS_SHA256,
@@ -199,15 +210,19 @@ def prepare_host(tag):
     embedded = json.loads((destination / 'RELEASE_REVIEW.json').read_text(encoding='utf-8'))
     if embedded != disclosure or b'4.0.0-typing.6+0f008c72983b9d567612855498800886201572e6' not in (destination / 'DictationAssistant.App.dll').read_bytes():
         raise ValueError('The extracted R6 application does not match the pinned release metadata')
-    files = host_file_hashes(destination)
-    if len(files) != 385:
-        raise ValueError('The staged R6 host must preserve all 385 files outside the typing plugin')
-    write_json(cache / 'HOST_BASELINE.json', {
+    files = host_file_hashes(destination, excluded_folder)
+    if len(files) != expected_count:
+        raise ValueError(f'The staged R6 host must preserve all {expected_count} files outside the selected plugin')
+    baseline = {
         'host_release_tag': HOST_RELEASE_TAG, 'host_source_commit': HOST_SOURCE_COMMIT,
-        'files_outside_typing_plugin': files,
+        'selected_plugin_id': plugin_id, 'excluded_plugin_folder': excluded_folder,
+        'files_outside_selected_plugin': files,
         'documentation_path_adaptations': adaptations,
         'staging_note': 'Only the pinned legacy guide filename is adapted for Windows; its bytes and all other R6 files are unchanged. The published R6 archive is not modified.',
-    })
+    }
+    if plugin_id == 'synchronous-typing':
+        baseline['files_outside_typing_plugin'] = files
+    write_json(cache / ('HOST_BASELINE.json' if plugin_id == 'synchronous-typing' else IMPORTER_BASELINE_FILE), baseline)
     print(f'Prepared pinned published R6 host without rebuilding it: {destination}')
 
 
@@ -244,6 +259,51 @@ def standalone_context(args, head):
                 'plugin_dll_sha256': digest(dll)}
     if any(compatibility.get(key) != value for key, value in expected.items()):
         raise ValueError('Compatibility validation does not match the current standalone plugin and pinned R6 host')
+    return disclosure['release_review'], compatibility
+
+
+def standalone_importer_context(args, head):
+    if (args.host_release_tag != HOST_RELEASE_TAG or args.plugin_release_tag != STANDALONE_IMPORTER_TAG
+            or args.plugin_id not in (None, ['docx-vocabulary'])):
+        raise ValueError('Standalone importer publication is restricted to Word/Excel 1.1.0 with the published R6 host')
+    manifest = json.loads((ROOT / 'plugins/DictationAssistant.Importers.Docx/plugin.json').read_text(encoding='utf-8'))
+    if (manifest.get('id') != 'docx-vocabulary' or manifest.get('version') != '1.1.0'
+            or manifest.get('apiVersion') != 1 or manifest.get('minimumHostFeatureLevel', 1) > 4
+            or manifest.get('extensions') != IMPORTER_EXTENSIONS):
+        raise ValueError('The standalone importer must keep API 1 and declare exactly its five supported extensions')
+    if git('rev-parse', '--verify', f'refs/tags/{args.plugin_release_tag}^{{commit}}') != head:
+        raise ValueError('The standalone importer release tag must match the current HEAD')
+    if (git('rev-parse', '--verify', f'refs/tags/{HOST_RELEASE_TAG}^{{commit}}') != HOST_SOURCE_COMMIT
+            or git('rev-parse', '--verify', f'refs/tags/{PRESERVED_TYPING_TAG}^{{commit}}') != PRESERVED_TYPING_COMMIT):
+        raise ValueError('An existing R6 or typing release tag moved from its pinned commit')
+    subprocess.run(['git', 'diff', '--quiet', PRESERVED_TYPING_COMMIT, head, '--',
+                    'src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Abstractions',
+                    'plugins/DictationAssistant.Practices.Typing'], cwd=ROOT, check=True)
+    disclosure = verified_host_metadata()
+    baseline = json.loads((host_cache() / IMPORTER_BASELINE_FILE).read_text(encoding='utf-8'))
+    if (baseline.get('host_release_tag') != HOST_RELEASE_TAG
+            or baseline.get('host_source_commit') != HOST_SOURCE_COMMIT
+            or baseline.get('selected_plugin_id') != 'docx-vocabulary'
+            or baseline.get('excluded_plugin_folder') != 'DocxVocabulary'
+            or baseline.get('documentation_path_adaptations') != HOST_DOCUMENTATION_PATH_ADAPTATIONS
+            or len(baseline.get('files_outside_selected_plugin', {})) != 386
+            or baseline.get('files_outside_selected_plugin') != host_file_hashes(ROOT / 'artifacts/Windows-x64', 'DocxVocabulary')):
+        raise ValueError('Files outside the importer changed in the published R6 compatibility host')
+    compatibility = json.loads((host_cache() / IMPORTER_COMPATIBILITY_FILE).read_text(encoding='utf-8'))
+    dll = ROOT / 'artifacts/Windows-x64/Plugins/DocxVocabulary/DictationAssistant.Importers.Docx.dll'
+    expected = {'host_release_tag': HOST_RELEASE_TAG, 'host_source_commit': HOST_SOURCE_COMMIT,
+                'plugin_source_commit': head, 'plugin_version': '1.1.0', 'plugin_api_version': 1,
+                'host_feature_level': 4, 'typing_plugin_version': '1.2.0', 'importer_loaded': True,
+                'importer_extensions': IMPORTER_EXTENSIONS, 'existing_typing_checks_passed': 15,
+                'synthetic_excel_read_passed': True, 'synthetic_excel_column_exports': 4,
+                'main_window_opened_and_closed': True,
+                'host_documentation_path_adaptations': HOST_DOCUMENTATION_PATH_ADAPTATIONS,
+                'host_non_importer_file_count': 386,
+                'preserved_typing_release_tag': PRESERVED_TYPING_TAG,
+                'preserved_typing_release_commit': PRESERVED_TYPING_COMMIT,
+                'plugin_dll_sha256': digest(dll)}
+    if any(compatibility.get(key) != value for key, value in expected.items()):
+        raise ValueError('Importer compatibility validation does not match the current plugin and pinned R6 host')
     return disclosure['release_review'], compatibility
 
 
@@ -348,7 +408,7 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
         review['host_compatibility'] = compatibility
     if plugin_id == 'docx-vocabulary' and version == '1.1.0':
         review['unverified'] = [
-            'Full worksheet/value and GUI checks used the supplied XLSX on Linux; Windows Excel-import interaction requires separate validation.',
+            'Full worksheet/value and GUI checks used the supplied XLSX on Linux; Windows GUI interaction with that workbook requires separate validation. Windows standalone compatibility checks consume only a generated two-sheet Unicode XLSX through the published R6 CLI.',
             'XLS, XLSB, XLSM and formula-cache behavior were not exercised by that XLSX sample.'
         ]
     write_json(output / 'RELEASE_REVIEW.json', review)
@@ -466,6 +526,8 @@ not establish a new permission or legal clearance for that combination.
             notes += 'R5 单绑定文件的 Windows 实机迁移尚未验证；1.2.0 需要 R6 或其他宿主功能级别 4 的版本，不能直接安装到 R5 本体。\n'
         if compatibility is not None:
             notes += '已将本插件装入固定哈希的已发布 R6 便携包，核对 API 1、功能级别 4、练习与配置能力加载以及生产主窗口正常开闭；R6 本体和 Word 1.0.1 文件保持原字节。此结果不代表真实在线翻译或 Windows 密钥迁移已验证。\n'
+    elif compatibility is not None:
+        notes += '\n已将 Word / Excel 导入插件装入固定哈希的既有 R6 本体，核对 API 1、功能级别 4、五种扩展名、插件加载及主窗口正常开闭；15 项既有打字检查通过。Windows 使用合成双工作表 Unicode XLSX 验证实际依赖加载和四次列导出逐行一致，未上传私人工作簿。本体及 R6 自带同步打字 1.2.0 的文件保持原字节，已发布同步打字 1.3.1 的标签和资产不变。Windows 真实 Excel 导入交互及其他 Excel 格式仍以验证页所列范围为准；私人工作簿及完整提取内容不在包内。\n'
     (output / 'RELEASE_NOTES.md').write_text(notes, encoding='utf-8')
     binary = output / f'{plugin_id}-{version}.zip'
     with zipfile.ZipFile(binary, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -479,7 +541,8 @@ not establish a new permission or legal clearance for that combination.
                     'scripts/prepare_plugin_release.py', 'scripts/prepare_licenses.py',
                     'scripts/collect_third_party_sources.py', 'docs/同步打字插件使用说明.md']
     if compatibility is not None:
-        source_paths.append('.github/workflows/release-typing-plugin.yml')
+        source_paths.append('.github/workflows/release-importer-plugin.yml' if plugin_id == 'docx-vocabulary'
+                            else '.github/workflows/release-typing-plugin.yml')
     if plugin_id == 'docx-vocabulary' and version == '1.1.0':
         source_paths.append('docs/Excel导入验证.md')
     subprocess.run(['git', 'archive', '--format=zip', f'--output={source}', head, '--', *source_paths],
@@ -508,6 +571,7 @@ def main():
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument('--prepare-host', action='store_true', help='Download and extract the pinned public R6 host for compatibility checks')
     modes.add_argument('--standalone', action='store_true', help='Package only typing 1.3.1 against the unchanged published R6 host')
+    modes.add_argument('--standalone-importer', action='store_true', help='Package only Word/Excel importer 1.1.0 against the unchanged published R6 host')
     parser.add_argument('--host-release-tag')
     parser.add_argument('--plugin-release-tag')
     parser.add_argument('--plugin-id', action='append', choices=[item[0] for item in PLUGINS],
@@ -515,11 +579,11 @@ def main():
     args = parser.parse_args()
     try:
         if args.prepare_host:
-            if args.app_release_tag or args.plugin_release_tag or args.plugin_id:
-                raise ValueError('--prepare-host accepts only --host-release-tag')
-            prepare_host(args.host_release_tag)
+            if args.app_release_tag or args.plugin_release_tag or args.plugin_id and len(args.plugin_id) != 1:
+                raise ValueError('--prepare-host accepts a host tag and at most one selected plugin ID')
+            prepare_host(args.host_release_tag, (args.plugin_id or ['synchronous-typing'])[0])
             return
-        if args.standalone:
+        if args.standalone or args.standalone_importer:
             if args.app_release_tag:
                 raise ValueError('Standalone publication must not prepare a new application release')
         elif not args.app_release_tag or args.host_release_tag or args.plugin_release_tag:
@@ -535,6 +599,15 @@ def main():
             if output_root.exists():
                 shutil.rmtree(output_root)
             package_plugin(*PLUGINS[0], HOST_RELEASE_TAG, head, catalog, host_review,
+                           host_commit=HOST_SOURCE_COMMIT, compatibility=compatibility)
+            return
+        if args.standalone_importer:
+            host_review, compatibility = standalone_importer_context(args, head)
+            catalog = json.loads((ROOT / 'third-party/components.json').read_text(encoding='utf-8'))
+            output_root = ROOT / 'artifacts/plugin-releases'
+            if output_root.exists():
+                shutil.rmtree(output_root)
+            package_plugin(*PLUGINS[1], HOST_RELEASE_TAG, head, catalog, host_review,
                            host_commit=HOST_SOURCE_COMMIT, compatibility=compatibility)
             return
         selected = set(args.plugin_id or (

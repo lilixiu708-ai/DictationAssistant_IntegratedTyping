@@ -1,6 +1,6 @@
 # Excel 导入验证
 
-**范围：Word / Excel 导入插件 1.1.0，尚未发布。** 当前用户 `.xlsx` 样本已完成独立比对；Windows 构建及程序窗口检查通过，其他 Excel 格式与 Windows 下的 Excel 导入交互未验证。R6 本体、同步打字 1.3.1 和已公开的 Word 导入 1.0.1 均不因此变更。
+**范围：Word / Excel 导入插件 1.1.0，正在准备独立发布，尚未公开。** 当前用户 `.xlsx` 样本已完成独立比对；Windows 构建及程序窗口检查通过，其他 Excel 格式与 Windows 下的 Excel 导入交互未验证。R6 本体、同步打字 1.3.1 和已公开的 Word 导入 1.0.1 均不因此变更。
 
 ## 读取库与规则
 
@@ -63,4 +63,4 @@
 | Windows 构建、插件 / 包校验和生产主窗口开闭 | 提交 `dbb2a04a4ee9b6d623f0c783ccd3edba6a26ea5a` 的 [CI 39390197721](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39390197721) 已通过 |
 | Windows 下的真实 Excel 导入交互 | 未运行；上述逐单元格、CLI 和 GUI 核对在 Linux 执行 |
 
-本轮仅验证上述 `.xlsx` 样本，未新建 Release；本地候选插件 ZIP、对应源码与 SHA 校验文件用于后续 Windows 真实 Excel 交互验证，不提供新的公开下载入口。后续结果仍按实际平台、版本 / 提交、计数或哈希及通过、失败、未运行范围记录，不将本样本的通过扩大为全部格式均通过。
+当前准备以 `plugin-docx-vocabulary-v1.1.0` 独立交付插件 ZIP、对应源码与校验文件，公开前保留现有下载入口，流程见 [发布规范](RELEASING.md#仅发布-word--excel-导入插件-110)。新 Windows 工作流只核验固定 R6 的插件装载及程序窗口，不上传私人工作簿，也不代替真实 Excel 导入交互；不得将本样本的通过扩大为全部格式均通过。

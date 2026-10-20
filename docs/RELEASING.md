@@ -2,6 +2,8 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**Word / Excel 导入插件 1.1.0 正在准备独立发布，尚未公开。** 使用 `plugin-docx-vocabulary-v1.1.0`，复用固定公开 R6；不重新发布本体、同步打字或原生依赖，不覆盖 Word 导入 1.0.1。当前下载入口在公开与下载校验完成前保持不变。
+
 **`v4.0.0-typing.6`（R6）本体与同步打字插件 1.2.0 预发布已公开。** Avalonia 保持 **11.3.12**，仍按既有发布授权披露未解决的 MS-PL/AGPL 组合事项，不将其表述为已获额外授权。原始许可、对应源码及完整性检查继续保留；R5 与同步打字 1.1.0 保留为历史版本。
 
 **[同步打字插件 1.3.1 已独立公开发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1)。** 本次只修改和发布插件，复用已公开的 R6 本体，Word 导入仍为 1.0.1；不增加本体版本，不覆盖 1.2.0 或其他历史 Release。新增官方翻译 API 适配没有引入新的 NuGet 依赖；本机凭据保护及宿主既有 Avalonia 披露保持不变，真实服务账户翻译仍待验证。
@@ -53,6 +55,17 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 - `third-party/components.json` 的 `native_source_provenance`、`source_coverage` 和 `native_overrides` 记录来源及范围；包内 `third-party-sources/SOURCE_ARCHIVES.json` 记录实际归档及哈希。目录中的 `delivery=bundled` 条目须真的入包，引用索引不等于已经交付。
 - 下载字节按固定 SHA-256 验证；Gitiles 有动态归档元数据的条目按目录规定核验固定 canonical `tar-members-v1` 内容树哈希（路径、类型、权限、链接和文件字节），并记录该次归档的实际 SHA-256。不能因压缩字节不同跳过内容验证。
 - GitHub 自动源码 ZIP 不执行上述追加流程，不能称它与准备脚本产出的对应源码包相同。核对每个实际组件要求的交付内容，勿将所有原生源码覆盖一概标成未补齐，也勿把部分通过扩大为整个 App 已合规。
+
+## 仅发布 Word / Excel 导入插件 1.1.0
+
+使用 `.github/workflows/release-importer-plugin.yml`，由标签 `plugin-docx-vocabulary-v1.1.0` 触发：
+
+1. 将插件 1.1.0、固定依赖、原始许可、对应源码材料与验证记录提交到同一版本，保持插件 ID `docx-vocabulary`、入口及 API 1；标签指向该实际提交。
+2. 下载并核验固定的公开 R6，暂存后只替换导入插件及其私有依赖；在 Windows 核验 R6 插件装载和程序窗口，不重建或重新发布 App、同步打字及原生资产。
+3. 通过后准备插件 ZIP、对应源码、`SHA256SUMS` 与披露文件，仅创建新的插件 Release；核对草稿资产再公开，不覆盖旧标签或附件。
+4. 公开后重新下载并核对哈希、源码提交、DLL 与 R6 兼容记录，再切换首页的当前 Word / Excel 下载入口。
+
+本轮私人 `.xlsx` 的 19 页、2,683 个非空文本、56 列预览、112 处标题 / 表头及默认 95 条已在 Linux 核对。私有文件不上传 CI；其他格式、公式缓存与 Windows 真实 Excel 导入交互仍未验证，详见 [Excel 导入验证](Excel导入验证.md)。
 
 ## 仅发布同步打字插件 1.3.1
 

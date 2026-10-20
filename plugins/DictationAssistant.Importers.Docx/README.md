@@ -2,7 +2,7 @@
 
 面向 DictationAssistant 插件接口第 1 版，运行目标为 .NET 10。插件在本地读取 `.docx`，不需要安装 Microsoft Word，不启动外部程序，也不访问文档中的链接或嵌入文件。
 
-**源码中的 1.1.0 已完成本轮 Linux 样本验证，尚未发布。** 新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm` 读取，继续使用插件 ID `docx-vocabulary`、程序集 `DictationAssistant.Importers.Docx` 及原有入口类型；安装目录仍为 `Plugins/DocxVocabulary/`。现有公开的 1.0.1 仅支持 DOCX。
+**1.1.0 已完成本轮 Linux 样本验证，正在准备独立发布，尚未公开。** 新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm` 读取，继续使用插件 ID `docx-vocabulary`、程序集 `DictationAssistant.Importers.Docx` 及原有入口类型；安装目录仍为 `Plugins/DocxVocabulary/`。现有公开的 1.0.1 仅支持 DOCX。
 
 ## DOCX 导入内容
 
@@ -16,7 +16,7 @@
 
 插件不会自行去重、打乱或修改词表。检测到文本相同的表格时只返回提示，实际导入范围由宿主预览决定。
 
-## Excel 导入内容（1.1.0，未发布）
+## Excel 导入内容（1.1.0，独立发布准备中）
 
 - 每张工作表作为独立分区，用户在宿主预览中选择工作表和列；不把不同工作表拼成一张表。
 - 文本保留原始 Unicode、大小写、空白及列位置，不自行去重、规范化或填补空单元格。

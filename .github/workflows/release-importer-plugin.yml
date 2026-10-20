@@ -1,0 +1,343 @@
+name: Release independent Word and Excel importer against published R6
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['plugin-docx-vocabulary-v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: independent-importer-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-plugin:
+    if: github.ref == 'refs/tags/plugin-docx-vocabulary-v1.1.0'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify importer-only scope and unchanged published host and typing sources
+        shell: python {0}
+        run: |
+          import json, os, pathlib, subprocess, xml.etree.ElementTree as ET
+          tag = os.environ['GITHUB_REF_NAME']
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          host = '0f008c72983b9d567612855498800886201572e6'
+          typing = '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'
+          def target(name):
+              return subprocess.check_output(['git', 'rev-parse', '--verify', f'refs/tags/{name}^{{commit}}'], text=True).strip()
+          if (tag != 'plugin-docx-vocabulary-v1.1.0' or head != os.environ['GITHUB_SHA']
+                  or target(tag) != head or target('v4.0.0-typing.6') != host
+                  or target('plugin-synchronous-typing-v1.3.1') != typing):
+              raise SystemExit('The importer, existing R6 host or existing typing tag does not match its expected commit')
+          subprocess.run(['git', 'diff', '--exit-code', typing, head, '--',
+                          'src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Abstractions',
+                          'plugins/DictationAssistant.Practices.Typing'], check=True)
+          folder = pathlib.Path('plugins/DictationAssistant.Importers.Docx')
+          manifest = json.loads((folder / 'plugin.json').read_text(encoding='utf-8'))
+          version = ET.parse(folder / 'DictationAssistant.Importers.Docx.csproj').findtext('.//Version')
+          if (manifest.get('id') != 'docx-vocabulary' or manifest.get('version') != '1.1.0'
+                  or version != '1.1.0' or manifest.get('apiVersion') != 1
+                  or manifest.get('minimumHostFeatureLevel', 1) > 4
+                  or manifest.get('extensions') != ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm']):
+              raise SystemExit('The importer must retain API 1 and declare exactly its five extensions')
+      - name: Download and verify the unchanged published R6 host
+        shell: cmd
+        run: python scripts\prepare_plugin_release.py --prepare-host --host-release-tag v4.0.0-typing.6 --plugin-id docx-vocabulary
+      - name: Build only the updated importer into the compatibility host
+        shell: cmd
+        run: |
+          rmdir /s /q artifacts\Windows-x64\Plugins\DocxVocabulary
+          if errorlevel 1 exit /b 1
+          dotnet restore plugins\DictationAssistant.Importers.Docx\DictationAssistant.Importers.Docx.csproj -p:NuGetLockFilePath=obj/cloud.packages.lock.json
+          if errorlevel 1 exit /b 1
+          dotnet publish plugins\DictationAssistant.Importers.Docx\DictationAssistant.Importers.Docx.csproj -c Release --no-restore -p:DebugType=None -p:DebugSymbols=false -o artifacts\Windows-x64\Plugins\DocxVocabulary
+          if errorlevel 1 exit /b 1
+      - name: Restore the existing typing logic checks
+        shell: cmd
+        run: dotnet restore tests\TypingPlugin.SmokeTests\TypingPlugin.SmokeTests.csproj -p:NuGetLockFilePath=obj/cloud.packages.lock.json
+      - name: Run and count the existing fifteen typing logic checks
+        shell: python {0}
+        run: |
+          import json, pathlib, subprocess, sys
+          result = subprocess.run(['dotnet', 'run', '--project', 'tests/TypingPlugin.SmokeTests/TypingPlugin.SmokeTests.csproj',
+                                   '-c', 'Release', '--no-restore'], capture_output=True, check=True)
+          output = result.stdout.decode('utf-8-sig')
+          print(output)
+          sys.stderr.write(result.stderr.decode('utf-8-sig'))
+          count = sum(line.startswith('PASS ') for line in output.splitlines())
+          if count != 15 or 'ALL TYPING LOGIC SMOKE TESTS PASSED' not in output:
+              raise SystemExit('The existing fifteen typing checks did not all pass')
+          pathlib.Path('artifacts/host-releases/v4.0.0-typing.6/importer-typing-checks.json').write_text(
+              json.dumps({'existing_typing_checks_passed': count}), encoding='utf-8')
+      - name: Load the updated importer in the published R6 executable
+        shell: python {0}
+        run: |
+          import json, pathlib, subprocess
+          host = pathlib.Path('artifacts/Windows-x64').resolve()
+          result = subprocess.run([str(host / 'DictationAssistant.App.exe'), '--list-plugins'],
+                                  cwd=host, capture_output=True, check=True, timeout=60)
+          report = json.loads(result.stdout.decode('utf-8-sig'))
+          if report.get('ApiVersion') != 1 or report.get('HostFeatureLevel') != 4:
+              raise SystemExit('The compatibility executable is not the expected R6 API/feature level')
+          plugins = {item['Manifest']['Id']: item for item in report['Plugins'] if item.get('Manifest')}
+          if set(plugins) != {'synchronous-typing', 'docx-vocabulary'} or report.get('LoadedCount') != 2:
+              raise SystemExit('The pinned R6 host did not load exactly the expected two plugins')
+          typing = plugins['synchronous-typing']
+          importer = plugins['docx-vocabulary']
+          extensions = ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm']
+          if (not importer.get('IsLoaded') or importer.get('Error') is not None
+                  or importer['Manifest'].get('Version') != '1.1.0'
+                  or importer['Manifest'].get('ApiVersion') != 1
+                  or importer['Manifest'].get('Extensions') != extensions
+                  or 'document-importer' not in importer.get('Capabilities', [])
+                  or set(report.get('SupportedExtensions', [])) != set(extensions)):
+              raise SystemExit('The updated importer did not load all five extensions')
+          if (not typing.get('IsLoaded') or typing.get('Error') is not None
+                  or typing['Manifest'].get('Version') != '1.2.0'
+                  or not {'practice', 'configuration'} <= set(typing.get('Capabilities', []))):
+              raise SystemExit('The unchanged R6-bundled typing 1.2.0 plugin no longer loads')
+          destination = pathlib.Path('artifacts/host-releases/v4.0.0-typing.6/importer-plugin-discovery.json')
+          destination.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print('Published R6 loaded importer 1.1.0 with five extensions and unchanged bundled typing 1.2.0.')
+      - name: Read a synthetic two-sheet Unicode XLSX through the unchanged R6 host
+        shell: python {0}
+        run: |
+          import json, pathlib, subprocess, tempfile, zipfile
+          from xml.sax.saxutils import escape
+          host = pathlib.Path('artifacts/Windows-x64').resolve()
+          sheets = [[['H₂O', '中文'], ['café', 'αβ']], [['Na⁺', '日本語'], ['π', 'Français']]]
+          namespace = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+          with tempfile.TemporaryDirectory(prefix='importer-synthetic-xlsx-') as temporary:
+              folder = pathlib.Path(temporary)
+              workbook = folder / 'synthetic.xlsx'
+              with zipfile.ZipFile(workbook, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+                  archive.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>')
+                  archive.writestr('_rels/.rels', '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')
+                  archive.writestr('xl/workbook.xml', f'<workbook xmlns="{namespace}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Unicode 1" sheetId="1" r:id="rId1"/><sheet name="Unicode 2" sheetId="2" r:id="rId2"/></sheets></workbook>')
+                  archive.writestr('xl/_rels/workbook.xml.rels', '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/></Relationships>')
+                  for number, rows in enumerate(sheets, 1):
+                      row_xml = ''.join('<row r="%s">%s</row>' % (index, ''.join(f'<c r="{column}{index}" t="inlineStr"><is><t>{escape(value)}</t></is></c>' for column, value in zip('AB', row))) for index, row in enumerate(rows, 1))
+                      archive.writestr(f'xl/worksheets/sheet{number}.xml', f'<worksheet xmlns="{namespace}"><sheetData>{row_xml}</sheetData></worksheet>')
+              selections = 0
+              for section, rows in enumerate(sheets, 1):
+                  for column in range(1, 3):
+                      output = folder / f'{section}-{column}.txt'
+                      subprocess.run([str(host / 'DictationAssistant.App.exe'), '--extract', str(workbook),
+                                      '--output', str(output), '--plugin', 'docx-vocabulary', '--section', str(section),
+                                      '--column', str(column), '--include-headers', '--keep-numbering'],
+                                     cwd=host, capture_output=True, check=True, timeout=60)
+                      if output.read_text(encoding='utf-8-sig').splitlines() != [row[column - 1] for row in rows]:
+                          raise SystemExit(f'Synthetic Unicode XLSX mismatch in sheet {section}, column {column}')
+                      selections += 1
+          pathlib.Path('artifacts/host-releases/v4.0.0-typing.6/importer-synthetic-excel.json').write_text(
+              json.dumps({'synthetic_excel_read_passed': True, 'synthetic_excel_column_exports': selections}), encoding='utf-8')
+          print('Existing R6 host read both Unicode XLSX sheets through the new importer; four column exports matched.')
+      - name: Start and close the published R6 production application
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $executable = Join-Path $env:GITHUB_WORKSPACE 'artifacts/Windows-x64/DictationAssistant.App.exe'
+          $process = Start-Process $executable -WorkingDirectory (Split-Path $executable) -PassThru
+          try {
+            Start-Sleep -Seconds 8
+            $process.Refresh()
+            if ($process.HasExited) { throw "The published R6 host exited during startup: $($process.ExitCode)" }
+            if ($process.MainWindowHandle -eq 0) { throw 'The published R6 host did not create a main window.' }
+            $null = $process.CloseMainWindow()
+            if (-not $process.WaitForExit(10000)) { throw 'The published R6 main window did not close normally.' }
+            if ($process.ExitCode -ne 0) { throw "The published R6 host exited unsuccessfully: $($process.ExitCode)" }
+            @{ main_window_opened_and_closed = $true } | ConvertTo-Json | Set-Content artifacts/host-releases/v4.0.0-typing.6/importer-window-smoke.json
+          } finally {
+            if (-not $process.HasExited) { $process.Kill() }
+          }
+      - name: Record compatibility and prepare only independent importer assets
+        shell: python {0}
+        run: |
+          import hashlib, json, os, pathlib, subprocess, sys
+          cache = pathlib.Path('artifacts/host-releases/v4.0.0-typing.6')
+          def read(name):
+              return json.loads((cache / name).read_text(encoding='utf-8-sig'))
+          discovery = read('importer-plugin-discovery.json')
+          window = read('importer-window-smoke.json')
+          checks = read('importer-typing-checks.json')
+          excel = read('importer-synthetic-excel.json')
+          baseline = read('HOST_BASELINE-docx-vocabulary.json')
+          plugin = pathlib.Path('artifacts/Windows-x64/Plugins/DocxVocabulary/DictationAssistant.Importers.Docx.dll')
+          with plugin.open('rb') as stream:
+              checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
+          compatibility = {
+              'host_release_tag': 'v4.0.0-typing.6',
+              'host_source_commit': '0f008c72983b9d567612855498800886201572e6',
+              'plugin_source_commit': os.environ['GITHUB_SHA'],
+              'plugin_version': '1.1.0', 'plugin_api_version': discovery['ApiVersion'],
+              'host_feature_level': discovery['HostFeatureLevel'], 'typing_plugin_version': '1.2.0',
+              'importer_loaded': True, 'importer_extensions': ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm'],
+              'existing_typing_checks_passed': checks['existing_typing_checks_passed'],
+              'synthetic_excel_read_passed': excel.get('synthetic_excel_read_passed') is True,
+              'synthetic_excel_column_exports': excel['synthetic_excel_column_exports'],
+              'main_window_opened_and_closed': window.get('main_window_opened_and_closed') is True,
+              'plugin_dll_sha256': checksum,
+              'host_documentation_path_adaptations': baseline['documentation_path_adaptations'],
+              'host_non_importer_file_count': len(baseline['files_outside_selected_plugin']),
+              'host_staging_note': baseline['staging_note'],
+              'preserved_typing_release_tag': 'plugin-synchronous-typing-v1.3.1',
+              'preserved_typing_release_commit': '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2',
+              'scope': 'Existing published R6 host, five-extension discovery, synthetic two-sheet Unicode XLSX consumption with four exact column exports, existing fifteen typing checks and normal main-window open/close. The supplied private workbook was not used or uploaded on Windows; Windows Excel GUI interaction and other Excel formats are not claimed verified.',
+          }
+          (cache / 'PLUGIN_COMPATIBILITY-docx-vocabulary.json').write_text(json.dumps(compatibility, ensure_ascii=False, indent=2), encoding='utf-8')
+          subprocess.run([sys.executable, 'scripts/prepare_plugin_release.py', '--standalone-importer',
+                          '--host-release-tag', 'v4.0.0-typing.6', '--plugin-release-tag', os.environ['GITHUB_REF_NAME']], check=True)
+      - name: Upload only the independent importer release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: independent-importer-plugin-release
+          path: artifacts/plugin-releases/docx-vocabulary/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+  publish-plugin:
+    if: github.ref == 'refs/tags/plugin-docx-vocabulary-v1.1.0'
+    needs: build-plugin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: independent-importer-plugin-release
+          path: release
+      - name: Publish only the new importer prerelease
+        shell: python {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          import hashlib, json, os, pathlib, re, subprocess, tempfile
+          repository = os.environ['GH_REPO']
+          commit = os.environ['GITHUB_SHA']
+          tag = os.environ['RELEASE_TAG']
+          if tag != 'plugin-docx-vocabulary-v1.1.0' or not re.fullmatch(r'[0-9a-f]{40}', commit):
+              raise SystemExit('Unexpected independent plugin release scope')
+
+          def gh(*arguments):
+              return subprocess.check_output(['gh', *arguments], text=True)
+
+          def remote_target(name):
+              refs = subprocess.check_output(['git', 'ls-remote', 'origin', f'refs/tags/{name}', f'refs/tags/{name}^{{}}'], text=True)
+              values = dict(line.split()[::-1] for line in refs.splitlines())
+              return values.get(f'refs/tags/{name}^{{}}', values.get(f'refs/tags/{name}'))
+
+          if (remote_target(tag) != commit or remote_target('v4.0.0-typing.6') != '0f008c72983b9d567612855498800886201572e6'
+                  or remote_target('plugin-synchronous-typing-v1.3.1') != '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'):
+              raise SystemExit('The new plugin tag or existing published host tag changed')
+          releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+          if any(item['tag_name'] == tag for page in releases for item in page):
+              raise SystemExit('Refusing to replace an existing public release or draft')
+          folder = pathlib.Path('release')
+          assets = {path.name: path for path in folder.iterdir() if path.is_file()}
+          expected_names = {'docx-vocabulary-1.1.0.zip', 'docx-vocabulary-1.1.0-source.zip',
+                            'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
+          if set(assets) != expected_names:
+              raise SystemExit('The independent plugin asset set is incomplete or contains an unrelated asset')
+          checked = set()
+          expected_hashes = {}
+          for line in assets['SHA256SUMS'].read_text(encoding='ascii').splitlines():
+              expected, name = line.split('  ', 1)
+              if not re.fullmatch(r'[0-9a-f]{64}', expected) or name not in assets or name in checked:
+                  raise SystemExit('Invalid or duplicate plugin checksum entry')
+              with assets[name].open('rb') as stream:
+                  actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+              if actual != expected:
+                  raise SystemExit(f'Plugin release asset checksum mismatch: {name}')
+              checked.add(name)
+          if checked != expected_names - {'SHA256SUMS'}:
+              raise SystemExit('The plugin checksum file does not cover exactly all four other assets')
+          for name, path in assets.items():
+              with path.open('rb') as stream:
+                  expected_hashes[name] = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+          review = json.loads(assets['RELEASE_REVIEW.json'].read_text(encoding='utf-8'))
+          host_review = review.get('host_release_review', {})
+          blockers = host_review.get('blocking_issues', [])
+          compatibility = review.get('host_compatibility', {})
+          if (review.get('source_commit') != commit or review.get('plugin_id') != 'docx-vocabulary'
+                  or review.get('plugin_version') != '1.1.0' or review.get('app_release_tag') != 'v4.0.0-typing.6'
+                  or review.get('host_source_commit') != '0f008c72983b9d567612855498800886201572e6'
+                  or review.get('publication_scope') != 'standalone-plugin-update-existing-host'
+                  or review.get('legal_clearance_claimed') is not False
+                  or host_review.get('status') != 'blocked' or not blockers
+                  or any(not isinstance(item, dict) or item.get('id') != 'avalonia-mspl-agpl-compatibility'
+                         for item in blockers)
+                  or compatibility.get('plugin_source_commit') != commit
+                  or compatibility.get('plugin_api_version') != 1 or compatibility.get('host_feature_level') != 4
+                  or compatibility.get('plugin_version') != '1.1.0'
+                  or compatibility.get('host_release_tag') != 'v4.0.0-typing.6'
+                  or compatibility.get('host_source_commit') != '0f008c72983b9d567612855498800886201572e6'
+                  or compatibility.get('importer_loaded') is not True
+                  or compatibility.get('importer_extensions') != ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm']
+                  or compatibility.get('typing_plugin_version') != '1.2.0'
+                  or compatibility.get('existing_typing_checks_passed') != 15
+                  or compatibility.get('synthetic_excel_read_passed') is not True
+                  or compatibility.get('synthetic_excel_column_exports') != 4
+                  or compatibility.get('preserved_typing_release_tag') != 'plugin-synchronous-typing-v1.3.1'
+                  or compatibility.get('preserved_typing_release_commit') != '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'
+                  or compatibility.get('main_window_opened_and_closed') is not True
+                  or compatibility.get('host_non_importer_file_count') != 386
+                  or compatibility.get('host_documentation_path_adaptations') != [{
+                      'original_archive_path': './??????????.md', 'staged_path': 'R6_PLUGIN_GUIDE.md',
+                      'bytes': 14711, 'archive_flag_bits': 8,
+                      'sha256': '1d83b102d4ba612ebd7e2c21837f259b137cd421509e4ccf537aebfc474b7e28'}]):
+              raise SystemExit('The plugin disclosure, source or compatibility metadata is inconsistent')
+          gh('release', 'create', tag, '--draft', '--prerelease', '--latest=false', '--verify-tag',
+             '--target', commit, '--title', '插件更新：Word / Excel 词表导入 1.1.0',
+             '--notes-file', str(assets['RELEASE_NOTES.md']))
+          gh('release', 'upload', tag, *(str(path) for path in assets.values()))
+          releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+          matches = [item for page in releases for item in page if item['tag_name'] == tag]
+          if len(matches) != 1 or not matches[0].get('draft'):
+              raise SystemExit('Expected exactly one newly created plugin draft')
+          release = matches[0]
+          expected_sizes = {name: path.stat().st_size for name, path in assets.items()}
+          if {item['name']: item['size'] for item in release['assets']} != expected_sizes:
+              raise SystemExit('The draft plugin assets do not match the complete local asset set')
+          for item in release['assets']:
+              if item.get('state') != 'uploaded':
+                  raise SystemExit('A draft plugin upload is incomplete')
+              expected = expected_hashes[item['name']]
+              if item.get('digest'):
+                  if item['digest'] != expected:
+                      raise SystemExit('An uploaded plugin asset has an unexpected SHA-256 digest')
+              else:
+                  with tempfile.TemporaryDirectory() as temporary:
+                      path = pathlib.Path(temporary) / 'asset'
+                      with path.open('wb') as destination:
+                          subprocess.run(['gh', 'api', f'repos/{repository}/releases/assets/{item["id"]}',
+                                          '-H', 'Accept: application/octet-stream'], stdout=destination, check=True)
+                      with path.open('rb') as stream:
+                          actual = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+                      if path.stat().st_size != item['size'] or actual != expected:
+                          raise SystemExit('A downloaded draft plugin asset differs from the verified local file')
+          current = json.loads(gh('api', f'repos/{repository}/releases/{release["id"]}'))
+          fields = lambda value: sorted((item['id'], item['name'], item['size'], item.get('state')) for item in value['assets'])
+          if not current.get('draft') or current.get('tag_name') != tag or fields(current) != fields(release):
+              raise SystemExit('The new plugin draft changed before publication')
+          if any(item.get('digest') and item['digest'] != expected_hashes[item['name']] for item in current['assets']):
+              raise SystemExit('A draft plugin asset digest changed before publication')
+          if (remote_target(tag) != commit or remote_target('v4.0.0-typing.6') != '0f008c72983b9d567612855498800886201572e6'
+                  or remote_target('plugin-synchronous-typing-v1.3.1') != '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'):
+              raise SystemExit('The plugin or host tag changed before publication')
+          gh('release', 'edit', tag, '--draft=false', '--prerelease', '--latest=false')
+          print(gh('release', 'view', tag, '--json', 'url', '--jq', '.url').strip())
