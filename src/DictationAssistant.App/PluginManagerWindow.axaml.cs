@@ -3,12 +3,18 @@ using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Threading;
 using DictationAssistant.App.Plugins;
 
 namespace DictationAssistant.App;
 
 public partial class PluginManagerWindow : Window
 {
+    private readonly CancellationTokenSource _windowLifetime = new();
+    private readonly HashSet<Task> _configurationTasks = [];
+    private bool _isClosing;
+    private bool _allowClose;
+
     public PluginManagerWindow(PluginRuntime runtime, Action openFolder)
     {
         var catalog = runtime.Catalog;
@@ -38,9 +44,15 @@ public partial class PluginManagerWindow : Window
             }
         };
         CloseButton.Click += (_, _) => Close();
+        Closing += PluginManagerWindow_Closing;
+        Closed += (_, _) =>
+        {
+            CancelConfiguration();
+            _windowLifetime.Dispose();
+        };
     }
 
-    private static Border CreateEntryCard(PluginRuntime runtime, PluginEntry entry)
+    private Border CreateEntryCard(PluginRuntime runtime, PluginEntry entry)
     {
         var content = new StackPanel { Spacing = 6 };
         content.Children.Add(new TextBlock
@@ -91,6 +103,27 @@ public partial class PluginManagerWindow : Window
             content.Children.Add(enable);
             content.Children.Add(preferenceStatus);
         }
+        if (entry.IsLoaded && entry.ConfigurationPlugin is not null)
+        {
+            var configure = new Button { Content = "配置…", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left };
+            var configurationStatus = new TextBlock { TextWrapping = TextWrapping.Wrap };
+            configure.Click += async (_, _) =>
+            {
+                if (_isClosing || !configure.IsEnabled) return;
+                configure.IsEnabled = false;
+                configurationStatus.Text = "正在打开插件配置…";
+                var task = ConfigureEntryAsync(runtime, entry, configurationStatus);
+                _configurationTasks.Add(task);
+                try { await task; }
+                finally
+                {
+                    _configurationTasks.Remove(task);
+                    if (!_isClosing) configure.IsEnabled = true;
+                }
+            };
+            content.Children.Add(configure);
+            content.Children.Add(configurationStatus);
+        }
         if (entry.LastError is { } lastError)
             content.Children.Add(new SelectableTextBlock { Text = $"最近错误：{lastError}", TextWrapping = TextWrapping.Wrap });
         var logs = runtime.Logs.Where(log => log.PluginId == entry.Manifest?.Id).TakeLast(10).ToArray();
@@ -120,5 +153,62 @@ public partial class PluginManagerWindow : Window
             BorderBrush = new SolidColorBrush(Color.Parse("#70808080")),
             Child = content
         };
+    }
+
+    private async Task ConfigureEntryAsync(PluginRuntime runtime, PluginEntry entry, TextBlock status)
+    {
+        try
+        {
+            await runtime.InvokeAsync(entry, "configure", async token =>
+            {
+                var callback = runtime.CaptureInvocation(async () =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        await entry.ConfigurationPlugin!.ConfigureAsync(this, token);
+                    }
+                    catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
+                    catch (Exception)
+                    {
+                        // Provider errors can contain credentials; keep runtime logs and UI generic.
+                        throw new InvalidOperationException("插件配置失败，请检查本机设置后重试。");
+                    }
+                });
+                // This overload returns the callback's task; retain the invocation until the dialog closes.
+                var dialogTask = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Normal, token);
+                await dialogTask;
+            }, _windowLifetime.Token, waitForTurn: false);
+            if (!_isClosing) status.Text = "配置窗口已关闭，设置按插件说明生效。";
+        }
+        catch (OperationCanceledException) when (_windowLifetime.IsCancellationRequested) { }
+        catch (Exception)
+        {
+            if (!_isClosing) status.Text = "插件正忙或配置无法打开，请稍后重试。";
+        }
+    }
+
+    private async void PluginManagerWindow_Closing(object? sender, WindowClosingEventArgs e)
+    {
+        if (_allowClose || _configurationTasks.Count == 0) return;
+        e.Cancel = true;
+        if (_isClosing) return;
+        _isClosing = true;
+        CloseButton.IsEnabled = false;
+        CloseButton.Content = "正在关闭…";
+        CancelConfiguration();
+        // Keep the dispatcher free while configuration dialogs observe cancellation and close.
+        await Task.WhenAll(_configurationTasks.ToArray());
+        _allowClose = true;
+        Close();
+    }
+
+    private void CancelConfiguration()
+    {
+        try { _windowLifetime.Cancel(); }
+        catch (Exception)
+        {
+            Trace.WriteLine("[PluginManagerWindow] A configuration cancellation callback failed.");
+        }
     }
 }

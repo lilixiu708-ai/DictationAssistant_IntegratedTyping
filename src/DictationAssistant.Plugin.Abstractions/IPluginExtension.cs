@@ -9,6 +9,16 @@ public interface ICommandPlugin
 
 public sealed record PluginCommand(string Id, string Name, string Description = "");
 
+/// <summary>Optional configuration UI, opened on the UI thread with the plugin manager as owner.</summary>
+public interface IConfigurablePlugin
+{
+    /// <summary>
+    /// The owner is an Avalonia window. Complete when the configuration window closes,
+    /// and close that window when cancellation is requested.
+    /// </summary>
+    Task ConfigureAsync(object ownerWindow, CancellationToken cancellationToken);
+}
+
 /// <summary>Optional initialization and shutdown for any plugin kind.</summary>
 public interface IPluginLifecycle
 {

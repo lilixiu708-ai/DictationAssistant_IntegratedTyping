@@ -220,8 +220,8 @@ public sealed class PluginCatalog
         }
 
         var kind = string.IsNullOrWhiteSpace(manifest.Kind) ? "document-importer" : manifest.Kind.Trim();
-        if (kind is not ("document-importer" or "practice" or "command" or "voice" or "audio-effect" or "extension"))
-            throw new InvalidDataException("kind 必须是 document-importer、practice、command、voice、audio-effect 或 extension。");
+        if (kind is not ("document-importer" or "practice" or "command" or "configuration" or "voice" or "audio-effect" or "extension"))
+            throw new InvalidDataException("kind 必须是 document-importer、practice、command、configuration、voice、audio-effect 或 extension。");
         if ((kind == "document-importer" && (manifest.Extensions is null || manifest.Extensions.Length == 0)) ||
             manifest.Extensions is { Length: > 32 } || manifest.Extensions?.Any(extension => !IsValidExtension(extension)) == true)
             throw new InvalidDataException("导入插件 extensions 需要 1–32 个扩展名，如 .docx。");
@@ -277,6 +277,7 @@ public sealed class PluginCatalog
                 "document-importer" => typeof(IDocumentImporter),
                 "practice" => typeof(IPracticePlugin),
                 "command" => typeof(ICommandPlugin),
+                "configuration" => typeof(IConfigurablePlugin),
                 "voice" => typeof(IVoiceProviderPlugin),
                 "audio-effect" => typeof(IAudioEffectPlugin),
                 _ => typeof(object)
@@ -291,6 +292,7 @@ public sealed class PluginCatalog
             if (instance is IDocumentImporter) capabilities.Add("document-importer");
             if (instance is IPracticePlugin) capabilities.Add("practice");
             if (instance is ICommandPlugin) capabilities.Add("command");
+            if (instance is IConfigurablePlugin) capabilities.Add("configuration");
             if (instance is IVoiceProviderPlugin) capabilities.Add("voice");
             if (instance is IAudioEffectPlugin) capabilities.Add("audio-effect");
             if (instance is IWordListObserverPlugin) capabilities.Add("word-list-observer");

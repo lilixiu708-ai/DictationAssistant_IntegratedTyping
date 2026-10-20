@@ -76,7 +76,9 @@ public partial class MainWindow
                     token.ThrowIfCancellationRequested();
                     return plugin.RunAsync(host, token);
                 });
-                await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Normal, token);
+                // Keep the runtime lease until the dispatched practice task completes.
+                var practiceTask = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Normal, token);
+                await practiceTask;
             }, _windowLifetime.Token);
             ShuffleStatusMessage.Text = $"{entry.DisplayName}已结束。";
         }

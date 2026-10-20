@@ -1,10 +1,14 @@
 # 插件扩展 SDK
 
-功能级别 2 在原有文档导入和练习接口上增加命令、词表观察、语音提供器及 PCM 音效。共享契约仍为 `DictationAssistant.Plugin.Abstractions`，`apiVersion` 保持 `1`；插件使用新增接口时，在清单中声明 `minimumHostFeatureLevel: 2`。应用版本、插件自身版本、接口版本和宿主功能级别分别管理。
+当前源码开发中的宿主为 `4.0.0-typing.6`、功能级别 **4**，尚未发布；公开 R5 仍为功能级别 3。共享契约为 `DictationAssistant.Plugin.Abstractions`，`apiVersion` 保持 **1**。应用版本、插件自身版本、接口版本和宿主功能级别分别管理。
+
+功能级别 2 在原有文档导入和练习接口上增加命令、词表观察、语音提供器及 PCM 音效；仅使用这些接口的插件仍可声明 `minimumHostFeatureLevel: 2`。
 
 原有 DOCX、`.phrases` 文档结构及导入限制见 [插件开发指南](插件开发指南.md)。本页对应的可编译示例位于 [`sdk/examples/`](../sdk/examples/)，均为可选开发示例，不自动安装到应用，不加入主解决方案或 Windows 发行包。
 
-当前宿主功能级别为 3，新增可选的 `IPracticeWordListMetadata.ExpectedWordCount`。宿主从同一份编辑器快照独立统计非空行，再解析并提供不可变词条；练习插件可在后台逐条读取后核对实际数量。使用此类型的插件声明 `minimumHostFeatureLevel: 3`；仅使用功能级别 2 接口的既有示例仍声明 2。共享程序集和 `apiVersion` 保持 1。
+功能级别 3 新增可选的 `IPracticeWordListMetadata.ExpectedWordCount`。宿主从同一份编辑器快照独立统计非空行，再解析并提供不可变词条；练习插件可在后台逐条读取后核对实际数量。使用此类型的插件声明 `minimumHostFeatureLevel: 3`。
+
+功能级别 4 新增可选的 `IConfigurablePlugin`，由插件管理中的逐插件「配置…」打开独立设置窗口，不要求先载入词表。使用该接口或 `configuration` 清单类型的插件声明 `minimumHostFeatureLevel: 4`；不能将此类新插件作为 R5 的插件更新包。
 
 ## 选择扩展接口
 
@@ -14,15 +18,24 @@
 | --- | --- | --- |
 | `IDocumentImporter` | `ReadAsync(Stream, string, CancellationToken)` → `ImportDocument` | 读取文件，返回分区、列和行；不修改源文件，不关闭宿主传入的流 |
 | `IPracticePlugin` | `RunAsync(IPracticeHost, CancellationToken)` | 运行桌面练习；使用词条快照、重复次数、间隔和 `SpeakOnceAsync`，退出前结束播放 |
+| `IConfigurablePlugin` | `ConfigureAsync(object ownerWindow, CancellationToken)` | 可选独立配置界面；以插件管理窗口为所有者，关闭后返回 |
 | `ICommandPlugin` | `Commands`；`ExecuteAsync(commandId, context, token)` | 声明固定命令并按用户操作执行；使用宿主服务处理词表、对话和音频 |
 | `IWordListObserverPlugin` | `OnWordListChangedAsync(snapshot, token)` | 后台接收合并后的词表快照，适合统计和索引 |
 | `IVoiceProviderPlugin` | `GetVoicesAsync(token)`；`SynthesizeAsync(voiceId, text, options, token)` | 提供语音列表和完整 PCM；不打开音频设备或操作界面 |
 | `IAudioEffectPlugin` | `ProcessAsync(audio, token)` | 处理完整 PCM 缓冲区，返回处理结果 |
 | `IPluginLifecycle` | `InitializeAsync(context, token)`；`ShutdownAsync(token)` | 可选初始化与关闭，适用于任意主要功能 |
 
-清单支持 `document-importer`、`practice`、`command`、`voice`、`audio-effect` 和 `extension`。主要功能对应的接口必须实现；多功能插件可选择 `extension`。单纯生命周期不是一个可独立安装的功能；入口还须实现至少一个功能接口。
+清单支持 `document-importer`、`practice`、`command`、`configuration`、`voice`、`audio-effect` 和 `extension`。主要功能对应的接口必须实现；多功能插件可选择 `extension`。只提供配置界面时，可用 `kind: "configuration"` 并实现 `IConfigurablePlugin`。单纯生命周期不是一个可独立安装的功能；入口还须实现至少一个功能接口。
 
 清单省略 `kind` 时按既有文档导入器处理。文档导入能力需要 1–32 个合法文件扩展名；其他示例使用 `extensions: []`。同时实现导入及其他能力的入口可用 `kind: "extension"` 并声明其导入扩展名。插件 ID 不区分大小写，安装目录中不得出现重复 ID。
+
+## 独立配置窗口
+
+现有练习、语音或其他插件也可同时实现 `IConfigurablePlugin`，无需为设置单独创建插件。宿主在 UI 线程调用 `ConfigureAsync`，`ownerWindow` 为 Avalonia 窗口；插件校验类型后创建模态设置窗口，返回的任务应持续到该窗口关闭。收到取消令牌时关闭窗口，并结束在途保存，避免阻塞插件管理退出。
+
+配置调用沿用同一插件实例的运行管理。插件仍在练习或执行其他操作时，配置入口会报告忙碌，先结束该操作再打开。配置数据由插件保存在本机用户数据目录，勿打印密钥或通过异常详情泄露凭据；网络请求须由插件按用户操作执行。
+
+源码中的同步打字插件 1.2.0 使用此入口管理多个命名的 DeepL Free / Pro 绑定和首选项；翻译准备页可以临时选择其他绑定，并打开同一套管理窗口。Windows 将整份配置经 DPAPI 加密并绑定本机与当前账户，其他平台仅提供保留至程序退出的会话配置；R5 单绑定配置在读取时转换，明确保存时才写入新格式。配置与切换不翻译，只有准备页点击「翻译缺失项」才请求所选服务。
 
 ## 从词表工具示例开始
 
@@ -124,7 +137,9 @@ await context.UpdateWordListAsync(
 
 构造函数只建立轻量状态，不联网、不打开设备、不启动长期任务。宿主加载后调用可选的 `InitializeAsync`，再固定命令列表并执行功能。初始化失败会显示插件错误，而不是让插件静默处于半初始化状态。
 
-宿主在后台调度插件工作，并对同一实例的常规调用进行串行管理。插件自己启动的任务仍须自行管理，不要依赖 UI 线程或同步上下文；长循环和分块 I/O 定期检查取消。不要使用 `async void`、阻塞等待 `.Result`，或启动不跟踪的无限后台任务。
+宿主对同一实例的常规调用进行串行管理。桌面练习 `RunAsync` 与配置 `ConfigureAsync` 由 UI 线程进入；耗时计算和 I/O 仍须异步或在后台执行。插件自己的后台任务不得依赖 UI 线程或同步上下文，长循环和分块 I/O 定期检查取消。不要使用 `async void`、阻塞等待 `.Result`，或启动不跟踪的无限后台任务。
+
+通过 `InvokeOnUiAsync` 调度异步操作时，宿主会等待该操作的内部任务完成；练习和配置也等待模态窗口实际关闭后才结束运行调用。插件应返回代表完整操作的任务，避免只排队显示窗口就提前返回。
 
 语音枚举、合成和音效调用采用不等待空闲的调度方式：目标插件仍在初始化或忙于另一项操作时，会立即报告忙碌错误，避免音频链一直等待插件自己释放。`waitForTurn: false` 是宿主运行时的调度选项，不是插件要传给上下文的新参数。
 

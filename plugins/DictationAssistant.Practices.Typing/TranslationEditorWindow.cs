@@ -12,6 +12,7 @@ namespace DictationAssistant.Practices.Typing;
 internal sealed class TranslationEditorWindow : Window
 {
     private readonly IReadOnlyList<string> _words;
+    private readonly TranslationEngineSession _engineSession;
     private readonly Dictionary<string, string> _saved;
     private readonly CancellationTokenSource _cancellation;
     private readonly CancellationTokenRegistration _externalCancellationRegistration;
@@ -22,11 +23,12 @@ internal sealed class TranslationEditorWindow : Window
     };
     private readonly Button _apiSettings = new()
     {
-        Content = "翻译 API 设置…", MinWidth = 140
+        Content = "管理翻译引擎…", MinWidth = 140
     };
+    private readonly ComboBox _engineSelection = new() { MinWidth = 200, MaxWidth = 360 };
     private readonly TextBlock _apiSummary = new()
     {
-        Text = "尚未绑定翻译 API；手动录入不需要密钥。", TextWrapping = TextWrapping.Wrap
+        Text = "正在读取已绑定引擎…", TextWrapping = TextWrapping.Wrap
     };
     private readonly ComboBox _direction = new()
     {
@@ -37,14 +39,16 @@ internal sealed class TranslationEditorWindow : Window
     private readonly Button _cancel = new() { Content = "取消", MinWidth = 80 };
     private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
     private Task? _operation;
-    private TranslationApiConfiguration? _apiConfiguration;
+    private TranslationEngineConfiguration _engineConfiguration = TranslationEngineConfiguration.Empty;
     private bool _closing;
     private bool _allowClose;
 
     public TranslationEditorWindow(IReadOnlyList<string> words,
-        IReadOnlyDictionary<string, string> saved, CancellationToken cancellationToken)
+        IReadOnlyDictionary<string, string> saved, TranslationEngineSession engineSession,
+        CancellationToken cancellationToken)
     {
         _words = words;
+        _engineSession = engineSession;
         _saved = new Dictionary<string, string>(saved, StringComparer.Ordinal);
         _cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         Title = "录入与提前翻译";
@@ -73,17 +77,21 @@ internal sealed class TranslationEditorWindow : Window
         layout.Children.Add(_editor);
 
         var api = new StackPanel { Spacing = 8 };
-        api.Children.Add(new TextBlock { Text = "可选：使用 DeepL 提前补全缺失译文", FontWeight = FontWeight.SemiBold });
+        api.Children.Add(new TextBlock { Text = "可选：提前翻译缺失译文", FontWeight = FontWeight.SemiBold });
         api.Children.Add(_apiSummary);
+        var engineRow = new WrapPanel { ItemSpacing = 10, LineSpacing = 8 };
+        engineRow.Children.Add(new TextBlock { Text = "本次翻译引擎：", VerticalAlignment = VerticalAlignment.Center });
+        engineRow.Children.Add(_engineSelection);
+        engineRow.Children.Add(_apiSettings);
+        api.Children.Add(engineRow);
         var options = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
-        options.Children.Add(_apiSettings);
         options.Children.Add(_direction);
         options.Children.Add(_translate);
         api.Children.Add(options);
         api.Children.Add(new TextBlock
         {
-            Text = "仅点击翻译时将缺失项的原词发送至 DeepL，并可能消耗额度；已有译文不会覆盖。\n" +
-                "请校对后保存。API 密钥请在独立的“翻译 API 设置”窗口绑定。",
+            Text = "仅点击翻译时将缺失项发送给选定引擎，并可能消耗额度；已有译文不会覆盖。\n" +
+                "本页切换仅用于本次准备。首选项在插件配置中调整；请校对译文后保存。",
             TextWrapping = TextWrapping.Wrap, Opacity = 0.8
         });
         Grid.SetRow(api, 2);
@@ -103,13 +111,15 @@ internal sealed class TranslationEditorWindow : Window
         _translate.Click += async (_, _) => await RunOperationAsync(TranslateAsync);
         _apiSettings.Click += async (_, _) => await RunOperationAsync(ConfigureApiAsync);
         Opened += async (_, _) => await RunOperationAsync(LoadApiAsync);
+        _engineSelection.SelectionChanged += (_, _) => RefreshApiSummary();
         _cancel.Click += (_, _) => Close();
         Closing += OnClosing;
         Closed += (_, _) =>
         {
             _closing = true;
             _externalCancellationRegistration.Dispose();
-            _apiConfiguration = null;
+            _engineSelection.ItemsSource = null;
+            _engineConfiguration = TranslationEngineConfiguration.Empty;
             _cancellation.Cancel();
             _cancellation.Dispose();
         };
@@ -145,7 +155,8 @@ internal sealed class TranslationEditorWindow : Window
     private void SetBusy(bool busy)
     {
         _editor.IsReadOnly = busy;
-        _save.IsEnabled = _translate.IsEnabled = _apiSettings.IsEnabled = _direction.IsEnabled = !busy;
+        _save.IsEnabled = _apiSettings.IsEnabled = _direction.IsEnabled = !busy;
+        _translate.IsEnabled = _engineSelection.IsEnabled = !busy && _engineConfiguration.Bindings.Count > 0;
         _cancel.Content = busy ? "取消并关闭" : "取消";
     }
 
@@ -155,14 +166,15 @@ internal sealed class TranslationEditorWindow : Window
         var missing = _words.Distinct(StringComparer.Ordinal).Where(word => !parsed.ContainsKey(word)).ToArray();
         if (missing.Length == 0)
         {
-            _status.Text = "所有词条已有译文，无需调用 DeepL。";
+            _status.Text = "所有词条已有译文，无需调用翻译引擎。";
             return;
         }
-        var configuration = _apiConfiguration
-            ?? throw new InvalidOperationException("请先打开“翻译 API 设置”绑定 DeepL 密钥。手动录入和保存无需密钥。");
+        var binding = _engineSelection.SelectedItem as TranslationEngineBinding
+            ?? throw new InvalidOperationException("请先在插件配置中绑定翻译引擎。手动录入和保存不受影响。");
+        TranslationEngineProviders.Validate(binding);
         _status.Text = $"正在提前翻译 {missing.Length} 个缺失项，可取消并关闭…";
         var englishToChinese = _direction.SelectedIndex == 0;
-        var translations = await DeepLTranslator.TranslateAsync(missing, configuration.ApiKey, configuration.UseFreeApi,
+        var translations = await DeepLTranslator.TranslateAsync(missing, binding.ApiKey, binding.Provider == "deepl-free",
             englishToChinese ? "EN" : "ZH", englishToChinese ? "ZH" : "EN", _cancellation.Token);
         _cancellation.Token.ThrowIfCancellationRequested();
         for (var i = 0; i < missing.Length; i++) parsed[missing[i]] = translations[i];
@@ -172,25 +184,35 @@ internal sealed class TranslationEditorWindow : Window
 
     private async Task LoadApiAsync()
     {
-        _apiConfiguration = await TranslationApiSettings.LoadAsync(_cancellation.Token);
-        RefreshApiSummary();
+        _engineConfiguration = await _engineSession.GetAsync(_cancellation.Token);
+        RefreshEngineSelection(null);
     }
 
     private async Task ConfigureApiAsync()
     {
-        var settings = new TranslationApiSettingsWindow(_apiConfiguration, _cancellation.Token);
-        var configured = await settings.ShowDialog<TranslationApiConfiguration?>(this);
+        var selectedId = (_engineSelection.SelectedItem as TranslationEngineBinding)?.Id;
+        var settings = new TranslationApiSettingsWindow(_engineSession, _cancellation.Token);
+        await settings.ShowDialog(this);
         if (_closing) return;
-        if (settings.BindingDeleted) _apiConfiguration = null;
-        if (configured is not null) _apiConfiguration = configured;
-        RefreshApiSummary();
-        _status.Text = settings.BindingDeleted ? "已删除本机 API 绑定。"
-            : configured is not null ? "API 设置已更新，可提前翻译缺失项。" : string.Empty;
+        _engineConfiguration = await _engineSession.GetAsync(_cancellation.Token);
+        RefreshEngineSelection(selectedId);
+        _status.Text = string.Empty;
     }
 
-    private void RefreshApiSummary() => _apiSummary.Text = _apiConfiguration is { } configured
-        ? $"已配置 DeepL API {(configured.UseFreeApi ? "Free" : "Pro")}，可提前翻译缺失项。"
-        : "尚未绑定翻译 API；手动录入不需要密钥。";
+    private void RefreshEngineSelection(string? selectedId)
+    {
+        _engineSelection.ItemsSource = _engineConfiguration.Bindings;
+        _engineSelection.SelectedItem = _engineConfiguration.Bindings.FirstOrDefault(binding => binding.Id == selectedId)
+            ?? _engineConfiguration.Preferred ?? _engineConfiguration.Bindings.FirstOrDefault();
+        RefreshApiSummary();
+    }
+
+    private void RefreshApiSummary()
+    {
+        _apiSummary.Text = _engineConfiguration.Bindings.Count > 0
+            ? $"已绑定 {_engineConfiguration.Bindings.Count} 个引擎配置；首选：{_engineConfiguration.Preferred?.Name ?? "未设置"}。"
+            : "尚未绑定翻译引擎，请在插件配置中添加；手动录入不受影响。";
+    }
 
     private async Task SaveAsync()
     {

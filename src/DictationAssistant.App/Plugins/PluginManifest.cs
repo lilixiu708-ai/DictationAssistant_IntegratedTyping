@@ -34,6 +34,7 @@ public sealed class PluginEntry
     public IDocumentImporter? Importer => Instance as IDocumentImporter;
     public IPracticePlugin? PracticePlugin => Instance as IPracticePlugin;
     public ICommandPlugin? CommandPlugin => Instance as ICommandPlugin;
+    public IConfigurablePlugin? ConfigurationPlugin => Instance as IConfigurablePlugin;
     public IVoiceProviderPlugin? VoiceProvider => Instance as IVoiceProviderPlugin;
     public IAudioEffectPlugin? AudioEffect => Instance as IAudioEffectPlugin;
     public IWordListObserverPlugin? WordListObserver => Instance as IWordListObserverPlugin;

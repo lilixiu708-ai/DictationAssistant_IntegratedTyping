@@ -80,7 +80,9 @@ public partial class MainWindow
                     _window._windowLifetime.Token.ThrowIfCancellationRequested();
                     return action();
                 });
-                await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Normal, cancellationToken);
+                // This overload dispatches a Task without awaiting the asynchronous action itself.
+                var actionTask = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Normal, cancellationToken);
+                await actionTask;
             }
         }
 

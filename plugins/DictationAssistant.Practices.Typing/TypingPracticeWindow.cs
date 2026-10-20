@@ -21,6 +21,7 @@ namespace DictationAssistant.Practices.Typing;
 internal sealed class TypingPracticeWindow : Window
 {
     private readonly IPracticeHost _host;
+    private readonly TranslationEngineSession _translationEngines;
     private readonly CancellationTokenSource _cancellation;
     private readonly CancellationTokenRegistration _externalCancellationRegistration;
     private readonly TextBlock _progress = new() { FontSize = 16, TextAlignment = TextAlignment.Center };
@@ -110,9 +111,11 @@ internal sealed class TypingPracticeWindow : Window
     private bool _ignoreCaseSnapshot;
     private bool _csvSaving;
 
-    public TypingPracticeWindow(IPracticeHost host, CancellationToken externalToken)
+    public TypingPracticeWindow(IPracticeHost host, CancellationToken externalToken,
+        TranslationEngineSession translationEngines)
     {
         _host = host;
+        _translationEngines = translationEngines;
         _cancellation = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
         Title = "同步打字听写";
         Width = 750;
@@ -323,7 +326,7 @@ internal sealed class TypingPracticeWindow : Window
         _translationsButton.IsEnabled = _startButton.IsEnabled = false;
         try
         {
-            var editor = new TranslationEditorWindow(_words, _translations, _cancellation.Token);
+            var editor = new TranslationEditorWindow(_words, _translations, _translationEngines, _cancellation.Token);
             var saved = await editor.ShowDialog<Dictionary<string, string>?>(this);
             if (!_closing && saved is not null)
             {

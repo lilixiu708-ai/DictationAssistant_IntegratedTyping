@@ -1,8 +1,9 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: separate translation API binding and session-only settings.
+// Modified 2026-10-20: manage named translation bindings and the preferred engine.
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -11,82 +12,123 @@ namespace DictationAssistant.Practices.Typing;
 
 internal sealed class TranslationApiSettingsWindow : Window
 {
+    private readonly TranslationEngineSession _session;
     private readonly CancellationTokenSource _cancellation;
     private readonly CancellationTokenRegistration _externalCancellationRegistration;
+    private readonly List<TranslationEngineBinding> _bindings = [];
+    private readonly ListBox _engines = new() { MinHeight = 150 };
+    private readonly TextBlock _preferred = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _formTitle = new() { FontSize = 18, FontWeight = FontWeight.SemiBold };
+    private readonly TextBox _name = new() { Watermark = "例如：常用翻译、备用账户", MaxLength = 80 };
     private readonly TextBox _apiKey = new()
     {
-        PasswordChar = '●', MinHeight = 36, HorizontalAlignment = HorizontalAlignment.Stretch
+        PasswordChar = '●', MinHeight = 36, MaxLength = 512,
+        HorizontalAlignment = HorizontalAlignment.Stretch
     };
-    private readonly ComboBox _account = new()
+    private readonly ComboBox _provider = new()
     {
-        ItemsSource = new[] { "DeepL API Free", "DeepL API Pro" }, MinWidth = 180
+        ItemsSource = new[] { "DeepL API Free", "DeepL API Pro" }, MinWidth = 180, SelectedIndex = 0
     };
-    private readonly Button _save = new() { Content = "保存并使用", MinWidth = 110 };
-    private readonly Button _session = new() { Content = "仅本次使用", MinWidth = 110 };
-    private readonly Button _delete = new() { Content = "删除本机绑定", MinWidth = 110 };
-    private readonly Button _cancel = new() { Content = "取消", MinWidth = 80 };
+    private readonly Button _new = new() { Content = "新建绑定" };
+    private readonly Button _remove = new() { Content = "移除绑定" };
+    private readonly Button _makePreferred = new() { Content = "设为首选" };
+    private readonly Button _apply = new() { Content = "添加绑定" };
+    private readonly Button _discard = new() { Content = "放弃修改" };
+    private readonly Button _save = new() { Content = "保存配置", MinWidth = 100 };
+    private readonly Button _useSession = new() { Content = "仅本次使用", MinWidth = 110 };
+    private readonly Button _cancel = new() { Content = "取消", MinWidth = 80, IsCancel = true };
+    private readonly Button _resetUnreadable = new()
+    {
+        Content = "重新绑定（替换无法读取的本机配置）", IsVisible = false
+    };
     private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
-    private TranslationApiConfiguration? _current;
+    private TranslationEngineBinding? _editing;
+    private string? _preferredId;
     private Task? _operation;
+    private bool _loaded;
+    private bool _busy;
+    private bool _populating;
+    private bool _dirty;
     private bool _closing;
     private bool _allowClose;
 
-    public bool BindingDeleted { get; private set; }
-
-    public TranslationApiSettingsWindow(TranslationApiConfiguration? current, CancellationToken external)
+    public TranslationApiSettingsWindow(TranslationEngineSession session, CancellationToken external)
     {
-        _current = current;
+        _session = session;
         _cancellation = CancellationTokenSource.CreateLinkedTokenSource(external);
-        Title = "翻译 API 设置";
-        Width = 680;
-        Height = 540;
-        MinWidth = 600;
-        MinHeight = 450;
+        Title = "翻译引擎配置";
+        Width = 900;
+        Height = 710;
+        MinWidth = 760;
+        MinHeight = 590;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        _account.SelectedIndex = current?.UseFreeApi == false ? 1 : 0;
-        // Never populate the text control with an existing key. Blank means reuse the current binding.
-        _apiKey.Watermark = current is null
-            ? "输入 DeepL API Key"
-            : "已配置密钥；留空继续使用，输入新密钥可替换";
-        _save.IsEnabled = _delete.IsEnabled = TranslationApiSettings.CanPersist;
 
         var root = new Grid
         {
-            Margin = new Thickness(20), RowDefinitions = new RowDefinitions("*,Auto,Auto"), RowSpacing = 14
+            Margin = new Thickness(20), RowDefinitions = new RowDefinitions("Auto,*,Auto,Auto"),
+            RowSpacing = 14
         };
         Content = root;
-        var form = new StackPanel { Spacing = 12 };
-        form.Children.Add(new TextBlock
+        root.Children.Add(new TextBlock
         {
-            Text = "翻译服务：DeepL API", FontSize = 20, FontWeight = FontWeight.SemiBold
-        });
-        form.Children.Add(new TextBlock
-        {
-            Text = "选择账户对应的 API Free 或 API Pro。设置密钥不会发送翻译请求。",
+            Text = "管理已绑定的翻译引擎，并设置首选项。翻译准备页仍可为本次任务切换引擎。\n" +
+                "当前支持现有服务的多个 Free／Pro 绑定；配置不会发送翻译请求。",
             TextWrapping = TextWrapping.Wrap
         });
-        form.Children.Add(_account);
-        form.Children.Add(new TextBlock { Text = "API 密钥", FontWeight = FontWeight.SemiBold });
+        var body = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*"), ColumnSpacing = 18 };
+        Grid.SetRow(body, 1);
+        root.Children.Add(body);
+        var list = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto"), RowSpacing = 10 };
+        list.Children.Add(_preferred);
+        _engines.ItemTemplate = new FuncDataTemplate<TranslationEngineBinding>((binding, _) =>
+            new TextBlock
+            {
+                Text = binding is null ? string.Empty : binding.Name +
+                    (binding.Id == _preferredId ? " · 首选" : string.Empty) + "\n" +
+                    (binding.Provider == "deepl-pro" ? "DeepL API Pro" : "DeepL API Free"),
+                TextWrapping = TextWrapping.Wrap, Margin = new Thickness(6)
+            });
+        Grid.SetRow(_engines, 1);
+        list.Children.Add(_engines);
+        var listActions = new WrapPanel { ItemSpacing = 6, LineSpacing = 6 };
+        listActions.Children.Add(_new);
+        listActions.Children.Add(_remove);
+        listActions.Children.Add(_makePreferred);
+        Grid.SetRow(listActions, 2);
+        list.Children.Add(listActions);
+        body.Children.Add(list);
+
+        var form = new StackPanel { Spacing = 10 };
+        form.Children.Add(_formTitle);
+        form.Children.Add(new TextBlock { Text = "绑定名称" });
+        form.Children.Add(_name);
+        form.Children.Add(new TextBlock { Text = "服务类型" });
+        form.Children.Add(_provider);
+        form.Children.Add(new TextBlock { Text = "API 密钥" });
         form.Children.Add(_apiKey);
         form.Children.Add(new TextBlock
         {
-            Text = "密钥仅以掩码显示；已有密钥不会回填到输入框。",
+            Text = "已有密钥不会回填。编辑时留空可沿用同一服务类型的密钥；更换服务类型须重新填写。",
             TextWrapping = TextWrapping.Wrap, Opacity = 0.8
         });
-
+        var formActions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8 };
+        formActions.Children.Add(_apply);
+        formActions.Children.Add(_discard);
+        form.Children.Add(formActions);
+        form.Children.Add(new TextBlock
+        {
+            Text = "添加、修改、移除和首选项调整在下方保存或应用后才生效。取消会保留原配置。",
+            TextWrapping = TextWrapping.Wrap, Opacity = 0.8
+        });
         if (TranslationApiSettings.CanPersist)
         {
-            string machineCode;
-            try { machineCode = TranslationApiSettings.GetMachineCode(); }
-            catch (Exception) { machineCode = "暂时无法读取"; }
+            string code;
+            try { code = TranslationApiSettings.GetMachineCode(); }
+            catch (Exception) { code = "暂时无法读取"; }
             form.Children.Add(new TextBlock
             {
-                Text = "本机标识：" + machineCode, TextWrapping = TextWrapping.Wrap
-            });
-            form.Children.Add(new TextBlock
-            {
-                Text = "保存后使用 Windows 系统加密，并绑定本机与当前账户。\n" +
-                    "仅保护本地保存，不防止同账户恶意程序读取。换机或更换账户后需要重新绑定。",
+                Text = "本机标识：" + code + "\n" +
+                    "配置通过 Windows 系统加密，绑定本机与当前账户。不能防止已控制当前账户或进程的软件读取。",
                 TextWrapping = TextWrapping.Wrap, Opacity = 0.8
             });
         }
@@ -94,94 +136,239 @@ internal sealed class TranslationApiSettingsWindow : Window
         {
             form.Children.Add(new TextBlock
             {
-                Text = "当前平台不支持 Windows 本机加密保存，请选择“仅本次使用”。关闭本次会话后需重新输入。",
+                Text = "当前平台不支持 Windows 本机加密保存，可选择“仅本次使用”；配置保留至程序退出。",
                 TextWrapping = TextWrapping.Wrap, Opacity = 0.8
             });
         }
-
         var scroll = new ScrollViewer
         {
             Content = form, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
-        root.Children.Add(scroll);
-        Grid.SetRow(_status, 1);
-        root.Children.Add(_status);
+        Grid.SetColumn(scroll, 1);
+        body.Children.Add(scroll);
+
+        var feedback = new StackPanel { Spacing = 8 };
+        feedback.Children.Add(_status);
+        feedback.Children.Add(_resetUnreadable);
+        Grid.SetRow(feedback, 2);
+        root.Children.Add(feedback);
         var footer = new WrapPanel
         {
-            Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right,
-            ItemSpacing = 8, LineSpacing = 8
+            ItemSpacing = 8, LineSpacing = 8, HorizontalAlignment = HorizontalAlignment.Right
         };
-        footer.Children.Add(_delete);
         footer.Children.Add(_save);
-        footer.Children.Add(_session);
+        footer.Children.Add(_useSession);
         footer.Children.Add(_cancel);
-        Grid.SetRow(footer, 2);
+        Grid.SetRow(footer, 3);
         root.Children.Add(footer);
 
-        _save.Click += async (_, _) => await RunOperationAsync(SaveBindingAsync,
-            "无法保存本机绑定，请检查用户数据目录权限，或选择“仅本次使用”。");
-        _session.Click += (_, _) => UseForSession();
-        _delete.Click += async (_, _) => await RunOperationAsync(DeleteBindingAsync,
-            "无法删除本机绑定，请检查用户数据目录权限后重试。");
+        _engines.SelectionChanged += OnEngineSelected;
+        _name.TextChanged += (_, _) => MarkDirty();
+        _apiKey.TextChanged += (_, _) => MarkDirty();
+        _provider.SelectionChanged += (_, _) => MarkDirty();
+        _new.Click += (_, _) =>
+        {
+            if (!CanLeaveForm()) return;
+            ShowBinding(null);
+            RefreshList(null);
+        };
+        _apply.Click += (_, _) => ApplyForm();
+        _discard.Click += (_, _) => ShowBinding(_editing);
+        _remove.Click += (_, _) => RemoveBinding();
+        _makePreferred.Click += (_, _) => MakePreferred();
+        _save.Click += async (_, _) => await RunOperationAsync(() => CommitAsync(persist: true),
+            "无法保存引擎配置，请检查本机用户配置，或选择“仅本次使用”。");
+        _useSession.Click += async (_, _) => await RunOperationAsync(() => CommitAsync(persist: false),
+            "无法应用引擎配置，请检查绑定内容后重试。");
+        _resetUnreadable.Click += (_, _) =>
+        {
+            _bindings.Clear();
+            _preferredId = null;
+            _loaded = true;
+            _resetUnreadable.IsVisible = false;
+            ShowBinding(null);
+            RefreshList(null);
+            ShowError("已开始重新绑定；保存时才替换原设置。取消可保留原文件。");
+            UpdateControls();
+        };
         _cancel.Click += (_, _) => Close();
+        Opened += async (_, _) => await RunOperationAsync(LoadAsync, "无法读取引擎配置。");
         Closing += OnClosing;
         Closed += (_, _) =>
         {
             _closing = true;
             _externalCancellationRegistration.Dispose();
             _apiKey.Text = string.Empty;
-            _current = null;
+            _name.Text = string.Empty;
+            _editing = null;
+            _bindings.Clear();
+            _engines.ItemsSource = null;
             _cancellation.Cancel();
             _cancellation.Dispose();
         };
         _externalCancellationRegistration = external.Register(() => Dispatcher.UIThread.Post(() => Close()));
+        ShowBinding(null);
+        UpdateControls();
     }
 
-    private bool TryGetConfiguration(out TranslationApiConfiguration? configuration)
+    private async Task LoadAsync()
     {
-        configuration = null;
-        var typed = _apiKey.Text?.Trim();
-        var key = string.IsNullOrEmpty(typed) ? _current?.ApiKey : typed;
-        if (string.IsNullOrWhiteSpace(key))
+        try
         {
-            ShowError("请先输入 DeepL API Key。");
-            return false;
+            _status.Text = "正在读取引擎配置…";
+            var configuration = await _session.GetAsync(_cancellation.Token);
+            _cancellation.Token.ThrowIfCancellationRequested();
+            _bindings.AddRange(configuration.Bindings);
+            _preferredId = configuration.PreferredEngineId;
+            _loaded = true;
+            var selected = _bindings.FirstOrDefault(binding => binding.Id == _preferredId)
+                ?? _bindings.FirstOrDefault();
+            ShowBinding(selected);
+            RefreshList(selected?.Id);
+            _status.Text = _bindings.Count == 0 ? "尚未绑定引擎，可新建绑定。" : "选择绑定可修改；首选引擎将用于新打开的翻译准备页。";
         }
-        if (key.Any(c => c is <= ' ' or >= '\u007f'))
+        catch (OperationCanceledException) { throw; }
+        catch (Exception)
         {
-            ShowError("密钥格式无效，请检查是否包含空格、换行或非英文字符。");
-            return false;
+            _resetUnreadable.IsVisible = true;
+            ShowError("无法读取已有引擎配置，原文件未被改动。可取消后检查本机设置，或选择重新绑定。");
         }
-        configuration = new TranslationApiConfiguration(_account.SelectedIndex == 0, key);
+    }
+
+    private void OnEngineSelected(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_populating) return;
+        if (_engines.SelectedItem is not TranslationEngineBinding selected) return;
+        if (selected.Id == _editing?.Id) return;
+        MarkDirty();
+        if (_dirty)
+        {
+            RefreshList(_editing?.Id);
+            ShowError("请先应用当前修改，或点击“放弃修改”后再切换。");
+            return;
+        }
+        ShowBinding(selected);
+    }
+
+    private void MarkDirty()
+    {
+        if (_populating || !_loaded || _closing) return;
+        // TextChanged can arrive after a programmatic editor refresh has completed.
+        _dirty = IsFormDirty();
+        UpdateControls();
+    }
+
+    private bool IsFormDirty() =>
+        !string.Equals(_name.Text ?? string.Empty, _editing?.Name ?? string.Empty, StringComparison.Ordinal)
+        || _provider.SelectedIndex != (_editing?.Provider == "deepl-pro" ? 1 : 0)
+        || !string.IsNullOrEmpty(_apiKey.Text);
+
+    private bool CanLeaveForm()
+    {
+        MarkDirty();
+        if (!_dirty) return true;
+        ShowError("请先应用当前修改，或点击“放弃修改”。");
+        return false;
+    }
+
+    private void ShowBinding(TranslationEngineBinding? binding)
+    {
+        _populating = true;
+        _editing = binding;
+        _name.Text = binding?.Name ?? string.Empty;
+        _provider.SelectedIndex = binding?.Provider == "deepl-pro" ? 1 : 0;
+        _apiKey.Text = string.Empty;
+        _apiKey.Watermark = binding is null ? "输入服务密钥" : "已配置；留空沿用同类服务密钥";
+        _formTitle.Text = binding is null ? "新建绑定" : "修改已绑定引擎";
+        _apply.Content = binding is null ? "添加绑定" : "应用修改";
+        _dirty = IsFormDirty();
+        _populating = false;
+        UpdateControls();
+    }
+
+    private void RefreshList(string? selectedId)
+    {
+        _populating = true;
+        _engines.ItemsSource = _bindings.ToArray();
+        _engines.SelectedItem = _bindings.FirstOrDefault(binding => binding.Id == selectedId);
+        _preferred.Text = _bindings.FirstOrDefault(binding => binding.Id == _preferredId) is { } preferred
+            ? "首选引擎：" + preferred.Name : "首选引擎：未设置";
+        _populating = false;
+        UpdateControls();
+    }
+
+    private bool ApplyForm()
+    {
+        var name = _name.Text?.Trim() ?? string.Empty;
+        if (name.Length is < 1 or > 80 || name.Any(char.IsControl))
+            return FormError("请输入 1–80 个字符的绑定名称。");
+        if (_bindings.Any(binding => binding.Id != _editing?.Id
+            && string.Equals(binding.Name, name, StringComparison.OrdinalIgnoreCase)))
+            return FormError("绑定名称已存在，请使用其他名称。");
+        var provider = _provider.SelectedIndex == 1 ? "deepl-pro" : "deepl-free";
+        var typedKey = _apiKey.Text?.Trim();
+        if (string.IsNullOrEmpty(typedKey) && _editing is not null && _editing.Provider != provider)
+            return FormError("更换服务类型后，请重新输入对应密钥。");
+        var key = string.IsNullOrEmpty(typedKey) ? _editing?.ApiKey : typedKey;
+        if (string.IsNullOrEmpty(key) || key.Length > 512 || key.Any(c => c is <= ' ' or >= '\u007f'))
+            return FormError("请输入有效的服务密钥，不要包含空格、换行或非英文字符。");
+        if (_editing is null && _bindings.Count >= 20)
+            return FormError("最多可保存 20 个绑定，请先移除不再使用的绑定。");
+
+        var binding = new TranslationEngineBinding(_editing?.Id ?? Guid.NewGuid().ToString("N"),
+            name, provider, key);
+        var index = _bindings.FindIndex(existing => existing.Id == binding.Id);
+        if (index < 0) _bindings.Add(binding);
+        else _bindings[index] = binding;
+        _preferredId ??= binding.Id;
+        ShowBinding(binding);
+        RefreshList(binding.Id);
+        _status.Foreground = Brushes.DimGray;
+        _status.Text = "绑定已加入本页草稿，请在下方保存配置或仅本次使用。";
         return true;
     }
 
-    private async Task SaveBindingAsync()
+    private bool FormError(string message)
     {
-        if (!TranslationApiSettings.CanPersist || !TryGetConfiguration(out var configuration)) return;
-        _status.Text = "正在加密保存本机绑定…";
-        await TranslationApiSettings.SaveAsync(configuration!.ApiKey, configuration.UseFreeApi, _cancellation.Token);
-        if (_closing) return;
-        _allowClose = true;
-        Close(configuration);
+        ShowError(message);
+        return false;
     }
 
-    private void UseForSession()
+    private void RemoveBinding()
     {
-        if (_closing || _operation is { IsCompleted: false } || !TryGetConfiguration(out var configuration)) return;
-        _allowClose = true;
-        Close(configuration);
+        if (!CanLeaveForm()) return;
+        if (_editing is null) { ShowError("请选择要移除的已绑定引擎。"); return; }
+        var id = _editing.Id;
+        var index = _bindings.FindIndex(binding => binding.Id == id);
+        if (index < 0) return;
+        _bindings.RemoveAt(index);
+        if (_preferredId == id) _preferredId = _bindings.FirstOrDefault()?.Id;
+        var selected = _bindings.Count > 0 ? _bindings[Math.Min(index, _bindings.Count - 1)] : null;
+        ShowBinding(selected);
+        RefreshList(selected?.Id);
+        _status.Foreground = Brushes.DimGray;
+        _status.Text = "已从本页草稿移除绑定，保存或应用后生效。";
     }
 
-    private async Task DeleteBindingAsync()
+    private void MakePreferred()
     {
-        if (!TranslationApiSettings.CanPersist) return;
-        _status.Text = "正在删除本机绑定…";
-        await TranslationApiSettings.DeleteAsync(_cancellation.Token);
-        BindingDeleted = true;
-        _current = null;
-        _apiKey.Text = string.Empty;
+        if (!CanLeaveForm()) return;
+        if (_editing is null) { ShowError("请选择已绑定引擎后再设置首选。"); return; }
+        _preferredId = _editing.Id;
+        RefreshList(_editing.Id);
+        _status.Foreground = Brushes.DimGray;
+        _status.Text = "首选项已调整，保存或应用后用于新的翻译准备页。";
+    }
+
+    private async Task CommitAsync(bool persist)
+    {
+        if (persist && !TranslationApiSettings.CanPersist) return;
+        MarkDirty();
+        if (_dirty && !ApplyForm()) return;
+        var configuration = new TranslationEngineConfiguration(_bindings.ToArray(), _preferredId);
+        _status.Text = persist ? "正在加密保存引擎配置…" : "正在应用本次引擎配置…";
+        await _session.SetAsync(configuration, persist, _cancellation.Token);
         if (_closing) return;
         _allowClose = true;
         Close();
@@ -190,8 +377,9 @@ internal sealed class TranslationApiSettingsWindow : Window
     private async Task RunOperationAsync(Func<Task> action, string failureMessage)
     {
         if (_closing || _operation is { IsCompleted: false }) return;
-        SetBusy(true);
+        _busy = true;
         _status.Foreground = Brushes.DimGray;
+        UpdateControls();
         try
         {
             _operation = action();
@@ -200,20 +388,29 @@ internal sealed class TranslationApiSettingsWindow : Window
         catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
         catch (Exception)
         {
-            // Provider/key/OS exception details must not leak into the settings UI or logs.
             if (!_closing) ShowError(failureMessage);
         }
         finally
         {
-            if (!_closing) SetBusy(false);
+            if (!_closing)
+            {
+                _busy = false;
+                UpdateControls();
+            }
         }
     }
 
-    private void SetBusy(bool busy)
+    private void UpdateControls()
     {
-        _apiKey.IsEnabled = _account.IsEnabled = _session.IsEnabled = !busy;
-        _save.IsEnabled = _delete.IsEnabled = !busy && TranslationApiSettings.CanPersist;
-        _cancel.Content = busy ? "取消并关闭" : "取消";
+        var enabled = _loaded && !_busy && !_closing;
+        _engines.IsEnabled = _new.IsEnabled = _name.IsEnabled = _apiKey.IsEnabled = _provider.IsEnabled = enabled;
+        _apply.IsEnabled = enabled;
+        _discard.IsEnabled = enabled && _dirty;
+        _remove.IsEnabled = _makePreferred.IsEnabled = enabled && _editing is not null;
+        _save.IsEnabled = enabled && TranslationApiSettings.CanPersist;
+        _useSession.IsEnabled = enabled;
+        _resetUnreadable.IsEnabled = !_busy && !_closing;
+        _cancel.Content = _busy ? "取消并关闭" : "取消";
     }
 
     private void ShowError(string message)
@@ -230,7 +427,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         _closing = true;
         _cancellation.Cancel();
         try { await _operation; }
-        catch (Exception) { /* The close path must finish even when persistence failed. */ }
+        catch (Exception) { /* Closing must finish without exposing underlying credential errors. */ }
         _allowClose = true;
         Close();
     }
