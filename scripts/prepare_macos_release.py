@@ -11,6 +11,7 @@ import pathlib
 import plistlib
 import re
 import shutil
+import shlex
 import stat
 import subprocess
 import sys
@@ -33,8 +34,43 @@ LOCK_PROJECTS = ('src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Ab
                  'tests/TypingPlugin.SmokeTests')
 
 
-def run(*arguments, **kwargs):
-    return subprocess.check_output([str(item) for item in arguments], text=True, **kwargs)
+def command_log(path, arguments, returncode, output):
+    if path is not None:
+        with path.open('a', encoding='utf-8') as stream:
+            stream.write(f'$ {shlex.join(str(item) for item in arguments)}\nexit_code={returncode}\n{output}\n')
+
+
+def run(*arguments, diagnostic_log=None, **kwargs):
+    command = [str(item) for item in arguments]
+    try:
+        result = subprocess.check_output(command, text=True, **kwargs)
+    except subprocess.CalledProcessError as error:
+        output = error.output or ''
+        if error.stderr:
+            output += error.stderr
+        command_log(diagnostic_log, command, error.returncode, output)
+        if output:
+            print(output, file=sys.stderr, end='' if output.endswith('\n') else '\n')
+        raise
+    command_log(diagnostic_log, command, 0, result)
+    return result
+
+
+def signature_preflight(runtime, diagnostic_log):
+    """Record existing signatures without modifying native dependency bytes."""
+    macho_magic = {b'\xfe\xed\xfa\xce', b'\xce\xfa\xed\xfe', b'\xfe\xed\xfa\xcf', b'\xcf\xfa\xed\xfe',
+                   b'\xca\xfe\xba\xbe', b'\xbe\xba\xfe\xca', b'\xca\xfe\xba\xbf', b'\xbf\xba\xfe\xca'}
+    for path in sorted(runtime.rglob('*')):
+        if not path.is_file():
+            continue
+        with path.open('rb') as stream:
+            if stream.read(4) not in macho_magic:
+                continue
+        command = ['codesign', '--verify', '--strict', '--verbose=4', str(path)]
+        result = subprocess.run(command, capture_output=True, text=True)
+        command_log(diagnostic_log, command, result.returncode, result.stdout + result.stderr)
+        if result.returncode:
+            print(f'Signature preflight: {path.relative_to(runtime)}\n{result.stdout}{result.stderr}', file=sys.stderr)
 
 
 def git(*arguments):
@@ -157,11 +193,19 @@ var voices = await new MacSayVoiceFactoryProvider().GetFactoriesAsync(timeout.To
 if (voices.Count == 0) throw new Exception("The system exposed no say voices.");
 var voice = voices.FirstOrDefault(v => v.Info.LocaleOrLanguage?.StartsWith("en", StringComparison.OrdinalIgnoreCase) == true) ?? voices[0];
 using var pcm = await voice.Create().SynthesizePcmAsync("Dictation assistant", new VoiceSynthesisOptions(), timeout.Token);
-if (!pcm.Data.CanRead || pcm.Data.ReadByte() < 0) throw new Exception("System speech returned empty PCM.");
-if (!pcm.Data.CanSeek) throw new Exception("System speech returned a non-seekable PCM stream.");
-pcm.Data.Position = 0;
+if (!pcm.Data.CanRead) throw new Exception("System speech returned unreadable PCM.");
+using var buffer = new MemoryStream();
+var transfer = new byte[16384];
+int count;
+while ((count = await pcm.Data.ReadAsync(transfer, timeout.Token)) != 0) {
+    if (buffer.Length + count > 4 * 1024 * 1024) throw new Exception("Short speech exceeded the probe PCM limit.");
+    await buffer.WriteAsync(transfer.AsMemory(0, count), timeout.Token);
+}
+if (buffer.Length == 0) throw new Exception("System speech returned empty PCM.");
+buffer.Position = 0;
+using var playback = new PcmAudio { Data = buffer, Format = pcm.Format };
 using var player = new SdlPcmPlayer();
-await player.PlayAsync(pcm, timeout.Token);
+await player.PlayAsync(playback, timeout.Token);
 Console.WriteLine($"PASS say synthesis and SDL dummy playback: {voice.Info.DisplayName}; {pcm.Format}");
 ''', encoding='utf-8')
         probe_build = run('dotnet', 'build', probe_project, '-c', 'Release', '-o', temporary / 'compiled', cwd=temporary)
@@ -235,6 +279,7 @@ def bundle(args):
     if sys.platform != 'darwin':
         raise ValueError('Signing and bundling must run on macOS')
     output = args.output_dir.resolve()
+    signature_log = output / 'codesign-diagnostics.log'
     payload = output / 'payload'
     app = payload / 'DictationAssistant.app'
     runtime = app / 'Contents/MacOS'
@@ -287,15 +332,19 @@ def bundle(args):
         original_sha = digest(sdl)
         if not any(item['path'] == sdl.name and item['sha256'] == original_sha for item in components['files']):
             raise ValueError('The unsigned Intel SDL was not verified against its original package')
-        run('codesign', '--force', '--sign', '-', sdl, stderr=subprocess.STDOUT)
-        run('codesign', '--verify', '--strict', sdl, stderr=subprocess.STDOUT)
+        run('codesign', '--force', '--sign', '-', '--verbose=4', sdl,
+            diagnostic_log=signature_log, stderr=subprocess.STDOUT)
+        run('codesign', '--verify', '--strict', '--verbose=4', sdl,
+            diagnostic_log=signature_log, stderr=subprocess.STDOUT)
         signing_adjustments.append({'path': sdl.name, 'source_original_sha256': original_sha,
             'distributed_signed_sha256': digest(sdl), 'signing': 'ad-hoc',
             'reason': 'The original osx-x64 NuGet SDL2 dylib has no code signature.',
             'command': 'codesign --force --sign - libSDL2.dylib'})
-    run('codesign', '--force', '--sign', '-', '--options', 'runtime', '--entitlements',
-        ROOT / 'deploy/macos/entitlements.plist', app, stderr=subprocess.STDOUT)
-    run('codesign', '--verify', '--deep', '--strict', '--verbose=2', app, stderr=subprocess.STDOUT)
+    signature_preflight(runtime, signature_log)
+    run('codesign', '--force', '--sign', '-', '--options', 'runtime', '--verbose=4', '--entitlements',
+        ROOT / 'deploy/macos/entitlements.plist', app, diagnostic_log=signature_log, stderr=subprocess.STDOUT)
+    run('codesign', '--verify', '--deep', '--strict', '--verbose=4', app,
+        diagnostic_log=signature_log, stderr=subprocess.STDOUT)
     apphost_found = False
     for item in components['files']:
         actual = digest(runtime / item['path'])
