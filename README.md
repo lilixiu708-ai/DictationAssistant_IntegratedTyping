@@ -49,7 +49,7 @@ build-windows-typing.cmd
 python scripts\verify_build.py
 ```
 
-脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。[Windows 独立原生构建依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)已公开，普通安装无需下载。macOS 构建入口为 `build-macos-typing.sh`，其独立原生资产和实际构建检查仍在准备，见 [macOS 说明](docs/MACOS.md#源码构建)。
+脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。[Windows](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)和 [macOS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng-macos.1) 的独立原生构建依赖均已公开，普通安装无需下载。macOS 构建入口为 `build-macos-typing.sh`，完整应用的签名与运行验证仍在进行，见 [macOS 说明](docs/MACOS.md#源码构建)。
 
 Linux 开发将锁文件放在各项目 `obj/`，避免覆盖已提交的 Windows RID 锁文件：
 

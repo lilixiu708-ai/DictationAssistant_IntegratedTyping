@@ -57,7 +57,7 @@ def run(*arguments, diagnostic_log=None, **kwargs):
 
 
 def signature_preflight(runtime, diagnostic_log):
-    """Record existing signatures without modifying native dependency bytes."""
+    """Require valid signatures on every Mach-O without changing dependency bytes."""
     macho_magic = {b'\xfe\xed\xfa\xce', b'\xce\xfa\xed\xfe', b'\xfe\xed\xfa\xcf', b'\xcf\xfa\xed\xfe',
                    b'\xca\xfe\xba\xbe', b'\xbe\xba\xfe\xca', b'\xca\xfe\xba\xbf', b'\xbf\xba\xfe\xca'}
     for path in sorted(runtime.rglob('*')):
@@ -70,7 +70,7 @@ def signature_preflight(runtime, diagnostic_log):
         result = subprocess.run(command, capture_output=True, text=True)
         command_log(diagnostic_log, command, result.returncode, result.stdout + result.stderr)
         if result.returncode:
-            print(f'Signature preflight: {path.relative_to(runtime)}\n{result.stdout}{result.stderr}', file=sys.stderr)
+            raise ValueError(f'Invalid Mach-O signature: {path.relative_to(runtime)}\n{result.stdout}{result.stderr}')
 
 
 def git(*arguments):
@@ -149,8 +149,8 @@ def validate(args):
         raise ValueError('Runtime checks must use the matching native runner')
     output = args.output_dir.resolve()
     app = output / 'payload/DictationAssistant.app'
-    runtime = app / 'Contents/MacOS'
-    executable = runtime / 'DictationAssistant.App'
+    runtime = app / 'Contents/Resources/runtime'
+    executable = app / 'Contents/MacOS/DictationAssistant.App'
     report = json.loads(run(executable, '--list-plugins', cwd=runtime, timeout=60))
     expected = {value[0]: value[1] for value in PLUGINS.values()}
     plugins = {item['Manifest']['Id']: item for item in report.get('Plugins', []) if item.get('Manifest')}
@@ -304,6 +304,19 @@ def bundle(args):
         shutil.move(runtime / name, payload / name)
     resources = app / 'Contents/Resources'
     resources.mkdir(parents=True, exist_ok=True)
+    # Managed PE assemblies are resources, not macOS nested code. Keep the
+    # complete .NET tree together, and expose one native bundle executable.
+    # This also avoids extended-attribute signatures on managed DLL files.
+    shutil.move(runtime, resources / 'runtime')
+    runtime = resources / 'runtime'
+    macos = app / 'Contents/MacOS'
+    macos.mkdir()
+    launcher = macos / 'DictationAssistant.App'
+    architecture = 'x86_64' if args.rid == 'osx-x64' else 'arm64'
+    run('xcrun', 'clang', '-arch', architecture, '-mmacosx-version-min=15.0',
+        '-std=c11', '-D_DARWIN_C_SOURCE', '-Wall', '-Wextra', '-Werror', '-O2',
+        ROOT / 'deploy/macos/launcher.c', '-o', launcher,
+        diagnostic_log=signature_log, stderr=subprocess.STDOUT)
     plist = plistlib.loads((ROOT / 'deploy/macos/Info.plist').read_bytes())
     plist['CFBundleShortVersionString'] = version().split('-')[0]
     (app / 'Contents/Info.plist').write_bytes(plistlib.dumps(plist, sort_keys=False))
@@ -319,7 +332,8 @@ def bundle(args):
     shutil.rmtree(iconset)
     executable = runtime / 'DictationAssistant.App'
     executable.chmod(executable.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    architecture = 'x86_64' if args.rid == 'osx-x64' else 'arm64'
+    if run('lipo', '-archs', launcher).split() != [architecture]:
+        raise ValueError('The native bundle launcher has the wrong architecture')
     for name in ('DictationAssistant.App', 'libcoreclr.dylib', 'libSDL2.dylib', 'libSkiaSharp.dylib'):
         archs = run('lipo', '-archs', runtime / name).split()
         if architecture not in archs:
@@ -340,6 +354,11 @@ def bundle(args):
             'distributed_signed_sha256': digest(sdl), 'signing': 'ad-hoc',
             'reason': 'The original osx-x64 NuGet SDL2 dylib has no code signature.',
             'command': 'codesign --force --sign - libSDL2.dylib'})
+    # The .NET executable retains its own JIT entitlements after execv. Sign
+    # this first-party apphost explicitly; existing native libraries stay intact.
+    run('codesign', '--force', '--sign', '-', '--options', 'runtime', '--verbose=4', '--entitlements',
+        ROOT / 'deploy/macos/entitlements.plist', executable,
+        diagnostic_log=signature_log, stderr=subprocess.STDOUT)
     signature_preflight(runtime, signature_log)
     run('codesign', '--force', '--sign', '-', '--options', 'runtime', '--verbose=4', '--entitlements',
         ROOT / 'deploy/macos/entitlements.plist', app, diagnostic_log=signature_log, stderr=subprocess.STDOUT)
@@ -351,6 +370,8 @@ def bundle(args):
         if item['path'] == 'DictationAssistant.App':
             item['source_original_sha256'] = item['sha256']
             item['sha256'] = actual
+            item['signing'] = 'ad-hoc with the bundled JIT entitlements'
+            item['signing_reason'] = 'The first-party apphost is signed explicitly before sealing Resources.'
             apphost_found = True
         elif any(item['path'] == adjustment['path'] for adjustment in signing_adjustments):
             adjustment = next(value for value in signing_adjustments if value['path'] == item['path'])
@@ -374,7 +395,7 @@ def bundle(args):
         '翻译引擎在插件配置中填写；macOS 上的凭据仅本次使用，不保存到下次启动。\n'
         '本版使用临时签名，尚未经过 Apple 公证。若系统阻止打开，核对来源后可在\n'
         '“系统设置 → 隐私与安全性”中确认打开。\n'
-        '原始许可证随应用保留在 Contents/MacOS/LICENSES；旁边的清单用于核验来源。\n'
+        '原始许可证随应用保留在 Contents/Resources/runtime/LICENSES；旁边的清单用于核验来源。\n'
         'Avalonia/MS-PL 与 AGPL 的组合授权事项仍未解决，具体声明随包保留。\n', encoding='utf-8')
     info = {'schema_version': 1, 'application_version': version(), 'source_commit': head,
             'runtime_identifier': args.rid, 'minimum_macos': '15.0', 'self_contained': True,
@@ -387,7 +408,11 @@ def bundle(args):
                         'native_signing_adjustments': signing_adjustments,
                         'other_native_dependency_bytes_unchanged': True},
             'license_review': review, 'review_only': args.review_only,
-            'binary_inventory_base': 'DictationAssistant.app/Contents/MacOS'}
+            'binary_inventory_base': 'DictationAssistant.app/Contents/Resources/runtime',
+            'launcher': {'source': 'deploy/macos/launcher.c',
+                         'source_sha256': digest(ROOT / 'deploy/macos/launcher.c'),
+                         'path': 'DictationAssistant.app/Contents/MacOS/DictationAssistant.App',
+                         'sha256': digest(launcher), 'minimum_macos': '15.0'}}
     write_json(payload / 'BUNDLE_INFO.json', info)
     write_json(payload / 'BUNDLE_FILES.json', file_inventory(app))
     destination = output / (base_name(args.rid) + '.zip')
@@ -411,6 +436,7 @@ def verify_part(part, rid, head):
     if (info.get('source_commit') != head or info.get('runtime_identifier') != rid
             or info.get('application_version') != version() or info.get('review_only')
             or info.get('nuget') != nuget_locks(rid)
+            or info.get('binary_inventory_base') != 'DictationAssistant.app/Contents/Resources/runtime'
             or info.get('bundled_plugins') != {value[0]: value[1] for value in PLUGINS.values()}):
         raise ValueError('A macOS build part has unexpected source, versions or review-only native files')
     sources = json.loads((part / MANIFESTS[1]).read_text())
@@ -450,7 +476,16 @@ def verify_part(part, rid, head):
                 raise ValueError('A bundle file differs from its sealed file inventory: ' + name)
         executable = archive.getinfo(prefix + 'DictationAssistant.app/Contents/MacOS/DictationAssistant.App')
         if not executable.external_attr >> 16 & stat.S_IXUSR:
-            raise ValueError('The macOS apphost lost its executable mode in ZIP packaging')
+            raise ValueError('The macOS native launcher lost its executable mode in ZIP packaging')
+        apphost = archive.getinfo(prefix + info['binary_inventory_base'] + '/DictationAssistant.App')
+        if not apphost.external_attr >> 16 & stat.S_IXUSR:
+            raise ValueError('The .NET apphost lost its executable mode in ZIP packaging')
+        launcher = info.get('launcher', {})
+        if (launcher.get('source') != 'deploy/macos/launcher.c'
+                or launcher.get('source_sha256') != digest(ROOT / 'deploy/macos/launcher.c')
+                or launcher.get('path') != 'DictationAssistant.app/Contents/MacOS/DictationAssistant.App'
+                or launcher.get('sha256') != hashlib.sha256(archive.read(prefix + launcher['path'])).hexdigest()):
+            raise ValueError('The native bundle launcher does not match its build inventory')
     return info, sources, validation, binary
 
 

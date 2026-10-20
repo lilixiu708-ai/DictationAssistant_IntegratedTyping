@@ -44,7 +44,7 @@ R5 本体与同步打字 1.1.0、Word 导入 1.0.1 已公开，来自提交 `ae1
 - **Avalonia 组合授权路径尚未解决：** 固定源码中 19 个 C# 文件有 Microsoft/MS-PL 头，实际 `Avalonia.Controls.dll` 含 22 个相关 TypeDef 及真实 IL，App 直接引用该程序集。[MS-PL §3(D)](../LICENSES/third-party/avalonia-11.3.12/NOTICE.md#silverlight-toolkit) 的二进制许可条件不等于这些源文件已允许 AGPL 再许可；未找到特定部分的双授权或链接例外，见[固定核查记录](../third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)。MIT 顶层标签或 DNG 替换成功不能解除这一独立事项；这不是宣称全部 Avalonia 违法。
 - **HarfBuzz/ANGLE 源码覆盖已补齐：** Windows 编译与修改所需的固定来源、配置/生成输入和交付清单见 [HarfBuzz 输入说明](../third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs/README.md)、[ANGLE 交付说明](../third-party/sources/angle-cb8b4e1-source-directions/README.md)及[组件目录](../third-party/components.json)。该结论不声称复现历史 DLL 的全部编译器版本或逐字节输出；最终源码包仍须实际包含匹配材料。
 
-Windows 独立 Skia 原生包不含 Avalonia，已完成固定资产与源码闭包核对并公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。macOS 计划使用独立标签 `native-skia-2.88.9-no-dng-macos.1`，尚待构建、复核及公开，不能沿用 Windows 的实物验证结论。这不解决 App 的 Avalonia/MS-PL 组合项；本体发行资产和说明继续保留该未解决事项。
+Windows 独立 Skia 原生包不含 Avalonia，已完成固定资产与源码闭包核对并公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。[macOS 独立原生依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng-macos.1)也已公开：[构建 39420587754](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754)在 Intel 和 Apple Silicon 上分别通过原生编译、接口与 PNG 检查；源码闭包独立复核、[上传 39423584068](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39423584068)及 7 份附件重新下载核验均通过，详细范围见 [NATIVE_BUILD.md](NATIVE_BUILD.md)。这是各平台的原生库验证，不代替完整 macOS 应用的运行检查，也不解决 App 的 Avalonia/MS-PL 组合项；本体发行资产和说明继续保留该未解决事项。
 
 ## 构建与审核
 
@@ -78,9 +78,9 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 
 ## R8 macOS 整合版：准备中
 
-1. 先完成 macOS 无 DNG 原生资产的二进制、对应源码和原始声明复核，独立发布后固定地址与哈希，再执行正式应用打包。未固定的审核资产不进入公开包，既有 Windows 原生资产与 R7 附件不改动。
+1. macOS 无 DNG 原生资产的二进制、对应源码和原始声明已完成复核并独立公开，两个架构的地址与哈希已固定。正式应用打包使用这批公开资产；未固定的审核资产不进入公开包，既有 Windows 原生资产与 R7 附件不改动。
 2. [macOS 工作流](../.github/workflows/build-typing-macos.yml)仅由 `workflow_dispatch` 触发。在 `main` 发起普通构建，留空 `native_run_id` 和 `build_run_id`，使用公开原生资产的固定来源。Intel x64 与 Apple Silicon arm64 分别在对应 macOS runner 构建，最低系统版本为 macOS 15。宿主、共享契约、两个插件及既有检查项目已按两个 RID 提交 10 份锁文件，构建与检查以 `--locked-mode` 还原。Linux 解析成功不代表 Mac 运行通过。
-3. 使用 `build-macos-typing.sh --rid osx-x64` 或 `--rid osx-arm64`，将两个插件放入 `.app/Contents/MacOS/Plugins/`，保留插件 ID、API 1、功能级别 5 和原配置路径。在每个架构的实际包上核验原生加载、双插件发现、既有逻辑检查、系统语音合成、SDL 播放路径和主窗口开闭；分别记录结果。当前只有 Linux 的 15 项实际进程与语音名解析检查通过，不能写成 Mac 已验证；扬声器、真实翻译 API、中文输入法和完整练习交互仍须实机核对。
+3. 使用 `build-macos-typing.sh --rid osx-x64` 或 `--rid osx-arm64`，将两个插件放入 `.app/Contents/Resources/runtime/Plugins/`，保留插件 ID、API 1、功能级别 5 和原配置路径。在每个架构的实际包上核验原生加载、双插件发现、既有逻辑检查、系统语音合成、SDL 播放路径和主窗口开闭；分别记录结果。当前只有 Linux 的 15 项实际进程与语音名解析检查通过，不能写成 Mac 已验证；扬声器、真实翻译 API、中文输入法和完整练习交互仍须实机核对。
 4. 等普通构建的两个 Mac 任务全部成功，确认该运行、当前 HEAD 和待创建标签指向同一完整提交，再创建 `v4.0.0-typing.8`。针对该标签手动触发同一工作流，填入 `build_run_id=<原成功运行 ID>`，保持 `native_run_id` 为空。发布任务重新核对原运行来源、成功状态和精确提交，复用原验证产物，不重新构建；仅推送标签不会触发构建或发布。
 5. 发布流程组装完整配套源码并校验原应用包及附件摘要，草稿附件齐全且摘要相符后才公开，再重新下载复核。应用采用 ad-hoc 签名，不宣称 Developer ID 签名或 Apple 公证；交付两份完整应用包、同一提交的配套源码、原始许可、披露文件和 `SHA256SUMS`。只沿用已明确披露的 Avalonia 组合授权事项，不放行新的来源或完整性缺项。审核构建的 `native_run_id` 只供诊断，不可作为正式发布来源。
 
