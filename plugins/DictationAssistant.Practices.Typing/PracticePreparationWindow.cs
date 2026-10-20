@@ -17,16 +17,16 @@ internal sealed class PracticePreparationWindow : Window
     private readonly CancellationTokenRegistration _externalCancellationRegistration;
     private readonly Button _openDocument = new() { Content = "从 Word / Excel 选择…", MinWidth = 180 };
     private readonly Button _useWords = new() { Content = "使用当前词表（播报听写）", MinWidth = 180 };
-    private readonly TextBlock _source = new() { Text = "先选择提示和答案的来源。", TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _source = new() { Text = "请选择文档，或使用当前词表。", TextWrapping = TextWrapping.Wrap };
     private readonly ComboBox _sections = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
     private readonly ComboBox _promptColumn = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
     private readonly ComboBox _answerColumn = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
     private readonly Button _swap = new() { Content = "交换提示与答案", MinWidth = 140 };
     private readonly CheckBox _skipHeaders = new() { Content = "跳过标题和表头", IsChecked = true };
-    private readonly CheckBox _chemicalAnswers = new() { Content = "答案为化学式：支持 ^ / _ 和上下标，区分元素大小写" };
+    private readonly CheckBox _chemicalAnswers = new() { Content = "答案是化学式（区分元素大小写）" };
     private readonly ComboBox _mode = new()
     {
-        ItemsSource = new[] { "计时背诵（不播放音频）", "播报后作答" },
+        ItemsSource = new[] { "静音计时", "播报后作答" },
         SelectedIndex = 0, HorizontalAlignment = HorizontalAlignment.Stretch
     };
     private readonly TextBlock _summary = new() { TextWrapping = TextWrapping.Wrap };
@@ -64,7 +64,7 @@ internal sealed class PracticePreparationWindow : Window
         Content = layout;
         layout.Children.Add(new TextBlock
         {
-            Text = "选择提示列和答案列，再设置每题时限。默认显示离子式，拼写英文名称。",
+            Text = "先选提示和答案，再设置作答时间。默认看离子式，拼写英文名称。",
             FontSize = 19, TextWrapping = TextWrapping.Wrap
         });
         var content = new StackPanel { Spacing = 12 };
@@ -74,8 +74,8 @@ internal sealed class PracticePreparationWindow : Window
         content.Children.Add(sourceButtons);
         content.Children.Add(_source);
         _documentOptions.Children.Add(Labeled("表格 / 工作表", _sections));
-        _documentOptions.Children.Add(Labeled("屏幕显示的提示列", _promptColumn));
-        _documentOptions.Children.Add(Labeled("需要拼写的答案列", _answerColumn));
+        _documentOptions.Children.Add(Labeled("提示列（显示在屏幕上）", _promptColumn));
+        _documentOptions.Children.Add(Labeled("答案列（需要拼写）", _answerColumn));
         var row = new WrapPanel { ItemSpacing = 14, LineSpacing = 8 };
         row.Children.Add(_swap);
         row.Children.Add(_skipHeaders);
@@ -85,11 +85,11 @@ internal sealed class PracticePreparationWindow : Window
         content.Children.Add(_chemicalAnswers);
         content.Children.Add(new TextBlock
         {
-            Text = "离子式可输入 Na^+、SO4^2- 或带上下标的形式；\n提示和答案始终按文档同一行配对，保持原顺序与重复项。",
+            Text = "离子式可写成 Na^+、SO4^2-，也可直接输入上下标。\n同一行的提示和答案组成一题，按文档顺序练习，重复项也会保留。",
             Opacity = 0.8, TextWrapping = TextWrapping.Wrap
         });
         content.Children.Add(_summary);
-        content.Children.Add(new TextBlock { Text = "配对预览（最多显示前 100 题；开始练习后不显示答案）", FontWeight = FontWeight.SemiBold });
+        content.Children.Add(new TextBlock { Text = "题目预览（前 100 题，练习时隐藏答案）", FontWeight = FontWeight.SemiBold });
         content.Children.Add(_preview);
         var scroll = new ScrollViewer
         {
@@ -190,7 +190,7 @@ internal sealed class PracticePreparationWindow : Window
         catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
         catch (Exception ex)
         {
-            if (!_closing) _status.Text = $"无法准备文档：{ex.Message}";
+            if (!_closing) _status.Text = $"无法读取文档：{ex.Message}";
         }
         finally
         {
@@ -211,8 +211,8 @@ internal sealed class PracticePreparationWindow : Window
         _chemicalAnswers.IsChecked = false;
         _questionSet = new PracticeQuestionSet(Array.AsReadOnly(_host.Words.Select((word, index) =>
             new PracticeQuestion(string.Empty, word, $"词表第 {index + 1} 项")).ToArray()), _host.Words.Count, 0, 0);
-        _source.Text = $"当前主窗口词表：{_host.Words.Count} 条。播报完整答案后作答。";
-        _summary.Text = $"已选择 {_questionSet.Questions.Count} 题，保留原顺序与重复项。";
+        _source.Text = $"当前词表共 {_host.Words.Count} 条，听完播报后作答。";
+        _summary.Text = $"共 {_questionSet.Questions.Count} 题，按词表顺序练习，重复项也会保留。";
         _status.Text = string.Empty;
         RefreshPreviewList();
         UpdateControls();
@@ -270,12 +270,12 @@ internal sealed class PracticePreparationWindow : Window
         UpdateControls();
         if (_document is null || _sections.SelectedItem is not SectionChoice section)
         {
-            _status.Text = "文档中没有可配对的表格，请选择至少两列的表格或工作表。";
+            _status.Text = "文档中没有可用的表格，请选择至少有两列的 Word 表格或 Excel 工作表。";
             return;
         }
         if (_promptColumn.SelectedItem is not ColumnChoice prompt || _answerColumn.SelectedItem is not ColumnChoice answer)
         {
-            _status.Text = "请选择不同的提示列和答案列。单列表格不能组成背诵题。";
+            _status.Text = "请选择提示列和答案列，表格至少需要两列。";
             return;
         }
         _status.Text = "正在按行配对…";
@@ -298,8 +298,8 @@ internal sealed class PracticePreparationWindow : Window
             token.ThrowIfCancellationRequested();
             if (_closing || _usingHostWords) return;
             _questionSet = set;
-            _summary.Text = $"有效配对：{set.Questions.Count} 题；跳过表头 {set.SkippedHeaders} 行，缺少提示或答案 {set.SkippedIncompleteRows} 行。";
-            _status.Text = set.Questions.Count == 0 ? "这两列没有可练习的配对，请检查所选区域、列和表头选项。" : string.Empty;
+            _summary.Text = $"共 {set.Questions.Count} 题；已跳过 {set.SkippedHeaders} 行表头，以及 {set.SkippedIncompleteRows} 行缺少提示或答案的内容。";
+            _status.Text = set.Questions.Count == 0 ? "这两列没有可用的题目，请检查选列和“跳过标题和表头”设置。" : string.Empty;
             RefreshPreviewList();
             UpdateControls();
         }

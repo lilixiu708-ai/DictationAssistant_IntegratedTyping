@@ -1,5 +1,5 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: delegate result scoring, serialization and recycled rows to focused types.
+// Modified 2026-10-20: support early settlement and clarify practice instructions.
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -46,12 +46,12 @@ internal sealed class TypingPracticeWindow : Window
     private readonly TextBox _seconds = new() { Width = 80, Text = "10", HorizontalContentAlignment = HorizontalAlignment.Center };
     private readonly CheckBox _ignoreCase = new()
     {
-        Content = "评分时忽略英文大小写", IsChecked = true, FontSize = 18,
+        Content = "忽略英文大小写", IsChecked = true, FontSize = 18,
         HorizontalAlignment = HorizontalAlignment.Center
     };
     private readonly CheckBox _showTranslation = new()
     {
-        Content = "显示翻译提示", IsChecked = false, FontSize = 18,
+        Content = "显示提示", IsChecked = false, FontSize = 18,
         HorizontalAlignment = HorizontalAlignment.Center
     };
     private readonly TextBlock _translationHint = new()
@@ -67,7 +67,7 @@ internal sealed class TypingPracticeWindow : Window
     };
     private readonly Button _translationsButton = new()
     {
-        Content = "录入／提前翻译", MinWidth = 140, IsEnabled = false,
+        Content = "编辑提示", MinWidth = 112, IsEnabled = false,
         HorizontalAlignment = HorizontalAlignment.Center
     };
     private readonly Button _startButton = new()
@@ -75,7 +75,8 @@ internal sealed class TypingPracticeWindow : Window
         Content = "开始练习", MinWidth = 112, FontSize = 18,
         IsEnabled = false, HorizontalAlignment = HorizontalAlignment.Center
     };
-    private readonly Button _closeButton = new() { Content = "取消并关闭", MinWidth = 112 };
+    private readonly Button _settleButton = new() { Content = "结算成绩", MinWidth = 112, IsVisible = false };
+    private readonly Button _closeButton = new() { Content = "关闭", MinWidth = 112 };
     private readonly Button _exportButton = new() { Content = "导出成绩 CSV", IsVisible = false };
     private readonly TextBox _answer = new()
     {
@@ -104,7 +105,9 @@ internal sealed class TypingPracticeWindow : Window
     private TaskCompletionSource<TypedAnswer>? _pendingAnswer;
     private Task? _readTask;
     private Task? _sessionTask;
+    private Task? _settlementTask;
     private Task? _translationTask;
+    private CancellationTokenSource? _sessionCancellation;
     private Dictionary<string, string> _translations = new(StringComparer.Ordinal);
     private IReadOnlyList<string> _words = Array.Empty<string>();
     private int _expectedWordCount;
@@ -117,6 +120,7 @@ internal sealed class TypingPracticeWindow : Window
     private bool _enterPressed;
     private bool _ignoreCaseSnapshot;
     private bool _csvSaving;
+    private bool _settlementRequested;
 
     public TypingPracticeWindow(IPracticeHost host, CancellationToken externalToken,
         TranslationEngineSession translationEngines, PracticePlan plan)
@@ -148,6 +152,7 @@ internal sealed class TypingPracticeWindow : Window
             Spacing = 12
         };
         footer.Children.Add(_exportButton);
+        footer.Children.Add(_settleButton);
         footer.Children.Add(_closeButton);
         Grid.SetRow(footer, 3);
         root.Children.Add(footer);
@@ -179,7 +184,7 @@ internal sealed class TypingPracticeWindow : Window
 
         var resultHeader = new TextBlock
         {
-            Text = "逐题核对 · 提示、正确答案与本次输入", FontWeight = FontWeight.SemiBold,
+            Text = "提示、答案和你的输入", FontWeight = FontWeight.SemiBold,
             Margin = new Thickness(10, 0, 10, 8)
         };
         _resultsView.Children.Add(resultHeader);
@@ -206,29 +211,35 @@ internal sealed class TypingPracticeWindow : Window
         };
         secondsRow.Children.Add(new TextBlock
         {
-            Text = "每题作答时限（秒，1–300）：", FontSize = 18, VerticalAlignment = VerticalAlignment.Center
+            Text = "每题用时（1–300 秒）：", FontSize = 18, VerticalAlignment = VerticalAlignment.Center
         });
         secondsRow.Children.Add(_seconds);
         _setupPanel.Children.Add(_wordListSummary);
         _setupPanel.Children.Add(new TextBlock
         {
-            Text = (_plan.PlayAudio ? "每题全部播报结束后开放输入并开始计时。"
-                : "不播放音频，显示本题提示后立即开始计时。")
-                + "\n整轮完成后显示答案与成绩。"
-                + (_plan.ChemicalAnswers ? "\n化学式使用 Na^+、SO4^2-；也接受 Unicode 上下标，元素大小写须准确。" : string.Empty),
+            Text = (_plan.PlayAudio ? "听完播报后开始答题和计时。"
+                : "显示题目后开始计时，不播放音频。")
+                + "\n可以中途结算"
+                + (_plan.ChemicalAnswers ? "\n化学式可写成 Na^+、SO4^2-，也可用上下标；请注意元素大小写。" : string.Empty),
             FontSize = 18, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center
         });
         _setupPanel.Children.Add(secondsRow);
         _setupPanel.Children.Add(_ignoreCase);
         _setupPanel.Children.Add(_translationsButton);
         _setupPanel.Children.Add(_startButton);
-        _phaseDetail.Text = "设定作答时限后开始。Enter 提交；到时自动记录当前输入。";
+        _phaseDetail.Text = "设置每题用时后开始。按 Enter 提交，到时自动提交。";
         _answer.Watermark = _plan.ChemicalAnswers ? "输入化学式，如 Na^+（Enter 提交）"
             : "根据提示输入答案（Enter 提交）";
         _ignoreCase.IsVisible = !_plan.ChemicalAnswers;
         _progress.Text = "正在读取词表…";
         Opened += (_, _) => _readTask = LoadWordListAsync(_cancellation.Token);
         _closeButton.Click += async (_, _) => await CancelAndCloseAsync();
+        _settleButton.Click += async (_, _) =>
+        {
+            if (_settlementTask is not null) return;
+            _settlementTask = SettleSessionAsync();
+            await _settlementTask;
+        };
         _startButton.Click += (_, _) => StartPractice();
         _exportButton.Click += async (_, _) => await ExportCsvAsync();
         _translationsButton.Click += async (_, _) =>
@@ -318,7 +329,7 @@ internal sealed class TypingPracticeWindow : Window
             catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
             catch (Exception)
             {
-                _error.Text = "本地翻译读取失败，可继续无提示练习；请检查插件数据目录中的 translations.json。";
+                _error.Text = "无法读取已保存的提示，可以继续练习。请检查插件数据目录中的 translations.json。";
                 // Do not let editing overwrite an unreadable saved file with an empty map.
                 _startButton.IsEnabled = true;
                 return;
@@ -333,7 +344,7 @@ internal sealed class TypingPracticeWindow : Window
             _phase = Phase.Error;
             _progress.Text = $"读取异常 · {actual} / {expected} 条";
             _phaseTitle.Text = "词表读取失败";
-            _phaseDetail.Text = "本轮不会开始，请检查词表后重新打开练习。";
+            _phaseDetail.Text = "请检查词表，再重新打开练习。";
             _setupPanel.IsVisible = false;
             _error.Text = ex.Message;
             _closeButton.Content = "关闭";
@@ -353,14 +364,14 @@ internal sealed class TypingPracticeWindow : Window
             {
                 _translations = saved;
                 var count = _words.Count(word => saved.ContainsKey(word));
-                _wordListSummary.Text = DescribePlan() + $"\n已录入翻译：{count} / {_words.Count} 条。";
+                _wordListSummary.Text = DescribePlan() + $"\n已填写提示：{count} / {_words.Count} 条。";
                 _error.Text = string.Empty;
             }
         }
         catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
         catch (Exception ex)
         {
-            if (!_closing) _error.Text = $"打开翻译编辑器失败：{ex.Message}";
+            if (!_closing) _error.Text = $"无法打开提示编辑窗口：{ex.Message}";
         }
         finally
         {
@@ -370,9 +381,9 @@ internal sealed class TypingPracticeWindow : Window
     }
 
     private string DescribePlan() => $"来源：{_plan.SourceDescription}\n共 {_words.Count} 题 · "
-        + (_plan.PlayAudio ? $"每题播报 {_host.TimesPerWord} 次，重复间隔 {_host.IntervalDescription} 秒。"
-            : "计时背诵，不播放音频。")
-        + (_plan.ChemicalAnswers ? "\n化学式判定：区分元素大小写与电荷。" : string.Empty);
+        + (_plan.PlayAudio ? $"每题读 {_host.TimesPerWord} 遍，每遍间隔 {_host.IntervalDescription} 秒。"
+            : "静音计时。")
+        + (_plan.ChemicalAnswers ? "\n化学式的元素大小写和电荷都需要写对。" : string.Empty);
 
     private void RefreshTranslationHint()
     {
@@ -393,12 +404,12 @@ internal sealed class TypingPracticeWindow : Window
         try
         {
             var path = await PracticeCrashLog.SaveAsync(stage, actual, expected, failedIndex, exception);
-            if (!_allowClose) _error.Text += $"{Environment.NewLine}Crash log 已保存：{path}";
+            if (!_allowClose) _error.Text += $"{Environment.NewLine}错误日志已保存：{path}";
         }
         catch (Exception logError)
         {
             Trace.WriteLine($"[SynchronousTyping] Crash log could not be saved: {logError}");
-            if (!_allowClose) _error.Text += $"{Environment.NewLine}Crash log 保存失败：{logError.Message}";
+            if (!_allowClose) _error.Text += $"{Environment.NewLine}无法保存错误日志：{logError.Message}";
         }
     }
 
@@ -410,7 +421,7 @@ internal sealed class TypingPracticeWindow : Window
         if (!int.TryParse(_seconds.Text?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var secs)
             || secs is < 1 or > 300)
         {
-            _error.Text = "请输入 1 到 300 之间的整数秒数。";
+            _error.Text = "每题用时请填写 1 到 300 之间的整数。";
             return;
         }
 
@@ -421,8 +432,10 @@ internal sealed class TypingPracticeWindow : Window
         _setupPanel.IsVisible = false;
         _sessionProgress.IsVisible = true;
         _startButton.IsEnabled = false;
-        _closeButton.Content = "结束本轮（不评分）";
-        _sessionTask = RunSessionAsync(_cancellation.Token);
+        _closeButton.Content = "退出练习";
+        _settleButton.IsVisible = true;
+        _sessionCancellation = CancellationTokenSource.CreateLinkedTokenSource(_cancellation.Token);
+        _sessionTask = RunSessionAsync(_sessionCancellation.Token);
     }
 
     private async Task RunSessionAsync(CancellationToken ct)
@@ -454,7 +467,9 @@ internal sealed class TypingPracticeWindow : Window
                 _sessionProgress.Value = _records.Count;
             }
             ct.ThrowIfCancellationRequested();
-            _phaseTitle.Text = "正在汇总成绩";
+            _phase = Phase.Settling;
+            _settleButton.IsEnabled = false;
+            _phaseTitle.Text = "正在结算…";
             var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct,
                 _plan.ChemicalAnswers), ct);
             ct.ThrowIfCancellationRequested();
@@ -462,7 +477,8 @@ internal sealed class TypingPracticeWindow : Window
         }
         catch (OperationCanceledException) when (_cancellation.IsCancellationRequested || ct.IsCancellationRequested)
         {
-            // Interrupted sessions do not reveal or score partially answered items.
+            // Window cancellation discards the session. Explicit early settlement
+            // waits for this loop to stop, then scores the records separately.
         }
         catch (Exception ex)
         {
@@ -470,12 +486,62 @@ internal sealed class TypingPracticeWindow : Window
             RefreshTranslationHint();
             _timer.Stop();
             _answer.IsVisible = false;
-            _phaseTitle.Text = "练习失败";
-            _phaseDetail.Text = _plan.PlayAudio ? "本轮未评分，请确认语音引擎和音频输出后重试。"
-                : "本轮未评分，请检查练习内容后重试。";
+            _settleButton.IsVisible = false;
+            _phaseTitle.Text = "练习出了点问题";
+            _phaseDetail.Text = _plan.PlayAudio ? "请检查语音设置和音频输出，再试一次。"
+                : "请检查练习内容，再试一次。";
             _error.Text = ex.Message;
             _closeButton.Content = "关闭";
             await SaveCrashLogAsync("practice", _words.Count, _expectedWordCount,
+                _index < _words.Count ? _index + 1 : null, ex);
+        }
+        finally
+        {
+            _sessionCancellation?.Dispose();
+            _sessionCancellation = null;
+        }
+    }
+
+    private async Task SettleSessionAsync()
+    {
+        if (_closing || _settlementRequested || _sessionTask is not { IsCompleted: false }
+            || _phase is not (Phase.Playing or Phase.Typing or Phase.Committing)) return;
+        _settlementRequested = true;
+        _settleButton.IsEnabled = false;
+        // Keep a current nonblank answer, using the same commit path as Enter.
+        // An untouched question and later questions are excluded from the score.
+        if (_phase == Phase.Typing && !string.IsNullOrWhiteSpace(_answer.Text))
+            CompleteAnswer(timedOut: false);
+        _phase = Phase.Settling;
+        _timer.Stop();
+        _clock.Stop();
+        _answer.IsVisible = false;
+        _countdown.Text = string.Empty;
+        RefreshTranslationHint();
+        _phaseTitle.Text = "正在结算…";
+        _phaseDetail.Text = "正在结束当前题目，请稍等。";
+        var ct = _cancellation.Token;
+        try
+        {
+            _sessionCancellation?.Cancel();
+            await _sessionTask;
+            if (_closing || _phase == Phase.Error) return;
+            var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct,
+                _plan.ChemicalAnswers), ct);
+            ct.ThrowIfCancellationRequested();
+            ShowFinalResults(correct);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            if (_closing) return;
+            _phase = Phase.Error;
+            _settleButton.IsVisible = false;
+            _phaseTitle.Text = "无法结算成绩";
+            _phaseDetail.Text = "请关闭练习后重试。";
+            _error.Text = ex.Message;
+            _closeButton.Content = "关闭";
+            await SaveCrashLogAsync("settlement", _records.Count, _words.Count,
                 _index < _words.Count ? _index + 1 : null, ex);
         }
     }
@@ -485,13 +551,13 @@ internal sealed class TypingPracticeWindow : Window
         _phase = Phase.Playing;
         RefreshTranslationHint();
         _progress.Text = $"第 {_index + 1} / {_words.Count} 题";
-        _phaseTitle.Text = "播放中";
+        _phaseTitle.Text = "正在播放";
         _phaseDetail.Text = waiting
-            ? $"第 {repeat} / {maxRepeat} 遍已结束；正在等待下一遍播报…"
-            : $"正在完整播放第 {repeat} / {maxRepeat} 遍";
+            ? $"已读完第 {repeat} 遍，共 {maxRepeat} 遍。稍后继续…"
+            : $"第 {repeat} / {maxRepeat} 遍";
         _answer.IsVisible = false;
         _countdown.IsVisible = true;
-        _countdown.Text = "请仔细听，播报全部结束后才能输入";
+        _countdown.Text = "听完后开始答题";
     }
 
     private async Task<TypedAnswer> AwaitTypingAsync(CancellationToken ct)
@@ -499,9 +565,9 @@ internal sealed class TypingPracticeWindow : Window
         _phase = Phase.Typing;
         RefreshTranslationHint();
         _progress.Text = $"第 {_index + 1} / {_words.Count} 题";
-        _phaseTitle.Text = "请作答";
-        _phaseDetail.Text = _plan.PlayAudio ? "完整播放已结束。输入后按 Enter 提交，或等待倒计时结束。"
-            : "根据提示拼写答案。Enter 提交；到时自动记录。";
+        _phaseTitle.Text = "请拼写";
+        _phaseDetail.Text = _plan.PlayAudio ? "播报结束了，请输入答案。按 Enter 提交，到时自动提交。"
+            : "请输入答案。按 Enter 提交，到时自动提交。";
         _answer.Text = string.Empty;
         _answer.IsVisible = true;
         _countdown.IsVisible = true;
@@ -566,7 +632,7 @@ internal sealed class TypingPracticeWindow : Window
             RefreshTranslationHint();
             _timer.Stop();
             _answer.IsVisible = false;
-            _phaseTitle.Text = "已记录";
+            _phaseTitle.Text = "已提交";
             _phaseDetail.Text = "准备下一题…";
             _countdown.Text = string.Empty;
         }
@@ -578,17 +644,20 @@ internal sealed class TypingPracticeWindow : Window
         _timer.Stop();
         var count = _records.Count;
         var wrong = count - correct;
-        _phaseTitle.Text = $"正确率 {TypingEvaluation.Accuracy(correct, count):F1}%";
-        _phaseDetail.Text = $"完成 {count} 题 · 正确 {correct} · 错误或漏答 {wrong}。";
+        _phaseTitle.Text = count == 0 ? "还没有作答" : $"正确率 {TypingEvaluation.Accuracy(correct, count):F1}%";
+        _phaseDetail.Text = count == 0 ? "本次没有计分。"
+            : $"已作答 {count} 题，答对 {correct} 题，答错或漏答 {wrong} 题。"
+                + (count < _words.Count ? $"\n剩余 {_words.Count - count} 题未计分。" : string.Empty);
         RefreshTranslationHint();
-        _progress.Text = $"已完成 · {count} / {_words.Count}";
+        _progress.Text = count < _words.Count ? $"本次结算 {count} / {_words.Count} 题" : $"已完成 {count} 题";
         _countdown.Text = string.Empty;
         _answer.IsVisible = false;
         _exerciseScroll.IsVisible = false;
         _resultsList.ItemsSource = _records;
         _resultsView.IsVisible = true;
         _closeButton.Content = "关闭";
-        _exportButton.IsVisible = true;
+        _settleButton.IsVisible = false;
+        _exportButton.IsVisible = count > 0;
     }
 
     private async Task ExportCsvAsync()
@@ -637,6 +706,11 @@ internal sealed class TypingPracticeWindow : Window
             try { await _sessionTask; }
             catch (OperationCanceledException) { }
         }
+        if (_settlementTask is not null)
+        {
+            try { await _settlementTask; }
+            catch (OperationCanceledException) { }
+        }
         // The owner may have closed this window while the session was stopping.
         if (!_allowClose)
         {
@@ -649,6 +723,7 @@ internal sealed class TypingPracticeWindow : Window
     {
         if (_allowClose || (_readTask is null || _readTask.IsCompleted) &&
             (_sessionTask is null || _sessionTask.IsCompleted) &&
+            (_settlementTask is null || _settlementTask.IsCompleted) &&
             (_translationTask is null || _translationTask.IsCompleted)) return;
         e.Cancel = true;
         await CancelAndCloseAsync();
@@ -695,5 +770,5 @@ internal sealed class TypingPracticeWindow : Window
     }
 
     private sealed record TypedAnswer(string Value, bool TimedOut, TimeSpan Elapsed);
-    private enum Phase { Setup, Playing, Typing, Committing, Completed, Error }
+    private enum Phase { Setup, Playing, Typing, Committing, Settling, Completed, Error }
 }

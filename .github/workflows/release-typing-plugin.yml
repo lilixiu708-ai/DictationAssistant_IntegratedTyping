@@ -1,4 +1,4 @@
-name: Release independent typing plugin against published R6
+name: Release independent typing plugin against its published host
 
 on:
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build-plugin:
-    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.1'
+    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.1' || github.ref == 'refs/tags/plugin-synchronous-typing-v1.4.1'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,31 +25,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify plugin-only release scope and unchanged R6 contract
+      - name: Verify the exact plugin update and unchanged published host sources
         shell: python {0}
         run: |
-          import json, os, pathlib, subprocess, xml.etree.ElementTree as ET
-          tag = os.environ['GITHUB_REF_NAME']
+          import os, subprocess, sys
+          sys.path.insert(0, 'scripts')
+          from prepare_plugin_release import typing_release_config, verify_typing_release_source
+          config = typing_release_config(os.environ['GITHUB_REF_NAME'])
           head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-          if tag != 'plugin-synchronous-typing-v1.3.1' or head != os.environ['GITHUB_SHA']:
-              raise SystemExit('Unexpected independent plugin release tag or commit')
-          tagged = subprocess.check_output(['git', 'rev-parse', '--verify', f'refs/tags/{tag}^{{commit}}'], text=True).strip()
-          host = '0f008c72983b9d567612855498800886201572e6'
-          host_tagged = subprocess.check_output(['git', 'rev-parse', '--verify', 'refs/tags/v4.0.0-typing.6^{commit}'], text=True).strip()
-          if tagged != head or host_tagged != host:
-              raise SystemExit('The new plugin or existing host tag does not match its expected commit')
-          subprocess.run(['git', 'diff', '--exit-code', host, head, '--',
-                          'src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Abstractions'], check=True)
-          folder = pathlib.Path('plugins/DictationAssistant.Practices.Typing')
-          manifest = json.loads((folder / 'plugin.json').read_text(encoding='utf-8'))
-          version = ET.parse(folder / 'DictationAssistant.Practices.Typing.csproj').findtext('.//Version')
-          if (manifest.get('id') != 'synchronous-typing' or manifest.get('version') != '1.3.1'
-                  or version != '1.3.1' or manifest.get('apiVersion') != 1
-                  or manifest.get('minimumHostFeatureLevel') != 4):
-              raise SystemExit('The update must keep plugin API 1 and R6 host feature level 4')
-      - name: Download and verify the unchanged published R6 host
+          if head != os.environ['GITHUB_SHA']:
+              raise SystemExit('The release must use its exact tagged build commit')
+          verify_typing_release_source(config, head)
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              output.write('HOST_RELEASE_TAG=' + config['host_release_tag'] + '\n')
+      - name: Download and verify the unchanged published compatibility host
         shell: cmd
-        run: python scripts\prepare_plugin_release.py --prepare-host --host-release-tag v4.0.0-typing.6
+        run: python scripts\prepare_plugin_release.py --prepare-host --host-release-tag %HOST_RELEASE_TAG%
       - name: Build only the updated plugin into the compatibility host
         shell: cmd
         run: |
@@ -66,33 +57,36 @@ jobs:
           if errorlevel 1 exit /b 1
           dotnet run --project tests\TypingPlugin.SmokeTests\TypingPlugin.SmokeTests.csproj -c Release --no-restore
           if errorlevel 1 exit /b 1
-      - name: Load the updated plugin in the published R6 executable
+      - name: Load the updated plugin in the published executable
         shell: python {0}
         run: |
-          import json, pathlib, subprocess
+          import json, os, pathlib, subprocess, sys
+          sys.path.insert(0, 'scripts')
+          from prepare_plugin_release import typing_release_config, write_json
+          config = typing_release_config(os.environ['GITHUB_REF_NAME'])
+          host_config = config['host']
           host = pathlib.Path('artifacts/Windows-x64').resolve()
           result = subprocess.run([str(host / 'DictationAssistant.App.exe'), '--list-plugins'],
                                   cwd=host, capture_output=True, check=True, timeout=60)
           report = json.loads(result.stdout.decode('utf-8-sig'))
-          if report.get('ApiVersion') != 1 or report.get('HostFeatureLevel') != 4:
-              raise SystemExit('The compatibility executable is not the expected R6 API/feature level')
+          if report.get('ApiVersion') != 1 or report.get('HostFeatureLevel') != host_config['feature_level']:
+              raise SystemExit('The compatibility executable has an unexpected API or feature level')
           plugins = {item['Manifest']['Id']: item for item in report['Plugins'] if item.get('Manifest')}
           if set(plugins) != {'synchronous-typing', 'docx-vocabulary'} or report.get('LoadedCount') != 2:
-              raise SystemExit('The pinned R6 host did not load exactly the expected two plugins')
-          typing = plugins['synchronous-typing']
-          word = plugins['docx-vocabulary']
+              raise SystemExit('The fixed published host did not load exactly the expected two plugins')
+          typing, word = plugins['synchronous-typing'], plugins['docx-vocabulary']
           if (not typing.get('IsLoaded') or typing.get('Error') is not None
-                  or typing['Manifest'].get('Version') != '1.3.1'
+                  or typing['Manifest'].get('Version') != config['version']
                   or typing['Manifest'].get('ApiVersion') != 1
-                  or typing['Manifest'].get('MinimumHostFeatureLevel') != 4
+                  or typing['Manifest'].get('MinimumHostFeatureLevel') != host_config['feature_level']
                   or not {'practice', 'configuration'} <= set(typing.get('Capabilities', []))):
-              raise SystemExit('The updated typing plugin did not load its practice and configuration capabilities')
-          if not word.get('IsLoaded') or word.get('Error') is not None or word['Manifest'].get('Version') != '1.0.1':
-              raise SystemExit('The unchanged Word 1.0.1 plugin no longer loads')
-          destination = pathlib.Path('artifacts/host-releases/v4.0.0-typing.6/plugin-discovery.json')
-          destination.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
-          print('Published R6 loaded typing 1.3.1 practice/configuration and unchanged Word 1.0.1.')
-      - name: Start and close the published R6 production application
+              raise SystemExit('The updated practice and configuration capabilities did not load')
+          if (not word.get('IsLoaded') or word.get('Error') is not None
+                  or word['Manifest'].get('Version') != host_config['word_plugin_version']):
+              raise SystemExit('The unchanged bundled Word/Excel importer no longer loads')
+          write_json(pathlib.Path('artifacts/host-releases') / config['host_release_tag'] / 'plugin-discovery.json', report)
+          print('The published host loaded the updated practice plugin and unchanged importer.')
+      - name: Start and close the published production application
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -101,12 +95,12 @@ jobs:
           try {
             Start-Sleep -Seconds 8
             $process.Refresh()
-            if ($process.HasExited) { throw "The published R6 host exited during startup: $($process.ExitCode)" }
-            if ($process.MainWindowHandle -eq 0) { throw 'The published R6 host did not create a main window.' }
+            if ($process.HasExited) { throw "The published host exited during startup: $($process.ExitCode)" }
+            if ($process.MainWindowHandle -eq 0) { throw 'The published host did not create a main window.' }
             $null = $process.CloseMainWindow()
-            if (-not $process.WaitForExit(10000)) { throw 'The published R6 main window did not close normally.' }
-            if ($process.ExitCode -ne 0) { throw "The published R6 host exited unsuccessfully: $($process.ExitCode)" }
-            @{ main_window_opened_and_closed = $true } | ConvertTo-Json | Set-Content artifacts/host-releases/v4.0.0-typing.6/window-smoke.json
+            if (-not $process.WaitForExit(10000)) { throw 'The published main window did not close normally.' }
+            if ($process.ExitCode -ne 0) { throw "The published host exited unsuccessfully: $($process.ExitCode)" }
+            @{ main_window_opened_and_closed = $true } | ConvertTo-Json | Set-Content (Join-Path ('artifacts/host-releases/' + $env:HOST_RELEASE_TAG) 'window-smoke.json')
           } finally {
             if (-not $process.HasExited) { $process.Kill() }
           }
@@ -114,7 +108,11 @@ jobs:
         shell: python {0}
         run: |
           import hashlib, json, os, pathlib, subprocess, sys
-          cache = pathlib.Path('artifacts/host-releases/v4.0.0-typing.6')
+          sys.path.insert(0, 'scripts')
+          from prepare_plugin_release import typing_release_config, write_json
+          config = typing_release_config(os.environ['GITHUB_REF_NAME'])
+          host_config = config['host']
+          cache = pathlib.Path('artifacts/host-releases') / config['host_release_tag']
           discovery = json.loads((cache / 'plugin-discovery.json').read_text(encoding='utf-8'))
           window = json.loads((cache / 'window-smoke.json').read_text(encoding='utf-8-sig'))
           baseline = json.loads((cache / 'HOST_BASELINE.json').read_text(encoding='utf-8'))
@@ -122,22 +120,21 @@ jobs:
           with plugin.open('rb') as stream:
               checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
           compatibility = {
-              'host_release_tag': 'v4.0.0-typing.6',
-              'host_source_commit': '0f008c72983b9d567612855498800886201572e6',
+              'host_release_tag': config['host_release_tag'], 'host_source_commit': host_config['source_commit'],
               'plugin_source_commit': os.environ['GITHUB_SHA'],
-              'plugin_version': '1.3.1', 'plugin_api_version': discovery['ApiVersion'],
-              'host_feature_level': discovery['HostFeatureLevel'], 'word_plugin_version': '1.0.1',
+              'plugin_version': config['version'], 'plugin_api_version': discovery['ApiVersion'],
+              'host_feature_level': discovery['HostFeatureLevel'], 'word_plugin_version': host_config['word_plugin_version'],
               'practice_and_configuration_loaded': True,
               'main_window_opened_and_closed': window.get('main_window_opened_and_closed') is True,
               'plugin_dll_sha256': checksum,
               'host_documentation_path_adaptations': baseline['documentation_path_adaptations'],
               'host_non_typing_file_count': len(baseline['files_outside_typing_plugin']),
               'host_staging_note': baseline['staging_note'],
-              'scope': 'Existing published R6 host, plugin discovery and normal main-window open/close only. No live provider credentials were used; real translation, credential migration and cross-account encryption are not claimed verified.',
+              'scope': 'Existing fixed published host, plugin discovery and normal main-window open/close only. Full interactive practice, live translation, credential migration and cross-account encryption are not claimed verified.',
           }
-          (cache / 'PLUGIN_COMPATIBILITY.json').write_text(json.dumps(compatibility, ensure_ascii=False, indent=2), encoding='utf-8')
+          write_json(cache / 'PLUGIN_COMPATIBILITY.json', compatibility)
           subprocess.run([sys.executable, 'scripts/prepare_plugin_release.py', '--standalone',
-                          '--host-release-tag', 'v4.0.0-typing.6', '--plugin-release-tag', os.environ['GITHUB_REF_NAME']], check=True)
+                          '--host-release-tag', config['host_release_tag'], '--plugin-release-tag', os.environ['GITHUB_REF_NAME']], check=True)
       - name: Upload only the independent typing plugin release assets
         uses: actions/upload-artifact@v4
         with:
@@ -148,7 +145,7 @@ jobs:
           compression-level: 0
 
   publish-plugin:
-    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.1'
+    if: github.ref == 'refs/tags/plugin-synchronous-typing-v1.3.1' || github.ref == 'refs/tags/plugin-synchronous-typing-v1.4.1'
     needs: build-plugin
     runs-on: ubuntu-latest
     permissions:
@@ -166,11 +163,15 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          import hashlib, json, os, pathlib, re, subprocess, tempfile
+          import hashlib, json, os, pathlib, re, subprocess, sys, tempfile, zipfile
+          sys.path.insert(0, "scripts")
+          from prepare_plugin_release import typing_release_config, check_zip
           repository = os.environ['GH_REPO']
           commit = os.environ['GITHUB_SHA']
           tag = os.environ['RELEASE_TAG']
-          if tag != 'plugin-synchronous-typing-v1.3.1' or not re.fullmatch(r'[0-9a-f]{40}', commit):
+          config = typing_release_config(tag)
+          version, host_tag, host = config['version'], config['host_release_tag'], config['host']
+          if not re.fullmatch(r'[0-9a-f]{40}', commit):
               raise SystemExit('Unexpected independent plugin release scope')
 
           def gh(*arguments):
@@ -181,14 +182,14 @@ jobs:
               values = dict(line.split()[::-1] for line in refs.splitlines())
               return values.get(f'refs/tags/{name}^{{}}', values.get(f'refs/tags/{name}'))
 
-          if remote_target(tag) != commit or remote_target('v4.0.0-typing.6') != '0f008c72983b9d567612855498800886201572e6':
+          if remote_target(tag) != commit or remote_target(host_tag) != host['source_commit']:
               raise SystemExit('The new plugin tag or existing published host tag changed')
           releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
           if any(item['tag_name'] == tag for page in releases for item in page):
               raise SystemExit('Refusing to replace an existing public release or draft')
           folder = pathlib.Path('release')
           assets = {path.name: path for path in folder.iterdir() if path.is_file()}
-          expected_names = {'synchronous-typing-1.3.1.zip', 'synchronous-typing-1.3.1-source.zip',
+          expected_names = {f'synchronous-typing-{version}.zip', f'synchronous-typing-{version}-source.zip',
                             'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
           if set(assets) != expected_names:
               raise SystemExit('The independent plugin asset set is incomplete or contains an unrelated asset')
@@ -213,25 +214,38 @@ jobs:
           blockers = host_review.get('blocking_issues', [])
           compatibility = review.get('host_compatibility', {})
           if (review.get('source_commit') != commit or review.get('plugin_id') != 'synchronous-typing'
-                  or review.get('plugin_version') != '1.3.1' or review.get('app_release_tag') != 'v4.0.0-typing.6'
-                  or review.get('host_source_commit') != '0f008c72983b9d567612855498800886201572e6'
+                  or review.get('plugin_version') != version or review.get('app_release_tag') != host_tag
+                  or review.get('host_source_commit') != host['source_commit']
                   or review.get('publication_scope') != 'standalone-plugin-update-existing-host'
                   or review.get('legal_clearance_claimed') is not False
                   or host_review.get('status') != 'blocked' or not blockers
                   or any(not isinstance(item, dict) or item.get('id') != 'avalonia-mspl-agpl-compatibility'
                          for item in blockers)
                   or compatibility.get('plugin_source_commit') != commit
-                  or compatibility.get('plugin_api_version') != 1 or compatibility.get('host_feature_level') != 4
+                  or compatibility.get('plugin_api_version') != 1 or compatibility.get('host_feature_level') != host['feature_level']
+                  or compatibility.get('plugin_version') != version or compatibility.get('host_release_tag') != host_tag
+                  or compatibility.get('host_source_commit') != host['source_commit']
+                  or compatibility.get('word_plugin_version') != host['word_plugin_version']
                   or compatibility.get('practice_and_configuration_loaded') is not True
                   or compatibility.get('main_window_opened_and_closed') is not True
-                  or compatibility.get('host_non_typing_file_count') != 385
-                  or compatibility.get('host_documentation_path_adaptations') != [{
-                      'original_archive_path': './??????????.md', 'staged_path': 'R6_PLUGIN_GUIDE.md',
-                      'bytes': 14711, 'archive_flag_bits': 8,
-                      'sha256': '1d83b102d4ba612ebd7e2c21837f259b137cd421509e4ccf537aebfc474b7e28'}]):
+                  or compatibility.get('host_non_typing_file_count') != host['file_counts']['synchronous-typing']
+                  or compatibility.get('host_documentation_path_adaptations') != host['documentation_path_adaptations']):
               raise SystemExit('The plugin disclosure, source or compatibility metadata is inconsistent')
+          binary_path = assets[f'synchronous-typing-{version}.zip']
+          source_path = assets[f'synchronous-typing-{version}-source.zip']
+          for path in (binary_path, source_path):
+              check_zip(path)
+          with zipfile.ZipFile(binary_path) as binary, zipfile.ZipFile(source_path) as source:
+              expected_review = assets['RELEASE_REVIEW.json'].read_bytes().replace(b'\r\n', b'\n')
+              if (binary.read('SynchronousTyping/RELEASE_REVIEW.json').replace(b'\r\n', b'\n') != expected_review
+                      or source.read('RELEASE_REVIEW.json').replace(b'\r\n', b'\n') != expected_review):
+                  raise SystemExit('The binary/source generated disclosure differs from the verified review')
+              plugin = binary.read('SynchronousTyping/DictationAssistant.Practices.Typing.dll')
+              if (hashlib.sha256(plugin).hexdigest() != compatibility.get('plugin_dll_sha256')
+                      or f'{version}+{commit}'.encode('ascii') not in plugin):
+                  raise SystemExit('The independent plugin DLL does not match the release commit and compatibility record')
           gh('release', 'create', tag, '--draft', '--prerelease', '--latest=false', '--verify-tag',
-             '--target', commit, '--title', '插件更新：同步打字 1.3.1（多翻译服务）',
+             '--target', commit, '--title', config['title'],
              '--notes-file', str(assets['RELEASE_NOTES.md']))
           gh('release', 'upload', tag, *(str(path) for path in assets.values()))
           releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
@@ -265,7 +279,7 @@ jobs:
               raise SystemExit('The new plugin draft changed before publication')
           if any(item.get('digest') and item['digest'] != expected_hashes[item['name']] for item in current['assets']):
               raise SystemExit('A draft plugin asset digest changed before publication')
-          if remote_target(tag) != commit or remote_target('v4.0.0-typing.6') != '0f008c72983b9d567612855498800886201572e6':
+          if remote_target(tag) != commit or remote_target(host_tag) != host['source_commit']:
               raise SystemExit('The plugin or host tag changed before publication')
-          gh('release', 'edit', tag, '--draft=false', '--prerelease', '--latest=false')
+          gh('release', 'edit', tag, '--tag', tag, '--target', commit, '--draft=false', '--prerelease', '--latest=false')
           print(gh('release', 'view', tag, '--json', 'url', '--jq', '.url').strip())

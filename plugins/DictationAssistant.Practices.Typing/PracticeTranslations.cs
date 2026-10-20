@@ -20,7 +20,7 @@ internal static class PracticeTranslations
             4096, FileOptions.Asynchronous);
         var saved = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream,
             cancellationToken: cancellationToken)
-            ?? throw new InvalidDataException("本地翻译文件为空或格式无效。");
+            ?? throw new InvalidDataException("保存的提示文件为空或格式有误。");
         ValidateTranslations(saved);
         return new Dictionary<string, string>(saved, StringComparer.Ordinal);
     }
@@ -43,13 +43,13 @@ internal static class PracticeTranslations
         }
         catch (IOException)
         {
-            throw new IOException("翻译文件正由其他窗口保存，请稍后重试。");
+            throw new IOException("另一个窗口正在保存提示，请稍后重试。");
         }
         await using var heldLock = saveLock;
         var current = await LoadAsync(cancellationToken);
         if (current.Count != expected.Count || expected.Any(pair =>
             !current.TryGetValue(pair.Key, out var value) || value != pair.Value))
-            throw new InvalidDataException("翻译已在其他窗口修改，请关闭并重新打开练习后重试。");
+            throw new InvalidDataException("提示已在其他窗口修改，请重新打开练习后再保存。");
 
         var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -85,7 +85,7 @@ internal static class PracticeTranslations
             if (!seen.Add(word)) continue;
             translations.TryGetValue(word, out var translation);
             translation ??= string.Empty;
-            if (translation.Length > 0) ValidateCell(translation, "译文");
+            if (translation.Length > 0) ValidateCell(translation, "提示");
             if (result.Length > 0) result.AppendLine();
             result.Append(word).Append('\t').Append(translation);
         }
@@ -107,15 +107,15 @@ internal static class PracticeTranslations
             if (string.IsNullOrWhiteSpace(line)) continue;
             var separator = line.IndexOf('\t');
             if (separator < 0 || line.IndexOf('\t', separator + 1) >= 0)
-                throw new InvalidDataException($"第 {lineNumber} 行格式无效，请使用“原词 + Tab + 译文”两列。");
+                throw new InvalidDataException($"第 {lineNumber} 行格式有误，请用 Tab 隔开原词和提示。");
             var word = line[..separator];
             var translation = line[(separator + 1)..].Trim();
             ValidateCell(word, $"第 {lineNumber} 行词条");
             if (!knownWords.Contains(word))
                 throw new InvalidDataException($"第 {lineNumber} 行的原词不在当前词表中，请保留原词的大小写和标点。");
-            if (translation.Length > 0) ValidateCell(translation, $"第 {lineNumber} 行译文");
+            if (translation.Length > 0) ValidateCell(translation, $"第 {lineNumber} 行提示");
             if (rows.TryGetValue(word, out var existing) && existing != translation)
-                throw new InvalidDataException($"第 {lineNumber} 行与前面的重复词条译文不同，请为同一词条保留一份译文。");
+                throw new InvalidDataException($"第 {lineNumber} 行的提示与同一原词的另一条提示不同，请统一后再保存。");
             rows[word] = translation;
         }
 
@@ -128,7 +128,7 @@ internal static class PracticeTranslations
         foreach (var (word, translation) in translations)
         {
             ValidateCell(word, "词条");
-            ValidateCell(translation, "译文");
+            ValidateCell(translation, "提示");
         }
     }
 

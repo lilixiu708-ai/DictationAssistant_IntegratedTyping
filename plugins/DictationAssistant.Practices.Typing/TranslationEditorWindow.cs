@@ -19,7 +19,7 @@ internal sealed class TranslationEditorWindow : Window
     private readonly TextBox _editor = new()
     {
         AcceptsReturn = true, AcceptsTab = true, TextWrapping = TextWrapping.NoWrap,
-        MinHeight = 160, Watermark = "每行：原词（Tab）译文；可从表格复制两列粘贴。"
+        MinHeight = 160, Watermark = "每行填写：原词（Tab）提示；也可从表格复制两列粘贴。"
     };
     private readonly Button _apiSettings = new()
     {
@@ -34,8 +34,8 @@ internal sealed class TranslationEditorWindow : Window
     {
         ItemsSource = new[] { "英文 → 中文", "中文 → 英文" }, SelectedIndex = 0, MinWidth = 140
     };
-    private readonly Button _translate = new() { Content = "翻译缺失项", MinWidth = 110 };
-    private readonly Button _save = new() { Content = "保存翻译", MinWidth = 100 };
+    private readonly Button _translate = new() { Content = "补全提示", MinWidth = 110 };
+    private readonly Button _save = new() { Content = "保存提示", MinWidth = 100 };
     private readonly Button _cancel = new() { Content = "取消", MinWidth = 80 };
     private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
     private Task? _operation;
@@ -51,7 +51,7 @@ internal sealed class TranslationEditorWindow : Window
         _engineSession = engineSession;
         _saved = new Dictionary<string, string>(saved, StringComparer.Ordinal);
         _cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        Title = "录入与提前翻译";
+        Title = "编辑提示";
         Width = 800;
         Height = 660;
         MinWidth = 620;
@@ -69,15 +69,15 @@ internal sealed class TranslationEditorWindow : Window
         Content = layout;
         layout.Children.Add(new TextBlock
         {
-            Text = "每行保留原词，用 Tab 分隔译文；可从 Excel 等表格复制两列。\n" +
-                "留空译文可移除提示，重复原词共用译文。原词仍用于播报和判分。",
+            Text = "左列保留原词，右列填写提示，用 Tab 隔开；也可从 Excel 复制两列粘贴。\n" +
+                "提示留空即可删除，相同原词共用一条提示。原词仍用于播报和判分。",
             TextWrapping = TextWrapping.Wrap
         });
         Grid.SetRow(_editor, 1);
         layout.Children.Add(_editor);
 
         var api = new StackPanel { Spacing = 8 };
-        api.Children.Add(new TextBlock { Text = "可选：提前翻译缺失译文", FontWeight = FontWeight.SemiBold });
+        api.Children.Add(new TextBlock { Text = "用翻译补全提示（可选）", FontWeight = FontWeight.SemiBold });
         api.Children.Add(_apiSummary);
         var engineRow = new WrapPanel { ItemSpacing = 10, LineSpacing = 8 };
         engineRow.Children.Add(new TextBlock { Text = "本次翻译引擎：", VerticalAlignment = VerticalAlignment.Center });
@@ -90,8 +90,8 @@ internal sealed class TranslationEditorWindow : Window
         api.Children.Add(options);
         api.Children.Add(new TextBlock
         {
-            Text = "仅点击翻译时将缺失项发送给选定引擎，并可能消耗额度；已有译文不会覆盖。\n" +
-                "本页切换仅用于本次准备。首选项在插件配置中调整；请校对译文后保存。",
+            Text = "点击“补全提示”后，会将尚未填写提示的词条发给所选引擎，可能占用服务额度。已有提示会保留。\n" +
+                "这里切换引擎只影响本次翻译；首选引擎请在插件配置中设置。保存前请检查提示。",
             TextWrapping = TextWrapping.Wrap, Opacity = 0.8
         });
         Grid.SetRow(api, 2);
@@ -166,20 +166,20 @@ internal sealed class TranslationEditorWindow : Window
         var missing = _words.Distinct(StringComparer.Ordinal).Where(word => !parsed.ContainsKey(word)).ToArray();
         if (missing.Length == 0)
         {
-            _status.Text = "所有词条已有译文，无需调用翻译引擎。";
+            _status.Text = "所有词条都已有提示，无需翻译。";
             return;
         }
         var binding = _engineSelection.SelectedItem as TranslationEngineBinding
-            ?? throw new InvalidOperationException("请先在插件配置中绑定翻译引擎。手动录入和保存不受影响。");
+            ?? throw new InvalidOperationException("请先在插件配置中添加翻译引擎，也可以直接手动填写提示。");
         TranslationEngineProviders.Validate(binding);
-        _status.Text = $"正在提前翻译 {missing.Length} 个缺失项，可取消并关闭…";
+        _status.Text = $"正在翻译 {missing.Length} 个词条，可点击“取消并关闭”停止…";
         var englishToChinese = _direction.SelectedIndex == 0;
         var translations = await TranslationService.TranslateAsync(missing, binding,
             englishToChinese ? "EN" : "ZH", englishToChinese ? "ZH" : "EN", _cancellation.Token);
         _cancellation.Token.ThrowIfCancellationRequested();
         for (var i = 0; i < missing.Length; i++) parsed[missing[i]] = translations[i];
         _editor.Text = PracticeTranslations.BuildEditorText(_words, parsed);
-        _status.Text = $"已补全 {missing.Length} 个译文，请校对后点击“保存翻译”。";
+        _status.Text = $"已补全 {missing.Length} 条提示，检查后点击“保存提示”。";
     }
 
     private async Task LoadApiAsync()
@@ -210,8 +210,8 @@ internal sealed class TranslationEditorWindow : Window
     private void RefreshApiSummary()
     {
         _apiSummary.Text = _engineConfiguration.Bindings.Count > 0
-            ? $"已绑定 {_engineConfiguration.Bindings.Count} 个引擎配置；首选：{_engineConfiguration.Preferred?.Name ?? "未设置"}。"
-            : "尚未绑定翻译引擎，请在插件配置中添加；手动录入不受影响。";
+            ? $"已添加 {_engineConfiguration.Bindings.Count} 个配置；首选：{_engineConfiguration.Preferred?.Name ?? "未设置"}。"
+            : "还没有添加翻译引擎，可先手动填写提示，或打开“管理翻译引擎”添加。";
     }
 
     private async Task SaveAsync()
@@ -220,7 +220,7 @@ internal sealed class TranslationEditorWindow : Window
         var merged = new Dictionary<string, string>(_saved, StringComparer.Ordinal);
         foreach (var word in _words) merged.Remove(word);
         foreach (var pair in parsed) merged[pair.Key] = pair.Value;
-        _status.Text = "正在保存翻译…";
+        _status.Text = "正在保存提示…";
         await PracticeTranslations.SaveAsync(merged, _saved, _cancellation.Token);
         if (_closing) return;
         _allowClose = true;

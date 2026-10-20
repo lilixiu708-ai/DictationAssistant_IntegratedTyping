@@ -82,8 +82,8 @@ internal sealed class TranslationApiSettingsWindow : Window
         Content = root;
         root.Children.Add(new TextBlock
         {
-            Text = "管理已绑定的翻译引擎，并设置首选项。翻译准备页仍可为本次任务切换引擎。\n" +
-                "已支持多种常用翻译服务，可为同一服务添加多个绑定；配置不会发送翻译请求。",
+            Text = "在这里添加和修改翻译引擎，将常用的设为首选。\n" +
+                "同一服务可以添加多个配置，翻译前也可以临时切换引擎。",
             TextWrapping = TextWrapping.Wrap
         });
         var body = new Grid { ColumnDefinitions = new ColumnDefinitions("260,*"), ColumnSpacing = 18 };
@@ -126,8 +126,8 @@ internal sealed class TranslationApiSettingsWindow : Window
         form.Children.Add(_region);
         form.Children.Add(new TextBlock
         {
-            Text = "已有凭据不会回填。编辑时留空可沿用同一服务的凭据；切换服务会清空待填凭据，需重新输入。" +
-                "请使用官方开发者平台的 API 凭据，翻译网页的账户或网址不能直接绑定。",
+            Text = "已保存的凭据不会显示。修改同一服务时，留空即可沿用；更换服务后需要重新填写。\n" +
+                "请填写服务商开发者平台提供的 API 凭据。",
             TextWrapping = TextWrapping.Wrap, Opacity = 0.8
         });
         var formActions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8 };
@@ -136,7 +136,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         form.Children.Add(formActions);
         form.Children.Add(new TextBlock
         {
-            Text = "添加、修改、移除和首选项调整在下方保存或应用后才生效。取消会保留原配置。",
+            Text = "修改完成后，点击“保存配置”或“仅本次使用”。点击“取消”会放弃本页修改。",
             TextWrapping = TextWrapping.Wrap, Opacity = 0.8
         });
         if (TranslationApiSettings.CanPersist)
@@ -147,7 +147,7 @@ internal sealed class TranslationApiSettingsWindow : Window
             form.Children.Add(new TextBlock
             {
                 Text = "本机标识：" + code + "\n" +
-                    "配置通过 Windows 系统加密，绑定本机与当前账户。不能防止已控制当前账户或进程的软件读取。",
+                    "配置由 Windows 加密，并绑定这台电脑和当前账户。若账户或程序已被控制，密钥仍可能被读取。",
                 TextWrapping = TextWrapping.Wrap, Opacity = 0.8
             });
         }
@@ -155,7 +155,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         {
             form.Children.Add(new TextBlock
             {
-                Text = "当前平台不支持 Windows 本机加密保存，可选择“仅本次使用”；配置保留至程序退出。",
+                Text = "当前版本在此系统上无法保存配置，请选择“仅本次使用”。这些修改不会保留到下次启动。",
                 TextWrapping = TextWrapping.Wrap, Opacity = 0.8
             });
         }
@@ -247,7 +247,7 @@ internal sealed class TranslationApiSettingsWindow : Window
                 ?? _draft.Bindings.FirstOrDefault();
             ShowBinding(selected);
             RefreshList(selected?.Id);
-            _status.Text = _draft.Bindings.Count == 0 ? "尚未绑定引擎，可新建绑定。" : "选择绑定可修改；首选引擎将用于新打开的翻译准备页。";
+            _status.Text = _draft.Bindings.Count == 0 ? "还没有添加翻译引擎，点击“新建绑定”添加。" : "选择左侧配置即可修改；下次打开翻译页时会默认选中首选引擎。";
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception)
@@ -374,7 +374,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         ShowBinding(binding);
         RefreshList(binding.Id);
         _status.Foreground = Brushes.DimGray;
-        _status.Text = "绑定已加入本页草稿，请在下方保存配置或仅本次使用。";
+        _status.Text = "已更新配置列表。点击“保存配置”或“仅本次使用”后生效。";
         return true;
     }
 
@@ -392,7 +392,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         ShowBinding(selected);
         RefreshList(selected?.Id);
         _status.Foreground = Brushes.DimGray;
-        _status.Text = "已从本页草稿移除绑定，保存或应用后生效。";
+        _status.Text = "已移除绑定。点击“保存配置”或“仅本次使用”后生效。";
     }
 
     private void MakePreferred()
@@ -402,7 +402,7 @@ internal sealed class TranslationApiSettingsWindow : Window
         _draft.MakePreferred(_editing.Id);
         RefreshList(_editing.Id);
         _status.Foreground = Brushes.DimGray;
-        _status.Text = "首选项已调整，保存或应用后用于新的翻译准备页。";
+        _status.Text = "已选择首选引擎。点击“保存配置”或“仅本次使用”后生效。";
     }
 
     private async Task CommitAsync(bool persist)
