@@ -167,14 +167,25 @@ def build(args):
     logs = output / 'logs'
     for directory in (output, work, cache, logs):
         directory.mkdir(parents=True, exist_ok=True)
-    wrapper, skia, patches, downloaded = prepare_sources(source_lock, work, cache, logs)
-    mac_patch = lock['macos_patch']
-    patch_path = ROOT / mac_patch['path']
-    if file_digest(patch_path) != mac_patch['sha256']:
-        raise ValueError('The fixed macOS GN patch changed')
-    run(['git', 'apply', '--check', patch_path], skia, logs / (patch_path.stem + '-check.log'))
-    run(['git', 'apply', patch_path], skia, logs / (patch_path.stem + '-apply.log'))
-    patches.append(mac_patch)
+    # git apply run in an unpacked tree inside the host checkout otherwise
+    # discovers that parent repository and silently skips paths outside its
+    # subdirectory prefix. Stop repository discovery at this source workspace.
+    previous_ceiling = os.environ.get('GIT_CEILING_DIRECTORIES')
+    os.environ['GIT_CEILING_DIRECTORIES'] = str(work)
+    try:
+        wrapper, skia, patches, downloaded = prepare_sources(source_lock, work, cache, logs)
+        mac_patch = lock['macos_patch']
+        patch_path = ROOT / mac_patch['path']
+        if file_digest(patch_path) != mac_patch['sha256']:
+            raise ValueError('The fixed macOS GN patch changed')
+        run(['git', 'apply', '--check', patch_path], skia, logs / (patch_path.stem + '-check.log'))
+        run(['git', 'apply', patch_path], skia, logs / (patch_path.stem + '-apply.log'))
+        patches.append(mac_patch)
+    finally:
+        if previous_ceiling is None:
+            os.environ.pop('GIT_CEILING_DIRECTORIES', None)
+        else:
+            os.environ['GIT_CEILING_DIRECTORIES'] = previous_ceiling
     write_json(output / 'source-preparation.json', {'sources': downloaded, 'patches': patches})
     if args.prepare_only:
         print('Exact shared source trees prepared; macOS execution was not attempted.')
