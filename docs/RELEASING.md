@@ -2,6 +2,10 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**[背诵练习 1.4.1 已独立预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1)。** 标签对应源码提交 `551174f64e15929c648b178affc3a2ec4f2f5cf3`，[Windows CI 39413856150](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39413856150) 的构建与发布均成功。固定公开 R7 加载 1.4.1，核对 API 1 / 功能级别 5、原导入 1.2.0、15 项既有检查及主窗口正常开闭通过；Windows 真实练习 GUI、原生音频与输入法仍未实测。本次仅更新练习插件，R7 完整包仍内置 1.4.0，导入插件与历史发行资产不变。
+
+公开后五份附件重新下载的 SHA-256 与服务器摘要均通过；177 个选定源码文件与标签逐字节一致，原始声明及私有依赖源码闭包完整，下载源码已独立还原并通过 Release 发布构建，旧发行资产和标签保持不变。
+
 **[R7 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)、[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0)和 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0) 均已公开。** 三份发行来自同一源码提交 `20251457f881d5efca52eb39dc832f8ae2e9f135`；两个插件要求 R7 的宿主功能级别 5，API 仍为 1。R7 完整包已包含它们，独立包供已有 R7 时更新，不能单独安装到 R6。
 
 原标签工作流的 [windows-x64 任务（39398895391）](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39398895391) 已通过完整构建、包校验、API 1 / 功能级别 5 双插件加载、主窗口开闭、15 项既有检查及 SDK 示例构建。原工作流的发布任务失败后，由[恢复上传 39401716293](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39401716293) 继续交付；该上传使用自动化提交 `9577df5519bd26e82d5e6c08392cb1143b1f5cdf`，仅上传这批原构建附件，未重新构建或改变源码标签；随后按三份发行的固定 ID、标签和源码提交核对后公开。

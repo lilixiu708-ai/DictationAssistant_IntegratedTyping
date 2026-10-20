@@ -7,6 +7,9 @@
 - 可以中途结算：点击“结算成绩”，已提交的答案和当前已输入的内容一并计分，未作答的题目不计分。播放中也能结算，先停止播报，再显示已有答案的成绩。
 - “显示翻译提示”改为“显示提示”，提示编辑统一使用“编辑提示”“补全提示”和“保存提示”。选列、计时、成绩和翻译配置的说明改为简短直接的表达。
 - 独立插件更新，继续配合 R7（API 1 / 宿主功能级别 5）使用。R7 完整包仍内置背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，本次只更新背诵练习插件。
+- [1.4.1 已公开为预发布版](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1)，源码提交 `551174f64e15929c648b178affc3a2ec4f2f5cf3`。[Windows 构建与发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39413856150)通过固定 R7 的双插件加载、15 项既有检查和主窗口开闭；Linux Headless 的 48 项观察覆盖中途结算、超时、重复操作和退出。Windows 真实练习界面、原生音频及输入法仍未实测。
+
+- 五份公开附件的下载摘要与校验和通过；对应源码逐字节核对、原始声明及私有依赖源码闭包完整，下载源码独立还原与 Release 发布构建成功。旧发行资产和标签保持不变。
 
 ## [4.0.0-typing.7] - 2026-10-20
 

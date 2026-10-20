@@ -2,6 +2,8 @@
 
 当前版本为 **[R7 预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)**，完整包包含[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0)与 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0)。首次安装或从 R6 升级选择完整包，已有 R7 才需单独更新插件；附件选择见[项目首页](../README.md#下载与使用)。
 
+[背诵练习 1.4.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1) 已独立预发布，增加中途结算并简化提示用词。沿用 R7 和导入 1.2.0，只替换练习插件目录；R7 完整包仍内置 1.4.0。操作见[1.4.1 说明](同步打字插件使用说明.md#141-更新中途结算与提示)。
+
 背诵练习先从文档选择提示与答案，再静音计时或播报练习，操作见[使用说明](同步打字插件使用说明.md#背诵练习-140文档配对与计时)。两个新插件要求 R7 的宿主功能级别 5，不能单独装入 R6；源码、原 Windows 构建和恢复上传的对应关系见[发布记录](RELEASING.md)。
 
 历史版本：[R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) · [同步打字 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) · [Word / Excel 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0)。R6 完整包内仍为同步打字 1.2.0 与 Word 1.0.1。

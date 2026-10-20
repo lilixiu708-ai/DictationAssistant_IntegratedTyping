@@ -4,37 +4,37 @@
 
 **当前版本：R7（`v4.0.0-typing.7`）预发布。** 完整包包含背诵练习 1.4.0、Word / Excel 导入 1.2.0 和 .NET 运行环境。“背诵练习”是原同步打字插件的新名称，原有设置与译文继续沿用。
 
-**背诵练习 1.4.1 更新准备中：** 提示开关改为「显示提示」，增加「结算成绩」，可以中途结算已作答内容。只需更新练习插件，沿用 R7 和导入 1.2.0；R7 完整包仍内置整轮结束结算的 1.4.0，当前下载入口暂不变。规则见[1.4.1 使用说明](docs/同步打字插件使用说明.md#141-更新中途结算与提示)。
+**背诵练习 1.4.1 已独立预发布。** 练习中可点击「结算成绩」提前结束，提示开关改为「显示提示」。R7 完整包仍包含 1.4.0；已有 R7，下载下方 1.4.1 插件包并替换练习插件目录即可。[查看用法](docs/同步打字插件使用说明.md#141-更新中途结算与提示)。
 
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
 ## 功能
 
 - 文档配对：选择表格、工作表和同行的提示 / 答案列，预览或交换方向；默认跳过表头，保留顺序和重复项。
-- 背诵与听写：静音计时或播报后作答，每题 1–300 秒，Enter 提交或到时记录，整轮结束统一查看成绩、导出 CSV。
+- 背诵与听写：静音计时或播报后作答，每题 1–300 秒，Enter 提交或到时记录；1.4.1 可中途结算，查看成绩、导出 CSV。
 - 化学记号：保留 Word 直接上下标，接受 `Na^+`、`SO4^2-` 和 Unicode 上下标；化学式区分元素大小写，英文名称可忽略大小写。
-- 翻译提示：提前录入或使用官方翻译 API 补全，校对保存；提示可隐藏，练习过程中不联网翻译。
+- 提示：提前录入或使用官方翻译 API 补全，校对保存；提示可隐藏，练习过程中不联网翻译。
 - 词表与扩展：文本编辑、Word / Excel 导入、选列、预览、去重和打乱；插件 SDK 提供导入、练习、命令、语音及音效接口。
 
 ## 下载与使用
 
-首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`，无需重复安装插件。两个新插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6；独立插件包供已有 R7 时更新。
+首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`；需要中途结算时，再安装下方的 1.4.1 独立更新。插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6。
 
 | 用途 | 版本与下载 | 选择的附件 |
 | --- | --- | --- |
 | 安装或更新完整程序 | [R7 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7) | [便携包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/DictationAssistant-4.0.0-typing.7-win-x64-portable.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/DictationAssistant-4.0.0-typing.7-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/SHA256SUMS) |
-| 单独更新背诵练习 | [插件 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.0/synchronous-typing-1.4.0.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.0/synchronous-typing-1.4.0-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.0/SHA256SUMS) |
+| 单独更新背诵练习 | [插件 1.4.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.1/synchronous-typing-1.4.1.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.1/synchronous-typing-1.4.1-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.1/SHA256SUMS) |
 | 单独更新 Word / Excel 导入 | [插件 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.2.0/docx-vocabulary-1.2.0.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.2.0/docx-vocabulary-1.2.0-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.2.0/SHA256SUMS) |
 
 升级前关闭程序并备份用户数据；更新插件时，将 ZIP 内完整目录替换到 `Plugins/` 后重启。本机练习设置、译文和翻译绑定沿用原目录，Windows 加密绑定仍限原机器和账户。`*-source.zip` 用于源码开发，`SHA256SUMS` 用于校验附件；GitHub 自动生成的源码附件不包含额外收集的依赖源码。
 
 1. 打开「插件 → 背诵练习」或 `Ctrl+Shift+T`，点击「从 Word / Excel 选择…」，主词表可以为空。
 2. 选表格 / 工作表及提示、答案列，核对预览；选择静音计时或播报后作答，再设置每题时限。
-3. 开始练习，按 Enter 提交或等待超时，整轮结束查看成绩。使用「当前词表」入口可继续原有播报听写。
+3. 开始练习，按 Enter 提交或等待超时，整轮结束查看成绩；1.4.1 也可点击「结算成绩」提前结束。使用「当前词表」入口可继续原有播报听写。
 
 翻译服务从「插件管理 → 背诵练习 → 配置…」管理，须使用服务商的官方 API 账户；练习前主动补全译文，结果校对后保存。支持 DeepL、Microsoft、Google、百度、有道、腾讯云、阿里云和火山引擎，真实账户在线调用仍待验证。操作与验证范围见[使用说明](docs/同步打字插件使用说明.md)；问题请附版本、系统及复现步骤提交到 [Issues](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/issues)。
 
-历史版本：[R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) · [同步打字 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) · [Word / Excel 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0) · [Word 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。
+历史版本：[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0) · [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) · [同步打字 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) · [Word / Excel 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0) · [Word 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。
 
 ## 开发与构建
 
