@@ -97,6 +97,23 @@ def build_gn(lock, work, cache, logs, ninja):
     source = fetch_source(lock['tools']['gn_source'], cache)
     directory = work / 'gn-source'
     extract_source(cache / source['archive_path'], directory, False)
+    # Upstream's bootstrap generator drops this option from its Ninja regen
+    # command. Preserve it in the source generator so every regeneration is
+    # valid for an archive checkout without Git commit-position history.
+    generator = directory / 'build/gen.py'
+    before = file_digest(generator)
+    text = generator.read_text(encoding='utf-8')
+    original = "  args = ' -d' if options.debug else ''\n"
+    if text.count(original) != 1:
+        raise ValueError('The fixed GN bootstrap generator changed unexpectedly')
+    generator.write_text(text.replace(original, original +
+                         "  if options.no_last_commit_position:\n"
+                         "    args += ' --no-last-commit-position'\n"), encoding='utf-8')
+    transformations = [{'path': 'build/gen.py', 'before_sha256': before,
+                        'after_sha256': file_digest(generator),
+                        'reason': 'Preserve --no-last-commit-position in the Ninja regeneration command.'}]
+    write_json(logs / 'gn-bootstrap-source-transformations.json', transformations)
+    shutil.copyfile(generator, logs / 'gn-bootstrap-gen.py')
     # A source archive has no Git position history. Record the exact revision,
     # with an explicitly non-release numeric position, rather than inventing one.
     out = directory / 'out'
@@ -107,7 +124,7 @@ def build_gn(lock, work, cache, logs, ninja):
         f'#define LAST_COMMIT_POSITION "0 ({revision[:7]}; fixed-source-build)"\n', encoding='utf-8')
     run([sys.executable, 'build/gen.py', '--no-last-commit-position'], directory, logs / 'gn-bootstrap-gen.log')
     run([ninja, '-C', out, '-j', '3', 'gn'], directory, logs / 'gn-bootstrap-build.log')
-    return out / 'gn', source
+    return out / 'gn', source, transformations
 
 
 def upstream_png(wrapper, binary, work, logs):
@@ -200,7 +217,7 @@ def build(args):
         package.extract('ninja', tools)
     ninja = tools / 'ninja'
     ninja.chmod(0o755)
-    gn, gn_source = build_gn(lock, work, cache, logs, ninja)
+    gn, gn_source, gn_bootstrap_transformations = build_gn(lock, work, cache, logs, ninja)
     compiler = pathlib.Path(subprocess.check_output(['xcrun', '--find', 'clang'], text=True).strip())
     compiler_version = run([compiler, '--version'], work, logs / 'clang-version.txt', capture=True)
     run(['xcodebuild', '-version'], work, logs / 'xcode-version.txt')
@@ -307,6 +324,7 @@ def build(args):
             f'are in {mac_patch["path"]}; original upstream archives and copyright notices are preserved.',
         ],
         'tools': lock['tools'], 'gn_source_archive': gn_source,
+        'gn_bootstrap_source_transformations': gn_bootstrap_transformations,
         'compiler_binary_sha256': file_digest(compiler), 'compiler_version': compiler_version,
         'native_versions': versions, 'upstream_native_utility': png,
         'gn_source_transformations': transformations, 'native_source_input_count': len(source_inputs),

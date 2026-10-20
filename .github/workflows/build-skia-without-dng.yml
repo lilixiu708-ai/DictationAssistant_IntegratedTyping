@@ -10,6 +10,7 @@ on:
       - 'scripts/collect_third_party_sources.py'
       - 'third-party/skia-no-dng-build.json'
       - 'third-party/patches/**'
+      - '!third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch'
 
 permissions:
   contents: read

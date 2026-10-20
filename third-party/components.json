@@ -6836,7 +6836,7 @@
           },
           {
             "path": "third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch",
-            "sha256": "30c847ac0ceb88fed5a00a1c568d567f8bc1bb8e371ecdd6725bdd941b445eff"
+            "sha256": "157779ba59d2b40335603b32bfcfe121a48fde2ce7e325da2a81758ccda44ec6"
           }
         ],
         "gn_args": {
@@ -6947,7 +6947,7 @@
           },
           {
             "path": "third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch",
-            "sha256": "30c847ac0ceb88fed5a00a1c568d567f8bc1bb8e371ecdd6725bdd941b445eff"
+            "sha256": "157779ba59d2b40335603b32bfcfe121a48fde2ce7e325da2a81758ccda44ec6"
           }
         ],
         "gn_args": {
