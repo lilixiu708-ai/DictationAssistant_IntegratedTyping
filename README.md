@@ -6,6 +6,8 @@
 
 同步打字插件 **1.3.1 已独立发布**，支持 DeepL Free / Pro、必应 / Microsoft（Azure）、Google Cloud、百度、有道、腾讯云、阿里云和火山引擎翻译 API，可管理多个命名绑定、首选项并在准备页临时切换。只需更新插件，沿用 R6 本体和 Word 1.0.1；最低宿主功能级别仍为 4，不能直接用于 R5。
 
+Word / Excel 导入插件 **1.1.0 已完成本轮 Linux 样本验证，尚未发布**：新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm`，按工作表预览并选择列，保留 Unicode 文本；下方已发布的 Word 1.0.1 仍只支持 DOCX。读取库选用 [ExcelDataReader 3.9.0 固定源码](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3)，验证范围见 [Excel 导入验证](docs/Excel导入验证.md)。
+
 ## 功能
 
 - 词表：文本编辑、DOCX 表格/正文导入、选择列、预览、去重和打乱顺序。

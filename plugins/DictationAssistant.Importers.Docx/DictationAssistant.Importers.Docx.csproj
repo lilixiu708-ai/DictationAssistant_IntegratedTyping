@@ -4,12 +4,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <Description>Word vocabulary document importer for DictationAssistant plugin API 1.</Description>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Description>Word and Excel vocabulary document importer for DictationAssistant plugin API 1.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.9.0" />
     <ProjectReference Include="../../src/DictationAssistant.Plugin.Abstractions/DictationAssistant.Plugin.Abstractions.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>

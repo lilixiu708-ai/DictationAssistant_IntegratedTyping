@@ -14,6 +14,7 @@ R5 本体及插件独立预发布已公开；发行说明已披露仍未解决�
 | CommunityToolkit.Mvvm 8.4.0 | .NET Foundation and Contributors | MIT；另保留 ThirdPartyNotices；[License.md](LICENSES/third-party/communitytoolkit-mvvm-8.4.0/License.md)、[ThirdPartyNotices.txt](LICENSES/third-party/communitytoolkit-mvvm-8.4.0/ThirdPartyNotices.txt) | [638b41dad30d](https://github.com/CommunityToolkit/dotnet/tree/638b41dad30dffabb123a39aa38eabc7e3721371) |
 | DialogHost.Avalonia 0.8.1 | 2021 SKProCH | MIT；[LICENSE.txt](LICENSES/third-party/dialoghost-0.8.1/LICENSE.txt) | [61f074f96675](https://github.com/AvaloniaUtils/DialogHost.Avalonia/tree/61f074f96675240a3cbc99005f7c67c4dc4e48ec) |
 | EdgeTTS.DotNet 0.4.0 | 2025 Curry | MIT；[LICENSE.txt](LICENSES/third-party/edgetts-dotnet-0.4.0/LICENSE.txt) | [bf43ca26d5db](https://github.com/twn39/EdgeTTS.DotNet/tree/bf43ca26d5db85e856fb16f4fc0e1b83dab424e3) |
+| ExcelDataReader 3.9.0 | 2014 ExcelDataReader；ExcelDataReader developers | MIT；导入插件私有只读依赖；[LICENSE](LICENSES/third-party/exceldatareader-3.9.0/LICENSE) | [f3343f552451](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3) |
 | ExtendedNumerics.BigDecimal 3003.0.0.346 | 2024 Adam White | MIT；[LICENSE.txt](LICENSES/third-party/bigdecimal-3003.0.0.346/LICENSE.txt) | [6a2759de671b](https://github.com/AdamWhiteHat/BigDecimal/tree/6a2759de671b8a909ae6706f49fc869ae856b249) |
 | MessageBox.Avalonia 3.3.1.1 | 2019 CreateLab | MIT；[LICENSE.txt](LICENSES/third-party/messagebox-3.3.1.1/LICENSE.txt) | [c0cb96704e2b](https://github.com/CreateLab/MessageBox.Avalonia/tree/c0cb96704e2b5db62bfdfa043dcaf3e177475716) |
 | MicroCom.Runtime 0.11.0 | 2021 Nikita Tsukanov | MIT；[LICENSE.txt](LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt) | [7e773759cfc1](https://github.com/kekekeks/MicroCom/tree/7e773759cfc1012a5d080d4129c4718a662884b0) |
@@ -31,6 +32,8 @@ R5 本体及插件独立预发布已公开；发行说明已披露仍未解决�
 | NLayer / NLayer.NAudioSupport 2.0.1 | 2018 Mark Heath, Andrew Ward & Contributors | MIT；[LICENSE.txt](LICENSES/third-party/nlayer-2.0.1/LICENSE.txt) | [191c104a9fef](https://github.com/naudio/NLayer/tree/191c104a9fef8be13521d3956e537599b493a573) |
 
 Microsoft.Extensions 的 NuGet 包声明来自 `dotnet/dotnet@44525024595742ebe09023abe709df51de65009b`；其固定 `src/source-manifest.json` 将 `runtime` 映射到 `dotnet/runtime@9ffface2f3fa6fbbb427793c3230b1626a1fdd84`。组件目录保留这条映射及对应证据，所供源归档使用该 runtime 修订。MicroCom 的固定来源依据官方 0.11.0 版本提交与紧随其后的 NuGet 发布记录；NAudio 使用官方 `v2.2.1` 标签。
+
+ExcelDataReader 固定为 3.9.0，NuGet 记录的提交与官方 `v3.9.0` 标签一致。Word / Excel 导入插件只私有携带该包的 `net8.0` DLL，不引入 DataSet 扩展或 Office；该目标框架没有额外 NuGet 运行时依赖。原始 MIT 全文、已校验的固定源码归档及包哈希记录在组件目录；本项不改变既有宿主授权披露。
 
 ## 原生组件及附加条件
 

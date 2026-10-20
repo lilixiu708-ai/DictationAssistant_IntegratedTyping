@@ -4,6 +4,8 @@
 
 R6 新增逐插件配置和多个命名翻译绑定；同步打字 1.2.0 需要 R6 的宿主功能级别 4，不能直接替换到 R5。R5 与同步打字 1.1.0 作为历史版本保留。
 
+Word / Excel 导入插件 1.1.0 已完成本轮 Linux 样本验证，尚未发布；新增 Excel 格式的实现范围、独立比对结果及未验证项目见 [Excel 导入验证](Excel导入验证.md)。现有公开 Word 1.0.1 的功能与下载不变。
+
 使用与开发从[项目首页](../README.md)开始。普通安装选择 [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6)；已有配套宿主时，可单独更新[同步打字 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)或 [Word 导入 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。本体已包含两个插件，不需要重复安装。构建依赖与源码面向开发者，历史 `typing.1`–`typing.3` 保留为草稿。
 
 ## 当前文档
@@ -12,6 +14,7 @@ R6 新增逐插件配置和多个命名翻译绑定；同步打字 1.2.0 需要 
 | --- | --- |
 | [同步打字插件使用说明](同步打字插件使用说明.md) | 下载与更新、词表、翻译提示、练习和成绩导出 |
 | [Windows 验证清单](同步打字验证清单.md) | Windows 界面、输入、音频、长列表与资源占用的实机检查 |
+| [Excel 导入验证](Excel导入验证.md) | 导入插件 1.1.0 的选型依据、19 页样本独立比对结果及未验证范围 |
 | [插件开发指南](插件开发指南.md) | 文档导入接口、插件清单、练习接口及 SDK 示例 |
 | [插件扩展 SDK](PLUGIN_SDK.md) | 功能级别 2 的命令、词表观察、生命周期、语音、音效及可编译示例 |
 | [离线 OCR 方案](OCR_OPTIONS.md) | 三条候选路线、许可分层与可选插件建议，尚未集成 |

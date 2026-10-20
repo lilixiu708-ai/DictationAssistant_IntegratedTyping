@@ -346,6 +346,11 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
     if compatibility is not None:
         review['publication_scope'] = 'standalone-plugin-update-existing-host'
         review['host_compatibility'] = compatibility
+    if plugin_id == 'docx-vocabulary' and version == '1.1.0':
+        review['unverified'] = [
+            'Full worksheet/value and GUI checks used the supplied XLSX on Linux; Windows Excel-import interaction requires separate validation.',
+            'XLS, XLSB, XLSM and formula-cache behavior were not exercised by that XLSX sample.'
+        ]
     write_json(output / 'RELEASE_REVIEW.json', review)
     write_json(binary_root / 'RELEASE_REVIEW.json', review)
     components = []
@@ -430,6 +435,10 @@ not establish a new permission or legal clearance for that combination.
                    'Windows 加密绑定整份配置，其他平台仅保留至程序退出；切换配置不触发翻译。') \
                 if version == '1.2.0' else \
                 '新增预录译文、可隐藏翻译提示及 DeepL 提前翻译；独立 API 设置窗口支持 Windows 本机与当前账户绑定的加密保存。删除指定的统一评分提示文字。'
+    elif version == '1.1.0':
+        summary = ('新增 Excel 工作簿读取，每张工作表独立预览、选列；保留既有 DOCX 导入。'
+                   '使用固定 ExcelDataReader 3.9.0，插件 ID、程序集与 API 1 保持不变。'
+                   '本次样本验证范围及未验证格式见对应源码中的 Excel 导入验证记录。')
     else:
         summary = '首次提供独立更新包，DOCX 表格/正文提取及列选择功能保持不变；可独立替换导入插件，无需重装宿主。'
     details = '\n'.join('- ' + item['reason'] for item in host_review['blocking_issues'])
@@ -471,6 +480,8 @@ not establish a new permission or legal clearance for that combination.
                     'scripts/collect_third_party_sources.py', 'docs/同步打字插件使用说明.md']
     if compatibility is not None:
         source_paths.append('.github/workflows/release-typing-plugin.yml')
+    if plugin_id == 'docx-vocabulary' and version == '1.1.0':
+        source_paths.append('docs/Excel导入验证.md')
     subprocess.run(['git', 'archive', '--format=zip', f'--output={source}', head, '--', *source_paths],
                    cwd=ROOT, check=True)
     verify_git_archive_names(source, head, source_paths)

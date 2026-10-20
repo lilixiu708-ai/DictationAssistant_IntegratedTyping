@@ -1122,6 +1122,62 @@
       "source_archive_url": "https://codeload.github.com/twn39/EdgeTTS.DotNet/tar.gz/bf43ca26d5db85e856fb16f4fc0e1b83dab424e3"
     },
     {
+      "id": "ExcelDataReader",
+      "version": "3.9.0",
+      "family": "exceldatareader-3.9.0",
+      "primary_spdx_expression": "MIT",
+      "authors": "ExcelDataReader developers",
+      "copyright": "Copyright (c) 2014 ExcelDataReader",
+      "nuget_url": "https://www.nuget.org/packages/ExcelDataReader/3.9.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/ExcelDataReader/ExcelDataReader",
+        "commit": "f3343f5524518923bdeb4801e5003c0417fd35f3"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/exceldatareader-3.9.0/LICENSE",
+          "sha256": "52ba99951f976c3c89ac69d9b3bed7ca264f7aac0253c61c163dc3b658fd0f04"
+        }
+      ],
+      "distributed_in_windows_release": true,
+      "build_dependency": false,
+      "nuget_repository_metadata": {
+        "type": "git",
+        "url": "https://github.com/ExcelDataReader/ExcelDataReader",
+        "commit": "f3343f5524518923bdeb4801e5003c0417fd35f3"
+      },
+      "nuget_content_hash": "3lEkUzG67UWPYj/xlX5Hua3MeQQktnK0B7WGzDjLpdJpBtct7szX0E4WB3Kl6C/8bNnbkyT2eO0FSPV+9CCemw==",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/exceldatareader-3.9.0/LICENSE",
+          "sha256": "52ba99951f976c3c89ac69d9b3bed7ca264f7aac0253c61c163dc3b658fd0f04",
+          "source_url": "https://raw.githubusercontent.com/ExcelDataReader/ExcelDataReader/f3343f5524518923bdeb4801e5003c0417fd35f3/LICENSE",
+          "source_revision": "f3343f5524518923bdeb4801e5003c0417fd35f3",
+          "original_bytes": true
+        }
+      ],
+      "source_repository": "https://github.com/ExcelDataReader/ExcelDataReader",
+      "source_ref": "f3343f5524518923bdeb4801e5003c0417fd35f3",
+      "source_archive_url": "https://codeload.github.com/ExcelDataReader/ExcelDataReader/tar.gz/f3343f5524518923bdeb4801e5003c0417fd35f3",
+      "source_archive_sha256": "f673467087a70e3784b0e9c1e03474b149d3655041d533c563ee26588a1fc0ae",
+      "source_provenance": {
+        "method": "NuGet 3.9.0 repository commit, independently matched to the peeled official v3.9.0 annotated tag. The archive LICENSE matches the fixed raw GitHub LICENSE byte-for-byte.",
+        "tag": "v3.9.0",
+        "tag_object": "3b2934af74c957748e0f4f45c658082e7c0a1921",
+        "commit": "f3343f5524518923bdeb4801e5003c0417fd35f3"
+      },
+      "distribution_scope": "The document-import plugin privately ships the net8.0 ExcelDataReader.dll only. No ExcelDataReader.DataSet package, Office application, macro runtime or separate code-page package is bundled; net8.0 has no NuGet runtime dependencies. Existing host combined-distribution disclosures are unchanged.",
+      "nuget_archive_sha512": "qiYZmZoioC464liGwK43kPysjMCpqCU5HLYcwhBClZP9feRAmLWp0xj8URKrSv/pcyb6pZhLsEqZ9OqSp+xngQ==",
+      "nuget_archive_sha256": "a59df6b86a01cf67e45a6680f288a6ccc91b5a473232f76f00cb5104daa1543b",
+      "nuget_hash_provenance": {
+        "content_hash": "Signed-package content hash reported by successful dotnet nuget verify --all; this differs from the exact signed archive hash.",
+        "archive_hash": "SHA-512/base64 and SHA-256/hex of the exact signed .nupkg bytes; SHA-512 independently matches the official NuGet catalog packageHash.",
+        "catalog_url": "https://api.nuget.org/v3/catalog0/data/2026.06.16.09.50.06/exceldatareader.3.9.0.json",
+        "archive_url": "https://api.nuget.org/v3-flatcontainer/exceldatareader/3.9.0/exceldatareader.3.9.0.nupkg"
+      }
+    },
+    {
       "id": "ExtendedNumerics.BigDecimal",
       "version": "3003.0.0.346",
       "family": "bigdecimal-3003.0.0.346",

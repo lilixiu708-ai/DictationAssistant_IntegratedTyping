@@ -47,6 +47,11 @@ public sealed class DocxImporter : IDocumentImporter
         ArgumentNullException.ThrowIfNull(fileName);
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Modified 2026-10-20: keep the existing plugin identity and DOCX path;
+        // Excel worksheets use the same host-owned section/column preview.
+        if (ExcelImporter.Supports(fileName))
+            return await new ExcelImporter().ReadAsync(content, fileName, cancellationToken).ConfigureAwait(false);
+
         if (!content.CanRead)
             throw new ArgumentException("文件流不可读。", nameof(content));
         if (!string.Equals(Path.GetExtension(fileName), ".docx", StringComparison.OrdinalIgnoreCase))
