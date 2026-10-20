@@ -28,6 +28,9 @@ PLUGINS = {'SynchronousTyping': ('synchronous-typing', '1.4.1'), 'DocxVocabulary
 PROJECT_NOTICES = ('LICENSE.md', 'NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_NOTICES.md')
 MANIFESTS = ('THIRD_PARTY_COMPONENTS.json', 'THIRD_PARTY_SOURCES.json')
 KNOWN_ISSUE = 'avalonia-mspl-agpl-compatibility'
+LOCK_PROJECTS = ('src/DictationAssistant.App', 'src/DictationAssistant.Plugin.Abstractions',
+                 'plugins/DictationAssistant.Importers.Docx', 'plugins/DictationAssistant.Practices.Typing',
+                 'tests/TypingPlugin.SmokeTests')
 
 
 def run(*arguments, **kwargs):
@@ -57,6 +60,17 @@ def version():
 
 def base_name(rid):
     return f'DictationAssistant-{version()}-macos-' + rid.removeprefix('osx-')
+
+
+def nuget_locks(rid):
+    records = []
+    for project in LOCK_PROJECTS:
+        path = ROOT / project / f'packages.{rid}.lock.json'
+        document = json.loads(path.read_text(encoding='utf-8'))
+        if document.get('version') != 1 or set(document.get('dependencies', {})) != {'net10.0', f'net10.0/{rid}'}:
+            raise ValueError('A committed NuGet lock does not match its exact macOS RID: ' + str(path))
+        records.append({'path': path.relative_to(ROOT).as_posix(), 'sha256': digest(path)})
+    return {'locked_mode': True, 'runtime_framework_version': '10.0.0', 'lock_files': records}
 
 
 def check_review(sources, review_only=False):
@@ -118,10 +132,14 @@ def validate(args):
             raise ValueError('The actual app rejected a bundled plugin: ' + identity)
     write_json(output / 'PLUGIN_DISCOVERY.json', report)
     smoke = ROOT / 'tests/TypingPlugin.SmokeTests/TypingPlugin.SmokeTests.csproj'
-    smoke_build = run('dotnet', 'build', smoke, '-c', 'Release',
-                      f'-p:NuGetLockFilePath=obj/macos-{args.rid}.packages.lock.json', cwd=ROOT)
-    smoke_result = run('dotnet', smoke.parent / 'bin/Release/net10.0/TypingPlugin.SmokeTests.dll', cwd=ROOT, timeout=60)
-    (output / 'typing-checks.log').write_text(smoke_build + smoke_result, encoding='utf-8')
+    smoke_restore = run('dotnet', 'restore', smoke, '-r', args.rid, '--locked-mode',
+                        f'-p:RuntimeIdentifier={args.rid}', '-p:SelfContained=false', '-p:RestorePackagesWithLockFile=true',
+                        f'-p:NuGetLockFilePath=packages.{args.rid}.lock.json', cwd=ROOT)
+    smoke_build = run('dotnet', 'build', smoke, '-c', 'Release', '-r', args.rid,
+                      '--no-restore', '-p:SelfContained=false', cwd=ROOT)
+    smoke_result = run('dotnet', smoke.parent / f'bin/Release/net10.0/{args.rid}/TypingPlugin.SmokeTests.dll',
+                       cwd=ROOT, timeout=60)
+    (output / 'typing-checks.log').write_text(smoke_restore + smoke_build + smoke_result, encoding='utf-8')
     with tempfile.TemporaryDirectory(prefix='dictation-macos-probe-') as temporary:
         temporary = pathlib.Path(temporary)
         probe_project = temporary / 'AudioProbe.csproj'
@@ -312,6 +330,7 @@ def bundle(args):
     info = {'schema_version': 1, 'application_version': version(), 'source_commit': head,
             'runtime_identifier': args.rid, 'minimum_macos': '15.0', 'self_contained': True,
             'plugin_api_version': 1, 'host_feature_level': 5,
+            'nuget': nuget_locks(args.rid),
             'bundled_plugins': {value[0]: value[1] for value in PLUGINS.values()},
             'signing': {'type': 'ad-hoc', 'apple_notarized': False,
                         'deep_strict_verification_passed': True,
@@ -342,6 +361,7 @@ def verify_part(part, rid, head):
     info = json.loads((part / 'BUNDLE_INFO.json').read_text())
     if (info.get('source_commit') != head or info.get('runtime_identifier') != rid
             or info.get('application_version') != version() or info.get('review_only')
+            or info.get('nuget') != nuget_locks(rid)
             or info.get('bundled_plugins') != {value[0]: value[1] for value in PLUGINS.values()}):
         raise ValueError('A macOS build part has unexpected source, versions or review-only native files')
     sources = json.loads((part / MANIFESTS[1]).read_text())
@@ -437,7 +457,10 @@ Avalonia/MS-PL 与 AGPL 的组合授权事项仍未解决，原始许可、配�
     cache.mkdir(parents=True, exist_ok=True)
     added = {}
     with zipfile.ZipFile(source, 'a', compression=zipfile.ZIP_DEFLATED) as archive:
-        for rid, part, _, sources, _, _ in parts:
+        for rid, part, info, sources, _, _ in parts:
+            for locked in info['nuget']['lock_files']:
+                if hashlib.sha256(archive.read(prefix + locked['path'])).hexdigest() != locked['sha256']:
+                    raise ValueError('A build NuGet lock differs from the full corresponding-source archive')
             index = collect(part / MANIFESTS[1], cache)
             for item in index.get('inline_source_files', []):
                 if hashlib.sha256(archive.read(prefix + item['path'])).hexdigest() != item['sha256']:

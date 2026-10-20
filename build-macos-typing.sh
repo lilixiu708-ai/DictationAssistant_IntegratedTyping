@@ -35,7 +35,8 @@ PUBLISH="$OUTPUT/payload/DictationAssistant.app/Contents/MacOS"
 rm -rf "$OUTPUT"
 mkdir -p "$PUBLISH"
 dotnet restore src/DictationAssistant.App/DictationAssistant.App.csproj -r "$RID" \
-  -p:RuntimeFrameworkVersion=10.0.0 -p:NuGetLockFilePath="obj/macos-$RID.packages.lock.json"
+  --locked-mode -p:RuntimeIdentifier="$RID" -p:RuntimeFrameworkVersion=10.0.0 -p:SelfContained=true \
+  -p:RestorePackagesWithLockFile=true -p:NuGetLockFilePath="packages.$RID.lock.json"
 dotnet publish src/DictationAssistant.App/DictationAssistant.App.csproj -c Release -r "$RID" \
   --self-contained true --no-restore -p:RuntimeFrameworkVersion=10.0.0 -p:PublishTrimmed=false \
   -p:DebugType=None -p:DebugSymbols=false -o "$PUBLISH"
@@ -44,7 +45,8 @@ for PLUGIN in DictationAssistant.Importers.Docx DictationAssistant.Practices.Typ
   FOLDER=DocxVocabulary
   [[ "$PLUGIN" != DictationAssistant.Practices.Typing ]] || FOLDER=SynchronousTyping
   dotnet restore "plugins/$PLUGIN/$PLUGIN.csproj" -r "$RID" \
-    -p:NuGetLockFilePath="obj/macos-$RID.packages.lock.json"
+    --locked-mode -p:RuntimeIdentifier="$RID" -p:SelfContained=false -p:RestorePackagesWithLockFile=true \
+    -p:NuGetLockFilePath="packages.$RID.lock.json"
   dotnet publish "plugins/$PLUGIN/$PLUGIN.csproj" -c Release -r "$RID" --self-contained false \
     --no-restore -p:DebugType=None -p:DebugSymbols=false -o "$PUBLISH/Plugins/$FOLDER"
 done
