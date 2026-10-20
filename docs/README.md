@@ -1,6 +1,8 @@
 # 文档索引
 
-当前版本为 **[R7 预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)**，完整包包含[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0)与 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0)。首次安装或从 R6 升级选择完整包，已有 R7 才需单独更新插件；附件选择见[项目首页](../README.md#下载与使用)。
+Windows 当前版本为 **[R7 预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)**，完整包包含[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0)与 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0)。首次安装或从 R6 升级选择完整包，已有 R7 才需单独更新插件；附件选择见[项目首页](../README.md#下载与使用)。
+
+R8 macOS 整合版正在准备，尚未公开；面向 macOS 15+，Intel 和 Apple Silicon 分包，均内置背诵练习 1.4.1 与 Word / Excel 导入 1.2.0。安装、翻译凭据和源码构建见 [macOS 说明](MACOS.md)。
 
 [背诵练习 1.4.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1) 已独立预发布，增加中途结算并简化提示用词。沿用 R7 和导入 1.2.0，只替换练习插件目录；R7 完整包仍内置 1.4.0。操作见[1.4.1 说明](同步打字插件使用说明.md#141-更新中途结算与提示)。
 
@@ -10,7 +12,7 @@
 
 Excel 的逐工作表读取、Linux 全量样本比对和 Windows 合成样本检查见 [Excel 导入验证](Excel导入验证.md)。源代码职责与数据流见[代码结构](CODE_STRUCTURE.md)。
 
-无 DNG 原生依赖已独立发布，供构建和复核使用。Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍按发行说明披露，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。历史版本与构建资料保留追溯。
+Windows 无 DNG 原生依赖已独立发布，macOS 原生资产仍在准备，供构建和复核使用。Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍按发行说明披露，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。历史版本与构建资料保留追溯。
 
 ## 当前文档
 
@@ -18,6 +20,7 @@ Excel 的逐工作表读取、Linux 全量样本比对和 Windows 合成样本�
 | --- | --- |
 | [背诵练习与同步打字使用说明](同步打字插件使用说明.md) | R7 文档配对、静音背诵、听写与翻译，以及历史版本操作 |
 | [Windows 验证清单](同步打字验证清单.md) | Windows 界面、输入、音频、长列表与资源占用的实机检查 |
+| [macOS 安装与构建](MACOS.md) | R8 准备状态、处理器选择、首次打开、会话凭据及验证范围 |
 | [Excel 导入验证](Excel导入验证.md) | 导入插件 1.1.0 的选型依据、19 页样本独立比对结果及未验证范围 |
 | [插件开发指南](插件开发指南.md) | 文档导入接口、插件清单、练习接口及 SDK 示例 |
 | [插件扩展 SDK](PLUGIN_SDK.md) | 功能级别 2–5 的扩展接口、文档练习与记号能力及可编译示例 |

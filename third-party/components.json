@@ -722,7 +722,177 @@
       "source_repository": "https://github.com/AvaloniaUI/Avalonia",
       "source_ref": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
       "source_archive_url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
-      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms."
+      "embedded_license_note": "The upstream NOTICE retains other copyright holders and licenses, including the Microsoft Public License for Silverlight Toolkit and Apache-2.0 for RichTextKit. The package primary MIT expression does not replace these terms.",
+      "runtime_overrides": {
+        "osx-x64": {
+          "committed_notice_paths": [
+            {
+              "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+              "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+            },
+            {
+              "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+              "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+            },
+            {
+              "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+              "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+            },
+            {
+              "path": "LICENSES/third-party/avalonia-native-11.3.12/main-mm-original-notice.txt",
+              "sha256": "f6dda0412084fe2bc6a135d0b5f87a0fb1350e9de4a56f09adcaf4af61278d01"
+            },
+            {
+              "path": "LICENSES/third-party/numerge-9738c612/LICENSE.md",
+              "sha256": "d6f7069bdda58eca6a82b66e22a78df68e624c4c9ca11b425f242ef1c2926ffb"
+            },
+            {
+              "path": "LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt",
+              "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9"
+            }
+          ],
+          "source_archives": [
+            {
+              "name": "Avalonia",
+              "repository": "https://github.com/AvaloniaUI/Avalonia",
+              "revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+              "url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+              "delivery": "bundled",
+              "sha256": "8525bc62f19f731f69848e5a835163bf8aa1e6cd17f42f5b01fae03b8917cc56",
+              "bytes": 36081926
+            },
+            {
+              "name": "Numerge-build-input",
+              "repository": "https://github.com/kekekeks/Numerge",
+              "revision": "9738c6121fdd143c78d3e25686a7e4e13c00f586",
+              "url": "https://codeload.github.com/kekekeks/Numerge/tar.gz/9738c6121fdd143c78d3e25686a7e4e13c00f586",
+              "delivery": "bundled",
+              "sha256": "f2a1473b3ee552d1cf5efe1a3b2a142ff605e44bcda22d23cb91c6c6e88e80c7",
+              "bytes": 7607
+            },
+            {
+              "name": "MicroCom-generator",
+              "repository": "https://github.com/kekekeks/MicroCom",
+              "revision": "7e773759cfc1012a5d080d4129c4718a662884b0",
+              "url": "https://codeload.github.com/kekekeks/MicroCom/tar.gz/7e773759cfc1012a5d080d4129c4718a662884b0",
+              "delivery": "bundled",
+              "sha256": "5502ba52f1c4ea8f32e54a7750f2cc16d2a13a47a9b438a0afeb7f12e28b1a36",
+              "bytes": 24554
+            }
+          ],
+          "source_coverage": {
+            "status": "complete",
+            "scope": "macOS x64/arm64 compilation and modification source coverage of the pinned universal Avalonia.Native 11.3.12 dylib, including the IDL header input and generator recipe. This source-delivery statement does not resolve the separately disclosed Avalonia/MS-PL/AGPL combination authorization.",
+            "evidence": [
+              "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/native/Avalonia.Native/src/OSX/Avalonia.Native.OSX.xcodeproj/project.pbxproj",
+              "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/nukebuild/Build.cs",
+              "The 34 Xcode source translation units and 143 quoted imports resolve to the fixed Avalonia source, generated avalonia-native.h or platform SDK headers.",
+              "GenerateCppHeaders parses src/Avalonia.Native/avn.idl through MicroCom.CodeGenerator 0.11.0 and writes native/Avalonia.Native/inc/avalonia-native.h; both input and generator sources are supplied.",
+              "The fixed Numerge gitlink is supplied because nukebuild/_build.csproj compiles its source while building the upstream build tool."
+            ],
+            "build_directions": [
+              "Place Numerge at external/Numerge at the recorded fixed gitlink revision.",
+              "Restore the package-pinned nukebuild/_build.csproj and run the upstream GenerateCppHeaders target before native compilation. The full fixed MicroCom generator source accompanies the original package-pinned recipe.",
+              "Run the native Xcode build through the upstream native build target/build-native.sh; select x86_64 or arm64 as required. Retain the original build scripts and source headers."
+            ],
+            "build_tools": {
+              "MicroCom.CodeGenerator": "0.11.0; fixed source revision7e773759cfc1012a5d080d4129c4718a662884b0, version commit immediately preceding the official NuGet publication on2022-11-02.",
+              "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.8.0; unmodified general build/formatting tool dependency of CodeGenerator, source commit8de9e4b2beba5b7c0edd6f1e6a4f192a51fdc872 from NuGet metadata. Its C# formatting path is not compiled into the native dylib.",
+              "Roslyn transitive tools": "Microsoft.CodeAnalysis.Common/CSharp/Workspaces.Common3.8.0 and Humanizer.Core2.2.0; package-pinned build tools, not native object inputs.",
+              "upstream nuke": "Original nukebuild/_build.csproj preserves the other explicit general build-tool PackageReference versions."
+            },
+            "boundaries": [
+              "AppKit, Foundation, Carbon, Metal, QuartzCore, IOSurface, OpenGL, UniformTypeIdentifiers, pthread and the C++ standard library are external Apple platform SDK/system dependencies; those libraries are not copied into the source bundle.",
+              "The source coverage concerns the delivered modifiable source, IDL and build/generator recipes. It does not claim a byte-identical rebuild of the historical NuGet dylib or include the self-hosting source closure of general compiler/SDK tools."
+            ]
+          },
+          "source_provenance": "Avalonia.Native NuGet repository commit37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0; fixed native Xcode project and IDL recipe; Numerge gitlink9738c6121fdd143c78d3e25686a7e4e13c00f586; MicroCom generator version0.11.0."
+        },
+        "osx-arm64": {
+          "committed_notice_paths": [
+            {
+              "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+              "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+            },
+            {
+              "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+              "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+            },
+            {
+              "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+              "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+            },
+            {
+              "path": "LICENSES/third-party/avalonia-native-11.3.12/main-mm-original-notice.txt",
+              "sha256": "f6dda0412084fe2bc6a135d0b5f87a0fb1350e9de4a56f09adcaf4af61278d01"
+            },
+            {
+              "path": "LICENSES/third-party/numerge-9738c612/LICENSE.md",
+              "sha256": "d6f7069bdda58eca6a82b66e22a78df68e624c4c9ca11b425f242ef1c2926ffb"
+            },
+            {
+              "path": "LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt",
+              "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9"
+            }
+          ],
+          "source_archives": [
+            {
+              "name": "Avalonia",
+              "repository": "https://github.com/AvaloniaUI/Avalonia",
+              "revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+              "url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+              "delivery": "bundled",
+              "sha256": "8525bc62f19f731f69848e5a835163bf8aa1e6cd17f42f5b01fae03b8917cc56",
+              "bytes": 36081926
+            },
+            {
+              "name": "Numerge-build-input",
+              "repository": "https://github.com/kekekeks/Numerge",
+              "revision": "9738c6121fdd143c78d3e25686a7e4e13c00f586",
+              "url": "https://codeload.github.com/kekekeks/Numerge/tar.gz/9738c6121fdd143c78d3e25686a7e4e13c00f586",
+              "delivery": "bundled",
+              "sha256": "f2a1473b3ee552d1cf5efe1a3b2a142ff605e44bcda22d23cb91c6c6e88e80c7",
+              "bytes": 7607
+            },
+            {
+              "name": "MicroCom-generator",
+              "repository": "https://github.com/kekekeks/MicroCom",
+              "revision": "7e773759cfc1012a5d080d4129c4718a662884b0",
+              "url": "https://codeload.github.com/kekekeks/MicroCom/tar.gz/7e773759cfc1012a5d080d4129c4718a662884b0",
+              "delivery": "bundled",
+              "sha256": "5502ba52f1c4ea8f32e54a7750f2cc16d2a13a47a9b438a0afeb7f12e28b1a36",
+              "bytes": 24554
+            }
+          ],
+          "source_coverage": {
+            "status": "complete",
+            "scope": "macOS x64/arm64 compilation and modification source coverage of the pinned universal Avalonia.Native 11.3.12 dylib, including the IDL header input and generator recipe. This source-delivery statement does not resolve the separately disclosed Avalonia/MS-PL/AGPL combination authorization.",
+            "evidence": [
+              "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/native/Avalonia.Native/src/OSX/Avalonia.Native.OSX.xcodeproj/project.pbxproj",
+              "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/nukebuild/Build.cs",
+              "The 34 Xcode source translation units and 143 quoted imports resolve to the fixed Avalonia source, generated avalonia-native.h or platform SDK headers.",
+              "GenerateCppHeaders parses src/Avalonia.Native/avn.idl through MicroCom.CodeGenerator 0.11.0 and writes native/Avalonia.Native/inc/avalonia-native.h; both input and generator sources are supplied.",
+              "The fixed Numerge gitlink is supplied because nukebuild/_build.csproj compiles its source while building the upstream build tool."
+            ],
+            "build_directions": [
+              "Place Numerge at external/Numerge at the recorded fixed gitlink revision.",
+              "Restore the package-pinned nukebuild/_build.csproj and run the upstream GenerateCppHeaders target before native compilation. The full fixed MicroCom generator source accompanies the original package-pinned recipe.",
+              "Run the native Xcode build through the upstream native build target/build-native.sh; select x86_64 or arm64 as required. Retain the original build scripts and source headers."
+            ],
+            "build_tools": {
+              "MicroCom.CodeGenerator": "0.11.0; fixed source revision7e773759cfc1012a5d080d4129c4718a662884b0, version commit immediately preceding the official NuGet publication on2022-11-02.",
+              "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.8.0; unmodified general build/formatting tool dependency of CodeGenerator, source commit8de9e4b2beba5b7c0edd6f1e6a4f192a51fdc872 from NuGet metadata. Its C# formatting path is not compiled into the native dylib.",
+              "Roslyn transitive tools": "Microsoft.CodeAnalysis.Common/CSharp/Workspaces.Common3.8.0 and Humanizer.Core2.2.0; package-pinned build tools, not native object inputs.",
+              "upstream nuke": "Original nukebuild/_build.csproj preserves the other explicit general build-tool PackageReference versions."
+            },
+            "boundaries": [
+              "AppKit, Foundation, Carbon, Metal, QuartzCore, IOSurface, OpenGL, UniformTypeIdentifiers, pthread and the C++ standard library are external Apple platform SDK/system dependencies; those libraries are not copied into the source bundle.",
+              "The source coverage concerns the delivered modifiable source, IDL and build/generator recipes. It does not claim a byte-identical rebuild of the historical NuGet dylib or include the self-hosting source closure of general compiler/SDK tools."
+            ]
+          },
+          "source_provenance": "Avalonia.Native NuGet repository commit37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0; fixed native Xcode project and IDL recipe; Numerge gitlink9738c6121fdd143c78d3e25686a7e4e13c00f586; MicroCom generator version0.11.0."
+        }
+      }
     },
     {
       "id": "Avalonia.Remote.Protocol",
@@ -1316,6 +1486,26 @@
         {
           "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-COPYING",
+          "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/Skia-30ab-LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-ms-use-COPYING",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/Unicode-License-V3-current.txt",
+          "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/UCD-ReadMe.txt",
+          "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa"
         }
       ],
       "distributed_in_windows_release": false,
@@ -1337,7 +1527,72 @@
       ],
       "source_repository": "https://github.com/mono/SkiaSharp",
       "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
-      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "source_archives": [
+        {
+          "name": "SkiaSharp-HarfBuzzSharp",
+          "repository": "https://github.com/mono/SkiaSharp",
+          "revision": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+          "url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+          "delivery": "bundled",
+          "sha256": "5e9aaab4ae7c7129b1584776c099caf0c2669ed1c32ac23f4afe1ab8f8d234bf",
+          "bytes": 33711222
+        },
+        {
+          "name": "Skia-HarfBuzz-config",
+          "repository": "https://github.com/mono/skia",
+          "revision": "30abf4a0dcd3006f3a555e46906151e486f87b6e",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/30abf4a0dcd3006f3a555e46906151e486f87b6e",
+          "delivery": "bundled",
+          "sha256": "4d82f9d3b0277e2f3d925004d124f1b96d714d56dfb36fb8369c81912a2376cb",
+          "bytes": 63393062
+        },
+        {
+          "name": "HarfBuzz",
+          "repository": "https://github.com/harfbuzz/harfbuzz",
+          "revision": "2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "url": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "delivery": "bundled",
+          "sha256": "984fdd77e4bb6fc4472378e09193773db728f6a0cd7b50c2bd7fd0af8ae0f080",
+          "bytes": 36553581
+        },
+        {
+          "name": "Unicode-UCD",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+          "delivery": "bundled",
+          "bytes": 8248819,
+          "destination_subdir": "unicode-data/15.1.0"
+        },
+        {
+          "name": "Unicode-UCDXML-grouped",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip",
+          "sha256": "39bad74c0f53cf6bdf9efb2270040cf37fd8b514f505a3c58077356ea41d5593",
+          "delivery": "bundled",
+          "bytes": 613918,
+          "destination_subdir": "unicode-data/15.1.0"
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "macOS x64/arm64 compilation and modification source coverage for the pinned universal HarfBuzzSharp 8.3.1.1 dylib; historical byte-identical binary or generated-table reproduction is not claimed.",
+        "evidence": [
+          "https://github.com/mono/SkiaSharp/blob/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/macos/libHarfBuzzSharp/libHarfBuzzSharp.xcodeproj/project.pbxproj",
+          "https://github.com/mono/skia/blob/30abf4a0dcd3006f3a555e46906151e486f87b6e/third_party/harfbuzz/config-override.h",
+          "https://github.com/harfbuzz/harfbuzz/tree/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "The Release preprocessor configuration expands to 428 supplied HarfBuzz source inputs plus the supplied Skia config-override.h; no non-system input is missing.",
+          "The macOS project compiles harfbuzz-subset.cc with HAVE_OT, HAVE_CONFIG_OVERRIDE_H, HB_NO_FALLBACK_SHAPE and NDEBUG. It does not compile hb-coretext.cc or link CoreText, FreeType or Graphite.",
+          "Unicode 15.1.0 UCD and grouped UCDXML fixed archives accompany the readable/modifiable generated tables and their scripts."
+        ],
+        "boundaries": [
+          "The original C++ generated tables are modifiable source delivered directly in the fixed HarfBuzz archive. Exact historical Microsoft language-tags and IANA registry snapshots for a previously generated table have not been reconstructed; current online inputs are not represented as those snapshots.",
+          "The universal dylib links only platform libSystem and libc++; Apple compiler/SDK/platform libraries are external system dependencies, not copied third-party source inputs."
+        ]
+      },
+      "source_provenance": "HarfBuzzSharp 8.3.1.1 -> mono/SkiaSharp@64f24b1cddb68d30ec0ac6b661964178fc21d5ec -> externals/skia@30abf4a0dcd3006f3a555e46906151e486f87b6e -> DEPS harfbuzz@2b3631a866b3077d9d675caa4ec9010b342b5a7c; official 8.3.1 tag resolves to this source commit.",
+      "license_note": "HarfBuzz root MIT does not replace the Microsoft USE data MIT grant, Unicode data terms or BSD license of the Skia configuration input; retain all original notices."
     },
     {
       "id": "HarfBuzzSharp.NativeAssets.WebAssembly",
@@ -1491,7 +1746,63 @@
       ],
       "source_repository": "https://github.com/HexaEngine/Hexa.NET.SDL",
       "source_ref": "15fc3406e473759a2bcddd9c3ea24b8006916fbd",
-      "source_archive_url": "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd"
+      "source_archive_url": "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+      "runtime_overrides": {
+        "osx-x64": {
+          "source_archives": [
+            {
+              "name": "Hexa.NET.SDL",
+              "repository": "https://github.com/HexaEngine/Hexa.NET.SDL",
+              "revision": "15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+              "url": "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+              "delivery": "bundled"
+            },
+            {
+              "name": "SDL2",
+              "repository": "https://github.com/libsdl-org/SDL",
+              "revision": "5d249570393f7a37e037abf22cd6012a4cc56a71",
+              "url": "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+              "delivery": "bundled"
+            }
+          ],
+          "source_coverage": {
+            "status": "complete",
+            "scope": "The managed Hexa.NET.SDL2 binding and its macOS SDL2 dylib. Native SDL2 source and license are independently listed; this statement does not cover other application dylibs.",
+            "evidence": [
+              "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+              "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+              "Per-RID SDL2 binary SHA-256 and exact SDL-release-2.32.10-0-g5d24957 version string are recorded in the SDL2 native entry."
+            ]
+          }
+        },
+        "osx-arm64": {
+          "source_archives": [
+            {
+              "name": "Hexa.NET.SDL",
+              "repository": "https://github.com/HexaEngine/Hexa.NET.SDL",
+              "revision": "15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+              "url": "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+              "delivery": "bundled"
+            },
+            {
+              "name": "SDL2",
+              "repository": "https://github.com/libsdl-org/SDL",
+              "revision": "5d249570393f7a37e037abf22cd6012a4cc56a71",
+              "url": "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+              "delivery": "bundled"
+            }
+          ],
+          "source_coverage": {
+            "status": "complete",
+            "scope": "The managed Hexa.NET.SDL2 binding and its macOS SDL2 dylib. Native SDL2 source and license are independently listed; this statement does not cover other application dylibs.",
+            "evidence": [
+              "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+              "https://codeload.github.com/HexaEngine/Hexa.NET.SDL/tar.gz/15fc3406e473759a2bcddd9c3ea24b8006916fbd",
+              "Per-RID SDL2 binary SHA-256 and exact SDL-release-2.32.10-0-g5d24957 version string are recorded in the SDL2 native entry."
+            ]
+          }
+        }
+      }
     },
     {
       "id": "HexaGen.Runtime",
@@ -4561,6 +4872,800 @@
           "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
         ]
       }
+    },
+    {
+      "id": "SDL2",
+      "version": "2.32.10",
+      "files": [
+        "libSDL2.dylib"
+      ],
+      "primary_spdx_expression": "Zlib",
+      "repository": {
+        "url": "https://github.com/libsdl-org/SDL",
+        "commit": "5d249570393f7a37e037abf22cd6012a4cc56a71"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/SDL2-2.32.10/LICENSE.txt",
+          "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127"
+        }
+      ],
+      "binary_sha256": {
+        "libSDL2.dylib": "4e06ddaf79243cc06d3dae91792af9b39e3e2059889c3e765f35cfd06a31ba76"
+      },
+      "source_provenance": "The actual Hexa.NET.SDL2 1.2.17 macOS dylib contains SDL-release-2.32.10-0-g5d24957, matching the fixed release-2.32.10 commit. The dylib is thin for osx-x64.",
+      "source_archives": [
+        {
+          "name": "SDL2",
+          "repository": "https://github.com/libsdl-org/SDL",
+          "revision": "5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "url": "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "delivery": "bundled"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/SDL2-2.32.10/LICENSE.txt",
+          "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127",
+          "source_url": "https://raw.githubusercontent.com/libsdl-org/SDL/5d249570393f7a37e037abf22cd6012a4cc56a71/LICENSE.txt",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "The SDL2 macOS component for osx-x64; fixed source includes the Cocoa/CoreAudio/Metal platform implementations, CMake/Xcode/autoconf recipes and generated configuration templates. Apple platform SDK/frameworks are external system tools, not copied source dependencies.",
+        "evidence": [
+          "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "https://github.com/libsdl-org/SDL/tree/5d249570393f7a37e037abf22cd6012a4cc56a71/Xcode/SDL",
+          "The exact native binary version string and per-RID SHA-256 are recorded above."
+        ]
+      },
+      "runtime_identifier": "osx-x64"
+    },
+    {
+      "id": "SDL2",
+      "version": "2.32.10",
+      "files": [
+        "libSDL2.dylib"
+      ],
+      "primary_spdx_expression": "Zlib",
+      "repository": {
+        "url": "https://github.com/libsdl-org/SDL",
+        "commit": "5d249570393f7a37e037abf22cd6012a4cc56a71"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/SDL2-2.32.10/LICENSE.txt",
+          "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127"
+        }
+      ],
+      "binary_sha256": {
+        "libSDL2.dylib": "02ac911c3b085422c275b571c879263dd45ebd7a4c52e2233d25b0585c439d9a"
+      },
+      "source_provenance": "The actual Hexa.NET.SDL2 1.2.17 macOS dylib contains SDL-release-2.32.10-0-g5d24957, matching the fixed release-2.32.10 commit. The dylib is thin for osx-arm64.",
+      "source_archives": [
+        {
+          "name": "SDL2",
+          "repository": "https://github.com/libsdl-org/SDL",
+          "revision": "5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "url": "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "delivery": "bundled"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/SDL2-2.32.10/LICENSE.txt",
+          "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127",
+          "source_url": "https://raw.githubusercontent.com/libsdl-org/SDL/5d249570393f7a37e037abf22cd6012a4cc56a71/LICENSE.txt",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "The SDL2 macOS component for osx-arm64; fixed source includes the Cocoa/CoreAudio/Metal platform implementations, CMake/Xcode/autoconf recipes and generated configuration templates. Apple platform SDK/frameworks are external system tools, not copied source dependencies.",
+        "evidence": [
+          "https://codeload.github.com/libsdl-org/SDL/tar.gz/5d249570393f7a37e037abf22cd6012a4cc56a71",
+          "https://github.com/libsdl-org/SDL/tree/5d249570393f7a37e037abf22cd6012a4cc56a71/Xcode/SDL",
+          "The exact native binary version string and per-RID SHA-256 are recorded above."
+        ]
+      },
+      "runtime_identifier": "osx-arm64"
+    },
+    {
+      "id": "libgifcodec",
+      "version": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "(MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later) AND BSD-3-Clause AND BSD-2-Clause",
+      "repository": {
+        "url": "https://skia.googlesource.com/libgifcodec/",
+        "commit": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+          "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625"
+        },
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+          "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0"
+        }
+      ],
+      "source_archives": [],
+      "vendored_source_paths": [
+        "third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      ],
+      "selected_alternative": "For the alternatively licensed SkGifImageReader files, this distribution elects GPL-2.0-or-later at version 3. Original alternatives and copyright notices remain intact; other BSD portions retain their own terms.",
+      "source_provenance": "SkiaSharp.NativeAssets.Win32 2.88.9 -> mono/SkiaSharp@9699cdf046a989423a5e5eca68e7fd813486d81c -> externals/skia@4bed689c9c9eb77a120c6a9d54af6a572c85d1c2 -> DEPS libgifcodec.",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+          "sha256": "d56bafdaeaa793331a29e9766b7efe66524c98533da798a57201e291863ef625",
+          "source_url": "https://skia.googlesource.com/libgifcodec/+/d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+          "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/GPL-3.0-or-later.txt",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only; source completeness of the containing native binary and its other inputs is reviewed separately.",
+        "evidence": [
+          "third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia",
+      "version": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause",
+      "repository": {
+        "url": "https://github.com/mono/skia",
+        "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+        }
+      ],
+      "source_provenance": "The fixed Skia revision is shared with the Windows no-DNG recipe. The containing macOS dylib is independently rebuilt and its actual input graph and paired source bundle must be verified by the installed macOS native override.",
+      "source_archives": [
+        {
+          "name": "Skia",
+          "repository": "https://github.com/mono/skia",
+          "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "delivery": "bundled"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd",
+          "source_url": "https://raw.githubusercontent.com/mono/skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+          "original_bytes": true
+        },
+        {
+          "path": "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt",
+          "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5",
+          "source_url": "https://api.nuget.org/v3-flatcontainer/skiasharp/2.88.9/skiasharp.2.88.9.nupkg",
+          "original_bytes": true
+        }
+      ],
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia expat",
+      "version": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "MIT",
+      "repository": {
+        "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+        "commit": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/expat/COPYING",
+          "sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "expat",
+          "repository": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+          "revision": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+          "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/624da0f593bb8d7e146b9f42b06d8e6c80d032a3.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "b7dbedd3ec7ef30c41ea803714ac72b171f8616ca416883c9114af8ac6c9c6f6",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/expat"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/624da0f593bb8d7e146b9f42b06d8e6c80d032a3.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia libjpeg-turbo",
+      "version": "9b894306ec3b28cea46e84c32b56773a98c483da",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "IJG AND BSD-3-Clause AND Zlib",
+      "repository": {
+        "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+        "commit": "9b894306ec3b28cea46e84c32b56773a98c483da"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/LICENSE.md",
+          "sha256": "60c756742db3ad1913304e8b13f0e86e22e51adb50cc0b3333c163f7e45ceec1"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/README.ijg",
+          "sha256": "4b7b9f8c03bb8d60270dfd12684e70ab21e4abfd27e73905cd1a7c4cae6f5cdb"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jcarith.c",
+          "sha256": "76b5a23029a6c44f063a35c29c4a5cadd13930e931e83c624d9e2d872e8ce750"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jdarith.c",
+          "sha256": "a0291db89f2a057eefcf234ccf02ad1ea385c00759af13fddec914bab0cfe0d1"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "libjpeg-turbo",
+          "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+          "revision": "9b894306ec3b28cea46e84c32b56773a98c483da",
+          "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git/+archive/9b894306ec3b28cea46e84c32b56773a98c483da.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "ff5184274dba06ce0a4880cf4af63a7d7c985820339a039d5192715e25349328",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/libjpeg-turbo"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git/+archive/9b894306ec3b28cea46e84c32b56773a98c483da.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      },
+      "required_product_acknowledgments": [
+        "This software is based in part on the work of the Independent JPEG Group."
+      ],
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia libpng",
+      "version": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "libpng-2.0",
+      "repository": {
+        "url": "https://skia.googlesource.com/third_party/libpng.git",
+        "commit": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libpng/LICENSE",
+          "sha256": "5c0bb4b05b1354ae7c173532b6702ea68b611047ff9b91c4d3af77da39c195d9"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libpng/README",
+          "sha256": "23272855dcd241684a02515af0f52e586133c3b37cebe59d3a13bbad15c1d3c2"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "libpng",
+          "repository": "https://skia.googlesource.com/third_party/libpng.git",
+          "revision": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+          "url": "https://skia.googlesource.com/third_party/libpng.git/+archive/f135775ad4e5d4408d2e12ffcc71bb36e6b48551.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "c653cbe97b7f3248bda84dda7e1233b99a6e467473dd6d1bfbbe925def5f3292",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/libpng"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://skia.googlesource.com/third_party/libpng.git/+archive/f135775ad4e5d4408d2e12ffcc71bb36e6b48551.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia libwebp",
+      "version": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause",
+      "repository": {
+        "url": "https://github.com/webmproject/libwebp.git",
+        "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libwebp/COPYING",
+          "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "libwebp",
+          "repository": "https://github.com/webmproject/libwebp.git",
+          "revision": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+          "url": "https://codeload.github.com/webmproject/libwebp/tar.gz/ca332209cb5567c9b249c86788cb2dbf8847e760",
+          "sha256": "1676107dc385f9bf6cb4c2b94d4a9359d1fd95ab6309cb587191a742df292fe2",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/libwebp"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://codeload.github.com/webmproject/libwebp/tar.gz/ca332209cb5567c9b249c86788cb2dbf8847e760",
+          "third-party/skia-no-dng-build.json"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia zlib",
+      "version": "3ca9f16f02950edffa391ec19cea856090158e9e",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "Zlib AND BSD-3-Clause",
+      "repository": {
+        "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+        "commit": "3ca9f16f02950edffa391ec19cea856090158e9e"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/LICENSE",
+          "sha256": "e1cfcc55c325b3f78cf55df9664abaa066e2271dffe8213347d9fccdfbac8f2c"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/adler32_simd.c",
+          "sha256": "e0c13f88e5eb7fc14fda25422369cc139092657ff352f1bdf7550239c7d31c06"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h",
+          "sha256": "ca7047566630aa93a701f06df3817e2b7cfd7f12807281b2e09013b8f9132c70"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c",
+          "sha256": "a76c3d70aed9b52b78196199da23e207ae6a01513ade15f40cfffe172b74b345"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inflate.c",
+          "sha256": "3252aade2fcfc7f3a541ea2a1b16dc2c51c19038d93088e09a1c66f29ea5db60"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h",
+          "sha256": "b22accd948ac32ff2ae4357d2e6271566e11f2badccdcc9dd36c6b0499e444f3"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/cpu_features.c",
+          "sha256": "aca9c8fbe556e770221641d454905105c1c9ab7dac5491ceafa9793323ed72a4"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc32_simd.c",
+          "sha256": "55b223e3f0fdcf0c262d3ff37aeb32ba063d300e53b97d56057bd3a34c8ae989"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc_folding.c",
+          "sha256": "b6d3d72e3ecc9d33d5de6d6547f68c577c203d623585adb6455d20216cced592"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/chromium/LICENSE.txt",
+          "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "revision": "3ca9f16f02950edffa391ec19cea856090158e9e",
+          "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/3ca9f16f02950edffa391ec19cea856090158e9e.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "437db42adb2106d66cd9c5f610a2b9fb18885bee669e31b9f2f872096a7777b8",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/zlib"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/3ca9f16f02950edffa391ec19cea856090158e9e.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Skia skcms",
+      "version": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause",
+      "repository": {
+        "url": "https://github.com/mono/skia",
+        "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/skcms/LICENSE",
+          "sha256": "e59bb5c5c6ba426a9ac4ba9fe667ad14c5166b12aa25be8af1d122b14fbe2e36"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "Skia",
+          "repository": "https://github.com/mono/skia",
+          "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": "Embedded in the exact Skia source archive. Original library/header copyright and license grants are retained separately from Skia root BSD.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This embedded source component only; its source is present in the full Skia archive, without an additional gitlink.",
+        "evidence": [
+          "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "HarfBuzz",
+      "version": "8.3.1",
+      "files": [
+        "libHarfBuzzSharp.dylib"
+      ],
+      "primary_spdx_expression": "MIT",
+      "repository": {
+        "url": "https://github.com/harfbuzz/harfbuzz",
+        "commit": "2b3631a866b3077d9d675caa4ec9010b342b5a7c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-COPYING",
+          "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/Skia-30ab-LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-ms-use-COPYING",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/Unicode-License-V3-current.txt",
+          "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/UCD-ReadMe.txt",
+          "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa"
+        }
+      ],
+      "binary_sha256": {
+        "libHarfBuzzSharp.dylib": "bdfb4e1001ae1b24cff6e1ebe740e0bbf88e5bd2678aa8409cadfac960f09037"
+      },
+      "source_provenance": "HarfBuzzSharp 8.3.1.1 -> mono/SkiaSharp@64f24b1cddb68d30ec0ac6b661964178fc21d5ec -> externals/skia@30abf4a0dcd3006f3a555e46906151e486f87b6e -> DEPS harfbuzz@2b3631a866b3077d9d675caa4ec9010b342b5a7c; official 8.3.1 tag resolves to this source commit.",
+      "source_archives": [
+        {
+          "name": "SkiaSharp-HarfBuzzSharp",
+          "repository": "https://github.com/mono/SkiaSharp",
+          "revision": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+          "url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+          "delivery": "bundled",
+          "sha256": "5e9aaab4ae7c7129b1584776c099caf0c2669ed1c32ac23f4afe1ab8f8d234bf",
+          "bytes": 33711222
+        },
+        {
+          "name": "Skia-HarfBuzz-config",
+          "repository": "https://github.com/mono/skia",
+          "revision": "30abf4a0dcd3006f3a555e46906151e486f87b6e",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/30abf4a0dcd3006f3a555e46906151e486f87b6e",
+          "delivery": "bundled",
+          "sha256": "4d82f9d3b0277e2f3d925004d124f1b96d714d56dfb36fb8369c81912a2376cb",
+          "bytes": 63393062
+        },
+        {
+          "name": "HarfBuzz",
+          "repository": "https://github.com/harfbuzz/harfbuzz",
+          "revision": "2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "url": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "delivery": "bundled",
+          "sha256": "984fdd77e4bb6fc4472378e09193773db728f6a0cd7b50c2bd7fd0af8ae0f080",
+          "bytes": 36553581
+        },
+        {
+          "name": "Unicode-UCD",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+          "delivery": "bundled",
+          "bytes": 8248819,
+          "destination_subdir": "unicode-data/15.1.0"
+        },
+        {
+          "name": "Unicode-UCDXML-grouped",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip",
+          "sha256": "39bad74c0f53cf6bdf9efb2270040cf37fd8b514f505a3c58077356ea41d5593",
+          "delivery": "bundled",
+          "bytes": 613918,
+          "destination_subdir": "unicode-data/15.1.0"
+        }
+      ],
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-COPYING",
+          "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64",
+          "source_url": "https://raw.githubusercontent.com/harfbuzz/harfbuzz/2b3631a866b3077d9d675caa4ec9010b342b5a7c/COPYING",
+          "original_bytes": true
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "macOS x64/arm64 compilation and modification source coverage for the pinned universal HarfBuzzSharp 8.3.1.1 dylib; historical byte-identical binary or generated-table reproduction is not claimed.",
+        "evidence": [
+          "https://github.com/mono/SkiaSharp/blob/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/macos/libHarfBuzzSharp/libHarfBuzzSharp.xcodeproj/project.pbxproj",
+          "https://github.com/mono/skia/blob/30abf4a0dcd3006f3a555e46906151e486f87b6e/third_party/harfbuzz/config-override.h",
+          "https://github.com/harfbuzz/harfbuzz/tree/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "The Release preprocessor configuration expands to 428 supplied HarfBuzz source inputs plus the supplied Skia config-override.h; no non-system input is missing.",
+          "The macOS project compiles harfbuzz-subset.cc with HAVE_OT, HAVE_CONFIG_OVERRIDE_H, HB_NO_FALLBACK_SHAPE and NDEBUG. It does not compile hb-coretext.cc or link CoreText, FreeType or Graphite.",
+          "Unicode 15.1.0 UCD and grouped UCDXML fixed archives accompany the readable/modifiable generated tables and their scripts."
+        ],
+        "boundaries": [
+          "The original C++ generated tables are modifiable source delivered directly in the fixed HarfBuzz archive. Exact historical Microsoft language-tags and IANA registry snapshots for a previously generated table have not been reconstructed; current online inputs are not represented as those snapshots.",
+          "The universal dylib links only platform libSystem and libc++; Apple compiler/SDK/platform libraries are external system dependencies, not copied third-party source inputs."
+        ]
+      },
+      "license_note": "HarfBuzz root MIT does not replace the Microsoft USE data MIT grant, Unicode data terms or BSD license of the Skia configuration input; retain all original notices.",
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Unicode Data",
+      "version": "15.1.0",
+      "files": [
+        "libHarfBuzzSharp.dylib"
+      ],
+      "primary_spdx_expression": "Unicode-3.0",
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/Unicode-License-V3-current.txt",
+          "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/UCD-ReadMe.txt",
+          "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa"
+        }
+      ],
+      "binary_sha256": {
+        "libHarfBuzzSharp.dylib": "bdfb4e1001ae1b24cff6e1ebe740e0bbf88e5bd2678aa8409cadfac960f09037"
+      },
+      "source_archives": [
+        {
+          "name": "Unicode-UCD",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+          "delivery": "bundled",
+          "bytes": 8248819,
+          "destination_subdir": "unicode-data/15.1.0"
+        },
+        {
+          "name": "Unicode-UCDXML-grouped",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip",
+          "sha256": "39bad74c0f53cf6bdf9efb2270040cf37fd8b514f505a3c58077356ea41d5593",
+          "delivery": "bundled",
+          "bytes": 613918,
+          "destination_subdir": "unicode-data/15.1.0"
+        }
+      ],
+      "license_note": "The data release retains its original 2023 copyright markers. The supplied complete Unicode License V3 is the current official grant (copyright 1991-2026), linked by official Unicode terms; it is not claimed to be a text originally embedded in the 2023 archives.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "Unicode data used for HarfBuzz source table generation; these archives are source-only and are not installed as runtime data.",
+        "evidence": [
+          "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip"
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
+    },
+    {
+      "id": "Avalonia native macOS",
+      "version": "11.3.12",
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ],
+      "files": [
+        "libAvaloniaNative.dylib"
+      ],
+      "primary_spdx_expression": "MIT AND BSD-3-Clause",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/AvaloniaUI/Avalonia",
+        "commit": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0"
+      },
+      "binary_sha256": {
+        "libAvaloniaNative.dylib": "83218865aa3e1fa28c72e2cdcb2dc05a74cb3daba5ddb832119e482d1f23f5e4"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/LICENSE.md",
+          "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+          "sha256": "0e1ecea8b94eaacec8ade631994149d678940d05163b21d6f4be3d5dccb0a08d"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "LICENSES/third-party/avalonia-native-11.3.12/main-mm-original-notice.txt",
+          "sha256": "f6dda0412084fe2bc6a135d0b5f87a0fb1350e9de4a56f09adcaf4af61278d01"
+        },
+        {
+          "path": "LICENSES/third-party/numerge-9738c612/LICENSE.md",
+          "sha256": "d6f7069bdda58eca6a82b66e22a78df68e624c4c9ca11b425f242ef1c2926ffb"
+        },
+        {
+          "path": "LICENSES/third-party/microcom-runtime-0.11.0/LICENSE.txt",
+          "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9"
+        }
+      ],
+      "source_archives": [
+        {
+          "name": "Avalonia",
+          "repository": "https://github.com/AvaloniaUI/Avalonia",
+          "revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+          "url": "https://codeload.github.com/AvaloniaUI/Avalonia/tar.gz/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+          "delivery": "bundled",
+          "sha256": "8525bc62f19f731f69848e5a835163bf8aa1e6cd17f42f5b01fae03b8917cc56",
+          "bytes": 36081926
+        },
+        {
+          "name": "Numerge-build-input",
+          "repository": "https://github.com/kekekeks/Numerge",
+          "revision": "9738c6121fdd143c78d3e25686a7e4e13c00f586",
+          "url": "https://codeload.github.com/kekekeks/Numerge/tar.gz/9738c6121fdd143c78d3e25686a7e4e13c00f586",
+          "delivery": "bundled",
+          "sha256": "f2a1473b3ee552d1cf5efe1a3b2a142ff605e44bcda22d23cb91c6c6e88e80c7",
+          "bytes": 7607
+        },
+        {
+          "name": "MicroCom-generator",
+          "repository": "https://github.com/kekekeks/MicroCom",
+          "revision": "7e773759cfc1012a5d080d4129c4718a662884b0",
+          "url": "https://codeload.github.com/kekekeks/MicroCom/tar.gz/7e773759cfc1012a5d080d4129c4718a662884b0",
+          "delivery": "bundled",
+          "sha256": "5502ba52f1c4ea8f32e54a7750f2cc16d2a13a47a9b438a0afeb7f12e28b1a36",
+          "bytes": 24554
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "macOS x64/arm64 compilation and modification source coverage of the pinned universal Avalonia.Native 11.3.12 dylib, including the IDL header input and generator recipe. This source-delivery statement does not resolve the separately disclosed Avalonia/MS-PL/AGPL combination authorization.",
+        "evidence": [
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/native/Avalonia.Native/src/OSX/Avalonia.Native.OSX.xcodeproj/project.pbxproj",
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/nukebuild/Build.cs",
+          "The 34 Xcode source translation units and 143 quoted imports resolve to the fixed Avalonia source, generated avalonia-native.h or platform SDK headers.",
+          "GenerateCppHeaders parses src/Avalonia.Native/avn.idl through MicroCom.CodeGenerator 0.11.0 and writes native/Avalonia.Native/inc/avalonia-native.h; both input and generator sources are supplied.",
+          "The fixed Numerge gitlink is supplied because nukebuild/_build.csproj compiles its source while building the upstream build tool."
+        ],
+        "build_directions": [
+          "Place Numerge at external/Numerge at the recorded fixed gitlink revision.",
+          "Restore the package-pinned nukebuild/_build.csproj and run the upstream GenerateCppHeaders target before native compilation. The full fixed MicroCom generator source accompanies the original package-pinned recipe.",
+          "Run the native Xcode build through the upstream native build target/build-native.sh; select x86_64 or arm64 as required. Retain the original build scripts and source headers."
+        ],
+        "build_tools": {
+          "MicroCom.CodeGenerator": "0.11.0; fixed source revision7e773759cfc1012a5d080d4129c4718a662884b0, version commit immediately preceding the official NuGet publication on2022-11-02.",
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.8.0; unmodified general build/formatting tool dependency of CodeGenerator, source commit8de9e4b2beba5b7c0edd6f1e6a4f192a51fdc872 from NuGet metadata. Its C# formatting path is not compiled into the native dylib.",
+          "Roslyn transitive tools": "Microsoft.CodeAnalysis.Common/CSharp/Workspaces.Common3.8.0 and Humanizer.Core2.2.0; package-pinned build tools, not native object inputs.",
+          "upstream nuke": "Original nukebuild/_build.csproj preserves the other explicit general build-tool PackageReference versions."
+        },
+        "boundaries": [
+          "AppKit, Foundation, Carbon, Metal, QuartzCore, IOSurface, OpenGL, UniformTypeIdentifiers, pthread and the C++ standard library are external Apple platform SDK/system dependencies; those libraries are not copied into the source bundle.",
+          "The source coverage concerns the delivered modifiable source, IDL and build/generator recipes. It does not claim a byte-identical rebuild of the historical NuGet dylib or include the self-hosting source closure of general compiler/SDK tools."
+        ]
+      },
+      "source_provenance": "Avalonia.Native NuGet repository commit37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0; fixed native Xcode project and IDL recipe; Numerge gitlink9738c6121fdd143c78d3e25686a7e4e13c00f586; MicroCom generator version0.11.0.",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/avalonia-native-11.3.12/main-mm-original-notice.txt",
+          "sha256": "f6dda0412084fe2bc6a135d0b5f87a0fb1350e9de4a56f09adcaf4af61278d01",
+          "source_url": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/native/Avalonia.Native/src/OSX/main.mm",
+          "original_bytes": true
+        },
+        {
+          "path": "LICENSES/third-party/numerge-9738c612/LICENSE.md",
+          "sha256": "d6f7069bdda58eca6a82b66e22a78df68e624c4c9ca11b425f242ef1c2926ffb",
+          "source_url": "https://raw.githubusercontent.com/kekekeks/Numerge/9738c6121fdd143c78d3e25686a7e4e13c00f586/license.md",
+          "original_bytes": true
+        }
+      ]
     }
   ],
   "runtime_pack_policy": {
@@ -5688,6 +6793,228 @@
           "Dedicated JPEG/WebP/GIF decoding checks were not run; no new test harness was introduced.",
           "The source-coverage statement is scoped to the delivered modified source and actual build inputs; it is not a claim of byte-identical historical toolchain/DLL reproduction or a legal certification."
         ]
+      }
+    },
+    {
+      "id": "skiasharp-2.88.9-nodng-osx-x64",
+      "path": "libSkiaSharp.dylib",
+      "runtime_identifier": "osx-x64",
+      "status": "pending",
+      "supersedes_sha256": "169e3c792cd1d364e518c9d693d74580659569dff8bafb4719c7576a556bccc3",
+      "archive": {
+        "name": "SkiaSharp-2.88.9-no-dng-osx-x64.zip",
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64.zip"
+      },
+      "manifest": {
+        "path": "native-build.json"
+      },
+      "sources_asset": {
+        "name": "SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip",
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip"
+      },
+      "provenance": {
+        "sources": {
+          "wrapper": {
+            "repository": "https://github.com/mono/SkiaSharp",
+            "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+            "archive_sha256": "5490a714cf26031724a9c771b3e76e0d27ac3243da538d4b83dcdd1cedd4c96d"
+          },
+          "skia": {
+            "repository": "https://github.com/mono/skia",
+            "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+            "archive_sha256": "4dee89bef1406efd0f0c35ef24ec801a8f18ad37d6033d4360c2120eb858da0e"
+          }
+        },
+        "patches": [
+          {
+            "path": "third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+            "sha256": "cd82386bb78cd463a99386ba1b506afbe587a25aad9c3e7b5445dee44c55fc26"
+          },
+          {
+            "path": "third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch",
+            "sha256": "b10f336dfcb22cd9034722ddb6be6fe3a52d866930cbfcd508882c0ce1117327"
+          },
+          {
+            "path": "third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch",
+            "sha256": "30c847ac0ceb88fed5a00a1c568d567f8bc1bb8e371ecdd6725bdd941b445eff"
+          }
+        ],
+        "gn_args": {
+          "skia_use_dng_sdk": false,
+          "skia_use_piex": false,
+          "target_os": "mac",
+          "target_cpu": "x64"
+        }
+      },
+      "affected_components": [
+        "SkiaSharp.NativeAssets.macOS/2.88.9",
+        "Skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      ],
+      "removed_components": [
+        "Adobe DNG SDK/1.4.0"
+      ],
+      "distribution_review": {
+        "status": "pending",
+        "blocking_issues": [
+          "Actual macOS native build, matching source closure and artifact review have not completed."
+        ]
+      },
+      "scope_note": "The original universal macOS NuGet binary contains DNG implementation markers. Only a separately reviewed thin no-DNG replacement for this RID may satisfy this entry. Windows verification does not clear this artifact.",
+      "native_notice_paths": [
+        "LICENSES/third-party/apache-2.0/LICENSE.txt",
+        "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+        "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+        "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/chromium/LICENSE.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/VMA-vk_mem_alloc.h.LICENSE-excerpt.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/Vulkan-vulkan_core.h.LICENSE-excerpt.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/include/third_party/vulkan/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/skcms/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/include/LICENSE.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/expat/COPYING",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/LICENSE.md",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/README.ijg",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jcarith.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jdarith.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libpng/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libpng/README",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libwebp/COPYING",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/adler32_simd.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inflate.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/cpu_features.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc32_simd.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc_folding.c",
+        "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+        "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt"
+      ],
+      "required_product_acknowledgments": [
+        "This software is based in part on the work of the Independent JPEG Group."
+      ],
+      "selected_gif_license": "For alternatively licensed SkGifImageReader portions this native distribution elects GPL-2.0-or-later at version 3; BSD portions retain their separate original terms. Include the complete corresponding source archive and original copyright notices.",
+      "notice": {
+        "path": "NOTICE-NATIVE.txt"
+      },
+      "source_coverage": {
+        "status": "pending",
+        "scope": "The actual macOS no-DNG dylib and its exact paired source archive require independent review before public pins are recorded.",
+        "evidence": []
+      }
+    },
+    {
+      "id": "skiasharp-2.88.9-nodng-osx-arm64",
+      "path": "libSkiaSharp.dylib",
+      "runtime_identifier": "osx-arm64",
+      "status": "pending",
+      "supersedes_sha256": "169e3c792cd1d364e518c9d693d74580659569dff8bafb4719c7576a556bccc3",
+      "archive": {
+        "name": "SkiaSharp-2.88.9-no-dng-osx-arm64.zip",
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64.zip"
+      },
+      "manifest": {
+        "path": "native-build.json"
+      },
+      "sources_asset": {
+        "name": "SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip",
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip"
+      },
+      "provenance": {
+        "sources": {
+          "wrapper": {
+            "repository": "https://github.com/mono/SkiaSharp",
+            "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+            "archive_sha256": "5490a714cf26031724a9c771b3e76e0d27ac3243da538d4b83dcdd1cedd4c96d"
+          },
+          "skia": {
+            "repository": "https://github.com/mono/skia",
+            "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+            "archive_sha256": "4dee89bef1406efd0f0c35ef24ec801a8f18ad37d6033d4360c2120eb858da0e"
+          }
+        },
+        "patches": [
+          {
+            "path": "third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+            "sha256": "cd82386bb78cd463a99386ba1b506afbe587a25aad9c3e7b5445dee44c55fc26"
+          },
+          {
+            "path": "third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch",
+            "sha256": "b10f336dfcb22cd9034722ddb6be6fe3a52d866930cbfcd508882c0ce1117327"
+          },
+          {
+            "path": "third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch",
+            "sha256": "30c847ac0ceb88fed5a00a1c568d567f8bc1bb8e371ecdd6725bdd941b445eff"
+          }
+        ],
+        "gn_args": {
+          "skia_use_dng_sdk": false,
+          "skia_use_piex": false,
+          "target_os": "mac",
+          "target_cpu": "arm64"
+        }
+      },
+      "affected_components": [
+        "SkiaSharp.NativeAssets.macOS/2.88.9",
+        "Skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      ],
+      "removed_components": [
+        "Adobe DNG SDK/1.4.0"
+      ],
+      "distribution_review": {
+        "status": "pending",
+        "blocking_issues": [
+          "Actual macOS native build, matching source closure and artifact review have not completed."
+        ]
+      },
+      "scope_note": "The original universal macOS NuGet binary contains DNG implementation markers. Only a separately reviewed thin no-DNG replacement for this RID may satisfy this entry. Windows verification does not clear this artifact.",
+      "native_notice_paths": [
+        "LICENSES/third-party/apache-2.0/LICENSE.txt",
+        "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+        "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+        "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/chromium/LICENSE.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/VMA-vk_mem_alloc.h.LICENSE-excerpt.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/Vulkan-vulkan_core.h.LICENSE-excerpt.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/include/third_party/vulkan/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/skcms/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/include/LICENSE.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/expat/COPYING",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/LICENSE.md",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/README.ijg",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jcarith.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jdarith.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libpng/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libpng/README",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libwebp/COPYING",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/adler32_simd.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inflate.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/cpu_features.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc32_simd.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc_folding.c",
+        "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+        "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt"
+      ],
+      "required_product_acknowledgments": [
+        "This software is based in part on the work of the Independent JPEG Group."
+      ],
+      "selected_gif_license": "For alternatively licensed SkGifImageReader portions this native distribution elects GPL-2.0-or-later at version 3; BSD portions retain their separate original terms. Include the complete corresponding source archive and original copyright notices.",
+      "notice": {
+        "path": "NOTICE-NATIVE.txt"
+      },
+      "source_coverage": {
+        "status": "pending",
+        "scope": "The actual macOS no-DNG dylib and its exact paired source archive require independent review before public pins are recorded.",
+        "evidence": []
       }
     }
   ]

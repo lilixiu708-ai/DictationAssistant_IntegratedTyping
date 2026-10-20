@@ -1,10 +1,12 @@
 # DictationAssistant Typing · 听写与背诵练习
 
-看提示背诵，或听播报后拼写。直接从 Word / Excel 选择提示与答案，默认看离子式、输入英文名称，也可交换方向；支持静音计时、成绩复核和 CSV 导出，适用于 Windows x64。
+看提示背诵，或听播报后拼写。直接从 Word / Excel 选择提示与答案，默认看离子式、输入英文名称，也可交换方向；支持静音计时、成绩复核和 CSV 导出。当前公开安装包适用于 Windows x64。
 
 **当前版本：R7（`v4.0.0-typing.7`）预发布。** 完整包包含背诵练习 1.4.0、Word / Excel 导入 1.2.0 和 .NET 运行环境。“背诵练习”是原同步打字插件的新名称，原有设置与译文继续沿用。
 
 **背诵练习 1.4.1 已独立预发布。** 练习中可点击「结算成绩」提前结束，提示开关改为「显示提示」。R7 完整包仍包含 1.4.0；已有 R7，下载下方 1.4.1 插件包并替换练习插件目录即可。[查看用法](docs/同步打字插件使用说明.md#141-更新中途结算与提示)。
+
+**R8 macOS 整合版准备中，尚未发布。** 面向 macOS 15 及更新版本，分别提供 Intel 和 Apple Silicon 包，均内置背诵练习 1.4.1、Word / Excel 导入 1.2.0 及 .NET 运行环境。[安装与源码构建说明](docs/MACOS.md)。
 
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
@@ -18,7 +20,7 @@ Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披
 
 ## 下载与使用
 
-首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`；需要中途结算时，再安装下方的 1.4.1 独立更新。插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6。
+Windows 首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`；需要中途结算时，再安装下方的 1.4.1 独立更新。插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6。
 
 | 用途 | 版本与下载 | 选择的附件 |
 | --- | --- | --- |
@@ -47,7 +49,7 @@ build-windows-typing.cmd
 python scripts\verify_build.py
 ```
 
-脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。[独立原生构建依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)供开发和复核使用，普通安装无需下载。
+脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。[Windows 独立原生构建依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)已公开，普通安装无需下载。macOS 构建入口为 `build-macos-typing.sh`，其独立原生资产和实际构建检查仍在准备，见 [macOS 说明](docs/MACOS.md#源码构建)。
 
 Linux 开发将锁文件放在各项目 `obj/`，避免覆盖已提交的 Windows RID 锁文件：
 

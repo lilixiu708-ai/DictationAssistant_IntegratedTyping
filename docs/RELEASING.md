@@ -2,6 +2,8 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**R8（`v4.0.0-typing.8`）macOS 整合版准备中，尚未公开。** 面向 macOS 15+，分别准备 Intel x64 与 Apple Silicon arm64 包，均内置背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应 .NET 运行环境。实际 macOS 构建、运行和公开下载复核尚待完成；Windows 当前发行仍为 R7，另有背诵练习 1.4.1 独立更新。
+
 **[背诵练习 1.4.1 已独立预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1)。** 标签对应源码提交 `551174f64e15929c648b178affc3a2ec4f2f5cf3`，[Windows CI 39413856150](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39413856150) 的构建与发布均成功。固定公开 R7 加载 1.4.1，核对 API 1 / 功能级别 5、原导入 1.2.0、15 项既有检查及主窗口正常开闭通过；Windows 真实练习 GUI、原生音频与输入法仍未实测。本次仅更新练习插件，R7 完整包仍内置 1.4.0，导入插件与历史发行资产不变。
 
 公开后五份附件重新下载的 SHA-256 与服务器摘要均通过；177 个选定源码文件与标签逐字节一致，原始声明及私有依赖源码闭包完整，下载源码已独立还原并通过 Release 发布构建，旧发行资产和标签保持不变。
@@ -42,7 +44,7 @@ R5 本体与同步打字 1.1.0、Word 导入 1.0.1 已公开，来自提交 `ae1
 - **Avalonia 组合授权路径尚未解决：** 固定源码中 19 个 C# 文件有 Microsoft/MS-PL 头，实际 `Avalonia.Controls.dll` 含 22 个相关 TypeDef 及真实 IL，App 直接引用该程序集。[MS-PL §3(D)](../LICENSES/third-party/avalonia-11.3.12/NOTICE.md#silverlight-toolkit) 的二进制许可条件不等于这些源文件已允许 AGPL 再许可；未找到特定部分的双授权或链接例外，见[固定核查记录](../third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)。MIT 顶层标签或 DNG 替换成功不能解除这一独立事项；这不是宣称全部 Avalonia 违法。
 - **HarfBuzz/ANGLE 源码覆盖已补齐：** Windows 编译与修改所需的固定来源、配置/生成输入和交付清单见 [HarfBuzz 输入说明](../third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs/README.md)、[ANGLE 交付说明](../third-party/sources/angle-cb8b4e1-source-directions/README.md)及[组件目录](../third-party/components.json)。该结论不声称复现历史 DLL 的全部编译器版本或逐字节输出；最终源码包仍须实际包含匹配材料。
 
-独立 Skia 原生包不含 Avalonia，已完成固定资产与源码闭包核对并公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。这不解决 App 的 Avalonia/MS-PL 组合项；本体发行资产和说明继续保留该未解决事项。
+Windows 独立 Skia 原生包不含 Avalonia，已完成固定资产与源码闭包核对并公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。macOS 计划使用独立标签 `native-skia-2.88.9-no-dng-macos.1`，尚待构建、复核及公开，不能沿用 Windows 的实物验证结论。这不解决 App 的 Avalonia/MS-PL 组合项；本体发行资产和说明继续保留该未解决事项。
 
 ## 构建与审核
 
@@ -73,6 +75,15 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 1. 从同一提交构建 R7 本体、背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，分别使用上述标签；保留原插件 ID、程序集及本机数据目录。升级保留用户设置，不把新插件单独作为 R6 更新包。
 2. 运行既有检查、插件加载、包校验及对应界面验证；按实际平台记录范围。当前已通过 Common Ions 25 对记号、Excel 19 页输出回归、31 项 headless 窗口检查及 15 项既有检查；headless 不等于 Windows 真实练习 GUI 或像素渲染。
 3. 每份发行分别准备二进制 ZIP、同一提交的对应源码、`SHA256SUMS` 及原始许可材料；继续披露宿主 Avalonia/MS-PL 组合授权事项。草稿完整核对后公开，再重新下载验证，最后更新首页入口，保留历史标签和资产。
+
+## R8 macOS 整合版：准备中
+
+1. 在对应架构的 macOS runner 上分别构建 Intel x64 和 Apple Silicon arm64；最低系统版本为 macOS 15。使用 `build-macos-typing.sh --rid osx-x64` 或 `--rid osx-arm64`，将两个插件放入 `.app/Contents/MacOS/Plugins/`，保留插件 ID、API 1、功能级别 5 和原配置路径。
+2. 先完成 macOS 无 DNG 原生资产的二进制、对应源码和原始声明复核，独立发布后固定地址与哈希，再执行正式应用打包。未固定的审核资产不进入公开包，既有 Windows 原生资产与 R7 附件不改动。
+3. 在每个架构的实际包上核验原生加载、双插件发现、既有逻辑检查、系统语音合成、SDL 播放路径和主窗口开闭；分别记录结果。当前只有 Linux 的 15 项实际进程与语音名解析检查通过，不能写成 Mac 已验证；扬声器、真实翻译 API、中文输入法和完整练习交互仍须实机核对。
+4. 应用采用 ad-hoc 签名，不宣称 Developer ID 签名或 Apple 公证。两份完整应用包、同一提交的配套源码、原始许可、披露文件和 `SHA256SUMS` 齐全后才公开，并重新下载复核。只沿用已明确披露的 Avalonia 组合授权事项，不放行新的来源或完整性缺项。
+
+安装、首次打开及 macOS 会话凭据的说明见 [MACOS.md](MACOS.md)。发布完成后再补充本节的源码提交、实际 CI 和下载入口。
 
 ## 仅发布 Word / Excel 导入插件 1.1.0
 

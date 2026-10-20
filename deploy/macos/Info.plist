@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleIdentifier</key><string>io.github.lilixiu708-ai.dictationassistant</string>
+  <key>CFBundleName</key><string>DictationAssistant</string>
+  <key>CFBundleDisplayName</key><string>DictationAssistant</string>
+  <key>CFBundleExecutable</key><string>DictationAssistant.App</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleSignature</key><string>????</string>
+  <key>CFBundleShortVersionString</key><string>4.0.0</string>
+  <key>CFBundleVersion</key><string>4.0.8</string>
+  <key>CFBundleIconFile</key><string>DictationAssistant.icns</string>
+  <key>LSMinimumSystemVersion</key><string>15.0</string>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSPrincipalClass</key><string>NSApplication</string>
+  <key>NSHumanReadableCopyright</key><string>Copyright (C) 2013-2026 alampy.com. Original notices retained in LICENSE.md and NOTICE.md.</string>
+</dict>
+</plist>

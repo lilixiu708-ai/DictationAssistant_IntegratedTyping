@@ -16,6 +16,7 @@
 | 2026-10-20 | 将练习插件显示名改为背诵练习，增加文档前置配对、无音频计时与离子拼写判定，默认离子式提示/英文答案；增加保留 Word 直接上下标的可选读取和表头识别、宿主功能级别 5 文档选源能力，以及成绩提示/来源字段；保留稳定插件身份及本地配置路径，不包含私人文档或完整提取数据 |
 | 2026-10-20 | 重写历史 Release 的标题和说明，整理 R7 与两个插件的安装入口及版本要求；统一后续生成 JSON 的换行，修复发布校验中的 CRLF/LF 差异，并为已验证的原附件提供严格限定的草稿上传恢复流程，公开 R7 与背诵练习 1.4.0、Word / Excel 导入 1.2.0；源码标签与附件字节保持不变 |
 | 2026-10-20 | 背诵练习插件 1.4.1 增加中途结算，停止播报并等待当前练习结束后，仅对已提交和当前非空输入评分；补充结算与关闭、超时、重复操作的状态处理，统一“显示提示”和提示编辑入口，简化练习及翻译配置文案；继续使用 R7 宿主与原有配置目录 |
+| 2026-10-20 | 准备 R8 macOS 15+ 整合版，按 Intel x64 / Apple Silicon arm64 提供本体与背诵练习 1.4.1、Word / Excel 导入 1.2.0；新增 macOS 应用包、同版本无 DNG 原生构建与发行准备材料，补充安装和验证范围说明；修正外部进程取消与输入输出管道处理、保留完整系统语音名称。当前尚未公开 Mac 资产，Windows 已发行标签和附件不改动 |
 
 下表从审计观察点 `5bff3fae648ff124b019140e55669556f29ab377` 的实际 Git 文件历史生成，相对于上述上游基准列出当时的修改和新增文件。日期是该文件在观察点的最后修改日期，不将它当作首次创作日期或版权权属证明。该观察点共 206 个跟踪文件：20 个修改、77 个新增/移入、109 个不变；下表不包含未改动的上游文件。
 
@@ -129,6 +130,8 @@
 
 ## 同版本原生重建与源码交付
 
+本节早期审核观察保留用于追溯。其后的 Windows 原生源码闭包复核已完成，资产已公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)；Windows 应用也已按既有授权披露 Avalonia 组合事项后发行。下文“未公开”“暂停”是当时状态，不代表当前发行状态。2026-10-20 的 macOS 原生资产与 R8 仍在准备，未沿用 Windows 检查结论。
+
 2026-10-20 保留 Avalonia 11.3.12、SkiaSharp 2.88.9，在原生重建中关闭 RAW/DNG、PIEX，未升级图形 API。新增固定源码/工具配置、两个下载与构建补丁、构建脚本、独立工作流及 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)。实际 [CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 已成功：1,124 输入及编译/实现检查排除 DNG/PIEX，941 个导出与官方相同、原生版本 88.1，上游 PNG 和 production App Windows 窗口开闭通过。新 DLL 与两 ZIP 的实际哈希及未验证范围均保留在原生构建文档和[原始证据](third-party/evidence/skia-no-dng-2.88.9-win-x64/README.md)。
 
 本次补齐 HarfBuzz 和 ANGLE 的 Windows 编译/修改源码覆盖，分别保留 [固定输入与生成材料](third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs/README.md)和 [ANGLE 来源/交付清单](third-party/sources/angle-cb8b4e1-source-directions/README.md)。原始第三方字节、版权与许可不改，具体变换和可复建边界由对应目录记录；不宣称历史 DLL 逐字节可复现。
@@ -196,4 +199,4 @@
 - 根目录 AGPL 许可证全文保持原样，上游 `Copyright (C) 2013-2026 alampy.com` 及授权、无担保短通知在 README 和 NOTICE 中恢复保留。
 - 源码许可与修改声明可以放在项目级文件中；没有在每个原始文件上另行添加新的版权人，也没有将第三方文件批量重标为 AGPL。
 - 本 fork 的 AI 辅助修改说明仅覆盖本 fork 的修改，不覆盖上游原作的创作过程。
-- 当前 `typing.4` 为源码预览，no-DNG 替代已通过技术与实物验证，App 与 Avalonia 中 MS-PL 部分的组合授权路径独立未解决，App 公开发布继续暂停。本文件、特定组件源码覆盖或构建成功均不等于全面合规认证；具体证据与处理状态见 [版权与许可审计](docs/版权与许可审计.md)。
+- `typing.4` 审核时为源码预览，no-DNG 替代已通过技术与实物验证，当时 App 公开发布暂停；后续发行状态见上节和 [发布记录](docs/RELEASING.md)。App 与 Avalonia 中 MS-PL 部分的组合授权路径仍未解决。本文件、特定组件源码覆盖或构建成功均不等于全面合规认证；具体证据与处理状态见 [版权与许可审计](docs/版权与许可审计.md)。

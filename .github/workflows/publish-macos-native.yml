@@ -1,0 +1,58 @@
+name: Upload reviewed macOS native dependencies to draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful pinned macOS native producer run with both architectures
+        required: true
+        type: string
+      release_id:
+        description: Existing empty native-skia-2.88.9-no-dng-macos.1 draft release ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upload-reviewed-macos-native
+  cancel-in-progress: false
+
+jobs:
+  upload-native-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: SkiaSharp-2.88.9-no-dng-osx-x64
+          path: native-inputs/osx-x64
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: SkiaSharp-2.88.9-no-dng-osx-arm64
+          path: native-inputs/osx-arm64
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify both reviewed pairs and upload the seven assets without publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCER_RUN_ID: ${{ inputs.run_id }}
+          NATIVE_DRAFT_ID: ${{ inputs.release_id }}
+        run: >-
+          python scripts/publish_macos_native.py
+          --run-id "$PRODUCER_RUN_ID"
+          --release-id "$NATIVE_DRAFT_ID"
+          --input-dir native-inputs
+          --output-dir native-upload

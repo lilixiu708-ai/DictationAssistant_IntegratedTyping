@@ -24,6 +24,43 @@ PROJECT_NOTICES = ('LICENSE.md', 'NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_N
 BINARY_SUFFIXES = ('.dll', '.exe', '.so', '.dylib')
 NATIVE_INDEX = 'NATIVE_OVERRIDES.json'
 ORIGINAL_DNG_SKIA_SHA256 = '9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd'
+RUNTIME_IDENTIFIERS = ('win-x64', 'osx-x64', 'osx-arm64')
+
+
+def runtime_identifier(publish, requested=None):
+    """Use the host publish target, never a portable plugin's target."""
+    deps = publish / 'DictationAssistant.App.deps.json'
+    detected = None
+    if deps.is_file():
+        target = json.loads(deps.read_text(encoding='utf-8-sig'))['runtimeTarget']['name']
+        if '/' in target:
+            detected = target.rsplit('/', 1)[1]
+    selected = requested or detected or 'win-x64'
+    if selected not in RUNTIME_IDENTIFIERS:
+        raise ValueError(f'Unsupported release runtime: {selected}')
+    if detected and detected != selected:
+        raise ValueError(f'Requested runtime {selected} differs from the actual host publish target {detected}')
+    return selected
+
+
+def for_runtime(entries, runtime):
+    return [entry for entry in entries
+            if (not entry.get('runtime_identifier') or entry['runtime_identifier'] == runtime)
+            and (not entry.get('runtime_identifiers') or runtime in entry['runtime_identifiers'])]
+
+
+def runtime_evidence(evidence, runtime):
+    """Platform evidence supplements a package without changing other platforms."""
+    return {**evidence, **evidence.get('runtime_overrides', {}).get(runtime, {})}
+
+
+def verify_macho(binary, runtime, file_type):
+    expected = {'osx-x64': ('x86_64', 0x01000007), 'osx-arm64': ('arm64', 0x0100000c)}[runtime]
+    if len(binary) < 32 or binary[:4] != b'\xcf\xfa\xed\xfe':
+        raise ValueError('The platform-specific native image must be a thin 64-bit little-endian Mach-O')
+    if struct.unpack_from('<I', binary, 4)[0] != expected[1] or struct.unpack_from('<I', binary, 12)[0] != file_type:
+        raise ValueError(f'Mach-O image does not match {runtime} or its expected file type')
+    return expected
 
 
 def digest(path):
@@ -78,7 +115,7 @@ def download_native_asset(asset, filename, maximum_bytes):
     return target
 
 
-def verify_native_manifest(entry, raw, binary, review_only):
+def verify_native_manifest(entry, raw, binary, review_only, review_build_commit=None):
     """Check the producer contract before any replacement becomes usable."""
     manifest = json.loads(raw.decode('utf-8'))
     if manifest.get('schema_version') != 1 or manifest.get('status') != 'verified':
@@ -93,11 +130,20 @@ def verify_native_manifest(entry, raw, binary, review_only):
         raise ValueError('The original DNG-enabled DLL cannot be used as a replacement')
     if any(marker in binary for marker in (b'.?AVdng_', b'dng_host', b'dng_info')):
         raise ValueError('Native replacement still contains known Adobe DNG implementation markers')
-    if len(binary) < 64 or binary[:2] != b'MZ':
-        raise ValueError('Native replacement is not a Windows PE image')
-    pe_offset = struct.unpack_from('<I', binary, 0x3c)[0]
-    if pe_offset + 6 > len(binary) or binary[pe_offset:pe_offset + 4] != b'PE\0\0' or struct.unpack_from('<H', binary, pe_offset + 4)[0] != 0x8664:
-        raise ValueError('Native replacement is not a Windows x64 PE image')
+    if entry['runtime_identifier'].startswith('osx-'):
+        if any(marker in binary for marker in (b'dng_', b'SkDng', b'SkRawCodec', b'piex::')):
+            raise ValueError('Native macOS replacement still contains known DNG/PIEX implementation markers')
+        arch, cpu = verify_macho(binary, entry['runtime_identifier'], 6)
+        if details.get('mach_o_arch') != arch or details.get('mach_o_cputype') != hex(cpu):
+            raise ValueError('Native build record does not describe the actual Mach-O architecture')
+        if details.get('code_signature') != 'ad-hoc; verified before hashing':
+            raise ValueError('The native producer must verify its ad-hoc signature before fixing binary hashes')
+    else:
+        if len(binary) < 64 or binary[:2] != b'MZ':
+            raise ValueError('Native replacement is not a Windows PE image')
+        pe_offset = struct.unpack_from('<I', binary, 0x3c)[0]
+        if pe_offset + 6 > len(binary) or binary[pe_offset:pe_offset + 4] != b'PE\0\0' or struct.unpack_from('<H', binary, pe_offset + 4)[0] != 0x8664:
+            raise ValueError('Native replacement is not a Windows x64 PE image')
     provenance = entry['provenance']
     for name, expected in provenance['sources'].items():
         actual = manifest['sources'][name]
@@ -133,10 +179,18 @@ def verify_native_manifest(entry, raw, binary, review_only):
     if source['name'] != entry['sources_asset']['name']:
         raise ValueError('Native corresponding-source archive name does not match the configured asset')
     if review_only:
-        head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-        if commit != head:
-            raise ValueError('Local native review artifact must use the current build-script commit')
+        if review_build_commit is not None:
+            if (not entry['runtime_identifier'].startswith('osx-') or len(review_build_commit) != 40
+                    or any(character not in '0123456789abcdef' for character in review_build_commit)):
+                raise ValueError('An explicit native review producer commit requires a macOS RID and a full lowercase commit SHA')
+            expected_commit = review_build_commit
+        else:
+            expected_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+        if commit != expected_commit:
+            raise ValueError('Native review artifact does not match the exact selected build-script commit')
     else:
+        if review_build_commit is not None:
+            raise ValueError('A public native installation cannot use a review-only producer commit')
         if entry.get('status') != 'verified':
             raise ValueError('The native artifact has not been reviewed and pinned in the catalog')
         if binary_sha != require_hash(entry.get('binary_sha256'), 'replacement DLL'):
@@ -157,9 +211,12 @@ def verify_native_manifest(entry, raw, binary, review_only):
     return manifest
 
 
-def install_native_overrides(publish, catalog_path, local_review=None):
+def install_native_overrides(publish, catalog_path, local_review=None, runtime=None, review_build_commit=None):
     catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
-    entries = catalog.get('native_overrides', [])
+    runtime = runtime_identifier(publish, runtime)
+    if review_build_commit is not None and (not local_review or not runtime.startswith('osx-')):
+        raise ValueError('--native-review-build-commit is only available with a macOS --native-review-archive')
+    entries = for_runtime(catalog.get('native_overrides', []), runtime)
     if local_review and len(entries) != 1:
         raise ValueError('A local native review archive requires exactly one configured override')
     records = []
@@ -169,7 +226,7 @@ def install_native_overrides(publish, catalog_path, local_review=None):
             archive = local_review
         else:
             if entry.get('status') != 'verified':
-                raise ValueError(f'Native replacement {entry["id"]} is pending. Run the no-DNG Windows build and review its actual DLL/source before pinning an asset; the original DLL will not be used.')
+                raise ValueError(f'Native replacement {entry["id"]} is pending. Build and review the no-DNG binary and matching source before pinning a public asset; the original DNG-enabled binary will not be used.')
             archive = download_native_asset(entry['archive'], entry['id'] + '.zip', 256 * 1024 * 1024)
         with zipfile.ZipFile(archive) as zf:
             names = zf.namelist()
@@ -192,7 +249,7 @@ def install_native_overrides(publish, catalog_path, local_review=None):
             for acknowledgment in entry.get('required_product_acknowledgments', []):
                 if acknowledgment.encode('utf-8') not in notice:
                     raise ValueError('Native ZIP omits a required product acknowledgment')
-        manifest = verify_native_manifest(entry, raw, binary, review_only)
+        manifest = verify_native_manifest(entry, raw, binary, review_only, review_build_commit)
         if review_only:
             source = archive.parent / manifest['source_archive']['name']
             if not source.is_file() or source.stat().st_size != manifest['source_archive']['bytes'] or digest(source) != manifest['source_archive']['sha256']:
@@ -217,19 +274,20 @@ def install_native_overrides(publish, catalog_path, local_review=None):
                         'notice_sha256': hashlib.sha256(notice).hexdigest(),
                         'binary_sha256': manifest['binary']['sha256'],
                         'source_archive': manifest['source_archive'], 'source_asset_download_verified': True,
-                        'build_commit': manifest['build_commit']})
+                        'build_commit': manifest['build_commit'],
+                        **({'review_build_commit': review_build_commit} if review_build_commit is not None else {})})
     write_json(publish / NATIVE_INDEX, {'schema_version': 1, 'overrides': records})
     print(f'Installed {len(records)} verified native replacement(s)' + (' for local review only' if local_review else ''))
 
 
-def installed_native_overrides(publish, catalog):
+def installed_native_overrides(publish, catalog, runtime):
     index = publish / NATIVE_INDEX
     if not index.is_file():
         return {}
     document = json.loads(index.read_text(encoding='utf-8'))
     if document.get('schema_version') != 1:
         raise ValueError('Unsupported installed-native manifest version')
-    entries = {entry['id']: entry for entry in catalog.get('native_overrides', [])}
+    entries = {entry['id']: entry for entry in for_runtime(catalog.get('native_overrides', []), runtime)}
     installed = {}
     for record in document['overrides']:
         entry = entries[record['id']]
@@ -242,7 +300,8 @@ def installed_native_overrides(publish, catalog):
         notice = publish / checked_relative(record['notice_path'])
         if digest(notice) != record['notice_sha256']:
             raise ValueError('Installed native copyright/source notice checksum mismatch')
-        manifest = verify_native_manifest(entry, raw, (publish / path).read_bytes(), record['review_only'])
+        manifest = verify_native_manifest(entry, raw, (publish / path).read_bytes(), record['review_only'],
+                                          record.get('review_build_commit'))
         if not record['review_only'] and record['archive_sha256'] != entry['archive']['sha256']:
             raise ValueError('Installed native ZIP does not match the catalog pin')
         if record['binary_sha256'] != manifest['binary']['sha256'] or record['source_archive'] != manifest['source_archive']:
@@ -350,11 +409,12 @@ def runtime_component(identity, metadata, publish, cache):
     }
 
 
-def prepare(publish, catalog_path, cache):
+def prepare(publish, catalog_path, cache, runtime=None):
     if not publish.is_dir():
         raise ValueError(f'Publish directory is absent: {publish}')
     catalog = json.loads(catalog_path.read_text(encoding='utf-8'))
-    native_overrides = installed_native_overrides(publish, catalog)
+    runtime = runtime_identifier(publish, runtime)
+    native_overrides = installed_native_overrides(publish, catalog, runtime)
     removed_components = {identity for installed in native_overrides.values()
                           for identity in installed['entry'].get('removed_components', [])}
     packages = catalog.get('packages', catalog.get('components', []))
@@ -377,11 +437,11 @@ def prepare(publish, catalog_path, cache):
     for index, item in enumerate(catalog.get('release_review', {}).get('blocking_issues', [])):
         if not isinstance(item, dict) or item.get('component') not in removed_components:
             blocking_issues.append(item if isinstance(item, dict) else {'id': f'catalog-review-{index + 1}', 'reason': str(item)})
-    for entry in catalog.get('native_overrides', []):
+    for entry in for_runtime(catalog.get('native_overrides', []), runtime):
         installed = native_overrides.get(entry['path'])
         if not installed:
             blocking_issues.append({'id': 'native-replacement-unavailable:' + entry['id'],
-                                    'reason': 'The required no-DNG native replacement has not been built, verified and installed. The original DNG-enabled DLL does not satisfy this requirement.'})
+                                    'reason': 'The required no-DNG native replacement has not been built, verified and installed. The original DNG-enabled binary does not satisfy this requirement.'})
         elif installed['record']['review_only']:
             blocking_issues.append({'id': 'unreviewed-native-artifact:' + entry['id'],
                                     'reason': 'This locally verified native build is for review only. A versioned binary/source asset, reviewed license/source coverage and catalog SHA-256 pins are required before public distribution.'})
@@ -435,6 +495,12 @@ def prepare(publish, catalog_path, cache):
             key = (archive['url'], archive['revision'])
             if key not in archives:
                 archives[key] = {**archive, 'components': []}
+            else:
+                for name in ('sha256', 'bytes', 'content_tree_sha256', 'content_tree_schema'):
+                    if name in archive:
+                        if name in archives[key] and archives[key][name] != archive[name]:
+                            raise ValueError(f'Conflicting fixed source evidence for {archive["url"]}: {name}')
+                        archives[key][name] = archive[name]
             if owner not in archives[key]['components']:
                 archives[key]['components'].append(owner)
 
@@ -480,12 +546,13 @@ def prepare(publish, catalog_path, cache):
                         raise ValueError(f'Package has no reviewed license catalog entry: {identity}')
                     if evidence.get('release_blocked'):
                         raise ValueError(f'Package is blocked by the license review: {identity}')
+                    evidence = runtime_evidence(evidence, runtime)
                     component = {
                         'id': package, 'version': version, 'kind': 'nuget',
                         'license_expression': evidence.get('primary_spdx_expression') or evidence.get('license_expression') or evidence.get('license_value'),
                         'notice_files': copy_notices(evidence, publish),
                         'repository': evidence.get('repository'),
-                        **review_fields(evidence, identity),
+                        **review_fields(evidence, identity, native=any(path.suffix.lower() in ('.dylib', '.so') for path in actual_assets)),
                     }
                     add_archives(evidence, identity)
                 component['identity'] = identity
@@ -493,7 +560,7 @@ def prepare(publish, catalog_path, cache):
             for path in actual_assets:
                 record_file(path, identity)
 
-    for component in catalog.get('native_components', []):
+    for component in for_runtime(catalog.get('native_components', []), runtime):
         identity = f'{component["id"]}/{component["version"]}'
         if identity in removed_components:
             if not all(path in native_overrides for path in component['files']):
@@ -538,26 +605,37 @@ def prepare(publish, catalog_path, cache):
 
     # The apphost is generated from the platform SDK, rather than listed as an
     # ordinary runtime asset. It is covered by the platform runtime notices.
-    apphost = publish / 'DictationAssistant.App.exe'
+    apphost = publish / ('DictationAssistant.App' if runtime.startswith('osx-') else 'DictationAssistant.App.exe')
     runtime_ids = [identity for identity in components if identity.startswith('runtimepack.')]
     if apphost.is_file():
         if not runtime_ids:
             raise ValueError('Self-contained apphost has no recorded platform runtime')
+        if runtime.startswith('osx-'):
+            verify_macho(apphost.read_bytes(), runtime, 2)
         record_file(apphost, runtime_ids[0])
     for path in publish.rglob('*'):
-        if not path.is_file() or not path.name.lower().endswith(BINARY_SUFFIXES):
+        if not path.is_file():
+            continue
+        is_binary = path.name.lower().endswith(BINARY_SUFFIXES)
+        if runtime.startswith('osx-') and not is_binary:
+            with path.open('rb') as stream:
+                is_binary = stream.read(4) in (b'\xcf\xfa\xed\xfe', b'\xfe\xed\xfa\xcf',
+                                                b'\xca\xfe\xba\xbe', b'\xbe\xba\xfe\xca',
+                                                b'\xca\xfe\xba\xbf', b'\xbf\xba\xfe\xca')
+        if not is_binary:
             continue
         relative = path.relative_to(publish).as_posix()
         if path.name.lower().startswith(('bass', 'libbass')) or path.name.lower() == 'managedbass.dll':
             raise ValueError(f'Unresolved BASS binary must not be released: {relative}')
         if relative not in files:
             raise ValueError(f'Published binary is not accounted for by dependency/native manifests: {relative}')
-    if (publish / 'SDL2.dll').is_file() and not any(value['id'].lower() == 'sdl2' for value in components.values()):
+    if any((publish / name).is_file() for name in ('SDL2.dll', 'libSDL2.dylib')) and not any(value['id'].lower() == 'sdl2' for value in components.values()):
         raise ValueError('The SDL2 native library needs its own zlib license entry, separate from the managed wrapper')
 
     stamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
     manifest = {
         'schema_version': 1, 'generated_at_utc': stamp,
+        'runtime_identifier': runtime,
         'catalog_sha256': digest(catalog_path),
         'native_overrides': native_records,
         'components': [components[key] for key in sorted(components, key=str.lower)],
@@ -567,6 +645,7 @@ def prepare(publish, catalog_path, cache):
     write_json(publish / 'THIRD_PARTY_COMPONENTS.json', manifest)
     write_json(publish / 'THIRD_PARTY_SOURCES.json', {
         'schema_version': 1, 'generated_at_utc': stamp,
+        'runtime_identifier': runtime,
         'archives': [archives[key] for key in sorted(archives)],
         'inline_source_files': [vendored_sources[key] for key in sorted(vendored_sources)],
         'platform_runtime_sources': [value for value in components.values() if value['kind'] == 'platform-runtime'],
@@ -587,6 +666,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--publish-dir', type=pathlib.Path, default=ROOT / 'artifacts/Windows-x64')
     parser.add_argument('--catalog', type=pathlib.Path, default=ROOT / 'third-party/components.json')
+    parser.add_argument('--runtime-identifier', choices=RUNTIME_IDENTIFIERS,
+                        help='Actual host publish RID; inferred from the host .deps.json when available')
     parser.add_argument('--nuget-cache', type=pathlib.Path,
                         default=pathlib.Path(os.environ.get('NUGET_PACKAGES', pathlib.Path.home() / '.nuget/packages')))
     native_mode = parser.add_mutually_exclusive_group()
@@ -594,13 +675,18 @@ def main():
                              help='Install only reviewed, versioned and SHA-256-pinned native assets; perform no notice collection')
     native_mode.add_argument('--native-review-archive', type=pathlib.Path,
                              help='Install a locally verified native ZIP for review only; matching source ZIP must be beside it')
+    parser.add_argument('--native-review-build-commit',
+                        help='Exact macOS producer commit from an independently checked workflow run; review-archive mode only')
     args = parser.parse_args()
     try:
+        if args.native_review_build_commit and not args.native_review_archive:
+            raise ValueError('--native-review-build-commit requires --native-review-archive')
         if args.install_native_overrides or args.native_review_archive:
             install_native_overrides(args.publish_dir.resolve(), args.catalog.resolve(),
-                                     args.native_review_archive.resolve() if args.native_review_archive else None)
+                                     args.native_review_archive.resolve() if args.native_review_archive else None,
+                                     args.runtime_identifier, args.native_review_build_commit)
         else:
-            prepare(args.publish_dir.resolve(), args.catalog.resolve(), args.nuget_cache.resolve())
+            prepare(args.publish_dir.resolve(), args.catalog.resolve(), args.nuget_cache.resolve(), args.runtime_identifier)
     except (OSError, ValueError, KeyError, ET.ParseError, zipfile.BadZipFile, struct.error, subprocess.CalledProcessError) as error:
         parser.exit(1, f'License preparation failed: {error}\n')
 

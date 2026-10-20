@@ -1,8 +1,8 @@
-# Windows x64 原生图形库
+# 原生图形库构建
 
-保留 Avalonia **11.3.12**、SkiaSharp **2.88.9**，重建同版本 Windows x64 原生库，排除 RAW/DNG 与 PIEX，不升级图形 API。
+保留 Avalonia **11.3.12**、SkiaSharp **2.88.9**，重建同版本原生库，排除 RAW/DNG 与 PIEX，不升级图形 API。Windows x64 资产已公开；macOS 两个架构仍在准备，状态见文末。
 
-## 实际验证结果
+## Windows x64 实际验证结果
 
 [Windows CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 已成功，构建提交为 `06ebe119f27cad05af71c14a69c51f5baca586b6`。原始记录见[证据目录](../third-party/evidence/skia-no-dng-2.88.9-win-x64/README.md)及 [`native-build.json`](../third-party/evidence/skia-no-dng-2.88.9-win-x64/native-build.json)。
 
@@ -23,9 +23,11 @@
 | `libSkiaSharp.dll` | 8860160 | `e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e` |
 | `SkiaSharp-2.88.9-no-dng-win-x64-sources.zip` | 218395661 | `95c5775e4c31b9db945c890339789273a43b942c73409fa051dca78c2f3e4465` |
 
-计划独立发布为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)，目前仍在做源码闭包复核，**尚未公开发布该资产**。原生包不含 Avalonia，可按自身材料和检查独立审核；App 因 [Avalonia/MS-PL 组合授权路径未解决](../third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)继续暂停公开发行。
+已独立公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。源码闭包复核确认 1,124 个编译输入与源码包逐项匹配，30 份原始声明保留原字节；公开后二进制、构建记录和对应源码重新下载核验通过。原生包不含 Avalonia，独立于应用的组合授权事项。
 
-正式使用时，以 [`components.json`](../third-party/components.json) 的 `native_overrides` 为固定来源：核对实际 Release 的二进制 ZIP、DLL、`native-build.json` 与对应源码 ZIP 的地址、SHA-256、构建提交及匹配关系。不能用浮动 Actions 下载链接、空哈希或原 NuGet 含 DNG DLL 静默回退。上表与计划链接不表示 Release 已公开或目录 pin 已生效。
+Windows 应用已按既有发布授权交付，继续披露 [Avalonia/MS-PL 组合授权路径未解决](../third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)；披露不表示该事项已解决。早期暂停发行和原 NuGet DLL 的检查记录保留用于追溯，当前发行状态以[发布记录](RELEASING.md)为准。
+
+正式使用时，以 [`components.json`](../third-party/components.json) 的 `native_overrides` 为固定来源：核对实际 Release 的二进制 ZIP、DLL、`native-build.json` 与对应源码 ZIP 的地址、SHA-256、构建提交及匹配关系。不能用浮动 Actions 下载链接、空哈希或原 NuGet 含 DNG DLL 静默回退。
 
 ## 构建与复建
 
@@ -38,3 +40,9 @@ python scripts/build_skia_without_dng.py --msvc-path '<Visual Studio>/VC' --llvm
 源码 ZIP 中 `sources/SkiaSharp` 为实际修改后构建树，`upstream-archives` 保留原始归档，另附六项依赖、补丁、配置、构建/校验脚本、原始许可及来源记录。重新构建时进入 `rebuild/`，使用根目录 `BUILD_PROVENANCE.json` 的原提交，并加 `--cache-dir ../upstream-archives`、独立的 `--work-dir` 和 `--output-dir`。MSVC/SDK 等通用工具仍需按配置安装，不将它们称为源码包随附内容。
 
 `DICTATION_NATIVE_REVIEW_ARCHIVE` 仅供同一 CI 注入本地审核 ZIP；正式 App 打包必须使用已审核并固定的来源。重新构建产生新字节后重新核对全部哈希与记录，不能沿用本次实物 pin。
+
+## macOS x64 / arm64：准备中
+
+计划使用独立标签 `native-skia-2.88.9-no-dng-macos.1`，目前尚未构建完成或公开。入口为 [macOS 构建配置](../third-party/skia-no-dng-macos-build.json)、[构建脚本](../scripts/build_skia_macos_without_dng.py)和[原生构建工作流](../.github/workflows/build-skia-macos-without-dng.yml)。Windows 的 DLL 检查结论不能代替 macOS dylib 的实际验证。
+
+两个架构须分别核对实现排除、导出和版本、原生加载及对应源码，发布后再固定最终地址和哈希。R8 正式打包使用固定的审核资产；审核注入仍只用于构建复核。macOS 15+ 的应用包与验证范围见 [macOS 说明](MACOS.md)。

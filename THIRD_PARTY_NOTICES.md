@@ -2,7 +2,7 @@
 
 本文件是许可索引。第三方组件保留各自的版权和许可；本项目的 AGPL-3.0-or-later 不会把它们重新许可。原始 LICENSE、NOTICE、附加条款及免责声明保存在 `LICENSES/third-party/`，原文件字节与 SHA-256 记录在 [组件目录](third-party/components.json)。摘要不能代替原文，也不表示自动完成了法律兼容性认证。
 
-R5 本体及插件独立预发布已公开；发行说明已披露仍未解决的 Avalonia/MS-PL 组合授权事项，原始许可和未解决记录继续保留。下表索引 Windows 依赖、原 NuGet 包及历史审计材料；原 NuGet DLL 与已构建验证通过的无 DNG 替代按实际哈希区分。正式包的实际依赖与所带原文以 `THIRD_PARTY_COMPONENTS.json` 为准，固定源码和内联源码以匹配的 `THIRD_PARTY_SOURCES.json` 与源码交付内容为准；目录列出不等于已经发行。
+本体与插件的发行说明继续披露尚未解决的 Avalonia/MS-PL 组合授权事项，原始许可和审查记录一并保留。下表索引 Windows、macOS 依赖、原 NuGet 包及历史审计材料；原 NuGet 原生库与无 DNG 替代按各自的实际哈希区分。每个发行包的实际依赖与所带原文以 `THIRD_PARTY_COMPONENTS.json` 为准，固定源码和内联源码以匹配的 `THIRD_PARTY_SOURCES.json` 与源码交付内容为准；目录列出不等于已经发行。
 
 ## 应用依赖
 
@@ -25,8 +25,8 @@ R5 本体及插件独立预发布已公开；发行说明已披露仍未解决�
 | HexaGen.Runtime 1.1.24 | 2023 Juna Meinhold | MIT；[LICENSE.txt](LICENSES/third-party/hexagen-runtime-1.1.24/LICENSE.txt) | [e8cde045ae0b](https://github.com/JunaMeinhold/HexaGen/tree/e8cde045ae0b15284cddd8f79b491af4a8afc420) |
 | Hexa.NET.SDL2 1.2.17（托管绑定） | 2024 Juna Meinhold | MIT；SDL2 本体另列；[LICENSE.txt](LICENSES/third-party/hexa-net-sdl2-1.2.17/LICENSE.txt) | [15fc3406e473](https://github.com/HexaEngine/Hexa.NET.SDL/tree/15fc3406e473759a2bcddd9c3ea24b8006916fbd) |
 | Avalonia.Angle.Windows.Natives 2.1.25547.20250602 | 2018 The ANGLE Project Authors | BSD-3-Clause；子组件保留各自原文；[LICENSE](LICENSES/third-party/avalonia-angle-2.1.25547.20250602/LICENSE) | [cb8b4e1307a9](https://github.com/AvaloniaUI/angle/tree/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8) |
-| SkiaSharp / NativeAssets.Win32 2.88.9（原包与同版本 no-DNG 替代分别记录） | 2015–2016 Xamarin, Inc.；2017–2018 Microsoft Corporation；原文中的其他贡献者 | MIT（绑定）；原包原生组件另列，替代实物与适用通知见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)；[LICENSE.txt](LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt)、[THIRD-PARTY-NOTICES.txt](LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt) | [9699cdf046a9](https://github.com/mono/SkiaSharp/tree/9699cdf046a989423a5e5eca68e7fd813486d81c) |
-| HarfBuzzSharp / NativeAssets.Win32 8.3.1.1 | 2015–2016 Xamarin, Inc.；2017–2018 Microsoft Corporation；HarfBuzz 贡献者 | MIT（绑定）；HarfBuzz 本体另列；[LICENSE.txt](LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt) | [64f24b1cddb6](https://github.com/mono/SkiaSharp/tree/64f24b1cddb68d30ec0ac6b661964178fc21d5ec) |
+| SkiaSharp / NativeAssets.Win32、macOS 2.88.9（原包与各平台 no-DNG 替代分别记录） | 2015–2016 Xamarin, Inc.；2017–2018 Microsoft Corporation；原文中的其他贡献者 | MIT（绑定）；原包原生组件另列，替代实物与适用通知见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)及实际构建记录；[LICENSE.txt](LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt)、[THIRD-PARTY-NOTICES.txt](LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt) | [9699cdf046a9](https://github.com/mono/SkiaSharp/tree/9699cdf046a989423a5e5eca68e7fd813486d81c) |
+| HarfBuzzSharp / NativeAssets.Win32、macOS 8.3.1.1 | 2015–2016 Xamarin, Inc.；2017–2018 Microsoft Corporation；HarfBuzz 贡献者 | MIT（绑定）；HarfBuzz 本体另列；[LICENSE.txt](LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt) | [64f24b1cddb6](https://github.com/mono/SkiaSharp/tree/64f24b1cddb68d30ec0ac6b661964178fc21d5ec) |
 | Microsoft.Extensions.* 10.0.2 | .NET Foundation and Contributors；原文中的其他贡献者 | MIT；保留原包 THIRD-PARTY-NOTICES；[LICENSE.txt](LICENSES/third-party/dotnet-extensions-10.0.2/LICENSE.txt)、[THIRD-PARTY-NOTICES.TXT](LICENSES/third-party/dotnet-extensions-10.0.2/THIRD-PARTY-NOTICES.TXT) | [9ffface2f3fa](https://github.com/dotnet/runtime/tree/9ffface2f3fa6fbbb427793c3230b1626a1fdd84) |
 | NAudio.Core / NAudio.Wasapi 2.2.1 | 2020 Mark Heath | MIT；[LICENSE.txt](LICENSES/third-party/naudio-2.2.1/LICENSE.txt) | [b5d5ff83fd37](https://github.com/naudio/NAudio/tree/b5d5ff83fd378f046398891fe5cd99426ce44732) |
 | NLayer / NLayer.NAudioSupport 2.0.1 | 2018 Mark Heath, Andrew Ward & Contributors | MIT；[LICENSE.txt](LICENSES/third-party/nlayer-2.0.1/LICENSE.txt) | [191c104a9fef](https://github.com/naudio/NLayer/tree/191c104a9fef8be13521d3956e537599b493a573) |
@@ -58,6 +58,10 @@ libgifcodec 的原始多选许可和各版权声明完整保留。本次分发�
 Avalonia 保持 11.3.12；原始 NOTICE 含 Silverlight Toolkit 的完整 MS-PL，19 个固定 C# 文件有 Microsoft/MS-PL 头，实际 DLL 含 22 个相关类型及真实 IL，App 直接引用该程序集。其[源文件](https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/AutoCompleteBox.cs#L1)继续保留 MS-PL；[§3(D)](LICENSES/third-party/avalonia-11.3.12/NOTICE.md#silverlight-toolkit) 的二进制条件不等于允许源文件 AGPL 再许可，未找到特定部分的双授权/链接例外。[App 的组合授权路径尚未解决](third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)，不能以顶层 MIT、未直接使用控件或 no-DNG 构建通过替代；这不是对整个 Avalonia 的违法结论。RichTextKit 的 Apache-2.0 全文另随 LICENSES 提供。
 
 HarfBuzz 与 ANGLE 的 Windows 编译/修改源码覆盖已补齐，见 [HarfBuzz 输入说明](third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs/README.md)与 [ANGLE 交付说明](third-party/sources/angle-cb8b4e1-source-directions/README.md)。固定源码、生成输入及相应原始通知按实际包交付；不声称逐字节复现历史 DLL，也不以整个上游 `DEPS` 的所有条件分支冒充实际 Windows 依赖。无 DNG Skia 的修改源码、原始通知及实物检查范围见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)；尚未单独执行 JPEG/WebP/GIF 解码检查。
+
+macOS 的来源单独核对。HarfBuzz 使用同一固定 wrapper 中的 macOS Xcode 工程、Skia `30abf4a0` 的配置头、HarfBuzz `2b3631a8` 的完整源码和两份 Unicode 数据归档；该工程没有编译 CoreText、FreeType 或 Graphite。Avalonia.Native 的源码还附上 [Numerge 固定子模块](https://github.com/kekekeks/Numerge/tree/9738c6121fdd143c78d3e25686a7e4e13c00f586)和 [MicroCom 0.11.0 生成器](https://github.com/kekekeks/MicroCom/tree/7e773759cfc1012a5d080d4129c4718a662884b0)，保留 IDL、生成头文件的方法及原 Xcode 工程。[Numerge MIT 原文](LICENSES/third-party/numerge-9738c612/LICENSE.md)和含 Chromium 2011 声明的 [Avalonia 原始 `main.mm`](LICENSES/third-party/avalonia-native-11.3.12/main-mm-original-notice.txt)另随包保存。Apple SDK 和包版本固定的通用编译工具属于外部构建依赖，具体范围写在组件目录中。
+
+原 NuGet macOS Skia 库也含 DNG 实现，Windows 的验证结果不能用于放行它。macOS 自定义库必须分别完成实际构建、源码输入、ABI、PNG 及通知复核，再固定二进制和配套源码哈希。macOS 包采用临时签名；如上游 SDL2 尚未签名，打包时会记录其原 NuGet 哈希与签名后的分发哈希。其余原生库保留已经核对的字节。组件清单和源码索引放在 `.app` 外，与应用一起交付，避免应用签名与自身哈希互相影响。
 
 ## .NET 运行时与仅构建 / 历史依赖
 

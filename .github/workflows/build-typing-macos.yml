@@ -1,0 +1,154 @@
+name: macOS integrated app (Intel and Apple Silicon)
+
+on:
+  push:
+    tags: ['v4.0.0-typing.8']
+  workflow_dispatch:
+    inputs:
+      native_run_id:
+        description: 'Optional completed native producer run ID; review artifacts only, never a release'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: macos-integrated-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            rid: osx-x64
+          - runner: macos-15
+            rid: osx-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.100'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Obtain an optional native pair for diagnostic review
+        if: inputs.native_run_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NATIVE_RUN_ID: ${{ inputs.native_run_id }}
+          TASK_RID: ${{ matrix.rid }}
+        shell: python {0}
+        run: |
+          import json, os, pathlib, re, subprocess, zipfile
+          run_id, rid = os.environ['NATIVE_RUN_ID'], os.environ['TASK_RID']
+          if not re.fullmatch(r'[1-9][0-9]*', run_id) or os.environ['GITHUB_REF'].startswith('refs/tags/'):
+              raise SystemExit('Review-only native inputs require a numeric run ID and an untagged dispatch.')
+          repository = os.environ['GH_REPO']
+          run = json.loads(subprocess.check_output(['gh', 'api', f'repos/{repository}/actions/runs/{run_id}']))
+          if (run.get('path') != '.github/workflows/build-skia-macos-without-dng.yml'
+                  or run.get('status') != 'completed' or run.get('conclusion') != 'success'
+                  or run.get('head_repository', {}).get('full_name') != repository
+                  or not re.fullmatch(r'[0-9a-f]{40}', run.get('head_sha', ''))):
+              raise SystemExit('Native review input must come from this repository completed native producer.')
+          folder = pathlib.Path('artifacts/native-review').resolve()
+          subprocess.run(['gh', 'run', 'download', run_id, '--repo', repository,
+                          '--name', f'SkiaSharp-2.88.9-no-dng-{rid}', '--dir', str(folder)], check=True)
+          binary = folder / f'SkiaSharp-2.88.9-no-dng-{rid}.zip'
+          with zipfile.ZipFile(binary) as archive:
+              metadata = json.loads(archive.read('native-build.json'))
+          if metadata.get('build_commit') != run['head_sha'] or metadata.get('runtime_identifier') != rid:
+              raise SystemExit('The native binary does not match its producer run and architecture.')
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              output.write(f'NATIVE_REVIEW_ARCHIVE={binary}\n')
+              output.write(f'NATIVE_REVIEW_BUILD_COMMIT={run["head_sha"]}\n')
+      - name: Build and sign the integrated app on its native architecture
+        shell: bash
+        run: |
+          args=(--rid '${{ matrix.rid }}')
+          if [[ -n "${NATIVE_REVIEW_ARCHIVE:-}" ]]; then
+            args+=(--native-review-archive "$NATIVE_REVIEW_ARCHIVE"
+                   --native-review-build-commit "$NATIVE_REVIEW_BUILD_COMMIT")
+          fi
+          bash build-macos-typing.sh "${args[@]}"
+      - name: Exercise actual plugins, system speech, SDL and production main window
+        run: >-
+          python3 scripts/prepare_macos_release.py --validate
+          --rid ${{ matrix.rid }} --output-dir artifacts/macos/${{ matrix.rid }}
+      - name: Upload the verified app and review metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build-${{ matrix.rid }}
+          path: |
+            artifacts/macos/${{ matrix.rid }}/DictationAssistant-*-macos-*.zip
+            artifacts/macos/${{ matrix.rid }}/BUNDLE_INFO.json
+            artifacts/macos/${{ matrix.rid }}/THIRD_PARTY_COMPONENTS.json
+            artifacts/macos/${{ matrix.rid }}/THIRD_PARTY_SOURCES.json
+            artifacts/macos/${{ matrix.rid }}/BUILD_VALIDATION.json
+            artifacts/macos/${{ matrix.rid }}/runtime-notices/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - name: Preserve runtime diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.rid }}-diagnostics
+          path: |
+            artifacts/macos/${{ matrix.rid }}/*.log
+            artifacts/macos/${{ matrix.rid }}/PLUGIN_DISCOVERY.json
+            artifacts/macos/${{ matrix.rid }}/BUILD_VALIDATION.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  publish-macos:
+    if: github.event_name == 'push' && github.ref == 'refs/tags/v4.0.0-typing.8'
+    needs: native-macos
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-build-osx-x64
+          path: artifacts/macos/parts/osx-x64
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-build-osx-arm64
+          path: artifacts/macos/parts/osx-arm64
+      - name: Verify both packages and collect their complete corresponding source
+        run: >-
+          python3 scripts/prepare_macos_release.py --assemble
+          --tag '${{ github.ref_name }}' --parts-root artifacts/macos/parts
+          --output-dir artifacts/macos/release --acknowledge-license-review
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-release-assets
+          path: artifacts/macos/release/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - name: Publish the new release after verifying every uploaded asset digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          python3 scripts/prepare_macos_release.py --publish
+          --tag '${{ github.ref_name }}' --output-dir artifacts/macos/release
