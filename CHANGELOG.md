@@ -2,6 +2,15 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
+## [4.0.0-typing.3] - 2026-10-20
+
+- 进入打字练习时后台核对词表，成功显示实际读取/理论读取条数，保留重复词条并忽略空行；取消“准备就绪 · 0 / N”。
+- 宿主在同一份编辑器快照上独立统计非空行，练习插件逐条校验后才允许开始；提供功能级别 3 的可选数量元数据接口，共享 API 版本保持 1。
+- 读取失败、数量不符或播放练习异常时后台保存 crash log，记录阶段、数量、失败索引、版本与异常；最多保留 20 份，写入失败会明确提示。
+- 删除作答倒计时上方的下划线占位；准备页隐藏空倒计时和练习进度条，介绍文字放大居中，保留正常作答、计时和成绩虚拟化。
+- 同步打字插件版本更新为 1.0.1，新插件要求宿主功能级别 3；升级请完整解压新的程序包。
+- 已运行 .NET 构建、15 项既有检查及 Linux 虚拟图形会话验证：读取数量、空行与重复计数、文字布局、无占位条作答、Enter 提交、结算，以及播放失败后的日志写入。读取数量不符分支尚未通过故障注入验证；真实 Windows 音频与输入法仍需实机核对。
+
 ## [4.0.0-typing.2] - 2026-10-19
 
 基于上游 `ArcticLampyrid/DictationAssistant` 的 `v4.0.0`（`324cd043`）及本仓库 `typing.1` 继续迭代。
@@ -67,3 +76,4 @@
 
 [4.0.0-typing.1]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.1
 [4.0.0-typing.2]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.2
+[4.0.0-typing.3]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.3

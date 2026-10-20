@@ -22,3 +22,10 @@ public interface IPracticeHost
     /// <summary>Finishes only when speech synthesis AND device playback both end.</summary>
     Task SpeakOnceAsync(string word, CancellationToken cancellationToken);
 }
+
+/// <summary>Optional source count, independently calculated from the editor snapshot before parsing.</summary>
+public interface IPracticeWordListMetadata
+{
+    /// <summary>Nonempty source lines, including duplicates. This is not the number of answered words.</summary>
+    int ExpectedWordCount { get; }
+}

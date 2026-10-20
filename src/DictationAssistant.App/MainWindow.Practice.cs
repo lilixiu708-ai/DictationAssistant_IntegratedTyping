@@ -46,9 +46,11 @@ public partial class MainWindow
                 return;
             }
 
-            var words = WordlistEditor.Text.ReplaceLineEndings("\n")
-                .Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            if (words.Length == 0)
+            ShuffleStatusMessage.Text = "正在读取练习词表…";
+            // Work from one immutable editor snapshot. Count source lines independently
+            // from parsing, and keep both passes off the input thread.
+            var (words, expectedCount) = await ReadPracticeWordsAsync(_windowLifetime.Token);
+            if (words.Count == 0)
             {
                 await ShowFileErrorAsync("词表为空：请先导入 Word 或输入词条，每行一个。");
                 return;
@@ -60,13 +62,13 @@ public partial class MainWindow
             var player = vm.DictationPlayer;
             var calculator = player.WaitingTimeCalculator;
             var host = new PracticeHost(
-                this, Array.AsReadOnly(words),
+                this, words, expectedCount,
                 Math.Clamp(player.TimesPerWord, 1, 100), vm.IntervalExpression,
                 word => TimeSpan.FromSeconds(Math.Clamp(
                     calculator?.CalculateWaitingTime(word) ?? 3, 0, 3600)),
                 (word, token) => player.SpeakPracticeWordAsync(word, token));
 
-            ShuffleStatusMessage.Text = $"同步打字练习：{words.Length} 条，{host.TimesPerWord} 次/词。";
+            ShuffleStatusMessage.Text = $"同步打字练习：{words.Count} 条，{host.TimesPerWord} 次/词。";
             await PluginRuntime.InvokeAsync(entry, "practice", async token =>
             {
                 var callback = PluginRuntime.CaptureInvocation(() =>
@@ -95,17 +97,40 @@ public partial class MainWindow
         }
     }
 
-    private sealed class PracticeHost : IPracticeHost
+    private Task<(IReadOnlyList<string> Words, int ExpectedCount)> ReadPracticeWordsAsync(CancellationToken ct)
+    {
+        // Do not retain the original full text in the modal exercise's async state.
+        var text = WordlistEditor.Text;
+        return Task.Run(() => ReadPracticeWords(text, ct), ct);
+    }
+
+    private static (IReadOnlyList<string> Words, int ExpectedCount) ReadPracticeWords(string text, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        var normalized = text.ReplaceLineEndings("\n");
+        var expected = 0;
+        foreach (var line in normalized.AsSpan().EnumerateLines())
+        {
+            ct.ThrowIfCancellationRequested();
+            if (!line.Trim().IsEmpty) expected++;
+        }
+        var words = normalized.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        ct.ThrowIfCancellationRequested();
+        return (Array.AsReadOnly(words), expected);
+    }
+
+    private sealed class PracticeHost : IPracticeHost, IPracticeWordListMetadata
     {
         private readonly Func<string, TimeSpan> _getInterval;
         private readonly Func<string, CancellationToken, Task> _speak;
 
-        public PracticeHost(object owner, IReadOnlyList<string> words, int repeats,
+        public PracticeHost(object owner, IReadOnlyList<string> words, int expectedWordCount, int repeats,
             string intervalDescription, Func<string, TimeSpan> getInterval,
             Func<string, CancellationToken, Task> speak)
         {
             OwnerWindow = owner;
             Words = words;
+            ExpectedWordCount = expectedWordCount;
             TimesPerWord = repeats;
             IntervalDescription = intervalDescription;
             _getInterval = getInterval;
@@ -114,6 +139,7 @@ public partial class MainWindow
 
         public object OwnerWindow { get; }
         public IReadOnlyList<string> Words { get; }
+        public int ExpectedWordCount { get; }
         public int TimesPerWord { get; }
         public string IntervalDescription { get; }
         public TimeSpan GetRepeatInterval(string word) => _getInterval(word);

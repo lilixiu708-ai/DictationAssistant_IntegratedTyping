@@ -1,6 +1,6 @@
 # 文档索引
 
-本仓库当前版本为 **`v4.0.0-typing.2` 预览版**，对应应用的同步打字练习与通用插件扩展。当前入口是 [项目首页](../README.md) 与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases)。插件版本与接口版本独立管理。
+本仓库当前版本为 **`v4.0.0-typing.3` 预览版**，对应应用的同步打字练习与通用插件扩展。当前入口是 [项目首页](../README.md) 与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases)。插件版本与接口版本独立管理。
 
 ## 当前文档
 

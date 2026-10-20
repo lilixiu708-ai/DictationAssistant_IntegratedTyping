@@ -4,6 +4,8 @@
 
 原有 DOCX、`.phrases` 文档结构及导入限制见 [插件开发指南](插件开发指南.md)。本页对应的可编译示例位于 [`sdk/examples/`](../sdk/examples/)，均为可选开发示例，不自动安装到应用，不加入主解决方案或 Windows 发行包。
 
+当前宿主功能级别为 3，新增可选的 `IPracticeWordListMetadata.ExpectedWordCount`。宿主从同一份编辑器快照独立统计非空行，再解析并提供不可变词条；练习插件可在后台逐条读取后核对实际数量。使用此类型的插件声明 `minimumHostFeatureLevel: 3`；仅使用功能级别 2 接口的既有示例仍声明 2。共享程序集和 `apiVersion` 保持 1。
+
 ## 选择扩展接口
 
 一个公开无参入口类可以实现多个接口。清单的 `kind` 表示主要功能，宿主同时识别该实例实现的其他能力。
