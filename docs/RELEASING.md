@@ -2,11 +2,13 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
-**`v4.0.0-typing.5`（R5）本体及两个插件的独立预发布已公开。** 本次发行明确披露仍未解决的许可事项。Avalonia 保持 **11.3.12**；这一发布决定不等于 MS-PL/AGPL 组合授权路径已解决，不改变第三方许可。历史 `typing.1`–`typing.3` 草稿、原标签及资产保持原状。
+**正在准备 `v4.0.0-typing.6`（R6）本体与同步打字插件 1.2.0 预发布。** Avalonia 保持 **11.3.12**，仍按既有发布授权披露未解决的 MS-PL/AGPL 组合事项，不将其表述为已获额外授权。原始许可、对应源码及完整性检查继续保留。公开确认前，现有下载仍为 R5 与同步打字 1.1.0。
 
-本次独立插件标签为 `plugin-synchronous-typing-v1.1.0` 与 `plugin-docx-vocabulary-v1.0.1`，均与 R5 本体来自提交 `ae1a23210df3f40c2527832bc1a0c55990f08b3f`。Word 导入 1.0.1 本次仅调整独立交付版本，导入功能未变。后续文档更新不移动这些发行标签。
+本次预定标签为 [`v4.0.0-typing.6`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) 与 [`plugin-synchronous-typing-v1.2.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)。新插件要求宿主功能级别 4，须与 R6 配套；Word 导入功能未变，继续复用已公开的 `plugin-docx-vocabulary-v1.0.1`，不移动该标签、不覆盖既有资产。
 
-[Windows 构建 39363409555](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555) 已通过完整构建、包校验、15 项既有逻辑检查、production App 窗口正常开闭及 SDK 示例构建。此结果不包含 Windows DPAPI 保存、跨机器/账户拒绝读取、真实 DeepL 鉴权或真实扬声器和中文输入法验证。
+代码提交 `0e7ecae` 的 [Windows CI 39375979975](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975) 已通过完整程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建。这是主分支验证，最终 R6 发行提交须另行核对；Windows DPAPI、旧配置迁移、跨机器/账户拒绝读取和真实在线翻译仍待验证。
+
+R5 本体与同步打字 1.1.0、Word 导入 1.0.1 已公开，来自提交 `ae1a23210df3f40c2527832bc1a0c55990f08b3f`；其 [Windows 构建 39363409555](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555) 记录仅作为该版本证据。后续文档和 R6 发布不改变历史标签、资产或 `typing.1`–`typing.3` 草稿状态。
 
 ## 当前核对状态
 
@@ -14,7 +16,7 @@
 - **Avalonia 组合授权路径尚未解决：** 固定源码中 19 个 C# 文件有 Microsoft/MS-PL 头，实际 `Avalonia.Controls.dll` 含 22 个相关 TypeDef 及真实 IL，App 直接引用该程序集。[MS-PL §3(D)](../LICENSES/third-party/avalonia-11.3.12/NOTICE.md#silverlight-toolkit) 的二进制许可条件不等于这些源文件已允许 AGPL 再许可；未找到特定部分的双授权或链接例外，见[固定核查记录](../third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)。MIT 顶层标签或 DNG 替换成功不能解除这一独立事项；这不是宣称全部 Avalonia 违法。
 - **HarfBuzz/ANGLE 源码覆盖已补齐：** Windows 编译与修改所需的固定来源、配置/生成输入和交付清单见 [HarfBuzz 输入说明](../third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs/README.md)、[ANGLE 交付说明](../third-party/sources/angle-cb8b4e1-source-directions/README.md)及[组件目录](../third-party/components.json)。该结论不声称复现历史 DLL 的全部编译器版本或逐字节输出；最终源码包仍须实际包含匹配材料。
 
-独立 Skia 原生包不含 Avalonia，已完成固定资产与源码闭包核对并公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。这不解决 App 的 Avalonia/MS-PL 组合项；R5 另在发行资产和说明中保留该未解决事项。
+独立 Skia 原生包不含 Avalonia，已完成固定资产与源码闭包核对并公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。这不解决 App 的 Avalonia/MS-PL 组合项；本体发行资产和说明继续保留该未解决事项。
 
 ## 构建与审核
 
@@ -27,7 +29,7 @@ python scripts\verify_build.py
 
 App 构建只接受目录中已固定地址、来源和哈希的审核原生资产；尚无有效 no-DNG 资产时停止正式打包，不静默退回旧 DLL。同一 CI 的本地注入仅供审核，不能被描述为正式发行配置。
 
-`prepare_release.py --draft` 可从干净 HEAD 准备本地审核资料，无需创建版本标签；它不上传或发布。普通正式路径仍检查 `release_review`。本次 R5 使用明确的 `--acknowledge-license-review` 参数，仅承认并披露已记录的 `avalonia-mspl-agpl-compatibility` 项；原清单的未解决状态保留，不改为已获授权。
+`prepare_release.py --draft` 可从干净 HEAD 准备本地审核资料，无需创建版本标签；它不上传或发布。普通正式路径仍检查 `release_review`。R6 沿用明确的 `--acknowledge-license-review` 参数，仅承认并披露已记录的 `avalonia-mspl-agpl-compatibility` 项；原清单的未解决状态保留，不改为已获授权。
 
 该参数不能放行新的未知事项、缺少原始通知或实际源码、未知/变化二进制、无有效原生替代或校验不符。此类失败仍须修复；不得用占位哈希、浮动来源或关闭 TLS 使构建通过。
 
@@ -40,15 +42,15 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 - 下载字节按固定 SHA-256 验证；Gitiles 有动态归档元数据的条目按目录规定核验固定 canonical `tar-members-v1` 内容树哈希（路径、类型、权限、链接和文件字节），并记录该次归档的实际 SHA-256。不能因压缩字节不同跳过内容验证。
 - GitHub 自动源码 ZIP 不执行上述追加流程，不能称它与准备脚本产出的对应源码包相同。核对每个实际组件要求的交付内容，勿将所有原生源码覆盖一概标成未补齐，也勿把部分通过扩大为整个 App 已合规。
 
-## R5 与独立插件发布步骤
+## 本体与独立插件发布步骤
 
 以下命令用于已提交、干净且版本与标签一致的构建；命令成功不等于 Release 已公开。
 
 1. 从干净提交重新构建、校验；核对新原生 DLL 的实际 DNG 排除、ABI/版本、上游 PNG 工具及 Windows 窗口检查结果，连同 App 其他许可问题分别记录。既有构建成功不替代该轮实物验证。
 2. 令 `v<Version>` 标签与项目版本和 HEAD 精确匹配；应用版本与插件版本/API 分别管理。不得移动或覆盖既有标签、资产，不误公开历史草稿。修正已发行内容使用新版本。
 3. 交付版本化 Windows ZIP、匹配 source ZIP 与 `SHA256SUMS`，最终字节定稿后生成校验；记录完整提交 SHA、工具版本、未解决告警与实机验证范围。没有实测数据不承诺 CPU/内存降幅。
-4. 用 `python scripts/prepare_release.py v4.0.0-typing.5 --acknowledge-license-review` 准备本体资产，再用 `python scripts/prepare_plugin_release.py --app-release-tag v4.0.0-typing.5` 准备两个插件的独立 ZIP、对应源码、校验和及许可披露文件。发行说明须列出未解决项和实际验证范围。
-5. 推送 App 新标签后核对该次工作流的提交、构建与 Release 状态。工作流只为精确的 R5 标签启用本次披露发布路径；其他引用保留原审核行为。不得覆盖已公开标签或资产，也不得误公开历史草稿。
+4. 用 `python scripts/prepare_release.py v4.0.0-typing.6 --acknowledge-license-review` 准备本体资产，再用 `python scripts/prepare_plugin_release.py --app-release-tag v4.0.0-typing.6` 准备独立插件的 ZIP、对应源码、校验和及许可披露文件。本次只发布新的同步打字 1.2.0；Word 导入 1.0.1 复用现有 Release，即使本体重新构建了该插件，也不覆盖其独立发行资产。
+5. 推送 App 新标签后核对该次工作流的提交、构建与 Release 状态。R6 的披露路径应绑定精确的新标签，其他引用保留审核条件；发行说明列出未解决项和实际验证范围。不得覆盖已公开标签或资产，也不得误公开历史草稿。
 6. 重新下载本体和插件的最终附件，核对 `SHA256SUMS`、源码及声明清单，再将首页更新为已发布。私有仓库链接仍受仓库权限控制。
 
 `RELEASE_REVIEW.json` 和 `RELEASE_NOTES.md` 记录本次披露决定及核对边界；不将“已声明”写成“已解决”。普通分支构建继续遵守审核条件。构建输出、独立原生审核或许可证收集成功均不构成全面法律合规认证。

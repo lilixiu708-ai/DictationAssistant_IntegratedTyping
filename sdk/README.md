@@ -2,7 +2,7 @@
 
 开发入口见 [插件扩展 SDK](../docs/PLUGIN_SDK.md)，既有文件导入格式见 [插件开发指南](../docs/插件开发指南.md)。所有示例遵循仓库根目录的 [AGPL-3.0-or-later 许可证](../LICENSE.md)。
 
-源码开发中的宿主 `4.0.0-typing.6` 新增功能级别 4 的可选 `IConfigurablePlugin.ConfigureAsync(object ownerWindow, CancellationToken)`，供插件管理逐插件打开「配置…」。共享 `apiVersion` 仍为 1，使用新接口或 `kind: "configuration"` 时须声明 `minimumHostFeatureLevel: 4`。该开发版本尚未发布，公开 R5 为功能级别 3；下列既有示例仍保留各自的最低功能级别。
+宿主 `4.0.0-typing.6` 的功能级别为 4，提供可选的 `IConfigurablePlugin.ConfigureAsync(object ownerWindow, CancellationToken)`，供插件管理逐插件打开「配置…」。共享 `apiVersion` 仍为 1，使用新接口或 `kind: "configuration"` 时须声明 `minimumHostFeatureLevel: 4`。R5 为功能级别 3；下列既有示例仍保留各自的最低功能级别。
 
 | 示例 | 功能 |
 | --- | --- |

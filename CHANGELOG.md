@@ -2,14 +2,16 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
-## [4.0.0-typing.6] - 未发布
+## [4.0.0-typing.6] - 2026-10-20
+
+**R6 预发布版本。** 本体与同步打字插件分别交付，Word 导入插件继续使用已发布的 **1.0.1**。Avalonia 维持 11.3.12；已记录的 MS-PL/AGPL 组合授权事项仍未解决，延续既有的披露发布方式，保留原始许可、对应源码与完整性检查。
 
 - 宿主新增逐插件「配置…」入口和可选 `IConfigurablePlugin.ConfigureAsync`，支持 `configuration` 清单类型；功能级别更新为 4，`apiVersion` 仍为 1。
-- 同步打字插件开发版更新为 **1.2.0**，要求功能级别 4：可管理多个命名的 DeepL Free / Pro 绑定、设置首选项，并在翻译准备页为本次任务切换；两个入口共用配置，切换不触发翻译，打字过程中不调用翻译服务。
+- 同步打字插件更新为 **1.2.0**，要求功能级别 4，须配套 R6：可管理多个命名的 DeepL Free / Pro 绑定、设置首选项，并在翻译准备页为本次任务切换；两个入口共用配置，切换不触发翻译，打字过程中不调用翻译服务。
 - Windows 对整份绑定配置使用当前账户及本机绑定的 DPAPI 加密；其他平台仅供当前程序会话使用。R5 单绑定配置读取时转换，仅在明确保存时写入新格式。
 - 修正配置、练习及插件 UI 调度的异步等待：宿主等待内部任务和模态窗口实际结束后再释放运行状态，避免提前标记调用完成。
-- 已通过本轮 Linux Release 构建、15 项既有检查及多绑定/首选项/准备页切换/会话重启清理的图形核对；Windows 加密与旧配置迁移、真实在线翻译和完整边界校验仍待验证，详细范围见验证清单。
-- 以上均为源码开发变更，尚未发布；R5 本体及同步打字 1.1.0 的既有下载保持不变，Word 导入插件仍为 **1.0.1**。
+- 已通过本轮 Linux Release 构建、15 项既有检查及多绑定/首选项/准备页切换/会话重启清理的图形核对；代码提交 `0e7ecae` 的 [Windows CI 39375979975](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39375979975) 通过程序与插件构建、包及 DLL 校验、15 项既有检查、生产主窗口正常开闭和 SDK 示例构建。该主分支结果不替代最终发行提交验证；Windows 加密与旧配置迁移、真实在线翻译和完整边界校验仍待验证。
+- R5 本体与同步打字 1.1.0 作为历史版本保留；Word 导入 **1.0.1** 复用既有独立 Release，本次不覆盖其标签和资产。
 
 ## [4.0.0-typing.5] - 2026-10-20
 
@@ -112,3 +114,4 @@
 [4.0.0-typing.3]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.3
 [4.0.0-typing.4]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.4
 [4.0.0-typing.5]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5
+[4.0.0-typing.6]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6

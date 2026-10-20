@@ -23,6 +23,9 @@ review_mode.add_argument('--draft', action='store_true',
 review_mode.add_argument('--acknowledge-license-review', action='store_true',
                         help='Publish with a disclosure of the known Avalonia/MS-PL combination review; does not waive source, notice, binary or checksum verification')
 args = parser.parse_args()
+if args.acknowledge_license_review and args.tag not in {
+        'v4.0.0-typing.5', 'v4.0.0-typing.6'}:
+    parser.error('Disclosure publication is authorized only for the exact R5 and R6 release tags')
 
 project = root / 'src/DictationAssistant.App/DictationAssistant.App.csproj'
 version = ET.parse(project).findtext('.//Version')

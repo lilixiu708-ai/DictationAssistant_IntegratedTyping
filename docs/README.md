@@ -2,6 +2,8 @@
 
 当前已发布 **[`v4.0.0-typing.5`（R5）预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5)**，同步打字 1.1.0 与 Word 导入 1.0.1 另有独立更新包。无 DNG 原生依赖已独立发布；Avalonia 11.3.12 的 MS-PL/AGPL 组合授权路径仍未解决，发行说明已明确披露并保留原始许可和对应源码材料，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。
 
+下一版 [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6)与[同步打字 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.2.0)正在准备发布，新增逐插件配置和多个命名翻译绑定；1.2.0 需要 R6 的宿主功能级别 4。Word 导入继续复用已发布的 1.0.1；R6 正式公开前仍使用现有下载。
+
 使用与开发从[项目首页](../README.md)开始。普通安装选择 [R5 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5)；已有宿主时，可单独更新[同步打字 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.1.0)或 [Word 导入 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。本体已包含两个插件，不需要重复安装。构建依赖与源码面向开发者，历史 `typing.1`–`typing.3` 保留为草稿。
 
 ## 当前文档
@@ -19,6 +21,7 @@
 | [第三方组件声明](../THIRD_PARTY_NOTICES.md) | 第三方归属、原始许可与来源索引 |
 | [贡献规则](../CONTRIBUTING.md) | 目录、命名、开发与验证约定 |
 | [发布说明](RELEASING.md) | 本体、插件和构建依赖的发行分类、标签及资产校验 |
+| [云环境指南](CLOUD_ENVIRONMENT.md) | 仓库内 `bash .codex/setup.sh`、Linux 构建与日常启动 |
 | [原生构建说明](NATIVE_BUILD.md) | [独立原生依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)及其复核材料，普通安装无需下载 |
 | [变更记录](../CHANGELOG.md) | 当前版本改动与限制 |
 | [AGENTS.md](../AGENTS.md) | 架构与代理开发规则 |

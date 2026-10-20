@@ -1,6 +1,6 @@
 # 插件扩展 SDK
 
-当前源码开发中的宿主为 `4.0.0-typing.6`、功能级别 **4**，尚未发布；公开 R5 仍为功能级别 3。共享契约为 `DictationAssistant.Plugin.Abstractions`，`apiVersion` 保持 **1**。应用版本、插件自身版本、接口版本和宿主功能级别分别管理。
+宿主 `4.0.0-typing.6` 的功能级别为 **4**；R5 的功能级别为 3。共享契约为 `DictationAssistant.Plugin.Abstractions`，`apiVersion` 保持 **1**。应用版本、插件自身版本、接口版本和宿主功能级别分别管理。
 
 功能级别 2 在原有文档导入和练习接口上增加命令、词表观察、语音提供器及 PCM 音效；仅使用这些接口的插件仍可声明 `minimumHostFeatureLevel: 2`。
 

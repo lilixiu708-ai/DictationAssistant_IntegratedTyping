@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: windows-typing-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   windows-x64:
     runs-on: windows-latest
@@ -56,21 +60,22 @@ jobs:
           review = json.loads(manifest.read_text(encoding='utf-8')).get('release_review', {})
           blockers = review.get('blocking_issues', [])
           ready = review.get('status') == 'ready' and not blockers
-          # R5 is explicitly authorized for distribution with the known licensing
+          # R5 and R6 are explicitly authorized with the known licensing
           # issue disclosed. This does not mark that issue as resolved, and does
           # not waive missing notices/source, unknown issues or integrity checks.
-          acknowledged_r5 = (
-              os.environ.get('GITHUB_REF') == 'refs/tags/v4.0.0-typing.5'
+          acknowledged_release = (
+              os.environ.get('GITHUB_REF') in {'refs/tags/v4.0.0-typing.5', 'refs/tags/v4.0.0-typing.6'}
               and review.get('status') == 'blocked'
               and isinstance(blockers, list) and bool(blockers)
               and all(isinstance(item, dict) and item.get('id') == 'avalonia-mspl-agpl-compatibility'
+                      and isinstance(item.get('reason'), str) and bool(item['reason'].strip())
                       for item in blockers)
           )
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
               output.write(f'ready={str(ready).lower()}\n')
-              output.write(f'distribution_allowed={str(ready or acknowledged_r5).lower()}\n')
+              output.write(f'distribution_allowed={str(ready or acknowledged_release).lower()}\n')
           if not ready:
-              print('R5 distribution retains the unresolved licensing declaration.' if acknowledged_r5
+              print('This authorized release retains the unresolved licensing declaration.' if acknowledged_release
                     else 'Binary artifacts are withheld while license/source review remains unresolved.')
               print(json.dumps(blockers, ensure_ascii=False, indent=2))
       - name: Build SDK extension examples
@@ -83,7 +88,7 @@ jobs:
           dotnet build sdk\examples\GainEffect\GainEffect.csproj -c Release
           if errorlevel 1 exit /b 1
       - name: Prepare versioned release assets
-        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v4.0.0-typing.5'
+        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v4.0.0-typing.5' && github.ref != 'refs/tags/v4.0.0-typing.6'
         shell: cmd
         run: python scripts\prepare_release.py "%GITHUB_REF_NAME%"
       - name: Prepare R5 application and independent plugin assets with disclosures
@@ -93,6 +98,14 @@ jobs:
           python scripts\prepare_release.py "%GITHUB_REF_NAME%" --acknowledge-license-review
           if errorlevel 1 exit /b 1
           python scripts\prepare_plugin_release.py --app-release-tag "%GITHUB_REF_NAME%"
+          if errorlevel 1 exit /b 1
+      - name: Prepare R6 application and typing plugin assets with disclosures
+        if: github.ref == 'refs/tags/v4.0.0-typing.6'
+        shell: cmd
+        run: |
+          python scripts\prepare_release.py "%GITHUB_REF_NAME%" --acknowledge-license-review
+          if errorlevel 1 exit /b 1
+          python scripts\prepare_plugin_release.py --app-release-tag "%GITHUB_REF_NAME%" --plugin-id synchronous-typing
           if errorlevel 1 exit /b 1
       - name: Upload portable Windows archive
         if: steps.license-review.outputs.distribution_allowed == 'true'
@@ -112,8 +125,8 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
-      - name: Upload independent R5 plugin release assets
-        if: github.ref == 'refs/tags/v4.0.0-typing.5' && steps.license-review.outputs.distribution_allowed == 'true'
+      - name: Upload selected independent plugin release assets
+        if: (github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6') && steps.license-review.outputs.distribution_allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: plugin-release-assets
@@ -135,12 +148,12 @@ jobs:
           name: release-assets
           path: release
       - uses: actions/download-artifact@v4
-        if: github.ref == 'refs/tags/v4.0.0-typing.5'
+        if: github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6'
         with:
           name: plugin-release-assets
           path: plugin-release
       - name: Publish validated tagged release
-        if: github.ref != 'refs/tags/v4.0.0-typing.5'
+        if: github.ref != 'refs/tags/v4.0.0-typing.5' && github.ref != 'refs/tags/v4.0.0-typing.6'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -160,32 +173,43 @@ jobs:
           if [[ "$RELEASE_TAG" == *-* ]]; then prerelease=true; fi
           gh release edit "$RELEASE_TAG" --draft=false --prerelease="$prerelease"
           gh release view "$RELEASE_TAG" --json url --jq .url
-      - name: Publish R5 application and independent plugin prereleases
-        if: github.ref == 'refs/tags/v4.0.0-typing.5'
+      - name: Publish authorized application and selected plugin prereleases
+        if: github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6'
         shell: python {0}
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          import hashlib, json, os, pathlib, re, subprocess
+          import hashlib, json, os, pathlib, re, subprocess, tempfile
 
           repository = os.environ['GH_REPO']
           commit = os.environ['GITHUB_SHA']
           app_tag = os.environ['RELEASE_TAG']
-          if app_tag != 'v4.0.0-typing.5' or not re.fullmatch(r'[0-9a-f]{40}', commit):
+          if app_tag not in {'v4.0.0-typing.5', 'v4.0.0-typing.6'} or not re.fullmatch(r'[0-9a-f]{40}', commit):
               raise SystemExit('Unexpected release tag or build commit')
 
           def gh(*arguments):
               return subprocess.check_output(['gh', *arguments], text=True)
 
-          plans = [
-              (app_tag, 'DictationAssistant Typing R5', pathlib.Path('release')),
-              ('plugin-synchronous-typing-v1.1.0', 'Synchronous Typing plugin 1.1.0',
-               pathlib.Path('plugin-release/synchronous-typing')),
-              ('plugin-docx-vocabulary-v1.0.1', 'Word vocabulary importer plugin 1.0.1',
-               pathlib.Path('plugin-release/docx-vocabulary')),
-          ]
+          plans = {
+              'v4.0.0-typing.5': [
+                  (app_tag, 'DictationAssistant Typing R5', pathlib.Path('release')),
+                  ('plugin-synchronous-typing-v1.1.0', 'Synchronous Typing plugin 1.1.0',
+                   pathlib.Path('plugin-release/synchronous-typing')),
+                  ('plugin-docx-vocabulary-v1.0.1', 'Word vocabulary importer plugin 1.0.1',
+                   pathlib.Path('plugin-release/docx-vocabulary')),
+              ],
+              'v4.0.0-typing.6': [
+                  (app_tag, 'R6 本体：Windows x64 便携版（含插件）', pathlib.Path('release')),
+                  ('plugin-synchronous-typing-v1.2.0', '插件更新：同步打字 1.2.0',
+                   pathlib.Path('plugin-release/synchronous-typing')),
+              ],
+          }[app_tag]
+          expected_plugin_directories = {folder.name for tag, _, folder in plans if tag != app_tag}
+          actual_plugin_directories = {path.name for path in pathlib.Path('plugin-release').iterdir()}
+          if actual_plugin_directories != expected_plugin_directories:
+              raise SystemExit('The plugin artifact contains an unexpected or missing release directory')
           pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
           existing = {item['tag_name'] for page in pages for item in page}
           prepared = []
@@ -197,6 +221,15 @@ jobs:
               required = {'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
               if not required <= assets.keys() or len(assets) != 5:
                   raise SystemExit(f'Incomplete release asset set: {tag}')
+              review = json.loads(assets['RELEASE_REVIEW.json'].read_text(encoding='utf-8'))
+              if review.get('source_commit') != commit:
+                  raise SystemExit(f'Release review does not match the built commit: {tag}')
+              if tag == app_tag:
+                  if review.get('tag') != app_tag or review.get('application_version') != app_tag.removeprefix('v'):
+                      raise SystemExit('Application release review does not match the release tag')
+              elif (review.get('app_release_tag') != app_tag
+                    or tag != f'plugin-{review.get("plugin_id")}-v{review.get("plugin_version")}'):
+                  raise SystemExit(f'Plugin release review does not match the release tag: {tag}')
               checked = set()
               for line in assets['SHA256SUMS'].read_text(encoding='ascii').splitlines():
                   expected, name = line.split('  ', 1)
@@ -217,15 +250,20 @@ jobs:
               target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
               if target is not None and target != commit:
                   raise SystemExit(f'Refusing to move an existing tag: {tag}')
+              if tag != app_tag and target is not None:
+                  raise SystemExit(f'Refusing to reuse an existing plugin tag: {tag}')
               if tag == app_tag and target != commit:
                   raise SystemExit('The application tag does not match the built commit')
               prepared.append((tag, title, folder, assets))
 
-          # All three asset sets and refs are checked before creating any release.
+          # Every selected asset set and ref is checked before creating any release.
+          uploaded = {}
+          verified_digests = {}
           for tag, title, folder, assets in prepared:
               command = ['release', 'create', tag, '--draft', '--prerelease', '--latest=false',
-                         '--title', title, '--notes-file', str(assets['RELEASE_NOTES.md'])]
-              command += ['--verify-tag'] if tag == app_tag else ['--target', commit]
+                         '--title', title, '--notes-file', str(assets['RELEASE_NOTES.md']), '--target', commit]
+              if tag == app_tag:
+                  command += ['--verify-tag']
               gh(*command)
               gh('release', 'upload', tag, *(str(path) for path in assets.values()))
               # Tag endpoints may omit drafts; query the authenticated list by tag.
@@ -234,15 +272,57 @@ jobs:
               if len(matches) != 1 or not matches[0]['draft']:
                   raise SystemExit(f'Expected exactly one new draft: {tag}')
               release = matches[0]
+              if release.get('tag_name') != tag or tag != app_tag and release.get('target_commitish') != commit:
+                  raise SystemExit(f'Draft target does not match the built commit: {tag}')
               expected_sizes = {name: path.stat().st_size for name, path in assets.items()}
               if {item['name']: item['size'] for item in release['assets']} != expected_sizes:
                   raise SystemExit(f'Uploaded draft assets differ: {tag}')
+              asset_digests = {}
               for item in release['assets']:
+                  if item.get('state') != 'uploaded':
+                      raise SystemExit(f'Uploaded asset is not complete: {tag}/{item["name"]}')
+                  with assets[item['name']].open('rb') as stream:
+                      expected_digest = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+                  asset_digests[item['name']] = expected_digest
                   if item.get('digest'):
-                      with assets[item['name']].open('rb') as stream:
-                          expected_digest = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
                       if item['digest'] != expected_digest:
                           raise SystemExit(f'Uploaded asset digest differs: {tag}/{item["name"]}')
+                  else:
+                      # Older API responses may omit digest; verify downloaded
+                      # bytes rather than accepting file sizes as integrity proof.
+                      with tempfile.TemporaryDirectory() as temporary:
+                          downloaded = pathlib.Path(temporary) / 'asset'
+                          with downloaded.open('wb') as destination:
+                              subprocess.run(['gh', 'api', f'repos/{repository}/releases/assets/{item["id"]}',
+                                              '-H', 'Accept: application/octet-stream'], stdout=destination, check=True)
+                          with downloaded.open('rb') as stream:
+                              actual_digest = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+                          if downloaded.stat().st_size != item['size'] or actual_digest != expected_digest:
+                              raise SystemExit(f'Downloaded draft asset differs: {tag}/{item["name"]}')
+              uploaded[tag] = release
+              verified_digests[tag] = asset_digests
+
+          # Recheck every completed draft and tag after all uploads, before the
+          # first public release. No R5, Word or native release enters the R6 plan.
+          for tag, _, _, _ in prepared:
+              saved = uploaded[tag]
+              current = json.loads(gh('api', f'repos/{repository}/releases/{saved["id"]}'))
+              if (not current.get('draft') or current.get('tag_name') != tag
+                      or tag != app_tag and current.get('target_commitish') != commit):
+                  raise SystemExit(f'Draft changed before publication: {tag}')
+              fields = lambda release: sorted((item['id'], item['name'], item['size'], item.get('state'))
+                                               for item in release['assets'])
+              if fields(current) != fields(saved):
+                  raise SystemExit(f'Draft assets changed before publication: {tag}')
+              for item in current['assets']:
+                  if item.get('digest') and item['digest'] != verified_digests[tag][item['name']]:
+                      raise SystemExit(f'Draft asset digest changed before publication: {tag}/{item["name"]}')
+              refs = subprocess.check_output(['git', 'ls-remote', 'origin',
+                                              f'refs/tags/{tag}', f'refs/tags/{tag}^{{}}'], text=True)
+              values = dict(line.split()[::-1] for line in refs.splitlines())
+              target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
+              if target not in (None, commit) or tag == app_tag and target != commit:
+                  raise SystemExit(f'Tag changed before publication: {tag}')
 
           for tag, _, _, _ in prepared:
               gh('release', 'edit', tag, '--draft=false', '--prerelease', '--latest=false')

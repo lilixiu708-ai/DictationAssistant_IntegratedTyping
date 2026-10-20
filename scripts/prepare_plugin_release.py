@@ -137,7 +137,9 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
         'legal_clearance_claimed': False,
         'host_release_review': host_review,
         'scope_note': 'This plugin ZIP excludes the host, shared contracts, Avalonia DLLs and native graphics runtimes. It does not resolve the host application combined-distribution authorization review. Original third-party licenses and private-dependency source materials remain included.',
-        'unverified': ['Windows user/machine-bound API credential persistence and cross-account rejection require real-machine validation.',
+        'unverified': ['Windows user/machine-bound encrypted translation profile persistence and cross-account rejection require real-machine validation.',
+                       *(['Migration of an R5 single-binding credential file has not been validated on Windows.']
+                         if version == '1.2.0' else []),
                        'Live DeepL translation requires a valid user key; keys are never bundled.']
                       if plugin_id == 'synchronous-typing' else [],
     }
@@ -213,7 +215,11 @@ not establish a new permission or legal clearance for that combination.
 '''
     (binary_root / 'INSTALL_AND_BUILD.md').write_text(build_notes, encoding='utf-8')
     if plugin_id == 'synchronous-typing':
-        summary = '新增预录译文、可隐藏翻译提示及 DeepL 提前翻译；独立 API 设置窗口支持 Windows 本机与当前账户绑定的加密保存。删除指定的统一评分提示文字。'
+        summary = ('新增多个命名的 DeepL Free / Pro 翻译配置、首选配置及本次任务切换；'
+                   '可从宿主插件管理中的“配置…”入口统一管理。要求宿主功能级别 4（R6）；'
+                   'Windows 加密绑定整份配置，其他平台仅保留至程序退出；切换配置不触发翻译。') \
+            if version == '1.2.0' else \
+            '新增预录译文、可隐藏翻译提示及 DeepL 提前翻译；独立 API 设置窗口支持 Windows 本机与当前账户绑定的加密保存。删除指定的统一评分提示文字。'
     else:
         summary = '首次提供独立更新包，DOCX 表格/正文提取及列选择功能保持不变；可独立替换导入插件，无需重装宿主。'
     details = '\n'.join('- ' + item['reason'] for item in host_review['blocking_issues'])
@@ -237,6 +243,8 @@ not establish a new permission or legal clearance for that combination.
 '''
     if plugin_id == 'synchronous-typing':
         notes += '\nWindows 本机/账户加密保存和跨机器拒绝读取仍需实机验证；真实 DeepL 翻译需用户自己的有效密钥，未在本发布中声称已验证。\n'
+        if version == '1.2.0':
+            notes += 'R5 单绑定文件的 Windows 实机迁移尚未验证；1.2.0 需要 R6 或其他宿主功能级别 4 的版本，不能直接安装到 R5 本体。\n'
     (output / 'RELEASE_NOTES.md').write_text(notes, encoding='utf-8')
     binary = output / f'{plugin_id}-{version}.zip'
     with zipfile.ZipFile(binary, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -271,8 +279,15 @@ not establish a new permission or legal clearance for that combination.
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--app-release-tag', required=True)
+    parser.add_argument('--plugin-id', action='append', choices=[item[0] for item in PLUGINS],
+                        help='Package only this plugin (repeat to select several); R5 defaults to both, R6 to typing only')
     args = parser.parse_args()
     try:
+        selected = set(args.plugin_id or (
+            ['synchronous-typing'] if args.app_release_tag == 'v4.0.0-typing.6'
+            else [item[0] for item in PLUGINS]))
+        if args.app_release_tag == 'v4.0.0-typing.6' and selected != {'synchronous-typing'}:
+            raise ValueError('R6 publishes only the updated typing plugin; retain the existing Word importer release')
         head = git('rev-parse', 'HEAD')
         if args.app_release_tag != 'v' + project_version(ROOT / 'src/DictationAssistant.App/DictationAssistant.App.csproj'):
             raise ValueError('App release tag must match the current application version')
@@ -299,8 +314,13 @@ def main():
                     or acknowledged.get('release_review') != host_review):
                 raise ValueError('Application publication acknowledgement does not match this build and unresolved review')
         catalog = json.loads((ROOT / 'third-party/components.json').read_text(encoding='utf-8'))
+        # A selected update must not upload another plugin's stale release files.
+        output_root = ROOT / 'artifacts/plugin-releases'
+        if output_root.exists():
+            shutil.rmtree(output_root)
         for arguments in PLUGINS:
-            package_plugin(*arguments, args.app_release_tag, head, catalog, host_review)
+            if arguments[0] in selected:
+                package_plugin(*arguments, args.app_release_tag, head, catalog, host_review)
     except (OSError, ValueError, KeyError, ET.ParseError, zipfile.BadZipFile, subprocess.CalledProcessError) as error:
         parser.exit(1, f'Plugin release preparation failed: {error}\n')
 
