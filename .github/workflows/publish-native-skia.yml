@@ -69,22 +69,27 @@ jobs:
           assert producer['path'] == '.github/workflows/build-skia-without-dng.yml'
           tag = urllib.parse.urlsplit(entry['archive']['url']).path.split('/releases/download/', 1)[1].split('/')[0]
           assert tag.startswith('native-skia-') and api(f'commits/{tag}')['sha'] == manifest['build_commit']
-          release = api(f'releases/tags/{tag}')
+          # The tag lookup only returns published releases. Include drafts.
+          releases = [item for item in api('releases?per_page=100') if item['tag_name'] == tag]
+          assert len(releases) == 1
+          release = releases[0]
           assert release['draft'], 'Refusing to overwrite a published release'
           (root / 'native-build.json').write_bytes(raw)
           (root / 'SHA256SUMS').write_text(''.join(f"{item['sha256']}  {item['name']}\n" for item in assets))
           with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
               stream.write(f'tag={tag}\n')
+              stream.write(f'release_id={release["id"]}\n')
       - name: Upload the complete pair and publish the reviewed draft
         env:
           GH_TOKEN: ${{ github.token }}
           NATIVE_TAG: ${{ steps.verified.outputs.tag }}
+          NATIVE_RELEASE_ID: ${{ steps.verified.outputs.release_id }}
         run: |
           gh release upload "$NATIVE_TAG" native-assets/* --clobber
           python - <<'PY'
           import json, os, pathlib, subprocess
           expected = {path.name: path.stat().st_size for path in pathlib.Path('native-assets').iterdir()}
-          release = json.loads(subprocess.check_output(['gh', 'api', f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/tags/{os.environ['NATIVE_TAG']}"]))
+          release = json.loads(subprocess.check_output(['gh', 'api', f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/{os.environ['NATIVE_RELEASE_ID']}"]))
           assert release['draft']
           assert {item['name']: item['size'] for item in release['assets']} == expected, 'Draft asset set is incomplete'
           PY
