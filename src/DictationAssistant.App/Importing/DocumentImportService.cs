@@ -18,7 +18,8 @@ public static class DocumentImportService
     /// the preview window requests cooperative cancellation.
     /// </summary>
     public static Task<ImportDocument> ReadAsync(PluginEntry plugin,
-        Func<Task<Stream>> openReadAsync, string fileName, CancellationToken cancellationToken)
+        Func<Task<Stream>> openReadAsync, string fileName, CancellationToken cancellationToken,
+        bool preserveNotation = false)
     {
         ArgumentNullException.ThrowIfNull(plugin);
         ArgumentNullException.ThrowIfNull(openReadAsync);
@@ -40,7 +41,9 @@ public static class DocumentImportService
                 if (stream.CanSeek && stream.Length > MaximumInputBytes)
                     throw new InvalidDataException("文件超过 64 MiB，请先拆分文档后重试。");
 
-                var result = await importer.ReadAsync(stream, fileName, cancellationToken).ConfigureAwait(false);
+                var result = preserveNotation && importer is IDocumentNotationImporter notationImporter
+                    ? await notationImporter.ReadWithNotationAsync(stream, fileName, cancellationToken).ConfigureAwait(false)
+                    : await importer.ReadAsync(stream, fileName, cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 return CopyAndValidate(result, cancellationToken);
             }

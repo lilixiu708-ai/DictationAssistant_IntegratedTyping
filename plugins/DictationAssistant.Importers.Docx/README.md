@@ -4,17 +4,22 @@
 
 **[1.1.0 已独立公开](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0)。** 新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm` 读取，继续使用插件 ID `docx-vocabulary`、程序集 `DictationAssistant.Importers.Docx` 及原有入口类型；安装目录仍为 `Plugins/DocxVocabulary/`。历史版本 1.0.1 仅支持 DOCX，资产保留。
 
+当前源码为 **1.2.0，尚未发布，要求宿主功能级别 5**。新增背诵练习使用的可选 `IDocumentNotationImporter.ReadWithNotationAsync`：保留 Word 直接设置的上下标，输出 `Na^+`、`NH_4^+`、`SO_4^2-` 等记号。普通 `ReadAsync` 仍返回原来的纯文本；Excel 两种入口均保留原始 Unicode，不自行推断格式。
+
 ## DOCX 导入内容
 
 - 每张正文表格生成独立的 `Table` 分区，保留单元格内容、行顺序和重复项。
 - 正文中不属于表格的非空段落放入单独的 `Paragraphs` 分区，位于所有表格之后。
 - 可识别表格前 10 行内的常见中英文表头，或 Word 显式标记的表头；表头行保留并标记 `IsHeader`，方便宿主排除。
+- 1.2.0 增加 English Name、中文名称、Symbol 等表头识别，并标记这些表头前的整宽合并标题，避免将其作为练习条目。
 - 首选有“单词”“英文”“Word”“Phrase”“Vocabulary”等表头的第一张表格及相应列。其他情况使用第一分区、第一列，由用户在预览中选择。
 - 保留英文大小写、短语、单元格内的空白、制表符和换行。多个单元格段落用换行连接。
 - 横向合并单元格的内容只放在起始列，后续跨度用空单元格补齐；嵌套表格文本放入所属外层单元格，不重复生成分区。
 - 保留白色和显式隐藏文字，并在检测到时显示提示。删除修订、域指令、图片、文本框及嵌入对象不参与词条提取。
 
 插件不会自行去重、打乱或修改词表。检测到文本相同的表格时只返回提示，实际导入范围由宿主预览决定。
+
+记号读取合并相邻的同类上下标 run，再生成一个脚本组。数字下标和电荷上标使用简写；其他脚本用 `_{...}` / `^{...}` 明确分组。仅解析 run 直接声明的 `w:vertAlign`，不根据字号或位置猜测，不解析继承样式或嵌入公式；没有脚本格式的 `Br-` 保留原文，判定规则由练习插件负责。
 
 ## Excel 导入内容（1.1.0）
 
@@ -53,7 +58,7 @@ DTD 被禁止，外部 XML 资源解析被禁用。宿主传入的文件流保�
 
 ## 构建
 
-源码按读取流程划分：`DocxImporter` 负责格式分派和 Word 正文解析，`ExcelImporter` 负责工作表及单元格转换，`ExcelPackage` 负责包内 XML、解压预算与取消读取保护，`XlsbRecordValidator` 负责关系定位和二进制记录边界；两种格式共用 `ImportStreams` 的有界异步输入复制。
+源码按读取流程划分：`DocxImporter` 负责格式分派和 Word 正文解析，`DocxNotationReader` 负责可选的 run 脚本记号，`ExcelImporter` 负责工作表及单元格转换，`ExcelPackage` 负责包内 XML、解压预算与取消读取保护，`XlsbRecordValidator` 负责关系定位和二进制记录边界；两种格式共用 `ImportStreams` 的有界异步输入复制。
 
 在包含本项目和 `src/DictationAssistant.Plugin.Abstractions` 的完整源码目录中使用 .NET 10 SDK：
 

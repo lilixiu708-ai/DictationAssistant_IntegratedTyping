@@ -5,7 +5,7 @@ public static class PluginApi
 {
     public const int Version = 1;
     /// <summary>Additive host capabilities; existing API 1 plugins still use the same contract assembly.</summary>
-    public const int FeatureLevel = 4;
+    public const int FeatureLevel = 5;
 }
 
 /// <summary>Reads a document without changing it or the application's word list.</summary>

@@ -48,7 +48,7 @@
       <MenuItem Header="插件(_P)">
         <MenuItem Header="从文档提取词表…" InputGesture="Ctrl+Shift+I" Click="ImportDocument_Click" />
         <Separator />
-        <MenuItem Header="同步打字练习…" InputGesture="Ctrl+Shift+T" Click="TypingPractice_Click" />
+        <MenuItem Header="背诵练习…" InputGesture="Ctrl+Shift+T" Click="TypingPractice_Click" />
         <MenuItem x:Name="PluginPracticesMenu" Header="所有练习" IsEnabled="False" />
         <MenuItem x:Name="PluginCommandsMenu" Header="扩展命令" IsEnabled="False" />
         <MenuItem Header="插件管理…" Click="PluginManager_Click" />
@@ -147,7 +147,7 @@
             <Button DockPanel.Dock="Left" Content="导入文档" Click="ImportDocument_Click"
                     Padding="12,6" Margin="0,0,8,0"
                     ToolTip.Tip="通过插件从 Word 等文档提取词表。快捷键：Ctrl+Shift+I" />
-            <Button DockPanel.Dock="Left" Content="同步打字" Click="TypingPractice_Click"
+            <Button DockPanel.Dock="Left" Content="背诵练习" Click="TypingPractice_Click"
                     Padding="12,6" Margin="0,0,8,0"
                     ToolTip.Tip="逐词完整播报后限时打字，整轮结束再显示正确率。Ctrl+Shift+T" />
             <Button DockPanel.Dock="Left" Content="打乱顺序" Click="ShuffleWordList_Click"

@@ -12,7 +12,7 @@ public interface IPracticeHost
 {
     /// <summary>Avalonia Window instance for dialog ownership; no Avalonia dependency in this contract.</summary>
     object OwnerWindow { get; }
-    /// <summary>Immutable, nonempty terms. Snapshot taken before the modal dialog opens.</summary>
+    /// <summary>Immutable editor terms. May be empty for a source-selection plugin; snapshot taken before its dialog opens.</summary>
     IReadOnlyList<string> Words { get; }
     /// <summary>Current auto-play setting, clamped to at least 1.</summary>
     int TimesPerWord { get; }

@@ -4,9 +4,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <Description>Word and Excel vocabulary document importer for DictationAssistant plugin API 1.</Description>
   </PropertyGroup>
   <ItemGroup>

@@ -8,7 +8,9 @@
 
 Word / Excel 导入插件 **1.1.0 已独立发布**：新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm`，按工作表预览并选择列，保留 Unicode 文本；原 Word 1.0.1 作为仅支持 DOCX 的[历史版本](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)保留。读取库选用 [ExcelDataReader 3.9.0 固定源码](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3)，Linux 全量样本及 Windows 合成样本验证范围见 [Excel 导入验证](docs/Excel导入验证.md)。
 
-## 功能
+**当前源码（未发布）：同步打字更名为“背诵练习插件”1.4.0，配套 Word / Excel 导入 1.2.0。** 可先选文档、表格 / 工作表和同行提示 / 答案列，默认显示离子式、拼写英文名称，支持交换列、静音计时或播报后作答及化学上下标。两个新插件均要求宿主功能级别 **5**，须配套当前源码宿主；公开 R6 仅为级别 4，不能只复制新插件到 R6。插件 ID、程序集和本机配置路径保留，操作见[背诵练习说明](docs/同步打字插件使用说明.md#当前源码背诵练习-140未发布)。
+
+## 已发布功能
 
 - 词表：文本编辑、DOCX 表格/正文导入；更新导入插件 1.1.0 后支持 Excel，选择工作表与列、预览、去重和打乱顺序。
 - 同步打字：播报结束后开放输入，限时作答、评分和 CSV 导出；后台核对实际/理论词条数，异常保存日志。

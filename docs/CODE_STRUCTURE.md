@@ -2,6 +2,8 @@
 
 主程序保持单体 App；共享契约只描述宿主和插件之间的数据与能力。插件按功能独立构建，通过 `plugin.json` 侧载，拥有各自的版本和私有依赖。
 
+本页描述当前源码：宿主功能级别 5、背诵练习 1.4.0 与 Word / Excel 导入 1.2.0，均尚未发布。公开 R6 为功能级别 4，公开插件仍为同步打字 1.3.1 / 导入 1.1.0，新插件须配套源码宿主；`apiVersion` 仍为 1。
+
 ## 仓库目录
 
 | 目录 | 职责 |
@@ -9,7 +11,7 @@
 | `src/DictationAssistant.App/` | Avalonia 窗口、词表编辑、播报与音频、设置、插件加载和调用 |
 | `src/DictationAssistant.Plugin.Abstractions/` | 导入、练习、配置、生命周期等公开契约 |
 | `plugins/DictationAssistant.Importers.Docx/` | Word / Excel 内容读取，不修改宿主词表 |
-| `plugins/DictationAssistant.Practices.Typing/` | 同步打字、评分、译文和翻译服务配置 |
+| `plugins/DictationAssistant.Practices.Typing/` | 背诵练习、文档配对、播报听写、评分、译文和翻译服务配置 |
 | `sdk/examples/` | 使用公开契约的插件示例 |
 | `scripts/`、`.github/workflows/` | 构建验证、源码与许可收集、版本化发行 |
 | `docs/` | 当前使用与开发说明；`legacy/` 保留历史材料 |
@@ -26,11 +28,16 @@
 
 导入插件中，`DocxImporter` 是固定入口并读取 Word XML；`ExcelImporter` 负责工作表、行列和单元格值；`ExcelPackage` 负责包预检与取消保护；`XlsbRecordValidator` 校验 BIFF12 记录；`ImportStreams` 负责有大小上限的异步复制。插件返回原始内容与表头标记，宿主预览才执行空白规范化、跳过表头或去重。修改读取规则时须同时核对原始内容和最终词表。
 
-## 同步打字插件
+背诵准备另经 `IPracticeDocumentHost.OpenDocumentAsync` 选择文档，不写回编辑器；`DocumentImportService` 在此入口启用 `preserveNotation`，优先调用可选的 `IDocumentNotationImporter`。`DocxNotationReader` 将 Word 直接 run 的上下标标记表达为 `^` / `_` 分组；不推算继承样式或公式对象。普通词表导入仍走原 `ReadAsync` 的平文本读取路径，表头识别共用增强规则。
+
+## 背诵练习插件
 
 | 修改内容 | 主要入口 |
 | --- | --- |
 | 插件能力与宿主连接 | `SynchronousTypingPlugin` |
+| 文档、表格 / 工作表、提示 / 答案列及交换预览 | `PracticePreparationWindow` |
+| 同行配对、跳过表头与不可变练习数据 | `PracticeQuestionBuilder`、`PracticePlan`、`PracticeQuestion` |
+| 化学上下标显示及保留元素大小写的判定 | `ChemicalNotation` |
 | 播报、计时、输入与练习流程 | `TypingPracticeWindow`、`RepetitionPlayback` |
 | 判分、成绩和 CSV | `TypingEvaluation`、`TypingResults`、`TypingResultRow` |
 | 录入译文、提前翻译和本地译文 | `TranslationEditorWindow`、`PracticeTranslations` |
@@ -38,6 +45,10 @@
 | 服务定义、统一校验与当前会话 | `TranslationEngineProfiles` |
 | 本地加密保存与迁移 | `TranslationApiSettings` |
 | 服务调用、分批与 HTTP | `TranslationService`、`TranslationBatches`、`TranslationHttp`、各 `*Translator` |
+
+流程为准备窗口 → 同行配对 → 内部 `PracticePlan` → 练习设置与答题。配对保持顺序与重复项，默认跳过标题 / 表头，预览最多 100 题；文档可静音计时或播报后作答，当前主词表入口仍为播报听写。英文名称可忽略大小写，化学式答案强制区分元素大小写；`PracticePlan` 与 `ChemicalNotation` 都不是共享 SDK 类型。
+
+更名后，插件 ID `synchronous-typing`、`DictationAssistant.Practices.Typing` 程序集 / 命名空间及 `SynchronousTyping` 私有数据目录保持不变。
 
 配置窗口编辑独立草稿，应用后才更新会话；持久化由设置存储负责。服务字段和参数约束在 `TranslationEngineProviders` 定义，UI 与存储使用同一套校验。已有凭据不回填到输入框；同一服务留空时可沿用，切换服务时须重新填写。
 

@@ -7,7 +7,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'DictationAssistant.App'">
-    <Description>支持 Word/Excel 词表导入、语音播报、随机顺序、同步打字练习、成绩导出与插件扩展的桌面听写工具。</Description>
+    <Description>支持 Word/Excel 词表导入、语音播报、背诵与限时拼写练习、成绩导出及插件扩展的桌面工具。</Description>
     <IsPackable>false</IsPackable>
     <Copyright>Copyright (C) 2013-2026 alampy.com. Original notices retained; see NOTICE.md for this distribution.</Copyright>
   </PropertyGroup>

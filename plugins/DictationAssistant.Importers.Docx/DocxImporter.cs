@@ -9,7 +9,7 @@ using DictationAssistant.Plugin.Abstractions;
 namespace DictationAssistant.Importers.Docx;
 
 /// <summary>Reads DOCX body tables and paragraphs without Office or external programs.</summary>
-public sealed class DocxImporter : IDocumentImporter
+public sealed class DocxImporter : IDocumentNotationImporter
 {
     private const long MaxPackageBytes = 64L * 1024 * 1024;
     private const long MaxDocumentBytes = 32L * 1024 * 1024;
@@ -26,7 +26,8 @@ public sealed class DocxImporter : IDocumentImporter
         "英文词汇", "英语词汇", "英文词组", "英语词组", "英文短语", "英语短语", "短语",
         "word", "words", "phrase", "phrases", "wordphrase", "wordsphrases", "vocabulary",
         "vocab", "english", "englishword", "englishwords", "englishphrase", "englishphrases",
-        "englishvocabulary", "englishwordphrase", "term", "terms"
+        "englishvocabulary", "englishwordphrase", "term", "terms", "englishname", "englishnames",
+        "英文名称", "英文名"
     };
 
     private static readonly HashSet<string> OtherHeaders = new(StringComparer.Ordinal)
@@ -36,11 +37,20 @@ public sealed class DocxImporter : IDocumentImporter
         "no", "number", "index", "id", "pos", "partofspeech", "wordclass", "wordtype",
         "chinese", "translation", "meaning", "meanings", "definition", "definitions",
         "chinesemeaning", "chinesetranslation", "pronunciation", "phonetic", "phonetics",
-        "ipa", "example", "examples", "collocation", "collocations"
+        "ipa", "example", "examples", "collocation", "collocations", "中文名称", "中文名",
+        "化学式", "离子式", "符号", "symbol", "symbols", "formula", "chemicalformula"
     };
 
-    public async Task<ImportDocument> ReadAsync(
-        Stream content, string fileName, CancellationToken cancellationToken)
+    public Task<ImportDocument> ReadAsync(
+        Stream content, string fileName, CancellationToken cancellationToken) =>
+        ReadCoreAsync(content, fileName, preserveNotation: false, cancellationToken);
+
+    public Task<ImportDocument> ReadWithNotationAsync(
+        Stream content, string fileName, CancellationToken cancellationToken) =>
+        ReadCoreAsync(content, fileName, preserveNotation: true, cancellationToken);
+
+    private static async Task<ImportDocument> ReadCoreAsync(
+        Stream content, string fileName, bool preserveNotation, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(content);
         ArgumentNullException.ThrowIfNull(fileName);
@@ -111,10 +121,11 @@ public sealed class DocxImporter : IDocumentImporter
         var body = root.Element(ns + "body")
             ?? throw new InvalidDataException("Word 文档没有可读取的正文。");
 
-        return ReadBody(body, ns, cancellationToken);
+        return ReadBody(body, ns, preserveNotation, cancellationToken);
     }
 
-    private static ImportDocument ReadBody(XElement body, XNamespace ns, CancellationToken cancellationToken)
+    private static ImportDocument ReadBody(
+        XElement body, XNamespace ns, bool preserveNotation, CancellationToken cancellationToken)
     {
         var sections = new List<ImportSection>();
         var warnings = new List<string>();
@@ -138,7 +149,8 @@ public sealed class DocxImporter : IDocumentImporter
                 throw new InvalidDataException("正文中的表格超过 256 张，无法导入。");
 
             var tableNumber = sections.Count + 1;
-            var section = ReadTable(table, ns, tableNumber, ref rowBudget, ref cellBudget, cancellationToken);
+            var section = ReadTable(table, ns, tableNumber, ref rowBudget, ref cellBudget,
+                preserveNotation, cancellationToken);
             sections.Add(section);
             if (suggestedSection < 0 && section.Columns.Any(IsVocabularyHeader))
                 suggestedSection = sections.Count - 1;
@@ -158,7 +170,7 @@ public sealed class DocxImporter : IDocumentImporter
             if (paragraph.Ancestors(ns + "tbl").Any() || IsExcluded(paragraph, ns))
                 continue;
             paragraphNumber++;
-            var text = ReadParagraphText(paragraph, ns);
+            var text = ReadParagraphText(paragraph, ns, preserveNotation, cancellationToken);
             if (string.IsNullOrWhiteSpace(text))
                 continue;
             ConsumeBudget(ref rowBudget, 1, "可提取的行数超过 50000。");
@@ -205,9 +217,9 @@ public sealed class DocxImporter : IDocumentImporter
 
     private static ImportSection ReadTable(
         XElement table, XNamespace ns, int tableNumber,
-        ref int rowBudget, ref int cellBudget, CancellationToken cancellationToken)
+        ref int rowBudget, ref int cellBudget, bool preserveNotation, CancellationToken cancellationToken)
     {
-        var data = new List<(string[] Cells, bool ExplicitHeader)>();
+        var data = new List<(string[] Cells, bool ExplicitHeader, int SingleCellSpan)>();
         var columnCount = table.Element(ns + "tblGrid")?.Elements(ns + "gridCol").Count() ?? 0;
         if (columnCount > MaxColumns)
             throw new InvalidDataException("表格列数超过 256，无法导入。");
@@ -220,6 +232,8 @@ public sealed class DocxImporter : IDocumentImporter
             ConsumeBudget(ref rowBudget, 1, "可提取的行数超过 50000。");
             var cells = new List<string>();
             var before = ReadGridSize(row.Element(ns + "trPr")?.Element(ns + "gridBefore"), ns, 0);
+            var cellCount = 0;
+            var singleCellSpan = 0;
             for (var i = 0; i < before; i++)
                 cells.Add(string.Empty);
             foreach (var cell in row.Descendants(ns + "tc"))
@@ -228,11 +242,13 @@ public sealed class DocxImporter : IDocumentImporter
                 if (cell.Ancestors(ns + "tr").FirstOrDefault() != row || IsExcluded(cell, ns))
                     continue;
                 var span = ReadGridSize(cell.Element(ns + "tcPr")?.Element(ns + "gridSpan"), ns, 1);
+                cellCount++;
+                singleCellSpan = span;
                 if (span < 1 || cells.Count + span > MaxColumns)
                     throw new InvalidDataException("表格列数或合并单元格范围超过 256，无法导入。");
                 var paragraphs = cell.Descendants(ns + "p")
                     .Where(paragraph => !IsExcluded(paragraph, ns))
-                    .Select(paragraph => ReadParagraphText(paragraph, ns));
+                    .Select(paragraph => ReadParagraphText(paragraph, ns, preserveNotation, cancellationToken));
                 cells.Add(string.Join('\n', paragraphs));
                 for (var i = 1; i < span; i++)
                     cells.Add(string.Empty);
@@ -243,7 +259,8 @@ public sealed class DocxImporter : IDocumentImporter
             for (var i = 0; i < after; i++)
                 cells.Add(string.Empty);
             columnCount = Math.Max(columnCount, cells.Count);
-            data.Add((cells.ToArray(), IsEnabled(row.Element(ns + "trPr")?.Element(ns + "tblHeader"), ns)));
+            data.Add((cells.ToArray(), IsEnabled(row.Element(ns + "trPr")?.Element(ns + "tblHeader"), ns),
+                cellCount == 1 && before == 0 && after == 0 ? singleCellSpan : 0));
         }
         columnCount = Math.Max(1, columnCount);
         ConsumeBudget(ref cellBudget, checked(data.Count * columnCount), "可提取的单元格数量超过 500000。");
@@ -271,6 +288,7 @@ public sealed class DocxImporter : IDocumentImporter
                 SourceLabel = $"表格 {tableNumber}，第 {index + 1} 行",
                 Cells = padded,
                 IsHeader = raw.ExplicitHeader || index == headerIndex ||
+                           (index < headerIndex && columnCount > 1 && raw.SingleCellSpan >= columnCount) ||
                            (headerIndex >= 0 && SameHeader(raw.Cells, header))
             };
         }
@@ -284,8 +302,11 @@ public sealed class DocxImporter : IDocumentImporter
         };
     }
 
-    private static string ReadParagraphText(XElement paragraph, XNamespace ns)
+    private static string ReadParagraphText(
+        XElement paragraph, XNamespace ns, bool preserveNotation, CancellationToken cancellationToken)
     {
+        if (preserveNotation)
+            return DocxNotationReader.ReadParagraphText(paragraph, ns, cancellationToken);
         var text = new StringBuilder();
         AppendInline(paragraph, text, ns);
         return text.ToString();
@@ -313,7 +334,7 @@ public sealed class DocxImporter : IDocumentImporter
     private static bool IsExcluded(XElement element, XNamespace ns) =>
         element.AncestorsAndSelf().Any(ancestor => IsExcludedElement(ancestor, ns));
 
-    private static bool IsExcludedElement(XElement element, XNamespace ns) =>
+    internal static bool IsExcludedElement(XElement element, XNamespace ns) =>
         element.Name == ns + "del" || element.Name == ns + "moveFrom" ||
         element.Name == ns + "drawing" || element.Name == ns + "pict" ||
         element.Name == ns + "object" || element.Name == ns + "txbxContent";

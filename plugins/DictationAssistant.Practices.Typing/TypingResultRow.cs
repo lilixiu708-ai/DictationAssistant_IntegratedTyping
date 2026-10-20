@@ -43,7 +43,8 @@ internal sealed class TypingResultRow : Grid
         // Virtualized rows are recycled; update every field for the new item.
         // Format only visible rows instead of retaining one string/control per word.
         _number.Text = record.Index.ToString(CultureInfo.InvariantCulture);
-        _expected.Text = "正确：" + record.Expected;
+        _expected.Text = (record.Prompt.Length > 0 ? "提示：" + record.Prompt + "\n" : string.Empty)
+            + "正确：" + record.Expected;
         _entered.Text = "输入：" + (string.IsNullOrEmpty(record.Entered) ? "（空白）" : record.Entered);
         _status.Text = record.Correct
             ? (record.TimedOut ? "✓ 正确\n到时" : "✓ 正确")

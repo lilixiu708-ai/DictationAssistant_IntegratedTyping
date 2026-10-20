@@ -1,6 +1,6 @@
 # 插件扩展 SDK
 
-宿主 `4.0.0-typing.6` 的功能级别为 **4**；R5 的功能级别为 3。共享契约为 `DictationAssistant.Plugin.Abstractions`，`apiVersion` 保持 **1**。应用版本、插件自身版本、接口版本和宿主功能级别分别管理。
+**当前源码宿主功能级别为 5，尚未发布。** 公开宿主 `4.0.0-typing.6`（R6）的功能级别为 4；R5 为 3。共享契约为 `DictationAssistant.Plugin.Abstractions`，`apiVersion` 保持 **1**。应用版本、插件自身版本、接口版本和宿主功能级别分别管理。
 
 功能级别 2 在原有文档导入和练习接口上增加命令、词表观察、语音提供器及 PCM 音效；仅使用这些接口的插件仍可声明 `minimumHostFeatureLevel: 2`。
 
@@ -10,6 +10,8 @@
 
 功能级别 4 新增可选的 `IConfigurablePlugin`，由插件管理中的逐插件「配置…」打开独立设置窗口，不要求先载入词表。使用该接口或 `configuration` 清单类型的插件声明 `minimumHostFeatureLevel: 4`；不能将此类新插件作为 R5 的插件更新包。
 
+功能级别 5 新增可选文档练习与科学记号能力。源码中的背诵练习 1.4.0、Word / Excel 导入 1.2.0 均声明 `minimumHostFeatureLevel: 5`，须与当前源码宿主一起构建；公开的同步打字 1.3.1 / 导入 1.1.0 不含这些能力。
+
 ## 选择扩展接口
 
 一个公开无参入口类可以实现多个接口。清单的 `kind` 表示主要功能，宿主同时识别该实例实现的其他能力。
@@ -17,7 +19,9 @@
 | 接口 | 方法或数据 | 职责 |
 | --- | --- | --- |
 | `IDocumentImporter` | `ReadAsync(Stream, string, CancellationToken)` → `ImportDocument` | 读取文件，返回分区、列和行；不修改源文件，不关闭宿主传入的流 |
+| `IDocumentNotationImporter` | `ReadWithNotationAsync(Stream, string, CancellationToken)` → `ImportDocument` | 可选记号读取，继承 `IDocumentImporter`；普通导入继续使用 `ReadAsync` |
 | `IPracticePlugin` | `RunAsync(IPracticeHost, CancellationToken)` | 运行桌面练习；使用词条快照、重复次数、间隔和 `SpeakOnceAsync`，退出前结束播放 |
+| `IPracticeSourceSelectionPlugin` | `CanStartWithoutWords` | 练习插件显式允许在主词表为空时打开来源准备界面 |
 | `IConfigurablePlugin` | `ConfigureAsync(object ownerWindow, CancellationToken)` | 可选独立配置界面；以插件管理窗口为所有者，关闭后返回 |
 | `ICommandPlugin` | `Commands`；`ExecuteAsync(commandId, context, token)` | 声明固定命令并按用户操作执行；使用宿主服务处理词表、对话和音频 |
 | `IWordListObserverPlugin` | `OnWordListChangedAsync(snapshot, token)` | 后台接收合并后的词表快照，适合统计和索引 |
@@ -28,6 +32,14 @@
 清单支持 `document-importer`、`practice`、`command`、`configuration`、`voice`、`audio-effect` 和 `extension`。主要功能对应的接口必须实现；多功能插件可选择 `extension`。只提供配置界面时，可用 `kind: "configuration"` 并实现 `IConfigurablePlugin`。单纯生命周期不是一个可独立安装的功能；入口还须实现至少一个功能接口。
 
 清单省略 `kind` 时按既有文档导入器处理。文档导入能力需要 1–32 个合法文件扩展名；其他示例使用 `extensions: []`。同时实现导入及其他能力的入口可用 `kind: "extension"` 并声明其导入扩展名。插件 ID 不区分大小写，安装目录中不得出现重复 ID。
+
+## 功能级别 5：文档练习与记号
+
+练习宿主可选实现 `IPracticeDocumentHost`，提供 `OpenDocumentAsync(object ownerWindow, CancellationToken)` → `PracticeDocument?`。插件在 UI 线程传入所属 Avalonia 窗口，宿主负责文件选择和后台导入，取消选择返回 `null`；返回对象包含文件名及 `ImportDocument`，不会修改主窗口词表。
+
+实现 `IPracticeSourceSelectionPlugin` 且 `CanStartWithoutWords == true` 的练习可取得空 `IPracticeHost.Words`，先打开来源界面；其他练习仍要求非空主词表。文档来源、提示 / 答案配对和静音方式由插件组织，不新增清单 `kind`。
+
+文档练习读取时，宿主优先调用 `IDocumentNotationImporter.ReadWithNotationAsync`；未实现时仍调用普通 `ReadAsync`。Word 1.2.0 用 `^` / `_` 分组保留直接 run 上下标，普通导入继续返回平文本；这不代表支持继承样式或公式对象。该可选接口沿用流所有权、取消、物化及导入限制。
 
 ## 独立配置窗口
 

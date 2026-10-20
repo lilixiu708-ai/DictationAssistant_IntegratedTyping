@@ -21,13 +21,14 @@ namespace DictationAssistant.Practices.Typing;
 internal sealed class TypingPracticeWindow : Window
 {
     private readonly IPracticeHost _host;
+    private readonly PracticePlan _plan;
     private readonly TranslationEngineSession _translationEngines;
     private readonly CancellationTokenSource _cancellation;
     private readonly CancellationTokenRegistration _externalCancellationRegistration;
     private readonly TextBlock _progress = new() { FontSize = 16, TextAlignment = TextAlignment.Center };
     private readonly TextBlock _phaseTitle = new()
     {
-        Text = "听写打字练习", FontSize = 30, FontWeight = FontWeight.Bold,
+        Text = "背诵练习", FontSize = 30, FontWeight = FontWeight.Bold,
         HorizontalAlignment = HorizontalAlignment.Center
     };
     private readonly TextBlock _phaseDetail = new()
@@ -37,7 +38,7 @@ internal sealed class TypingPracticeWindow : Window
     };
     private readonly TextBlock _countdown = new()
     {
-        FontSize = 18, MaxWidth = 460, MinHeight = 28, IsVisible = false,
+        FontSize = 26, MaxWidth = 460, MinHeight = 36, IsVisible = false,
         HorizontalAlignment = HorizontalAlignment.Center, TextAlignment = TextAlignment.Center,
         TextWrapping = TextWrapping.Wrap
     };
@@ -57,6 +58,12 @@ internal sealed class TypingPracticeWindow : Window
     {
         FontSize = 22, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center,
         HorizontalAlignment = HorizontalAlignment.Center, IsVisible = false
+    };
+    private readonly TextBlock _questionPrompt = new()
+    {
+        FontSize = 34, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+        TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center,
+        IsVisible = false
     };
     private readonly Button _translationsButton = new()
     {
@@ -112,12 +119,13 @@ internal sealed class TypingPracticeWindow : Window
     private bool _csvSaving;
 
     public TypingPracticeWindow(IPracticeHost host, CancellationToken externalToken,
-        TranslationEngineSession translationEngines)
+        TranslationEngineSession translationEngines, PracticePlan plan)
     {
         _host = host;
+        _plan = plan ?? throw new ArgumentNullException(nameof(plan));
         _translationEngines = translationEngines;
         _cancellation = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
-        Title = "同步打字听写";
+        Title = "背诵练习";
         Width = 750;
         Height = 640;
         MinWidth = 570;
@@ -164,13 +172,14 @@ internal sealed class TypingPracticeWindow : Window
         root.Children.Add(card);
         content.Children.Add(_showTranslation);
         content.Children.Add(_translationHint);
+        content.Children.Add(_questionPrompt);
         content.Children.Add(_countdown);
         content.Children.Add(_answer);
         content.Children.Add(_setupPanel);
 
         var resultHeader = new TextBlock
         {
-            Text = "逐词核对 · 正确词条与本次输入", FontWeight = FontWeight.SemiBold,
+            Text = "逐题核对 · 提示、正确答案与本次输入", FontWeight = FontWeight.SemiBold,
             Margin = new Thickness(10, 0, 10, 8)
         };
         _resultsView.Children.Add(resultHeader);
@@ -197,20 +206,26 @@ internal sealed class TypingPracticeWindow : Window
         };
         secondsRow.Children.Add(new TextBlock
         {
-            Text = "每词打字时限（秒，1–300）：", FontSize = 18, VerticalAlignment = VerticalAlignment.Center
+            Text = "每题作答时限（秒，1–300）：", FontSize = 18, VerticalAlignment = VerticalAlignment.Center
         });
         secondsRow.Children.Add(_seconds);
         _setupPanel.Children.Add(_wordListSummary);
         _setupPanel.Children.Add(new TextBlock
         {
-            Text = "每词全部播报结束后开放输入并开始计时。\n整轮完成后统一显示答案与成绩。",
+            Text = (_plan.PlayAudio ? "每题全部播报结束后开放输入并开始计时。"
+                : "不播放音频，显示本题提示后立即开始计时。")
+                + "\n整轮完成后显示答案与成绩。"
+                + (_plan.ChemicalAnswers ? "\n化学式使用 Na^+、SO4^2-；也接受 Unicode 上下标，元素大小写须准确。" : string.Empty),
             FontSize = 18, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center
         });
         _setupPanel.Children.Add(secondsRow);
         _setupPanel.Children.Add(_ignoreCase);
         _setupPanel.Children.Add(_translationsButton);
         _setupPanel.Children.Add(_startButton);
-        _phaseDetail.Text = "设定作答时限后开始。Enter 可提前提交；到时自动记录当前输入。";
+        _phaseDetail.Text = "设定作答时限后开始。Enter 提交；到时自动记录当前输入。";
+        _answer.Watermark = _plan.ChemicalAnswers ? "输入化学式，如 Na^+（Enter 提交）"
+            : "根据提示输入答案（Enter 提交）";
+        _ignoreCase.IsVisible = !_plan.ChemicalAnswers;
         _progress.Text = "正在读取词表…";
         Opened += (_, _) => _readTask = LoadWordListAsync(_cancellation.Token);
         _closeButton.Click += async (_, _) => await CancelAndCloseAsync();
@@ -263,21 +278,27 @@ internal sealed class TypingPracticeWindow : Window
             var words = await Task.Run(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                var source = _host.Words ?? throw new InvalidDataException("宿主没有提供词表。");
+                var source = _plan.Questions ?? throw new InvalidDataException("没有可用的练习题。");
                 var count = source.Count;
-                expected = _host is IPracticeWordListMetadata metadata ? metadata.ExpectedWordCount : count;
+                expected = _plan.UsesHostWordList && _host is IPracticeWordListMetadata metadata
+                    ? metadata.ExpectedWordCount : count;
                 if (expected <= 0) throw new InvalidDataException("词表没有可读取的词条。");
+                var answers = new string[count];
                 int? invalidIndex = null;
                 for (var index = 0; index < count; index++)
                 {
                     ct.ThrowIfCancellationRequested();
                     failedIndex = index + 1;
-                    var word = source[index];
-                    if (string.IsNullOrWhiteSpace(word) || word.Contains('\0'))
+                    var question = source[index];
+                    if (question is null || string.IsNullOrWhiteSpace(question.Answer)
+                        || question.Answer.Contains('\0') || question.Prompt is null
+                        || question.Prompt.Contains('\0')
+                        || !_plan.UsesHostWordList && string.IsNullOrWhiteSpace(question.Prompt))
                     {
                         invalidIndex ??= index + 1;
                         continue;
                     }
+                    answers[index] = question.Answer;
                     actual++;
                 }
                 failedIndex = invalidIndex;
@@ -285,14 +306,14 @@ internal sealed class TypingPracticeWindow : Window
                     throw new InvalidDataException($"词表读取不完整：{actual} / {expected}。" +
                         (invalidIndex is { } invalid ? $"第 {invalid} 个词条为空或包含空字符。" : "词条数量与来源不一致。"));
                 ct.ThrowIfCancellationRequested();
-                return source;
+                return Array.AsReadOnly(answers);
             }, ct);
             if (_closing) return;
             _words = words;
             _expectedWordCount = expected;
             _sessionProgress.Maximum = expected;
             _progress.Text = $"已读取 {actual} / {expected} 条";
-            _wordListSummary.Text = $"词表：{actual} 条，每词播报 {_host.TimesPerWord} 次，重复间隔：{_host.IntervalDescription} 秒。";
+            _wordListSummary.Text = DescribePlan();
             try { _translations = await PracticeTranslations.LoadAsync(ct); }
             catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
             catch (Exception)
@@ -332,7 +353,7 @@ internal sealed class TypingPracticeWindow : Window
             {
                 _translations = saved;
                 var count = _words.Count(word => saved.ContainsKey(word));
-                _wordListSummary.Text = $"词表：{_words.Count} 条，每词播报 {_host.TimesPerWord} 次，重复间隔：{_host.IntervalDescription} 秒。\n已录入翻译：{count} / {_words.Count} 条。";
+                _wordListSummary.Text = DescribePlan() + $"\n已录入翻译：{count} / {_words.Count} 条。";
                 _error.Text = string.Empty;
             }
         }
@@ -348,8 +369,18 @@ internal sealed class TypingPracticeWindow : Window
         }
     }
 
+    private string DescribePlan() => $"来源：{_plan.SourceDescription}\n共 {_words.Count} 题 · "
+        + (_plan.PlayAudio ? $"每题播报 {_host.TimesPerWord} 次，重复间隔 {_host.IntervalDescription} 秒。"
+            : "计时背诵，不播放音频。")
+        + (_plan.ChemicalAnswers ? "\n化学式判定：区分元素大小写与电荷。" : string.Empty);
+
     private void RefreshTranslationHint()
     {
+        var hasPrompt = _phase == Phase.Typing && _index < _plan.Questions.Count;
+        _questionPrompt.Text = hasPrompt
+            ? (_plan.PromptIsChemical ? ChemicalNotation.ToDisplay(_plan.Questions[_index].Prompt)
+                : _plan.Questions[_index].Prompt) : string.Empty;
+        _questionPrompt.IsVisible = !string.IsNullOrEmpty(_questionPrompt.Text);
         var show = _phase == Phase.Typing && _showTranslation.IsChecked == true
             && _index < _words.Count;
         _translationHint.Text = show && _translations.TryGetValue(_words[_index], out var translation)
@@ -384,7 +415,7 @@ internal sealed class TypingPracticeWindow : Window
         }
 
         _typingSeconds = secs;
-        _ignoreCaseSnapshot = _ignoreCase.IsChecked == true;
+        _ignoreCaseSnapshot = !_plan.ChemicalAnswers && _ignoreCase.IsChecked == true;
         _error.Text = string.Empty;
         SavePreferences();
         _setupPanel.IsVisible = false;
@@ -405,19 +436,27 @@ internal sealed class TypingPracticeWindow : Window
                 // The entire sequence (all repetitions plus every between-repeat
                 // interval) remains in the "playing" phase. The awaited method
                 // returns only when the last device playback completes.
-                await RepetitionPlayback.PlayAsync(word, Math.Clamp(_host.TimesPerWord, 1, 100),
-                    _host.SpeakOnceAsync, _host.GetRepeatInterval,
-                    ShowPlaying, ct);
+                if (_plan.PlayAudio)
+                {
+                    await RepetitionPlayback.PlayAsync(word, Math.Clamp(_host.TimesPerWord, 1, 100),
+                        _host.SpeakOnceAsync, _host.GetRepeatInterval, ShowPlaying, ct);
+                }
                 ct.ThrowIfCancellationRequested();
                 var answer = await AwaitTypingAsync(ct);
                 // Only record here. Do not compare and do not show correct text.
+                var question = _plan.Questions[_index];
                 _records.Add(new TypedResult(_index + 1, word, answer.Value,
-                    answer.TimedOut, answer.Elapsed.TotalSeconds));
+                    answer.TimedOut, answer.Elapsed.TotalSeconds)
+                {
+                    Prompt = _plan.PromptIsChemical ? ChemicalNotation.ToDisplay(question.Prompt) : question.Prompt,
+                    SourceLabel = question.SourceLabel
+                });
                 _sessionProgress.Value = _records.Count;
             }
             ct.ThrowIfCancellationRequested();
             _phaseTitle.Text = "正在汇总成绩";
-            var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct), ct);
+            var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct,
+                _plan.ChemicalAnswers), ct);
             ct.ThrowIfCancellationRequested();
             ShowFinalResults(correct);
         }
@@ -431,8 +470,9 @@ internal sealed class TypingPracticeWindow : Window
             RefreshTranslationHint();
             _timer.Stop();
             _answer.IsVisible = false;
-            _phaseTitle.Text = "播放或练习失败";
-            _phaseDetail.Text = "本轮未评分，请确认语音引擎和音频输出后重试。";
+            _phaseTitle.Text = "练习失败";
+            _phaseDetail.Text = _plan.PlayAudio ? "本轮未评分，请确认语音引擎和音频输出后重试。"
+                : "本轮未评分，请检查练习内容后重试。";
             _error.Text = ex.Message;
             _closeButton.Content = "关闭";
             await SaveCrashLogAsync("practice", _words.Count, _expectedWordCount,
@@ -444,7 +484,7 @@ internal sealed class TypingPracticeWindow : Window
     {
         _phase = Phase.Playing;
         RefreshTranslationHint();
-        _progress.Text = $"第 {_index + 1} / {_words.Count} 词";
+        _progress.Text = $"第 {_index + 1} / {_words.Count} 题";
         _phaseTitle.Text = "播放中";
         _phaseDetail.Text = waiting
             ? $"第 {repeat} / {maxRepeat} 遍已结束；正在等待下一遍播报…"
@@ -458,10 +498,13 @@ internal sealed class TypingPracticeWindow : Window
     {
         _phase = Phase.Typing;
         RefreshTranslationHint();
-        _phaseTitle.Text = "请打字";
-        _phaseDetail.Text = "完整播放已结束。输入后按 Enter 提交，或等待倒计时结束。";
+        _progress.Text = $"第 {_index + 1} / {_words.Count} 题";
+        _phaseTitle.Text = "请作答";
+        _phaseDetail.Text = _plan.PlayAudio ? "完整播放已结束。输入后按 Enter 提交，或等待倒计时结束。"
+            : "根据提示拼写答案。Enter 提交；到时自动记录。";
         _answer.Text = string.Empty;
         _answer.IsVisible = true;
+        _countdown.IsVisible = true;
         _lastDisplayedSeconds = -1;
         _clock.Restart();
         var pending = new TaskCompletionSource<TypedAnswer>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -524,7 +567,7 @@ internal sealed class TypingPracticeWindow : Window
             _timer.Stop();
             _answer.IsVisible = false;
             _phaseTitle.Text = "已记录";
-            _phaseDetail.Text = "准备下一词…";
+            _phaseDetail.Text = "准备下一题…";
             _countdown.Text = string.Empty;
         }
     }
@@ -536,7 +579,7 @@ internal sealed class TypingPracticeWindow : Window
         var count = _records.Count;
         var wrong = count - correct;
         _phaseTitle.Text = $"正确率 {TypingEvaluation.Accuracy(correct, count):F1}%";
-        _phaseDetail.Text = $"完成 {count} 词 · 正确 {correct} · 错误或漏答 {wrong}。";
+        _phaseDetail.Text = $"完成 {count} 题 · 正确 {correct} · 错误或漏答 {wrong}。";
         RefreshTranslationHint();
         _progress.Text = $"已完成 · {count} / {_words.Count}";
         _countdown.Text = string.Empty;
@@ -556,8 +599,8 @@ internal sealed class TypingPracticeWindow : Window
         {
             var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "导出同步打字成绩",
-                SuggestedFileName = $"TypingPractice_{DateTime.Now:yyyyMMdd_HHmmss}.csv",
+                Title = "导出背诵练习成绩",
+                SuggestedFileName = $"RecitationPractice_{DateTime.Now:yyyyMMdd_HHmmss}.csv",
                 DefaultExtension = "csv",
                 FileTypeChoices = [new FilePickerFileType("CSV 表格") { Patterns = ["*.csv"] }]
             });
@@ -636,7 +679,7 @@ internal sealed class TypingPracticeWindow : Window
             Directory.CreateDirectory(Path.GetDirectoryName(PreferencesPath)!);
             File.WriteAllText(PreferencesPath, JsonSerializer.Serialize(new PracticePreferences
             {
-                TypingSeconds = _typingSeconds, IgnoreCase = _ignoreCaseSnapshot,
+                TypingSeconds = _typingSeconds, IgnoreCase = _ignoreCase.IsChecked == true,
                 ShowTranslation = _showTranslation.IsChecked == true
             }));
         }
