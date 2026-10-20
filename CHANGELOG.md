@@ -4,13 +4,17 @@
 
 ## [4.0.0-typing.7] - 2026-10-20
 
-**R7 准备发布。** 配套背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，新增文档配对与无音频计时背诵。既有 Avalonia/MS-PL 组合授权事项继续如实披露，尚未解决。
+**[R7 已公开为预发布版](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)。** 配套背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，新增文档配对与无音频计时背诵。既有 Avalonia/MS-PL 组合授权事项继续如实披露，尚未解决。
 
-- 同步打字插件更名为“背诵练习插件”，源码版本为 **1.4.0**；保留既有插件 ID、程序集和本地配置目录。新增前置文档准备界面，可从 Word / Excel 选择表格、提示列与答案列，按原行顺序配对，默认“离子式提示 → 英文名称答案”，支持中文列及反向交换。
+- 同步打字插件更名为“背诵练习插件”，更新至 **1.4.0**；保留既有插件 ID、程序集和本地配置目录。新增前置文档准备界面，可从 Word / Excel 选择表格、提示列与答案列，按原行顺序配对，默认“离子式提示 → 英文名称答案”，支持中文列及反向交换。
 - 新增无音频的计时背诵模式，逐题显示提示和剩余秒数，Enter 提交或到时记录，整轮完成后评分；保留播报后作答、译文提示与翻译配置。化学式答案使用区分元素大小写、电荷和计量的判定，接受 `Na^+`、`SO4^2-` 与 Unicode 上下标；成绩与 CSV 增加提示和来源。
-- Word / Excel 导入插件源码更新为 **1.2.0**，增加可选记号读取接口以保留 Word 直接上下标 run；普通文档导入仍使用原纯文本路径，并补充英文名称、中文名称、Symbol 表头及整宽标题识别。
+- Word / Excel 导入插件更新至 **1.2.0**，增加可选记号读取接口以保留 Word 直接上下标 run；普通文档导入仍使用原纯文本路径，并补充英文名称、中文名称、Symbol 表头及整宽标题识别。
 - 宿主功能级别升至 **5**，API 仍为 1：练习可在不改变编辑器词表的情况下选择文档，具备选源能力的插件可从空词表启动。以上两个新插件须与 R7 配套；旧 R6 的功能级别 4 不支持。
-- Common Ions 的 25 对记号及原 Excel 19 页读取回归通过；31 项 headless 交互核对覆盖默认/反向练习、Enter、超时、取消和旧播报流程模拟，静音全程零播报调用。[发行准备前的 Windows 检查](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39397588887)已通过构建、包及 DLL 校验、15 项检查、主窗口开闭与 SDK 示例构建；最终 R7 标签构建另行记录。Headless 不代表 Windows 真实练习界面或字体渲染验证。
+- Common Ions 的 25 对记号及原 Excel 19 页读取回归通过；31 项 headless 交互核对覆盖默认/反向练习、Enter、超时、取消和旧播报流程模拟，静音全程零播报调用。[R7 标签构建](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39398895391)的 Windows 任务已通过构建、包及 DLL 校验、15 项检查、主窗口开闭、双插件功能级别 5 加载和 SDK 示例构建。Headless 不代表 Windows 真实练习界面或字体渲染验证。
+
+- R7 完整包已包含两个插件；[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0) 和 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0) 也各自提供独立更新包、配套源码与校验文件。三个标签均固定到 `20251457f881d5efca52eb39dc832f8ae2e9f135`；[附件上传恢复流程](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39401716293)只上传原标签构建的已验证附件，未重建或改动文件。
+- 公开下载的 15 个附件与原 CI 文件逐字节一致，15 个服务器摘要及 12 条 `SHA256SUMS` 均通过；同批配套源码此前分别通过独立还原和 Release 构建，原始许可及源码闭包已核对。
+- 先重置失败工作流，再修复生成说明 JSON 的 CRLF/LF 比较；通过指定草稿上传和完整校验后公开。历史 Release 的标题与说明改写为用途、安装方式和版本要求，原有标签与附件保留。
 
 - 整理主程序与两个插件的职责：词表打开/导入移入独立主窗口 partial，统一 GUI/CLI 的区域选择与非空行统计；普通文本在后台读取，并对非定位流补齐 64 MiB 上限和关闭取消。
 - 同步打字插件将翻译绑定草稿、统一参数校验、成绩评分/CSV 和虚拟化结果行从窗口逻辑中分离，保持既有配置格式、插件身份和接口。

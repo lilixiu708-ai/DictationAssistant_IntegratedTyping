@@ -1,42 +1,38 @@
 # DictationAssistant Typing · 听写与背诵练习
 
-面向单词、短语和句子听写的 Windows x64 桌面程序，基于 C#、.NET 10 与 Avalonia 11，在上游 DictationAssistant v4.0.0 上扩展。
+看提示背诵，或听播报后拼写。直接从 Word / Excel 选择提示与答案，默认看离子式、输入英文名称，也可交换方向；支持静音计时、成绩复核和 CSV 导出，适用于 Windows x64。
 
-**当前公开版本：R6（`v4.0.0-typing.6`）预发布。** Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
+**当前版本：R7（`v4.0.0-typing.7`）预发布。** 完整包包含背诵练习 1.4.0、Word / Excel 导入 1.2.0 和 .NET 运行环境。“背诵练习”是原同步打字插件的新名称，原有设置与译文继续沿用。
 
-同步打字插件 **1.3.1 已独立发布**，支持 DeepL Free / Pro、必应 / Microsoft（Azure）、Google Cloud、百度、有道、腾讯云、阿里云和火山引擎翻译 API，可管理多个命名绑定、首选项并在准备页临时切换。只需更新插件，沿用 R6 本体；最低宿主功能级别仍为 4，不能直接用于 R5。
+Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
-Word / Excel 导入插件 **1.1.0 已独立发布**：新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm`，按工作表预览并选择列，保留 Unicode 文本；原 Word 1.0.1 作为仅支持 DOCX 的[历史版本](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)保留。读取库选用 [ExcelDataReader 3.9.0 固定源码](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3)，Linux 全量样本及 Windows 合成样本验证范围见 [Excel 导入验证](docs/Excel导入验证.md)。
+## 功能
 
-**准备发布：R7 本体、背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，当前尚未公开。** 新流程先选文档、表格 / 工作表及提示 / 答案列，默认看离子式、拼写英文名称，可交换方向，选择静音计时或播报后作答，支持化学上下标。两个新插件均须配套功能级别 **5** 的 R7，不能单独安装到 R6。R7 便携包将包含这两个插件；独立插件包供已有 R7 的用户更新，本机设置沿用原目录。操作见[背诵练习说明](docs/同步打字插件使用说明.md#背诵练习-140文档配对与计时)，公开前下方下载入口仍保留现有版本。
-
-## 已发布功能
-
-- 词表：文本编辑、DOCX 表格/正文导入；更新导入插件 1.1.0 后支持 Excel，选择工作表与列、预览、去重和打乱顺序。
-- 同步打字：播报结束后开放输入，限时作答、评分和 CSV 导出；后台核对实际/理论词条数，异常保存日志。
-- 翻译提示：提前录入或在程序内配置后补全，校对保存；打字时可显示或隐藏。
-- 界面与资源：倒计时减少重复刷新，成绩列表按可见范围加载，统一取消与资源释放。
-- 插件 SDK：文档导入、自定义练习、通用命令、词表观察、语音引擎、音效及生命周期管理。
+- 文档配对：选择表格、工作表和同行的提示 / 答案列，预览或交换方向；默认跳过表头，保留顺序和重复项。
+- 背诵与听写：静音计时或播报后作答，每题 1–300 秒，Enter 提交或到时记录，整轮结束统一查看成绩、导出 CSV。
+- 化学记号：保留 Word 直接上下标，接受 `Na^+`、`SO4^2-` 和 Unicode 上下标；化学式区分元素大小写，英文名称可忽略大小写。
+- 翻译提示：提前录入或使用官方翻译 API 补全，校对保存；提示可隐藏，练习过程中不联网翻译。
+- 词表与扩展：文本编辑、Word / Excel 导入、选列、预览、去重和打乱；插件 SDK 提供导入、练习、命令、语音及音效接口。
 
 ## 下载与使用
 
-首次安装先下载 R6 本体，已包含 .NET 运行环境、同步打字 1.2.0 和 Word 导入 1.0.1；需要新增翻译服务或 Excel 导入时，再安装下方对应插件的独立包。完整解压到新文件夹，运行 `DictationAssistant.App.exe`。
+首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`，无需重复安装插件。两个新插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6；独立插件包供已有 R7 时更新。
 
 | 用途 | 版本与下载 | 选择的附件 |
 | --- | --- | --- |
-| 安装或更新完整程序 | [R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) | `*-win-x64-portable.zip` |
-| 单独更新同步打字 | [插件 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.3.1/synchronous-typing-1.3.1.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.3.1/synchronous-typing-1.3.1-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.3.1/SHA256SUMS) |
-| 单独更新 Word / Excel 导入 | [插件 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.1.0/docx-vocabulary-1.1.0.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.1.0/docx-vocabulary-1.1.0-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.1.0/SHA256SUMS) |
+| 安装或更新完整程序 | [R7 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7) | [便携包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/DictationAssistant-4.0.0-typing.7-win-x64-portable.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/DictationAssistant-4.0.0-typing.7-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/SHA256SUMS) |
+| 单独更新背诵练习 | [插件 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.0/synchronous-typing-1.4.0.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.0/synchronous-typing-1.4.0-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.0/SHA256SUMS) |
+| 单独更新 Word / Excel 导入 | [插件 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0) | [安装包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.2.0/docx-vocabulary-1.2.0.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.2.0/docx-vocabulary-1.2.0-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-docx-vocabulary-v1.2.0/SHA256SUMS) |
 
-更新插件前关闭程序，将 ZIP 内完整插件目录替换到 `Plugins/` 后重启。源码开发选择对应 Release 的 `*-source.zip`；`SHA256SUMS` 用于校验下载，GitHub 自动生成的源码附件不包含额外收集的依赖源码。
+升级前关闭程序并备份用户数据；更新插件时，将 ZIP 内完整目录替换到 `Plugins/` 后重启。本机练习设置、译文和翻译绑定沿用原目录，Windows 加密绑定仍限原机器和账户。`*-source.zip` 用于源码开发，`SHA256SUMS` 用于校验附件；GitHub 自动生成的源码附件不包含额外收集的依赖源码。
 
-1. 编辑每行一条的词表，或通过「插件 → 从文档提取词表」导入 `.docx`；安装导入插件 1.1.0 后也可选择 Excel 文件。
-2. 设置语音、播报次数及间隔，需要时打乱顺序。
-3. 打开「插件 → 同步打字练习」，设置时限开始练习；播报完毕后输入，整轮结束查看成绩或导出 CSV。
+1. 打开「插件 → 背诵练习」或 `Ctrl+Shift+T`，点击「从 Word / Excel 选择…」，主词表可以为空。
+2. 选表格 / 工作表及提示、答案列，核对预览；选择静音计时或播报后作答，再设置每题时限。
+3. 开始练习，按 Enter 提交或等待超时，整轮结束查看成绩。使用「当前词表」入口可继续原有播报听写。
 
-R6 可从「插件管理 → 配置…」管理翻译绑定和首选项，准备页切换只影响本次翻译；R5 的入口仍为「录入／提前翻译 → 翻译 API 设置」。个人设置均在本机程序内完成。配置与切换不会调用翻译服务，打字过程中也不翻译。详细步骤见[使用说明](docs/同步打字插件使用说明.md)。报告问题请到 [Issues](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/issues)，附版本、系统及复现步骤。
+翻译服务从「插件管理 → 背诵练习 → 配置…」管理，须使用服务商的官方 API 账户；练习前主动补全译文，结果校对后保存。支持 DeepL、Microsoft、Google、百度、有道、腾讯云、阿里云和火山引擎，真实账户在线调用仍待验证。操作与验证范围见[使用说明](docs/同步打字插件使用说明.md)；问题请附版本、系统及复现步骤提交到 [Issues](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/issues)。
 
-1.3.1 接入的是各服务商的官方 API 账户，需要开通对应服务；程序按服务显示密钥、应用 ID、附加密钥及区域字段。网页翻译账号或 Cookie 不能代替 API 凭据。各服务真实账户的鉴权和在线翻译仍待验证。
+历史版本：[R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) · [同步打字 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) · [Word / Excel 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0) · [Word 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。
 
 ## 开发与构建
 
@@ -59,7 +55,7 @@ dotnet build DictationAssistant.slnx -c Release --no-restore
 dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c Release --no-build --no-restore
 ```
 
-窗口运行需要图形会话及本机音频依赖。R6 已通过 [Windows 发行构建、包校验、15 项逻辑检查及主窗口正常开闭](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39377359747)，发行提交为 `0f008c72983b9d567612855498800886201572e6`。本地设置加密、旧配置迁移、在线翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
+窗口运行需要图形会话及本机音频依赖。R7 源码提交为 `20251457f881d5efca52eb39dc832f8ae2e9f135`，原标签工作流的 [windows-x64 任务（39398895391）](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39398895391) 已通过完整构建、包校验、API 1 / 功能级别 5 的双插件加载、主窗口开闭、15 项既有检查及 SDK 示例构建；[恢复上传 39401716293](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39401716293) 使用同一批原构建附件，未重新构建。本地设置加密、旧配置迁移、在线翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
 
 ## 文档与扩展
 

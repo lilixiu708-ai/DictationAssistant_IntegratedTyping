@@ -1,10 +1,10 @@
 # 文档索引
 
-当前本体为 **[`v4.0.0-typing.6`（R6）预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6)**；独立插件更新为[同步打字 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1)和 [Word / Excel 导入 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0)。普通安装、更新方法和附件选择见[项目首页](../README.md#下载与使用)。
+当前版本为 **[R7 预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)**，完整包包含[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0)与 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0)。首次安装或从 R6 升级选择完整包，已有 R7 才需单独更新插件；附件选择见[项目首页](../README.md#下载与使用)。
 
-R6 包内仍是同步打字 1.2.0 与 Word 导入 1.0.1；新增翻译服务和 Excel 导入通过上面的独立包更新。同步打字 1.3.1 需要宿主功能级别 4，不能直接用于 R5。
+背诵练习先从文档选择提示与答案，再静音计时或播报练习，操作见[使用说明](同步打字插件使用说明.md#背诵练习-140文档配对与计时)。两个新插件要求 R7 的宿主功能级别 5，不能单独装入 R6；源码、原 Windows 构建和恢复上传的对应关系见[发布记录](RELEASING.md)。
 
-**R7 与两个新插件正在准备发布，尚未公开：** 背诵练习 1.4.0（原同步打字）与 Word / Excel 导入 1.2.0 支持先从文档选择提示与答案，再静音计时或播报练习。两个插件需要功能级别 5 的 R7，不能单独装入 R6；R7 完整包将包含两个插件。公开前下载入口仍为上面的现有版本，新流程见[使用说明](同步打字插件使用说明.md#背诵练习-140文档配对与计时)。
+历史版本：[R6 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.6) · [同步打字 1.3.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.3.1) · [Word / Excel 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0)。R6 完整包内仍为同步打字 1.2.0 与 Word 1.0.1。
 
 Excel 的逐工作表读取、Linux 全量样本比对和 Windows 合成样本检查见 [Excel 导入验证](Excel导入验证.md)。源代码职责与数据流见[代码结构](CODE_STRUCTURE.md)。
 
@@ -14,7 +14,7 @@ Excel 的逐工作表读取、Linux 全量样本比对和 Windows 合成样本�
 
 | 文档 | 用途 |
 | --- | --- |
-| [背诵练习与同步打字使用说明](同步打字插件使用说明.md) | 未发布的文档配对 / 静音背诵，以及已发布版下载、听写与翻译 |
+| [背诵练习与同步打字使用说明](同步打字插件使用说明.md) | R7 文档配对、静音背诵、听写与翻译，以及历史版本操作 |
 | [Windows 验证清单](同步打字验证清单.md) | Windows 界面、输入、音频、长列表与资源占用的实机检查 |
 | [Excel 导入验证](Excel导入验证.md) | 导入插件 1.1.0 的选型依据、19 页样本独立比对结果及未验证范围 |
 | [插件开发指南](插件开发指南.md) | 文档导入接口、插件清单、练习接口及 SDK 示例 |
