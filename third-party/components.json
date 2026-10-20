@@ -5666,6 +5666,123 @@
           "original_bytes": true
         }
       ]
+    },
+    {
+      "id": "Adobe DNG SDK",
+      "version": "1.4.0",
+      "files": [
+        "libSkiaSharp.dylib"
+      ],
+      "primary_spdx_expression": "LicenseRef-Adobe-DNG-SDK-1.4",
+      "repository": {
+        "url": "https://android.googlesource.com/platform/external/dng_sdk",
+        "commit": "c8d0c9b1d16bfda56f15165d39e0ffa360a11123"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE",
+          "sha256": "012e875468ac2f9a2070ee25a950588afa2735b4b2d961f491e3d72c8f572306"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.source_code",
+          "sha256": "0c993758dd78dbb15ce6aae8aee79639b428d8ebeca6d416019939dc90fdc08f"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.technology",
+          "sha256": "4731d85e841e1d8b5dbf7e0ba07e0b524c012f9371db3508551f996cb40c8fe6"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/README.version",
+          "sha256": "e1180750782d144f35aea3aba3b2c7787271d831138f4b680da71e5494b23380"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/NOTICE",
+          "sha256": "b60660d2a5a3ee1a49366400e7e9b01c1872356d6f08942f095d356a44deb5f6"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/PATENTS",
+          "sha256": "bd958835863f42d8479457503a7ed716424d35b6e76ef76db06b72b109696ec4"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dylib": "169e3c792cd1d364e518c9d693d74580659569dff8bafb4719c7576a556bccc3"
+      },
+      "source_archives": [
+        {
+          "name": "adobe-dng-sdk",
+          "repository": "https://android.googlesource.com/platform/external/dng_sdk",
+          "revision": "c8d0c9b1d16bfda56f15165d39e0ffa360a11123",
+          "url": "https://android.googlesource.com/platform/external/dng_sdk/+archive/c8d0c9b1d16bfda56f15165d39e0ffa360a11123.tar.gz",
+          "delivery": "bundled",
+          "reference_download_sha256": "bbb7ea74213f29cab3fd6af671b590a9b5c6ebae09c329c1a6ffca344ce0a2a6",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "9851a449e84bf955b7b314513f5e96a195ff636373821b5c24017bcfd9ecb45d",
+          "archive_metadata_note": "The fixed Gitiles commit response injects per-request mtime/PAX mtime headers, so compressed archive bytes vary. Independently compared 155-member downloads contain identical paths/types/modes/sizes/link targets and file bytes. The reviewed canonical source-tree hash is enforced; each acquired archive SHA-256 is recorded separately.",
+          "upstream_git_tree": "c864ee4d828656ce93b2714d32218f8f94172627",
+          "content_tree_basis": {
+            "authoritative_commit_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123?format=JSON",
+            "verification": "The reviewed canonical tree was independently verified against the authoritative Git tree by rebuilding Git blob and tree object IDs from four archive responses; all matched the recorded upstream_git_tree."
+          }
+        }
+      ],
+      "source_provenance": "Historical original SkiaSharp.NativeAssets.macOS2.88.9 universal dylib: both slices contain130 Adobe DNG RTTI markers; the fixed wrapper macOS build enables PIEX and the same fixed Skia DEPS identifies this DNG revision. This component is excluded only when the actual RID-specific no-DNG replacement is installed and verified.",
+      "license_note": "The DNG SDK has separate Adobe software/document/technology patent terms, including conditions for commercial redistribution; it is not the MIT license of the SkiaSharp wrapper.",
+      "license_evidence": [
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE",
+          "sha256": "012e875468ac2f9a2070ee25a950588afa2735b4b2d961f491e3d72c8f572306",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/LICENSE?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.source_code",
+          "sha256": "0c993758dd78dbb15ce6aae8aee79639b428d8ebeca6d416019939dc90fdc08f",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/LICENSE.source_code?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/LICENSE.technology",
+          "sha256": "4731d85e841e1d8b5dbf7e0ba07e0b524c012f9371db3508551f996cb40c8fe6",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/LICENSE.technology?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/README.version",
+          "sha256": "e1180750782d144f35aea3aba3b2c7787271d831138f4b680da71e5494b23380",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/README.version?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/NOTICE",
+          "sha256": "b60660d2a5a3ee1a49366400e7e9b01c1872356d6f08942f095d356a44deb5f6",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/NOTICE?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        },
+        {
+          "path": "LICENSES/third-party/adobe-dng-sdk-1.4.0/PATENTS",
+          "sha256": "bd958835863f42d8479457503a7ed716424d35b6e76ef76db06b72b109696ec4",
+          "source_url": "https://android.googlesource.com/platform/external/dng_sdk/+/c8d0c9b1d16bfda56f15165d39e0ffa360a11123/PATENTS?format=TEXT",
+          "original_bytes": true,
+          "transport_encoding": "Base64 Gitiles response decoded without altering resulting bytes"
+        }
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream DNG component only. This does not resolve AGPL/GPL license compatibility, the containing Skia binary, or source completeness of its other inputs.",
+        "evidence": [
+          "https://android.googlesource.com/platform/external/dng_sdk/+archive/c8d0c9b1d16bfda56f15165d39e0ffa360a11123.tar.gz",
+          "Verified 155-member canonical tar-members-v1 SHA-256 9851a449e84bf955b7b314513f5e96a195ff636373821b5c24017bcfd9ecb45d against independently reconstructed upstream Git tree c864ee4d828656ce93b2714d32218f8f94172627."
+        ]
+      },
+      "runtime_identifiers": [
+        "osx-x64",
+        "osx-arm64"
+      ]
     }
   ],
   "runtime_pack_policy": {
@@ -6799,18 +6916,23 @@
       "id": "skiasharp-2.88.9-nodng-osx-x64",
       "path": "libSkiaSharp.dylib",
       "runtime_identifier": "osx-x64",
-      "status": "pending",
+      "status": "verified",
       "supersedes_sha256": "169e3c792cd1d364e518c9d693d74580659569dff8bafb4719c7576a556bccc3",
       "archive": {
         "name": "SkiaSharp-2.88.9-no-dng-osx-x64.zip",
-        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64.zip"
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64.zip",
+        "sha256": "3382b8e3496dce49e87caf00b66068c49242c93d44b2c5f6ef3378c6e93cd926",
+        "bytes": 3207275
       },
       "manifest": {
-        "path": "native-build.json"
+        "path": "native-build.json",
+        "sha256": "524aaad186e4b4c7de477a64dc882bd5024b47487e152f1a038f461587338eac"
       },
       "sources_asset": {
         "name": "SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip",
-        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip"
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip",
+        "sha256": "c5218807e4355759675a90f76d4e0d2d66509ccfd5007aee4f63ac006aee266b",
+        "bytes": 219682362
       },
       "provenance": {
         "sources": {
@@ -6843,24 +6965,39 @@
           "skia_use_dng_sdk": false,
           "skia_use_piex": false,
           "target_os": "mac",
-          "target_cpu": "x64"
-        }
+          "target_cpu": "x64",
+          "min_macos_version": "15.0"
+        },
+        "build_commit": "2d58c6c9104419b6f6246dc3d216236d8e446baf"
       },
       "affected_components": [
         "SkiaSharp.NativeAssets.macOS/2.88.9",
+        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
         "Skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
-        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+        "Skia expat/624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+        "Skia libjpeg-turbo/9b894306ec3b28cea46e84c32b56773a98c483da",
+        "Skia libpng/f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+        "Skia libwebp/ca332209cb5567c9b249c86788cb2dbf8847e760",
+        "Skia zlib/3ca9f16f02950edffa391ec19cea856090158e9e",
+        "Skia skcms/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
       ],
       "removed_components": [
         "Adobe DNG SDK/1.4.0"
       ],
       "distribution_review": {
-        "status": "pending",
-        "blocking_issues": [
-          "Actual macOS native build, matching source closure and artifact review have not completed."
-        ]
+        "status": "ready",
+        "blocking_issues": [],
+        "scope": "Only the exact pinned macOS no-DNG native binary and paired corresponding-source asset for osx-x64. The separate application Avalonia/MS-PL/AGPL combination authorization remains unresolved and disclosed.",
+        "evidence": [
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754",
+          "Independent review matched every one of 1104 actual native source inputs to the source ZIP, all 3 tracked patches, all 30 original notices byte-for-byte in both ZIPs, and all 9 original wrapper/Skia/dependency/GN archives against fixed archive or canonical-tree pins.",
+          "Independent Mach-O parsing found the expected CPU, minimum macOS15.0, an existing code signature and the same939 public C ABI exports as the original official library.",
+          "The actual macOS producer loaded the final signed dylib, matched native version88.1, and ran the unchanged upstream PNG utility. The recorded load trace and PNG bytes were independently checked.",
+          "Modified source retains the original upstream archives, explicit downstream modification notice, patches, original copyright declarations, complete GPLv3 text and required Independent JPEG Group acknowledgment."
+        ],
+        "application_release_status": "Native-only asset review; the independent Avalonia/MS-PL/AGPL application authorization issue is unchanged."
       },
-      "scope_note": "The original universal macOS NuGet binary contains DNG implementation markers. Only a separately reviewed thin no-DNG replacement for this RID may satisfy this entry. Windows verification does not clear this artifact.",
+      "scope_note": "Verified osx-x64 native replacement from the exact recorded producer commit and CI run. The binary ZIP, final signed dylib, producer manifest and exact paired source ZIP are individually pinned. Installation never accepts the original DNG-enabled universal NuGet dylib. Windows native artifacts and their historical review are unchanged.",
       "native_notice_paths": [
         "LICENSES/third-party/apache-2.0/LICENSE.txt",
         "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
@@ -6901,27 +7038,68 @@
         "path": "NOTICE-NATIVE.txt"
       },
       "source_coverage": {
-        "status": "pending",
-        "scope": "The actual macOS no-DNG dylib and its exact paired source archive require independent review before public pins are recorded.",
-        "evidence": []
-      }
+        "status": "complete",
+        "scope": "Only the actual verified osx-x64 no-DNG dylib identified by binary_sha256, and its exact paired source archive. The installed override must validate these bytes before this coverage applies to affected_components. This does not clear the original DNG-enabled universal NuGet dylib.",
+        "evidence": [
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/scripts/build_skia_macos_without_dng.py",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/skia-no-dng-macos-build.json",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch"
+        ],
+        "binary_sha256": "1f27d65a2e1f58e0775149da53e787b9067f441f723a4268f911527cc4b64dd7",
+        "source_asset": {
+          "name": "SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip",
+          "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-x64-sources.zip",
+          "sha256": "c5218807e4355759675a90f76d4e0d2d66509ccfd5007aee4f63ac006aee266b",
+          "bytes": 219682362
+        },
+        "producer_manifest_sha256": "524aaad186e4b4c7de477a64dc882bd5024b47487e152f1a038f461587338eac",
+        "build_commit": "2d58c6c9104419b6f6246dc3d216236d8e446baf",
+        "verified_results": {
+          "runtime_identifier": "osx-x64",
+          "minimum_macos_version": "15.0",
+          "native_version": "88.1",
+          "matching_export_count": 939,
+          "source_input_count": 1104,
+          "original_source_archives_verified": 9,
+          "no_dng_sources_in_graph": true,
+          "no_dng_commands": true,
+          "no_dng_binary_symbols": true,
+          "upstream_png_encode": true,
+          "code_signature_verified_before_hashing": true
+        },
+        "boundaries": [
+          "Dedicated JPEG/WebP/GIF decoding checks were not run by the upstream PNG utility. Production application, plugin discovery, audio and window checks are separate from this native-only review.",
+          "This source-delivery review covers the actual modified source inputs and original notices. It does not claim byte-identical reproduction of a historical NuGet binary or certify legal compatibility of the separate Avalonia application combination.",
+          "Compiler, Apple SDK/system libraries and the pinned Ninja build executable are external build/runtime tools. The exact GN source archive and native compiler/tool provenance are retained."
+        ]
+      },
+      "binary_sha256": "1f27d65a2e1f58e0775149da53e787b9067f441f723a4268f911527cc4b64dd7"
     },
     {
       "id": "skiasharp-2.88.9-nodng-osx-arm64",
       "path": "libSkiaSharp.dylib",
       "runtime_identifier": "osx-arm64",
-      "status": "pending",
+      "status": "verified",
       "supersedes_sha256": "169e3c792cd1d364e518c9d693d74580659569dff8bafb4719c7576a556bccc3",
       "archive": {
         "name": "SkiaSharp-2.88.9-no-dng-osx-arm64.zip",
-        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64.zip"
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64.zip",
+        "sha256": "99570c651eb6cffe850ddb1dbf12a0626ffeaaf66ab455d9b7bd4557aedbd4a9",
+        "bytes": 2808034
       },
       "manifest": {
-        "path": "native-build.json"
+        "path": "native-build.json",
+        "sha256": "7b9f637c52e242ff803db5c76a13d5edccdce45ecdee636cad4e0aa6f3780037"
       },
       "sources_asset": {
         "name": "SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip",
-        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip"
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip",
+        "sha256": "dc203880a91e1923ea44b7bb501555674e98563590e88cd1ba062a196a71453f",
+        "bytes": 219683151
       },
       "provenance": {
         "sources": {
@@ -6954,24 +7132,39 @@
           "skia_use_dng_sdk": false,
           "skia_use_piex": false,
           "target_os": "mac",
-          "target_cpu": "arm64"
-        }
+          "target_cpu": "arm64",
+          "min_macos_version": "15.0"
+        },
+        "build_commit": "2d58c6c9104419b6f6246dc3d216236d8e446baf"
       },
       "affected_components": [
         "SkiaSharp.NativeAssets.macOS/2.88.9",
+        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
         "Skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
-        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+        "Skia expat/624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+        "Skia libjpeg-turbo/9b894306ec3b28cea46e84c32b56773a98c483da",
+        "Skia libpng/f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+        "Skia libwebp/ca332209cb5567c9b249c86788cb2dbf8847e760",
+        "Skia zlib/3ca9f16f02950edffa391ec19cea856090158e9e",
+        "Skia skcms/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
       ],
       "removed_components": [
         "Adobe DNG SDK/1.4.0"
       ],
       "distribution_review": {
-        "status": "pending",
-        "blocking_issues": [
-          "Actual macOS native build, matching source closure and artifact review have not completed."
-        ]
+        "status": "ready",
+        "blocking_issues": [],
+        "scope": "Only the exact pinned macOS no-DNG native binary and paired corresponding-source asset for osx-arm64. The separate application Avalonia/MS-PL/AGPL combination authorization remains unresolved and disclosed.",
+        "evidence": [
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754",
+          "Independent review matched every one of 1113 actual native source inputs to the source ZIP, all 3 tracked patches, all 30 original notices byte-for-byte in both ZIPs, and all 9 original wrapper/Skia/dependency/GN archives against fixed archive or canonical-tree pins.",
+          "Independent Mach-O parsing found the expected CPU, minimum macOS15.0, an existing code signature and the same939 public C ABI exports as the original official library.",
+          "The actual macOS producer loaded the final signed dylib, matched native version88.1, and ran the unchanged upstream PNG utility. The recorded load trace and PNG bytes were independently checked.",
+          "Modified source retains the original upstream archives, explicit downstream modification notice, patches, original copyright declarations, complete GPLv3 text and required Independent JPEG Group acknowledgment."
+        ],
+        "application_release_status": "Native-only asset review; the independent Avalonia/MS-PL/AGPL application authorization issue is unchanged."
       },
-      "scope_note": "The original universal macOS NuGet binary contains DNG implementation markers. Only a separately reviewed thin no-DNG replacement for this RID may satisfy this entry. Windows verification does not clear this artifact.",
+      "scope_note": "Verified osx-arm64 native replacement from the exact recorded producer commit and CI run. The binary ZIP, final signed dylib, producer manifest and exact paired source ZIP are individually pinned. Installation never accepts the original DNG-enabled universal NuGet dylib. Windows native artifacts and their historical review are unchanged.",
       "native_notice_paths": [
         "LICENSES/third-party/apache-2.0/LICENSE.txt",
         "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
@@ -7012,10 +7205,46 @@
         "path": "NOTICE-NATIVE.txt"
       },
       "source_coverage": {
-        "status": "pending",
-        "scope": "The actual macOS no-DNG dylib and its exact paired source archive require independent review before public pins are recorded.",
-        "evidence": []
-      }
+        "status": "complete",
+        "scope": "Only the actual verified osx-arm64 no-DNG dylib identified by binary_sha256, and its exact paired source archive. The installed override must validate these bytes before this coverage applies to affected_components. This does not clear the original DNG-enabled universal NuGet dylib.",
+        "evidence": [
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/scripts/build_skia_macos_without_dng.py",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/skia-no-dng-macos-build.json",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/2d58c6c9104419b6f6246dc3d216236d8e446baf/third-party/patches/mono-skia-4bed-macos-dylib-toolchain.patch"
+        ],
+        "binary_sha256": "a82bb103b8c181f158939342dfd2f82b6b0f29714682e7543a760fcb1959fcac",
+        "source_asset": {
+          "name": "SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip",
+          "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng-macos.1/SkiaSharp-2.88.9-no-dng-osx-arm64-sources.zip",
+          "sha256": "dc203880a91e1923ea44b7bb501555674e98563590e88cd1ba062a196a71453f",
+          "bytes": 219683151
+        },
+        "producer_manifest_sha256": "7b9f637c52e242ff803db5c76a13d5edccdce45ecdee636cad4e0aa6f3780037",
+        "build_commit": "2d58c6c9104419b6f6246dc3d216236d8e446baf",
+        "verified_results": {
+          "runtime_identifier": "osx-arm64",
+          "minimum_macos_version": "15.0",
+          "native_version": "88.1",
+          "matching_export_count": 939,
+          "source_input_count": 1113,
+          "original_source_archives_verified": 9,
+          "no_dng_sources_in_graph": true,
+          "no_dng_commands": true,
+          "no_dng_binary_symbols": true,
+          "upstream_png_encode": true,
+          "code_signature_verified_before_hashing": true
+        },
+        "boundaries": [
+          "Dedicated JPEG/WebP/GIF decoding checks were not run by the upstream PNG utility. Production application, plugin discovery, audio and window checks are separate from this native-only review.",
+          "This source-delivery review covers the actual modified source inputs and original notices. It does not claim byte-identical reproduction of a historical NuGet binary or certify legal compatibility of the separate Avalonia application combination.",
+          "Compiler, Apple SDK/system libraries and the pinned Ninja build executable are external build/runtime tools. The exact GN source archive and native compiler/tool provenance are retained."
+        ]
+      },
+      "binary_sha256": "a82bb103b8c181f158939342dfd2f82b6b0f29714682e7543a760fcb1959fcac"
     }
   ]
 }

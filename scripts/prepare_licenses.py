@@ -562,13 +562,13 @@ def prepare(publish, catalog_path, cache, runtime=None):
 
     for component in for_runtime(catalog.get('native_components', []), runtime):
         identity = f'{component["id"]}/{component["version"]}'
-        if identity in removed_components:
-            if not all(path in native_overrides for path in component['files']):
-                raise ValueError(f'Native component removal is not backed by an installed replacement: {identity}')
-            continue
         paths = [publish / checked_relative(path) for path in component.get('files', [])]
         present = [path for path in paths if path.is_file()]
         if not present:
+            continue
+        if identity in removed_components:
+            if not all(path in native_overrides for path in component['files']):
+                raise ValueError(f'Native component removal is not backed by an installed replacement: {identity}')
             continue
         reviewed_hashes = component.get('binary_sha256', {})
         for path in present:

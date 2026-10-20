@@ -51,7 +51,7 @@ ExcelDataReader 固定为 3.9.0，NuGet 记录的提交与官方 `v3.9.0` 标签
 
 > This product includes DNG technology under license by Adobe Systems Incorporated.
 
-no-RAW/no-DNG 替代已通过 [Windows CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 的实际编译、1,124 输入与实现排除检查、941 导出/88.1 版本核对、上游 PNG 和 Windows App 窗口开闭。实际 DLL SHA-256 为 `e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e`，完整记录及两 ZIP 哈希见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)。旧 DLL 归属和历史证据仍保留；不含 Avalonia 的独立 Skia 二进制与匹配源码已公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。App 的 Avalonia/MS-PL 组合授权路径仍未解决，R5 按本次发布决定披露该事实，不声明已获得额外授权或完成兼容性证明。
+no-RAW/no-DNG 替代已通过 [Windows CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 的实际编译、1,124 输入与实现排除检查、941 导出/88.1 版本核对、上游 PNG 和 Windows App 窗口开闭。实际 DLL SHA-256 为 `e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e`，完整记录及两 ZIP 哈希见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)。旧 DLL 归属和历史证据仍保留；不含 Avalonia 的独立 Skia 二进制与匹配源码已公开为 [`native-skia-2.88.9-no-dng.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)。App 的 Avalonia/MS-PL 组合授权路径仍未解决，应用发行说明继续披露该事实，不声明已获得额外授权或完成兼容性证明。
 
 libgifcodec 的原始多选许可和各版权声明完整保留。本次分发对其中可选的 `SkGifImageReader` 部分选择 GPL-2.0-or-later 的第 3 版，其他 BSD 部分继续适用其原许可；GPLv3 与 AGPLv3 组合的规则见 GPLv3 第 13 节。对应固定修订的 9 个上游文件以原字节保存在 [内联源码目录](third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/)，附有 Git blob / SHA-256 校验及单独的 downstream notice。
 
@@ -61,7 +61,9 @@ HarfBuzz 与 ANGLE 的 Windows 编译/修改源码覆盖已补齐，见 [HarfBuz
 
 macOS 的来源单独核对。HarfBuzz 使用同一固定 wrapper 中的 macOS Xcode 工程、Skia `30abf4a0` 的配置头、HarfBuzz `2b3631a8` 的完整源码和两份 Unicode 数据归档；该工程没有编译 CoreText、FreeType 或 Graphite。Avalonia.Native 的源码还附上 [Numerge 固定子模块](https://github.com/kekekeks/Numerge/tree/9738c6121fdd143c78d3e25686a7e4e13c00f586)和 [MicroCom 0.11.0 生成器](https://github.com/kekekeks/MicroCom/tree/7e773759cfc1012a5d080d4129c4718a662884b0)，保留 IDL、生成头文件的方法及原 Xcode 工程。[Numerge MIT 原文](LICENSES/third-party/numerge-9738c612/LICENSE.md)和含 Chromium 2011 声明的 [Avalonia 原始 `main.mm`](LICENSES/third-party/avalonia-native-11.3.12/main-mm-original-notice.txt)另随包保存。Apple SDK 和包版本固定的通用编译工具属于外部构建依赖，具体范围写在组件目录中。
 
-原 NuGet macOS Skia 库也含 DNG 实现，Windows 的验证结果不能用于放行它。macOS 自定义库必须分别完成实际构建、源码输入、ABI、PNG 及通知复核，再固定二进制和配套源码哈希。macOS 包采用临时签名；如上游 SDL2 尚未签名，打包时会记录其原 NuGet 哈希与签名后的分发哈希。其余原生库保留已经核对的字节。组件清单和源码索引放在 `.app` 外，与应用一起交付，避免应用签名与自身哈希互相影响。
+原 NuGet macOS Skia 库也含 DNG 实现，Windows 的验证结果不能用于放行它。macOS 自定义库已通过 [CI 39420587754](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754) 的两架构实际构建和上游 PNG 检查；独立复核逐项匹配了 x64 的 1,104 个、arm64 的 1,113 个编译输入，以及各自的 939 个 C 导出、88.1 版本、macOS 15 最低版本、3 份补丁、9 份原始源码归档和 30 份原始声明。配套二进制与源码固定为 [`native-skia-2.88.9-no-dng-macos.1`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng-macos.1)，实际哈希保存在组件目录；这项验证不包含应用窗口或专门的 JPEG/WebP/GIF 解码检查。
+
+macOS 包采用临时签名；如上游 SDL2 尚未签名，打包时会记录其原 NuGet 哈希与签名后的分发哈希。其余原生库保留已经核对的字节。组件清单和源码索引放在 `.app` 外，与应用一起交付，避免应用签名与自身哈希互相影响。
 
 ## .NET 运行时与仅构建 / 历史依赖
 
