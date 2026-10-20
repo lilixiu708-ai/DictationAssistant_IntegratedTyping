@@ -12,7 +12,7 @@ R8 macOS 整合版正在准备，尚未公开；面向 macOS 15+，Intel 和 App
 
 Excel 的逐工作表读取、Linux 全量样本比对和 Windows 合成样本检查见 [Excel 导入验证](Excel导入验证.md)。源代码职责与数据流见[代码结构](CODE_STRUCTURE.md)。
 
-Windows 无 DNG 原生依赖已独立发布，macOS 原生资产仍在准备，供构建和复核使用。Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍按发行说明披露，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。历史版本与构建资料保留追溯。
+Windows 和 macOS 无 DNG 原生依赖均已独立发布，供构建和复核使用。Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍按发行说明披露，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。历史版本与构建资料保留追溯。
 
 ## 当前文档
 

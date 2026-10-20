@@ -1,6 +1,6 @@
 # 原生图形库构建
 
-保留 Avalonia **11.3.12**、SkiaSharp **2.88.9**，重建同版本原生库，排除 RAW/DNG 与 PIEX，不升级图形 API。Windows x64 资产已公开；macOS 两个架构仍在准备，状态见文末。
+保留 Avalonia **11.3.12**、SkiaSharp **2.88.9**，重建同版本原生库，排除 RAW/DNG 与 PIEX，不升级图形 API。Windows x64 和 macOS 两个架构的原生资产均已公开，分别固定来源与哈希。
 
 ## Windows x64 实际验证结果
 
@@ -41,8 +41,10 @@ python scripts/build_skia_without_dng.py --msvc-path '<Visual Studio>/VC' --llvm
 
 `DICTATION_NATIVE_REVIEW_ARCHIVE` 仅供同一 CI 注入本地审核 ZIP；正式 App 打包必须使用已审核并固定的来源。重新构建产生新字节后重新核对全部哈希与记录，不能沿用本次实物 pin。
 
-## macOS x64 / arm64：准备中
+## macOS x64 / arm64
 
-计划使用独立标签 `native-skia-2.88.9-no-dng-macos.1`，目前尚未构建完成或公开。入口为 [macOS 构建配置](../third-party/skia-no-dng-macos-build.json)、[构建脚本](../scripts/build_skia_macos_without_dng.py)和[原生构建工作流](../.github/workflows/build-skia-macos-without-dng.yml)。Windows 的 DLL 检查结论不能代替 macOS dylib 的实际验证。
+[独立原生依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng-macos.1)已公开。[两种 Mac 的构建 39420587754](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39420587754)均成功，源码提交为 `2d58c6c9104419b6f6246dc3d216236d8e446baf`；[上传 39423584068](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39423584068)交付同一批已审核文件。7 份附件重新下载后，服务器摘要、6 项校验和及原构建文件全部匹配。
 
-两个架构须分别核对实现排除、导出和版本、原生加载及对应源码，发布后再固定最终地址和哈希。R8 正式打包使用固定的审核资产；审核注入仍只用于构建复核。macOS 15+ 的应用包与验证范围见 [macOS 说明](MACOS.md)。
+Intel 的 1,104 个实际输入与 Apple Silicon 的 1,113 个输入分别逐项匹配对应源码；两个架构各有 939 个 C 接口与官方一致，原生版本为 88.1，PNG 编码和实际新库加载通过。9 份原始源码归档、3 份补丁、30 份原始声明及构建记录均已独立复核。实际 Mach-O 部署目标均为 macOS 15.0，只依赖系统框架；两库在固定哈希前完成 ad-hoc 签名。
+
+正式来源和最终哈希见 [`components.json`](../third-party/components.json)。入口为 [macOS 构建配置](../third-party/skia-no-dng-macos-build.json)、[构建脚本](../scripts/build_skia_macos_without_dng.py)和[原生构建工作流](../.github/workflows/build-skia-macos-without-dng.yml)。源码包保留 GN 自重生成与现代 Apple 平台识别修复，使用固定版本的 zlib、libpng；没有升级图形 API。专门的 JPEG/WebP/GIF 解码及完整应用验证与上述 PNG 检查分开记录，见 [macOS 说明](MACOS.md)。

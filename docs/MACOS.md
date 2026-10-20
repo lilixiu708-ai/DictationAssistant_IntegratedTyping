@@ -38,7 +38,7 @@ bash build-macos-typing.sh --rid osx-arm64
 # Intel Mac 使用：bash build-macos-typing.sh --rid osx-x64
 ```
 
-脚本构建宿主与两个插件，准备原始许可和 `.app` 目录。正式构建需要先完成 macOS 无 DNG 原生资产复核并固定下载来源与哈希；当前该资产尚在准备，因此上述入口暂不代表可完成正式发行包。[原生构建说明](NATIVE_BUILD.md)和[发布规范](RELEASING.md)记录对应材料与交付步骤。
+脚本构建宿主与两个插件，准备原始许可和 `.app` 目录，并下载已公开、固定哈希的 macOS 无 DNG 原生资产及配套源码。原生依赖已通过两种 Mac 的构建与独立源码复核；完整应用的运行结果另行记录。[原生构建说明](NATIVE_BUILD.md)和[发布规范](RELEASING.md)记录对应材料与交付步骤。
 
 正式 NuGet 依赖已固定：宿主、共享契约、两个插件及既有逻辑检查项目，各有 `osx-x64` 和 `osx-arm64` 锁文件，共 10 份。构建和既有检查均以 `--locked-mode` 还原，依赖变化时直接失败。Linux 上的依赖解析检查不代表 Mac 运行验证。
 
