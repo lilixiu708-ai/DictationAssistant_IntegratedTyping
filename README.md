@@ -2,27 +2,33 @@
 
 面向单词、短语和句子听写的 Windows x64 桌面程序，基于 C#、.NET 10 与 Avalonia 11，在上游 DictationAssistant v4.0.0 上扩展。
 
-**`v4.0.0-typing.5`（R5）预发布及两个插件的独立更新现已发布。** Avalonia 保持 11.3.12；其中 MS-PL 部分与 App 的组合授权路径仍未解决，已在发行说明和随包材料中明确披露，不将其表述为已获额外授权。无 DNG 原生依赖已独立发布，原始许可与对应源码继续随适用产物提供。详见[许可审计](docs/版权与许可审计.md)。
+**当前版本：R5（`v4.0.0-typing.5`）公开预发布。** Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
 ## 功能
 
 - 词表：文本编辑、DOCX 表格/正文导入、选择列、预览、去重和打乱顺序。
 - 同步打字：播报结束后开放输入，限时作答、评分和 CSV 导出；后台核对实际/理论词条数，异常保存日志。
-- 翻译提示：提前手动录入，或绑定 DeepL API 后补全并校对保存；打字时可显示或隐藏，Windows 密钥可在本机加密保存。
+- 翻译提示：提前录入或在程序内配置后补全，校对保存；打字时可显示或隐藏。
 - 界面与资源：倒计时减少重复刷新，成绩列表按可见范围加载，统一取消与资源释放。
 - 插件 SDK：文档导入、自定义练习、通用命令、词表观察、语音引擎、音效及生命周期管理。
 
-## 使用
+## 下载与使用
 
-从 [R5 本体 Release](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5) 下载 Windows x64 便携 ZIP，解压到新文件夹并运行 `DictationAssistant.App.exe`。便携包自带 .NET 和两个插件；对应源码使用该发行附件中的 source ZIP。
+首次安装下载本体即可，已包含 .NET 运行环境、同步打字和 Word 导入插件。完整解压到新文件夹，运行 `DictationAssistant.App.exe`。
 
-插件独立包分别见[同步打字 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.1.0)和 [Word 导入 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。关闭程序，将完整插件目录放入 `Plugins/` 后重启；版本与宿主接口要求见各自说明。Word 导入本次仅调整独立交付版本，导入功能未变。
+| 用途 | 版本与下载 | 选择的附件 |
+| --- | --- | --- |
+| 安装或更新完整程序 | [R5 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5) | `*-win-x64-portable.zip` |
+| 单独更新同步打字 | [插件 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.1.0) | `synchronous-typing-1.1.0.zip` |
+| 单独更新 Word 导入 | [插件 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1) | `docx-vocabulary-1.0.1.zip` |
+
+更新插件前关闭程序，将 ZIP 内完整插件目录替换到 `Plugins/` 后重启。源码开发选择对应 Release 的 `*-source.zip`；`SHA256SUMS` 用于校验下载，GitHub 自动生成的源码附件不包含额外收集的依赖源码。
 
 1. 编辑每行一条的词表，或通过「插件 → 从文档提取词表」导入 `.docx`。
 2. 设置语音、播报次数及间隔，需要时打乱顺序。
 3. 打开「插件 → 同步打字练习」，设置时限开始练习；播报完毕后输入，整轮结束查看成绩或导出 CSV。
 
-详细步骤见[使用说明](docs/同步打字插件使用说明.md)。报告问题请到 [Issues](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/issues)，附版本、系统及复现步骤。
+翻译服务如需使用，下载后在程序的「录入／提前翻译 → 翻译 API 设置」中自行配置。详细步骤见[使用说明](docs/同步打字插件使用说明.md)。报告问题请到 [Issues](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/issues)，附版本、系统及复现步骤。
 
 ## 开发与构建
 
@@ -33,7 +39,7 @@ build-windows-typing.cmd
 python scripts\verify_build.py
 ```
 
-脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。
+脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。[独立原生构建依赖](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng.1)供开发和复核使用，普通安装无需下载。
 
 Linux 开发将锁文件放在各项目 `obj/`，避免覆盖已提交的 Windows RID 锁文件：
 
@@ -43,7 +49,7 @@ dotnet build DictationAssistant.slnx -c Release --no-restore
 dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c Release --no-build --no-restore
 ```
 
-窗口运行需要图形会话及本机音频依赖。R5 已通过 [Windows CI 构建、包校验、15 项逻辑检查及窗口正常开闭](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555)。Windows DPAPI 绑定与真实 DeepL 翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
+窗口运行需要图形会话及本机音频依赖。R5 已通过 [Windows CI 构建、包校验、15 项逻辑检查及窗口正常开闭](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555)。本地设置的加密绑定、在线翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
 
 ## 文档与扩展
 
