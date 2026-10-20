@@ -228,8 +228,11 @@ def run_upstream_mini(wrapper, binary, work, logs):
     origin = wrapper / 'utils/NativeLibraryMiniTest'
     shutil.copyfile(origin / 'source/Program.cs', mini / 'Program.cs')
     shutil.copyfile(origin / 'docker/NativeLibraryMiniTest.csproj', mini / 'NativeLibraryMiniTest.csproj')
+    # Restore removes the inner TargetFramework global property. Override its
+    # outer TargetFrameworks as well, keeping both upstream files unchanged.
     run(['dotnet', 'build', mini / 'NativeLibraryMiniTest.csproj', '-c', 'Release',
-         '-p:TargetFramework=net10.0', '-o', mini / 'bin', '--nologo'], mini, logs / 'upstream-mini-build.log')
+         '-p:TargetFramework=net10.0', '-p:TargetFrameworks=net10.0',
+         '-o', mini / 'bin', '--nologo'], mini, logs / 'upstream-mini-build.log')
     shutil.copyfile(binary, mini / 'bin/libSkiaSharp.dll')
     run(['dotnet', mini / 'bin/NativeLibraryMiniTest.dll'], mini, logs / 'upstream-mini-run.log')
     png = mini / 'output.png'
