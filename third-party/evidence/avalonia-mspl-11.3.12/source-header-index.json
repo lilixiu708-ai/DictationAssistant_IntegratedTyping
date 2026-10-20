@@ -1,0 +1,253 @@
+{
+  "component": "Avalonia11.3.12 Silverlight Toolkit derived Controls",
+  "marked_csharp_source_files": 19,
+  "files": [
+    {
+      "path": "src/Avalonia.Controls/AutoCompleteBox/AutoCompleteBox.Properties.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/AutoCompleteBox.Properties.cs#L1",
+      "full_original_source_sha256": "46264e337dba37463814d12a8870f4c3886e568e6975b981a9bb3965443ccb7e",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/AutoCompleteBox/AutoCompleteBox.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/AutoCompleteBox.cs#L1",
+      "full_original_source_sha256": "e6686d43d0e5b98ff09b03f584f7a35c794f8fb173a1e9bf8d9653bed4253d99",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/AutoCompleteBox/AutoCompleteFilterMode.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/AutoCompleteFilterMode.cs#L1",
+      "full_original_source_sha256": "7842319b4a7f617e7cfc5d75ff72d95463d456d118ee8b67252c5c81ae4af884",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/AutoCompleteBox/PopulatedEventArgs.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/PopulatedEventArgs.cs#L1",
+      "full_original_source_sha256": "3f9d14d470368de4c5f65a466baf9e1e58e2311a1ba49b1d3dd804a5cc9a8460",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/AutoCompleteBox/PopulatingEventArgs.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/PopulatingEventArgs.cs#L1",
+      "full_original_source_sha256": "8c729a8c1209db5aa9bd2ff4e63a7d7a854dbbb4a41397f3a1c578ea6e4385aa",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/Calendar.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/Calendar.cs#L1",
+      "full_original_source_sha256": "05118dd511c540b572d691fba879f723910bce0d8476339e7d3f69a499863343",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/CalendarBlackoutDatesCollection.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/CalendarBlackoutDatesCollection.cs#L1",
+      "full_original_source_sha256": "ae8558f6f6a2b9e89ba6ecd22ad4a0e79df98114695d934fc3e5a6f74eca5450",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/CalendarButton.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/CalendarButton.cs#L1",
+      "full_original_source_sha256": "15b027fb4aa04df387dad8305afd978d2a186c89cf77844ac48b5d2bf23cae22",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/CalendarDateRange.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/CalendarDateRange.cs#L1",
+      "full_original_source_sha256": "d2777b4e3c7938a044a698c144526059cbce024e0257c2e89c2d4a333c7e95a4",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/CalendarDayButton.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/CalendarDayButton.cs#L1",
+      "full_original_source_sha256": "be38eabb3c17fad399bb4d3011fe68066a77fc7329ace2baed1dbf2e0fd485f0",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/CalendarExtensions.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/CalendarExtensions.cs#L1",
+      "full_original_source_sha256": "b1d5b52dcc4a6c7fb9488e84a9d428184a819484208b948bdc1d51a6962be28e",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/CalendarItem.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/CalendarItem.cs#L1",
+      "full_original_source_sha256": "40b4860be56af9caacd20a1ff3af8938a9aad441025725849ab2e0cbee31363f",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/DateTimeHelper.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/DateTimeHelper.cs#L1",
+      "full_original_source_sha256": "572eb0b9d1d3b2335fc92ef962b7282031263b8eea1e056e5511d708ba6dd8f7",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Calendar/SelectedDatesCollection.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/SelectedDatesCollection.cs#L1",
+      "full_original_source_sha256": "8e225733191cc0b7d578916375f0400b8f45ca110f34681b9e44a47bd94f7753",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/CalendarDatePicker/CalendarDatePicker.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/CalendarDatePicker/CalendarDatePicker.cs#L1",
+      "full_original_source_sha256": "de12fa16e471e2cf75784890731e08e4e9a27f63d33e8a5dd442b713dbfb8206",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/CalendarDatePicker/CalendarDatePickerDateValidationErrorEventArgs.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/CalendarDatePicker/CalendarDatePickerDateValidationErrorEventArgs.cs#L1",
+      "full_original_source_sha256": "6c57ee50eabfe83bf9f6ea3093a3f2fac8a8bdac6c937bab99f8ca8dd853db84",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/CalendarDatePicker/CalendarDatePickerFormat.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/CalendarDatePicker/CalendarDatePickerFormat.cs#L1",
+      "full_original_source_sha256": "92202e9f90d849e334e10105e2becf58c90f0683a21cbf7c1e128f1993511e9d",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Utils/ISelectionAdapter.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Utils/ISelectionAdapter.cs#L1",
+      "full_original_source_sha256": "8831754650a77cd0e5f482ac9380f0d482b1133c3df3b1a952efb5e557f5a5fd",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    },
+    {
+      "path": "src/Avalonia.Controls/Utils/SelectingItemsControlSelectionAdapter.cs",
+      "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+      "source_url": "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Utils/SelectingItemsControlSelectionAdapter.cs#L1",
+      "full_original_source_sha256": "2209ebd88d8aff5243567f5053f6d8ef506cd2a2b3e6eeb395cb9872ae32e495",
+      "header_lines": [
+        "// (c) Copyright Microsoft Corporation.",
+        "// This source is subject to the Microsoft Public License (Ms-PL).",
+        "// Please see https://go.microsoft.com/fwlink/?LinkID=131993 for details.",
+        "// All other rights reserved."
+      ],
+      "scope": "Exact original leading license/copyright comments; complete source file is not copied into this evidence directory."
+    }
+  ]
+}

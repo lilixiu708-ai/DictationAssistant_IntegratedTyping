@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-10-20T01:45:34.445337+00:00",
+  "scope": "One targeted read-only source and actual Windows-x64 managed payload inspection, not an expansion of the native-DNG remediation.",
+  "source_repository": "https://github.com/AvaloniaUI/Avalonia",
+  "source_revision": "37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0",
+  "files": [
+    {
+      "path": "REVIEW.md",
+      "bytes": 4501,
+      "sha256": "b0068325879fe386e905ec4c50204d1b080812accdaf0396dd649c47189ba2f9"
+    },
+    {
+      "path": "actual-managed-payload-metadata.json",
+      "bytes": 5753,
+      "sha256": "d66cd010d66bcc406bc76900147192055222d1819f4d623454d9ca0cbc56f50a"
+    },
+    {
+      "path": "source-header-index.json",
+      "bytes": 16332,
+      "sha256": "d65da19285d0cf10f1aa9d01e0bd2a94a9e28a8d8990f04eade97a5b4bb01ae3"
+    }
+  ],
+  "method": "SDK-bundled System.Reflection.Metadata reads PE TypeDefinitions, MethodDefinitions with IL RVAs, and AssemblyReferences; inspected assemblies are not loaded or executed.",
+  "retained_original_licenses": "../../../LICENSES/third-party/avalonia-11.3.12/NOTICE.md",
+  "gnu_retrieval_status": "Not successfully retrieved in this session; official reference URL is cited as a reference, not represented as downloaded evidence."
+}

@@ -1,0 +1,12 @@
+{
+  "official": {
+    "milestone": 88,
+    "increment": 1,
+    "string": "88.1"
+  },
+  "rebuilt": {
+    "milestone": 88,
+    "increment": 1,
+    "string": "88.1"
+  }
+}

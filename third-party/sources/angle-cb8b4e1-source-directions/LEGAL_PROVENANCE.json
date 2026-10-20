@@ -1,0 +1,776 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/angle/LICENSE",
+      "sha256": "bf4da21bd20bcfb5b60b7ecc67fa864a79be049e21d6178076887f178dd6c71a",
+      "bytes": 1643,
+      "source_family": "angle",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/LICENSE",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 1643
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/xxhash/LICENSE",
+      "sha256": "86ec6953794503942b70fcd4f35b565d44f63f703b7037ce44dad965c4aaae91",
+      "bytes": 1314,
+      "source_family": "xxhash",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/src/common/third_party/xxhash/LICENSE",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 1314
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/volk/LICENSE.md",
+      "sha256": "336f505f8d5aa73ea40b4d798dde86953e9c1f6525757f1d7f18120fea09bb1d",
+      "bytes": 1066,
+      "source_family": "volk",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/src/third_party/volk/LICENSE.md",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 1066
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/khrplatform.h",
+      "sha256": "e206a6931f98ffe1c5c7ece69c4f94bbe1c9279243f40cbe7782848a0d3fa2de",
+      "bytes": 10279,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/KHR/khrplatform.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 10279
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/egl.h",
+      "sha256": "b9669499729432653659b99ec9e92f3defed9207c480ec7926024f424e693f9a",
+      "bytes": 19286,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/EGL/egl.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 19286
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/eglplatform.h",
+      "sha256": "b748729767798d85ecf8e1923552879328a76d572327b641ce737549b391cc9c",
+      "bytes": 5439,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/EGL/eglplatform.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 5439
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl2.h",
+      "sha256": "35848b4239ffde5d30744fa2cae62ec6ea55d13c4121a3ded60ca83949ccaece",
+      "bytes": 42930,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/GLES2/gl2.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 42930
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl2platform.h",
+      "sha256": "f5da0747540a50be5f44aad264aae45bdf157a192c40f17487dd9a2f99c71b6c",
+      "bytes": 642,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/GLES2/gl2platform.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 642
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl.h",
+      "sha256": "79592c4d0c9fcd6af3470de8acece16c6d2bba43d14926d442cba1eb21bd18e7",
+      "bytes": 44832,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/GLES/gl.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 44832
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/glplatform.h",
+      "sha256": "857bf0685ecb0dddf692157ea9ef98c95e9f58b5ed0c41b26fd3fe51ed1a3624",
+      "bytes": 1152,
+      "source_family": "khronos",
+      "source_url": "https://raw.githubusercontent.com/AvaloniaUI/angle/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8/include/GLES/glplatform.h",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 1152
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/chromium/LICENSE",
+      "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308",
+      "bytes": 1559,
+      "source_family": "chromium",
+      "source_url": "https://chromium.googlesource.com/chromium/src/+/2cd5dabd77439bd357fa6c3213a7fdb4fbbee030/LICENSE?format=TEXT",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 1559
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/LICENSE",
+      "sha256": "e1cfcc55c325b3f78cf55df9664abaa066e2271dffe8213347d9fccdfbac8f2c",
+      "bytes": 910,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/LICENSE?format=TEXT",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 910
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/astc-encoder/LICENSE.txt",
+      "sha256": "494accc32e50eb523a0e384d0ae6d4b702db867a89d6971216760e92b240ee12",
+      "bytes": 10139,
+      "source_family": "astc-encoder",
+      "source_url": "https://raw.githubusercontent.com/ARM-software/astc-encoder/2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b/LICENSE.txt",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 10139
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/LICENSE.md",
+      "sha256": "ac24e5ea920e4318e4d02c4086ae51f53cfb03feed06c18df1019e7ada1ec7bc",
+      "bytes": 458,
+      "source_family": "vulkan-headers",
+      "source_url": "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/75ad707a587e1469fb53a901b9b68fe9f6fbc11f/LICENSE.md",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 458
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/Apache-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "source_family": "vulkan-headers",
+      "source_url": "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/75ad707a587e1469fb53a901b9b68fe9f6fbc11f/LICENSES/Apache-2.0.txt",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 11358
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/MIT.txt",
+      "sha256": "1ca3502222d967f3be5751c55f6b7ee735b5383909c3b501495f54b216dbf227",
+      "bytes": 1084,
+      "source_family": "vulkan-headers",
+      "source_url": "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/75ad707a587e1469fb53a901b9b68fe9f6fbc11f/LICENSES/MIT.txt",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 1084
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/libcxx/LICENSE.TXT",
+      "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+      "bytes": 16703,
+      "source_family": "libcxx",
+      "source_url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+/a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96/LICENSE.TXT?format=TEXT",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 16703
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/llvm-libc/LICENSE.TXT",
+      "sha256": "ebcd9bbf783a73d05c53ba4d586b8d5813dcdf3bbec50265860ccc885e606f47",
+      "bytes": 15140,
+      "source_family": "llvm-libc",
+      "source_url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc/+/9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c/LICENSE.TXT?format=TEXT",
+      "method": {
+        "kind": "byte-for-byte-original",
+        "offset": 0,
+        "length": 15140
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32.c.LICENSE-prefix.txt",
+      "sha256": "39574e70c84da2c0a0578c47326392710832d78ca8b54232a0b3d37f06d40ff2",
+      "bytes": 201,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/adler32.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 201,
+        "upstream_source_path": "third_party/zlib/adler32.c",
+        "upstream_file_sha256": "e47831f9eaffc530e2f6f9720266d94e74eed9fe5c2082473d3afb9cf8880c13",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32_simd.c.LICENSE-prefix.txt",
+      "sha256": "d970d8fbd7521072bef5f3e1fe7eba64443eb208b0d4040b248c7ffde26bddff",
+      "bytes": 1777,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/adler32_simd.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 1777,
+        "upstream_source_path": "third_party/zlib/adler32_simd.c",
+        "upstream_file_sha256": "2e813211c76bc5d91fd16afc2ed3d0ea4eed9d3b0d47f9fb3aadc74996d8b577",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32_simd.h.LICENSE-prefix.txt",
+      "sha256": "d2a0b48440a68476f9ce9cfe6bf7d49d2940b21fd0c01e4945e7e6bfc1d1c9be",
+      "bytes": 194,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/adler32_simd.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 194,
+        "upstream_source_path": "third_party/zlib/adler32_simd.h",
+        "upstream_file_sha256": "8c1362d66be00e4ee75a303b8b67a36b128786666386d090ebd2cac8cbacd9ea",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/chromeconf.h.LICENSE-prefix.txt",
+      "sha256": "94837b1929d71d414d888e3b3c20538e504b1a8c6b577acf69771bbc17e73c8e",
+      "bytes": 145,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/chromeconf.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 145,
+        "upstream_source_path": "third_party/zlib/chromeconf.h",
+        "upstream_file_sha256": "52d0220bf96954d07af195a953c46c4568bcf1f85dc196b0175892c44b37f314",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/compress.c.LICENSE-prefix.txt",
+      "sha256": "3def4a0afd7c18a086ef72293e70f03b074ca7d4b0a65618bec8c9f914709627",
+      "bytes": 204,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/compress.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 204,
+        "upstream_source_path": "third_party/zlib/compress.c",
+        "upstream_file_sha256": "6df7d075f084e8834cf7e188ab889e5390e80c744d11d2c0a7638d5bfd9e59db",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h.LICENSE-prefix.txt",
+      "sha256": "52df535ad2bef944e2d524bb8bc13304fff3aecb87ae7322167d8cee4a6c60cf",
+      "bytes": 258,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/contrib/optimizations/chunkcopy.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 258,
+        "upstream_source_path": "third_party/zlib/contrib/optimizations/chunkcopy.h",
+        "upstream_file_sha256": "f43452bb0710645d1360f552a49359d322326fc7b2fbc607b1574fa203cce65e",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c.LICENSE-prefix.txt",
+      "sha256": "86fad0c2dc4b7da1aaeb1b431eab0714f2821e05acd49fa9720860ca9bb965e1",
+      "bytes": 190,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/contrib/optimizations/inffast_chunk.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 190,
+        "upstream_source_path": "third_party/zlib/contrib/optimizations/inffast_chunk.c",
+        "upstream_file_sha256": "1d30b2735708b139da9de8198e11cb036115f39e9752bec3d2547bd2e586b767",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.h.LICENSE-prefix.txt",
+      "sha256": "60fe130fd3092837b5119834a8df7e13fffc321f7919cbd6d07540cfae12197f",
+      "bytes": 438,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/contrib/optimizations/inffast_chunk.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 438,
+        "upstream_source_path": "third_party/zlib/contrib/optimizations/inffast_chunk.h",
+        "upstream_file_sha256": "670f8d05461dbad596e81355f6e218deb8d9e2e6595259465cfb8d2fad6a2315",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inflate.c.LICENSE-prefix.txt",
+      "sha256": "9a6ce405455012b6cd26321323bb58bffb512e7d31a067611be46819ada24219",
+      "bytes": 3944,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/contrib/optimizations/inflate.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 3944,
+        "upstream_source_path": "third_party/zlib/contrib/optimizations/inflate.c",
+        "upstream_file_sha256": "e1e6affe42a3539e6558aac361ed4957655a70180a658f15d486740e4e2a63b2",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h.LICENSE-prefix.txt",
+      "sha256": "36a7a4ee00e3aaf4c2f2c4f37b1df5c73aa8e6660a0bd4f1908acb999b0f2db2",
+      "bytes": 195,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/contrib/optimizations/insert_string.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 195,
+        "upstream_source_path": "third_party/zlib/contrib/optimizations/insert_string.h",
+        "upstream_file_sha256": "ff03fe98a4dcaa22022a44340f8fe62f4820c64cd1f326bd710fa5d37f8a2897",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/cpu_features.c.LICENSE-prefix.txt",
+      "sha256": "97de4036fca0608dae170975a78f31a0443c47cc027c57c9c093a7fdcf88cedd",
+      "bytes": 227,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/cpu_features.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 227,
+        "upstream_source_path": "third_party/zlib/cpu_features.c",
+        "upstream_file_sha256": "c1504072e83f8187aaaf73430ffb2464384b17e544eb2e243f4c3029d555fca7",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/cpu_features.h.LICENSE-prefix.txt",
+      "sha256": "19c125ef8fbe5b29f57c97e6f7fdbe74978fe69eccb658a1db4d030d0fcda70f",
+      "bytes": 227,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/cpu_features.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 227,
+        "upstream_source_path": "third_party/zlib/cpu_features.h",
+        "upstream_file_sha256": "48f5b148756771ed44f3ed27a843e16a119ad71efbdf18af96bf53e58374db0a",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32.c.LICENSE-prefix.txt",
+      "sha256": "deeb51484b37e99feededf48469ce7f63cbce18fd82ac2bc98c73b95e1a75985",
+      "bytes": 907,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/crc32.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 907,
+        "upstream_source_path": "third_party/zlib/crc32.c",
+        "upstream_file_sha256": "95d5b6dcb855ef71d84688c16c3238ae7d2a37f01c1c5a842907d707da9a846f",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32_simd.c.LICENSE-prefix.txt",
+      "sha256": "08ace092bc7149beccda2a20e1d490eb692fff4a0c90e06ead0163ad5ebff284",
+      "bytes": 192,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/crc32_simd.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 192,
+        "upstream_source_path": "third_party/zlib/crc32_simd.c",
+        "upstream_file_sha256": "96551ac987306d6dcc4fda16f3677b996b0368975e3758d26bda282192804e6d",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32_simd.h.LICENSE-prefix.txt",
+      "sha256": "2554287d6363c11297f880c8e0c5625ee1fc39aba6049c921c0c349f4bf1d37d",
+      "bytes": 192,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/crc32_simd.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 192,
+        "upstream_source_path": "third_party/zlib/crc32_simd.h",
+        "upstream_file_sha256": "80688abed37fbff1b49079050954749f0a694b5b9998abdbf59019f65401208a",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc_folding.c.LICENSE-prefix.txt",
+      "sha256": "7048f8f2f1fc70231d1ec43a91ce905f57675da5b12ab814e79e1068bae32637",
+      "bytes": 694,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/crc_folding.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 694,
+        "upstream_source_path": "third_party/zlib/crc_folding.c",
+        "upstream_file_sha256": "ec76325b7e4425a86ea0b1dc023ef140ee7f069f1067a587de135307971a1036",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/deflate.c.LICENSE-prefix.txt",
+      "sha256": "1e201b0a1a3055832a60cf1b00ecffa3d09c917ed8653b6835e08b67ab8f96ba",
+      "bytes": 2352,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/deflate.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 2352,
+        "upstream_source_path": "third_party/zlib/deflate.c",
+        "upstream_file_sha256": "c510df5ac553c5e5f7d0a7164b0f9b3fdf585913e40ca100d733305fec3772f2",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/deflate.h.LICENSE-prefix.txt",
+      "sha256": "dad2200841fe863693175e7637c2189e9e2e24b53b372b6a626827b5a7b2253d",
+      "bytes": 375,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/deflate.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 375,
+        "upstream_source_path": "third_party/zlib/deflate.h",
+        "upstream_file_sha256": "4524789bd11ec687f492b110c86611b1c80d85373aa5ced2b920ec646b17d655",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/google/compression_utils_portable.h.LICENSE-prefix.txt",
+      "sha256": "650f0589fd1ac279b92122f6fbded1b27272713ef98eba178f62e84d121bca7b",
+      "bytes": 208,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/google/compression_utils_portable.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 208,
+        "upstream_source_path": "third_party/zlib/google/compression_utils_portable.h",
+        "upstream_file_sha256": "ad6e83438a781734e0b8873b846b3cafae5ca31e1bf2c56a3d8c7ea2d9dc0c19",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzclose.c.LICENSE-prefix.txt",
+      "sha256": "295cc4471eecfa68fdc048ce0109883dc260ec833716f5991f6f5d3bb71b65c6",
+      "bytes": 156,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/gzclose.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 156,
+        "upstream_source_path": "third_party/zlib/gzclose.c",
+        "upstream_file_sha256": "35ea6e991a63095f797d8c4cc25817fac7a7155c2ba7dcdbbf648f7871c7ea40",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzguts.h.LICENSE-prefix.txt",
+      "sha256": "6523e3f81a4182d5c845820e1ce35e7b6525aa51c95d912a1ae52727efd1c812",
+      "bytes": 182,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/gzguts.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 182,
+        "upstream_source_path": "third_party/zlib/gzguts.h",
+        "upstream_file_sha256": "716fa648aca1bb06c219d7b97ad4846d8479206143bc39557bfd8283f5783e04",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzlib.c.LICENSE-prefix.txt",
+      "sha256": "cf9a78cc2952d2c1feabe17cc67d24303d6665def53766f5388a6e00ded766c1",
+      "bytes": 185,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/gzlib.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 185,
+        "upstream_source_path": "third_party/zlib/gzlib.c",
+        "upstream_file_sha256": "059266b27178381f6b5c47b735504f4d828fd8bfaac8ba42077bc591e5513891",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzread.c.LICENSE-prefix.txt",
+      "sha256": "2349b70268a88e11540c28587000795fa043c3a5180ec3a9b85bcdebc5e5115c",
+      "bytes": 168,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/gzread.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 168,
+        "upstream_source_path": "third_party/zlib/gzread.c",
+        "upstream_file_sha256": "cc288dc27252399323e97c30a50803f5ec70757ea17be10306a13636093c7512",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzwrite.c.LICENSE-prefix.txt",
+      "sha256": "e0115e7c4fdb5f1d1fdfa7cadebabcf157eabb8311c34aa09722a72c2bf41df7",
+      "bytes": 169,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/gzwrite.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 169,
+        "upstream_source_path": "third_party/zlib/gzwrite.c",
+        "upstream_file_sha256": "469b1e58932ea11bdda2a153f6655f7b3c13254240fae157181b49ed1bc93b47",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/infback.c.LICENSE-prefix.txt",
+      "sha256": "c0ce58c9adc918ee87eb0fdc41e0a559c9883148e9399fb7631bafbe906da967",
+      "bytes": 469,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/infback.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 469,
+        "upstream_source_path": "third_party/zlib/infback.c",
+        "upstream_file_sha256": "dd28b080126b37ff08bea5cffd53a3d0703b32272d78b0f57f0f516ead2c29ce",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inffast.c.LICENSE-prefix.txt",
+      "sha256": "886d7660da32fa28245159025a8bca17d9a03b9efdae24d0a6317ec18a161f2d",
+      "bytes": 145,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/inffast.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 145,
+        "upstream_source_path": "third_party/zlib/inffast.c",
+        "upstream_file_sha256": "c43c280cf9539223886ca00cc81c80ba25ebe5f58d5bc8d13fc457d403addb6e",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inffast.h.LICENSE-prefix.txt",
+      "sha256": "e088f393f6454b309000a9cab1bb009f09af964de22fcdd369f903f834e4b7c0",
+      "bytes": 710,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/inffast.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 710,
+        "upstream_source_path": "third_party/zlib/inffast.h",
+        "upstream_file_sha256": "8fd2fe697f951e8508b98e8e4017faa0027e47e340cc62b9e4ae1a672af5cd04",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inflate.h.LICENSE-prefix.txt",
+      "sha256": "d8dc5b00c08b632241f19584204a8f09a986a6dd4698039650886924f85d7b89",
+      "bytes": 615,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/inflate.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 615,
+        "upstream_source_path": "third_party/zlib/inflate.h",
+        "upstream_file_sha256": "e8d4a51b07694bf48cb91979c19974cf6a5ab0b8a09d26ec0d14df349230673e",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inftrees.c.LICENSE-prefix.txt",
+      "sha256": "413e8ee8629e47d87f1e6f91b11e9c334001d00c1d6bdece4a94d07dafc2e9b4",
+      "bytes": 178,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/inftrees.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 178,
+        "upstream_source_path": "third_party/zlib/inftrees.c",
+        "upstream_file_sha256": "5d4f335221d2dc76f17abd2577d92c2d7baf68fa6d7f23373b360830493d1563",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inftrees.h.LICENSE-prefix.txt",
+      "sha256": "36819e26c296e515fbb5d27a4b8addce2113057eb978a3eadfdbe8677de83750",
+      "bytes": 1221,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/inftrees.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 1221,
+        "upstream_source_path": "third_party/zlib/inftrees.h",
+        "upstream_file_sha256": "333f0200383beec341de555e917ab805cfe68af7daafde0443dd6c70bd73d2cc",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/slide_hash_simd.h.LICENSE-prefix.txt",
+      "sha256": "f61fbfcd4ea5486387101197b5d5794c6d68317a675ae571c1b68bb73aac686f",
+      "bytes": 197,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/slide_hash_simd.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 197,
+        "upstream_source_path": "third_party/zlib/slide_hash_simd.h",
+        "upstream_file_sha256": "0524fd845c79ac31bf7e23436e68aa9eb20d21a849088f4ec3250d460214284c",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/trees.c.LICENSE-prefix.txt",
+      "sha256": "613ddc9514ad64646215c0501fc66425f292c8e917e518e61819776a7ab09503",
+      "bytes": 1190,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/trees.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 1190,
+        "upstream_source_path": "third_party/zlib/trees.c",
+        "upstream_file_sha256": "c43d1ca96ed370590c273eac8f4fb85c1d1999563424b231d487628288be71ea",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/uncompr.c.LICENSE-prefix.txt",
+      "sha256": "2143120e2e5dd1f39532e06207916fc86bc64a82acb90a6878c35e3af0aa9a14",
+      "bytes": 211,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/uncompr.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 211,
+        "upstream_source_path": "third_party/zlib/uncompr.c",
+        "upstream_file_sha256": "04dca5e31b3b8a17d1806426f66f0c539f4184d657e149d40be07070c6227b52",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zconf.h.LICENSE-prefix.txt",
+      "sha256": "45ebfd5937d6e8cfbe0fa0447a206b435ce95e678e8c8542c432a7226ef4f9fe",
+      "bytes": 210,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/zconf.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 210,
+        "upstream_source_path": "third_party/zlib/zconf.h",
+        "upstream_file_sha256": "95300584cc8858578a238cd20b3a10bae81ecc0f529ee08335c67e06067b5232",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zlib.h.LICENSE-prefix.txt",
+      "sha256": "fbab901f75feb30106921191b00a52ed14fb439e49ad0e42bc7b329438c34d24",
+      "bytes": 1327,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/zlib.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 1327,
+        "upstream_source_path": "third_party/zlib/zlib.h",
+        "upstream_file_sha256": "71e0dcf4cacb6b1674550a3d9407344746d27cdce739e6e25189d0b620b005ed",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zutil.c.LICENSE-prefix.txt",
+      "sha256": "9d1bdd7c98d8aeb85514cabcb2120496b818d0553d1cf43c24780446c62c48fd",
+      "bytes": 215,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/zutil.c?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 215,
+        "upstream_source_path": "third_party/zlib/zutil.c",
+        "upstream_file_sha256": "8ced40d8c88588811edd2bdb35b7439983d5e1f8e9e32b8a3b244731f3c317b7",
+        "implementation_included": false
+      }
+    },
+    {
+      "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zutil.h.LICENSE-prefix.txt",
+      "sha256": "9898b20d5a8b0337e67cfb40118e1bfe0e386a341ea36d248027077a0bcf2bb3",
+      "bytes": 422,
+      "source_family": "zlib",
+      "source_url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+/e8ff3f35551275330696606d7fef3a2a0f73a831/zutil.h?format=TEXT",
+      "method": {
+        "kind": "exact-leading-comment-prefix",
+        "offset": 0,
+        "length": 422,
+        "upstream_source_path": "third_party/zlib/zutil.h",
+        "upstream_file_sha256": "b5f24d878c8ea2959646f5f2ce2ca14f865c650e220ca0e14fb6397a32897f2f",
+        "implementation_included": false
+      }
+    }
+  ]
+}

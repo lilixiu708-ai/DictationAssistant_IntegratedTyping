@@ -2,7 +2,7 @@
 
 面向单词、短语和句子听写的 Windows x64 桌面程序，基于 C#、.NET 10 与 Avalonia 11，在上游 DictationAssistant v4.0.0 上扩展。
 
-**当前为 `v4.0.0-typing.4` 源码预览，公开发布暂停。** BASS/AAC 已替换；不含 Adobe DNG SDK 的原生依赖仍在重建，尚未完成构建及许可、对应源码交付核对。历史 `typing.1`–`typing.3` 已暂撤为草稿，保留标签与原资产。进展与剩余事项见[许可审计](docs/版权与许可审计.md)。
+**当前为 `v4.0.0-typing.4` 源码预览，App 公开发布暂停。** BASS/AAC 已替换，Windows 无 DNG 原生库已通过构建和窗口检查；Avalonia 部分控件的 MS-PL/AGPL 组合授权路径仍待解决，暂不升级 Avalonia。历史 `typing.1`–`typing.3` 已暂撤为草稿，保留标签与原资产。进展见[许可审计](docs/版权与许可审计.md)。
 
 ## 功能
 
@@ -30,7 +30,7 @@ build-windows-typing.cmd
 python scripts\verify_build.py
 ```
 
-脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。未配置已核验的无 DNG 原生资产时，Windows 打包会停止；先阅读[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。
+脚本构建宿主和两个插件、运行既有检查并准备许可材料，输出位于 `artifacts/`。首次构建会下载并校验固定的无 DNG 原生资产及配套源码，失败则停止打包；详见[原生构建说明](docs/NATIVE_BUILD.md)与[发布规范](docs/RELEASING.md)。
 
 Linux 开发将锁文件放在各项目 `obj/`，避免覆盖已提交的 Windows RID 锁文件：
 
@@ -47,6 +47,8 @@ dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c
 [文档索引](docs/README.md) · [插件开发](docs/插件开发指南.md) · [SDK 与可编译示例](docs/PLUGIN_SDK.md) · [贡献规则](CONTRIBUTING.md) · [代理约定](AGENTS.md) · [变更记录](CHANGELOG.md)
 
 主程序在 `src/DictationAssistant.App/`，共享契约在 `src/DictationAssistant.Plugin.Abstractions/`，插件在 `plugins/`，示例在 `sdk/examples/`。程序集保留 `DictationAssistant.*`，插件 ID/API 版本独立于应用版本。
+
+OCR 尚未集成，可选开源方案见 [OCR 说明](docs/OCR_OPTIONS.md)。桌面程序及插件通过 Releases 分发，无需发布 GitHub Packages。
 
 ## 来源与许可
 

@@ -1,0 +1,92 @@
+name: Publish verified Skia native dependency
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful no-DNG producer run containing the approved asset pair
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish-native:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: SkiaSharp-2.88.9-no-dng-win-x64
+          path: native-assets
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify the pinned binary, source, notices and successful producer
+        id: verified
+        shell: python {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCER_RUN_ID: ${{ inputs.run_id }}
+        run: |
+          import hashlib, json, os, pathlib, re, subprocess, sys, urllib.parse, zipfile
+          sys.path.insert(0, str(pathlib.Path('scripts').resolve()))
+          from prepare_licenses import verify_native_manifest
+          root = pathlib.Path('native-assets')
+          catalog = json.loads(pathlib.Path('third-party/components.json').read_text())
+          entry = next(item for item in catalog['native_overrides'] if item['id'] == 'skiasharp-2.88.9-nodng-win-x64')
+          review = entry['distribution_review']
+          assert review['status'] == 'ready' and not review['blocking_issues']
+          assert entry['source_coverage']['status'] == 'complete'
+          assets = (entry['archive'], entry['sources_asset'])
+          assert {path.name for path in root.iterdir()} == {item['name'] for item in assets}
+          for asset in assets:
+              path = root / asset['name']
+              assert hashlib.file_digest(path.open('rb'), 'sha256').hexdigest() == asset['sha256']
+              assert path.stat().st_size == asset['bytes']
+              with zipfile.ZipFile(path) as archive:
+                  assert archive.testzip() is None
+          with zipfile.ZipFile(root / assets[0]['name']) as archive:
+              raw = archive.read('native-build.json')
+              manifest = verify_native_manifest(entry, raw, archive.read(entry['path']), False)
+              for path in entry['native_notice_paths']:
+                  assert archive.read(path) == pathlib.Path(path).read_bytes()
+              notice = archive.read(entry['notice']['path'])
+              assert all(item.encode() in notice for item in entry['required_product_acknowledgments'])
+          repository = os.environ['GITHUB_REPOSITORY']
+          run_id = os.environ['PRODUCER_RUN_ID']
+          assert re.fullmatch(r'[0-9]+', run_id)
+          def api(path):
+              return json.loads(subprocess.check_output(['gh', 'api', f'repos/{repository}/{path}']))
+          producer = api(f'actions/runs/{run_id}')
+          assert producer['conclusion'] == 'success' and producer['head_sha'] == manifest['build_commit']
+          assert producer['path'] == '.github/workflows/build-skia-without-dng.yml'
+          tag = urllib.parse.urlsplit(entry['archive']['url']).path.split('/releases/download/', 1)[1].split('/')[0]
+          assert tag.startswith('native-skia-') and api(f'commits/{tag}')['sha'] == manifest['build_commit']
+          release = api(f'releases/tags/{tag}')
+          assert release['draft'], 'Refusing to overwrite a published release'
+          (root / 'native-build.json').write_bytes(raw)
+          (root / 'SHA256SUMS').write_text(''.join(f"{item['sha256']}  {item['name']}\n" for item in assets))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+              stream.write(f'tag={tag}\n')
+      - name: Upload the complete pair and publish the reviewed draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NATIVE_TAG: ${{ steps.verified.outputs.tag }}
+        run: |
+          gh release upload "$NATIVE_TAG" native-assets/* --clobber
+          python - <<'PY'
+          import json, os, pathlib, subprocess
+          expected = {path.name: path.stat().st_size for path in pathlib.Path('native-assets').iterdir()}
+          release = json.loads(subprocess.check_output(['gh', 'api', f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/tags/{os.environ['NATIVE_TAG']}"]))
+          assert release['draft']
+          assert {item['name']: item['size'] for item in release['assets']} == expected, 'Draft asset set is incomplete'
+          PY
+          gh release edit "$NATIVE_TAG" --draft=false --prerelease --latest=false
+          gh release view "$NATIVE_TAG" --json url,isDraft,isPrerelease,assets

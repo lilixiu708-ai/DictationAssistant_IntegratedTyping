@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "artifact_id": "skiasharp-2.88.9-nodng-win-x64",
+  "runtime_identifier": "win-x64",
+  "status": "verified",
+  "build_commit": "06ebe119f27cad05af71c14a69c51f5baca586b6",
+  "binary": {
+    "path": "libSkiaSharp.dll",
+    "sha256": "e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e",
+    "bytes": 8860160,
+    "pe_machine": "0x8664"
+  },
+  "sources": {
+    "wrapper": {
+      "repository": "https://github.com/mono/SkiaSharp",
+      "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "archive_sha256": "5490a714cf26031724a9c771b3e76e0d27ac3243da538d4b83dcdd1cedd4c96d"
+    },
+    "skia": {
+      "repository": "https://github.com/mono/skia",
+      "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "archive_sha256": "4dee89bef1406efd0f0c35ef24ec801a8f18ad37d6033d4360c2120eb858da0e"
+    }
+  },
+  "dependencies": [
+    {
+      "path": "third_party/externals/expat",
+      "repository": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+      "commit": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+      "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/624da0f593bb8d7e146b9f42b06d8e6c80d032a3.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "b7dbedd3ec7ef30c41ea803714ac72b171f8616ca416883c9114af8ac6c9c6f6",
+      "name": "expat",
+      "revision": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+      "strip_root": false,
+      "archive_path": "expat-624da0f593bb8d7e.tar.gz",
+      "sha256": "e2b98d1a24d2e9d99ecee916345349450d8634bef59d52156fbd98bc3ccfb1a8",
+      "bytes": 8406941
+    },
+    {
+      "path": "third_party/externals/libgifcodec",
+      "repository": "https://skia.googlesource.com/libgifcodec",
+      "commit": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+      "url": "https://skia.googlesource.com/libgifcodec/+archive/d06d2a6d42baf6c0c91cacc28df2542a911d05fe.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "655a8fab53c8594555f54d040b9ac486b759ce31d7b29462cc1e62012644f279",
+      "name": "libgifcodec",
+      "revision": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+      "strip_root": false,
+      "archive_path": "libgifcodec-d06d2a6d42baf6c0.tar.gz",
+      "sha256": "6e49a8b164e2f7170d909749f373254ebeda66693e1cda705d00e7798245c00c",
+      "bytes": 24482
+    },
+    {
+      "path": "third_party/externals/libjpeg-turbo",
+      "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+      "commit": "9b894306ec3b28cea46e84c32b56773a98c483da",
+      "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git/+archive/9b894306ec3b28cea46e84c32b56773a98c483da.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "ff5184274dba06ce0a4880cf4af63a7d7c985820339a039d5192715e25349328",
+      "name": "libjpeg-turbo",
+      "revision": "9b894306ec3b28cea46e84c32b56773a98c483da",
+      "strip_root": false,
+      "archive_path": "libjpeg-turbo-9b894306ec3b28ce.tar.gz",
+      "sha256": "66b6efe30c0e813a6d16c6a2b1cb9082522eb5544a39bcc4c2bc11e07866414f",
+      "bytes": 2328856
+    },
+    {
+      "path": "third_party/externals/libpng",
+      "repository": "https://skia.googlesource.com/third_party/libpng.git",
+      "commit": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+      "url": "https://skia.googlesource.com/third_party/libpng.git/+archive/f135775ad4e5d4408d2e12ffcc71bb36e6b48551.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "c653cbe97b7f3248bda84dda7e1233b99a6e467473dd6d1bfbbe925def5f3292",
+      "name": "libpng",
+      "revision": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+      "strip_root": false,
+      "archive_path": "libpng-f135775ad4e5d440.tar.gz",
+      "sha256": "09b168d43abcf92871ad6488c1b7415b5d936377c7718349bf21c5d3c29a76db",
+      "bytes": 1537926
+    },
+    {
+      "path": "third_party/externals/libwebp",
+      "repository": "https://github.com/webmproject/libwebp.git",
+      "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "url": "https://codeload.github.com/webmproject/libwebp/tar.gz/ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "name": "libwebp",
+      "revision": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "strip_root": true,
+      "sha256": "1676107dc385f9bf6cb4c2b94d4a9359d1fd95ab6309cb587191a742df292fe2",
+      "archive_path": "libwebp-ca332209cb5567c9.tar.gz",
+      "bytes": 3685887
+    },
+    {
+      "path": "third_party/externals/zlib",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+      "commit": "3ca9f16f02950edffa391ec19cea856090158e9e",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/3ca9f16f02950edffa391ec19cea856090158e9e.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "437db42adb2106d66cd9c5f610a2b9fb18885bee669e31b9f2f872096a7777b8",
+      "name": "zlib",
+      "revision": "3ca9f16f02950edffa391ec19cea856090158e9e",
+      "strip_root": false,
+      "archive_path": "zlib-3ca9f16f02950edf.tar.gz",
+      "sha256": "1e2be9f201db257d639fce2bb1024dc2ac780a4416e27cbec96c2d546d02f16a",
+      "bytes": 582818
+    }
+  ],
+  "patches": [
+    {
+      "path": "third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+      "sha256": "cd82386bb78cd463a99386ba1b506afbe587a25aad9c3e7b5445dee44c55fc26"
+    },
+    {
+      "path": "third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch",
+      "sha256": "b10f336dfcb22cd9034722ddb6be6fe3a52d866930cbfcd508882c0ce1117327"
+    }
+  ],
+  "gn_args": {
+    "target_os": "win",
+    "target_cpu": "x64",
+    "skia_enable_fontmgr_win_gdi": false,
+    "skia_use_dng_sdk": false,
+    "skia_use_piex": false,
+    "skia_use_icu": false,
+    "skia_use_sfntly": false,
+    "skia_use_system_expat": false,
+    "skia_use_system_libjpeg_turbo": false,
+    "skia_use_system_libpng": false,
+    "skia_use_system_libwebp": false,
+    "skia_use_system_zlib": false,
+    "skia_enable_skottie": true,
+    "skia_use_vulkan": true,
+    "clang_win": "D:/a/_temp/llvm-12",
+    "clang_win_version": "12.0.0",
+    "win_vc": "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC",
+    "win_vcvars_version": "14.2",
+    "extra_cflags": [
+      "-DSKIA_C_DLL",
+      "/MT",
+      "/EHsc",
+      "/Z7",
+      "-D_HAS_AUTO_PTR_ETC=1"
+    ],
+    "extra_ldflags": [
+      "/DEBUG:FULL",
+      "/DEBUGTYPE:CV,FIXUP"
+    ],
+    "skia_enable_tools": false,
+    "is_official_build": true
+  },
+  "tools": {
+    "gn": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/gn/gn/windows-amd64/+/git_revision:9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0",
+      "sha256": "f3bc13dc1527681a4d5c96169bbed217c868316df1ae9f8eea000b3bb73fbda3",
+      "bytes": 1092064,
+      "revision": "9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0"
+    },
+    "ninja": {
+      "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.1/ninja-win.zip",
+      "sha256": "26a40fa8595694dec2fad4911e62d29e10525d2133c9a4230b66397774ae25bf",
+      "bytes": 289808,
+      "version": "1.13.1"
+    },
+    "llvm": {
+      "version": "12.0.0",
+      "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win64.exe",
+      "sha256": "8426d57f2af2bf07f80014bfd359e87ed10f5521a236a10cfe9fc4870d1b1b25",
+      "bytes": 191037739
+    }
+  },
+  "compiler_binary_sha256": "9f88e3d460fa78b620881bf27e2b3b66f1a9034208b57720d59d3a6656226dc4",
+  "native_versions": {
+    "official": {
+      "milestone": 88,
+      "increment": 1,
+      "string": "88.1"
+    },
+    "rebuilt": {
+      "milestone": 88,
+      "increment": 1,
+      "string": "88.1"
+    }
+  },
+  "upstream_native_utility": {
+    "program_sha256": "a24d6bd6d3bcb99fbcdcef448350ca716a8fe572a9a4d5f59c326052b729cf65",
+    "original_program_path": "utils/NativeLibraryMiniTest/source/Program.cs",
+    "output_png_sha256": "ab1e85e6838f5c184fb5d28139c62540b77f5f401cc13a9d58ed7f0a1e156047"
+  },
+  "gn_source_transformations": [
+    {
+      "path": "third_party/externals/libpng/pngpriv.h",
+      "before_sha256": "aa5b6c80a37d57c3fa39982981d33e9ca7c5a3fd729c3fbb03a00108f62efa81",
+      "after_sha256": "31be67fd4e40e6a020cf300ffb7640492df8d1a75f4de75766b046d008d09beb"
+    },
+    {
+      "path": "third_party/externals/zlib/deflate.c",
+      "before_sha256": "01d716d419117ef21698fdd49a14b9440f39d741b068c350bee7fc4e50c4bca1",
+      "after_sha256": "58f09d7959c403ff1cb462f5467820e42ae30c28cb6350d219d5576792fa3942"
+    }
+  ],
+  "native_source_input_count": 1124,
+  "verification": {
+    "no_dng_sources_in_graph": true,
+    "no_dng_commands": true,
+    "no_dng_binary_symbols": true,
+    "exports_match_official": true,
+    "smoke_tests": {
+      "native_abi_version_and_load": true,
+      "upstream_png_encode": true
+    }
+  },
+  "unverified_features": [
+    "Dedicated JPEG/WebP/GIF decoding checks were not run; no new test harness was introduced."
+  ],
+  "distribution_review": "Separate from technical verification; this manifest never grants distribution approval.",
+  "source_archive": {
+    "name": "SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+    "sha256": "95c5775e4c31b9db945c890339789273a43b942c73409fa051dca78c2f3e4465",
+    "bytes": 218395661
+  }
+}

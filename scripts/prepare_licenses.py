@@ -392,8 +392,17 @@ def prepare(publish, catalog_path, cache):
             'license_note', 'source_provenance', 'source_coverage',
         ) if name in evidence}
         native = native or '.nativeassets.' in identity.lower() or 'angle.windows.natives' in identity.lower()
+        coverage = evidence.get('source_coverage', {})
+        for installed in native_overrides.values():
+            entry, record = installed['entry'], installed['record']
+            replacement = entry.get('source_coverage', {})
+            if (identity in entry.get('affected_components', [])
+                    and replacement.get('status') == 'complete' and replacement.get('evidence')):
+                coverage = {**replacement, 'native_override': entry['id'],
+                            'actual_binary_sha256': record['binary_sha256'],
+                            'actual_source_archive': record['source_archive']}
+                fields['source_coverage'] = coverage
         if native:
-            coverage = evidence.get('source_coverage', {})
             if coverage.get('status') != 'complete' or not coverage.get('evidence'):
                 blocking_issues.append({
                     'id': 'native-corresponding-source:' + identity,

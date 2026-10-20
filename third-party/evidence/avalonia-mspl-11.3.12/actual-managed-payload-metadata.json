@@ -1,0 +1,226 @@
+[
+  {
+    "file": "Avalonia.Controls.dll",
+    "bytes": 1083392,
+    "sha256": "748dcbdf46bf38ad956bf9592a450cc70642e8c79c8456522d63b61a5cb31023",
+    "assembly_version": "11.3.12.0",
+    "selected_type_definitions": [
+      {
+        "name": "AutoCompleteBox",
+        "ns": "Avalonia.Controls",
+        "method_count": 133,
+        "methods_with_il_bodies": 133
+      },
+      {
+        "name": "AutoCompleteFilterMode",
+        "ns": "Avalonia.Controls",
+        "method_count": 0,
+        "methods_with_il_bodies": 0
+      },
+      {
+        "name": "PopulatedEventArgs",
+        "ns": "Avalonia.Controls",
+        "method_count": 3,
+        "methods_with_il_bodies": 3
+      },
+      {
+        "name": "PopulatingEventArgs",
+        "ns": "Avalonia.Controls",
+        "method_count": 3,
+        "methods_with_il_bodies": 3
+      },
+      {
+        "name": "CalendarDatePicker",
+        "ns": "Avalonia.Controls",
+        "method_count": 81,
+        "methods_with_il_bodies": 81
+      },
+      {
+        "name": "CalendarDatePickerDateValidationErrorEventArgs",
+        "ns": "Avalonia.Controls",
+        "method_count": 7,
+        "methods_with_il_bodies": 7
+      },
+      {
+        "name": "CalendarDatePickerFormat",
+        "ns": "Avalonia.Controls",
+        "method_count": 0,
+        "methods_with_il_bodies": 0
+      },
+      {
+        "name": "CalendarMode",
+        "ns": "Avalonia.Controls",
+        "method_count": 0,
+        "methods_with_il_bodies": 0
+      },
+      {
+        "name": "CalendarSelectionMode",
+        "ns": "Avalonia.Controls",
+        "method_count": 0,
+        "methods_with_il_bodies": 0
+      },
+      {
+        "name": "CalendarDateChangedEventArgs",
+        "ns": "Avalonia.Controls",
+        "method_count": 5,
+        "methods_with_il_bodies": 5
+      },
+      {
+        "name": "CalendarModeChangedEventArgs",
+        "ns": "Avalonia.Controls",
+        "method_count": 5,
+        "methods_with_il_bodies": 5
+      },
+      {
+        "name": "Calendar",
+        "ns": "Avalonia.Controls",
+        "method_count": 129,
+        "methods_with_il_bodies": 129
+      },
+      {
+        "name": "CalendarDateRange",
+        "ns": "Avalonia.Controls",
+        "method_count": 7,
+        "methods_with_il_bodies": 7
+      },
+      {
+        "name": "DateTimeHelper",
+        "ns": "Avalonia.Controls",
+        "method_count": 13,
+        "methods_with_il_bodies": 13
+      },
+      {
+        "name": "ISelectionAdapter",
+        "ns": "Avalonia.Controls.Utils",
+        "method_count": 11,
+        "methods_with_il_bodies": 0
+      },
+      {
+        "name": "SelectingItemsControlSelectionAdapter",
+        "ns": "Avalonia.Controls.Utils",
+        "method_count": 27,
+        "methods_with_il_bodies": 27
+      },
+      {
+        "name": "CalendarBlackoutDatesCollection",
+        "ns": "Avalonia.Controls.Primitives",
+        "method_count": 11,
+        "methods_with_il_bodies": 11
+      },
+      {
+        "name": "CalendarButton",
+        "ns": "Avalonia.Controls.Primitives",
+        "method_count": 17,
+        "methods_with_il_bodies": 17
+      },
+      {
+        "name": "CalendarDayButton",
+        "ns": "Avalonia.Controls.Primitives",
+        "method_count": 24,
+        "methods_with_il_bodies": 24
+      },
+      {
+        "name": "CalendarExtensions",
+        "ns": "Avalonia.Controls.Primitives",
+        "method_count": 1,
+        "methods_with_il_bodies": 1
+      },
+      {
+        "name": "CalendarItem",
+        "ns": "Avalonia.Controls.Primitives",
+        "method_count": 53,
+        "methods_with_il_bodies": 53
+      },
+      {
+        "name": "SelectedDatesCollection",
+        "ns": "Avalonia.Controls.Primitives",
+        "method_count": 10,
+        "methods_with_il_bodies": 10
+      }
+    ],
+    "avalonia_assembly_references": [
+      {
+        "name": "Avalonia.Base",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Remote.Protocol",
+        "version": "11.3.12.0"
+      }
+    ],
+    "manifest_resources": []
+  },
+  {
+    "file": "Avalonia.Themes.Fluent.dll",
+    "bytes": 587264,
+    "sha256": "677564c21c4c18ec506a8442945f9339c065753b7fa5473dd3caf99a42eea82b",
+    "assembly_version": "11.3.12.0",
+    "selected_type_definitions": [],
+    "avalonia_assembly_references": [
+      {
+        "name": "Avalonia.Base",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Controls",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Markup.Xaml",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Markup",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Dialogs",
+        "version": "11.3.12.0"
+      }
+    ],
+    "manifest_resources": [
+      "!AvaloniaResources"
+    ]
+  },
+  {
+    "file": "DictationAssistant.App.dll",
+    "bytes": 1649664,
+    "sha256": "1453ea26cb83d12c6094cb79cf75f13f9c70b40fdc501c1e71fedad4599d300d",
+    "assembly_version": "4.0.0.0",
+    "selected_type_definitions": [],
+    "avalonia_assembly_references": [
+      {
+        "name": "Avalonia.Controls",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Base",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "AvaloniaEdit",
+        "version": "11.3.0.0"
+      },
+      {
+        "name": "Avalonia.Markup.Xaml",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Desktop",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Markup",
+        "version": "11.3.12.0"
+      },
+      {
+        "name": "Avalonia.Themes.Fluent",
+        "version": "11.3.12.0"
+      }
+    ],
+    "manifest_resources": [
+      "DictationAssistant.App.Resources.WordlistHighlighting.xshd",
+      "!AvaloniaResources"
+    ]
+  }
+]

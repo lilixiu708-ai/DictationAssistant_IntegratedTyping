@@ -5,3 +5,5 @@ LICENSES/** -text -whitespace
 third-party/sources/** -text -whitespace
 # Unified-diff context can intentionally contain original trailing whitespace.
 third-party/patches/** text eol=lf -whitespace
+# Keep the pinned producer records byte-for-byte, including Windows newlines.
+third-party/evidence/skia-no-dng-2.88.9-win-x64/** -text -whitespace

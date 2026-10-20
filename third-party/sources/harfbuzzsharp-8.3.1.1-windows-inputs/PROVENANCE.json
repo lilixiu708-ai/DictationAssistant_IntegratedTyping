@@ -1,0 +1,25 @@
+{
+  "component": "HarfBuzzSharp.NativeAssets.Win32",
+  "version": "8.3.1.1",
+  "wrapper_revision": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+  "native_revision": "2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+  "missing_from_existing_archives": [
+    {
+      "intended_path": "externals/skia/third_party/harfbuzz/config-override.h",
+      "source_repository": "https://github.com/mono/skia",
+      "revision": "30abf4a0dcd3006f3a555e46906151e486f87b6e",
+      "source_url": "https://raw.githubusercontent.com/mono/skia/30abf4a0dcd3006f3a555e46906151e486f87b6e/third_party/harfbuzz/config-override.h",
+      "sha256": "e73c86fd567d4386c3ea660026ef115af0cbb23e077f735e19c06087042dcf50",
+      "bytes": 430,
+      "vendored_path": "externals/skia/third_party/harfbuzz/config-override.h"
+    }
+  ],
+  "evidence": "Exact MSVC vcxproj compiles only native HarfBuzz src/harfbuzz-subset.cc; include dirs are HarfBuzz src plus this Skia config directory. It does not build the containing Skia GN targets. Existing HarfBuzz archive includes generated src/hb-version.h. Actual DLL import table lists KERNEL32.dll only.",
+  "no_source_modification": true,
+  "existing_archives_needed": [
+    "SkiaSharp-64f24b1cddb68d30.tar.gz",
+    "HarfBuzz-2b3631a866b3077d.tar.gz"
+  ],
+  "tooling": "MSVC v142/Windows SDK10.0.19041 and MSBuild are general toolchain/system dependencies; document exact invocation, no claim those proprietary tools are newly sublicensed under AGPL.",
+  "source_file_modified": false
+}

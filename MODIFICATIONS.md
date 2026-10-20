@@ -121,6 +121,14 @@
 
 `third-party/sources/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/` 提供固定上游提交的原始源码副本及来源说明，用于第三方源码交付。原文件的版权头和多重许可保持不变；实际采用的许可选项及组合依据由 [第三方组件声明](THIRD_PARTY_NOTICES.md) 和 [`third-party/components.json`](third-party/components.json) 记录。该目录不属于本 fork 原创或重新授权为 AGPL 的源码，补入文件不表示第三方版权转移给维护者。
 
+## 同版本原生重建与源码交付
+
+2026-10-20 保留 Avalonia 11.3.12、SkiaSharp 2.88.9，在原生重建中关闭 RAW/DNG、PIEX，未升级图形 API。新增固定源码/工具配置、两个下载与构建补丁、构建脚本、独立工作流及 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)。实际 [CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 已成功：1,124 输入及编译/实现检查排除 DNG/PIEX，941 个导出与官方相同、原生版本 88.1，上游 PNG 和 production App Windows 窗口开闭通过。新 DLL 与两 ZIP 的实际哈希及未验证范围均保留在原生构建文档和[原始证据](third-party/evidence/skia-no-dng-2.88.9-win-x64/README.md)。
+
+本次补齐 HarfBuzz 和 ANGLE 的 Windows 编译/修改源码覆盖，分别保留 [固定输入与生成材料](third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs/README.md)和 [ANGLE 来源/交付清单](third-party/sources/angle-cb8b4e1-source-directions/README.md)。原始第三方字节、版权与许可不改，具体变换和可复建边界由对应目录记录；不宣称历史 DLL 逐字节可复现。
+
+原 NuGet DLL 的 DNG 证据和原始通知保留用于历史溯源，与已验证的新替代分开记录。独立原生资产不含 Avalonia，技术检查已通过、源码闭包仍在复核，计划独立 native Release，当前未公开；[App 与实际 DLL 中 MS-PL 部分的组合授权路径独立未解决](third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)，特定源文件未找到 AGPL 双授权或链接例外，原许可不改写，当前 App 未公开发布。
+
 ## 本次许可修复移除的原生库与配置
 
 2026-10-20 的新版从发行与源码树移除整个 `src/DictationAssistant.App/BassRuntimeAssets/` 目录，包括下列 40 个 BASS 原生二进制及 7 个 `bass_plugin` 配置标记；下表来自审计观察点的原始跟踪清单。相关加载、引用及替代解码实现的具体变化以本次提交为准。历史标签和资产没有因此被重写。
@@ -182,4 +190,4 @@
 - 根目录 AGPL 许可证全文保持原样，上游 `Copyright (C) 2013-2026 alampy.com` 及授权、无担保短通知在 README 和 NOTICE 中恢复保留。
 - 源码许可与修改声明可以放在项目级文件中；没有在每个原始文件上另行添加新的版权人，也没有将第三方文件批量重标为 AGPL。
 - 本 fork 的 AI 辅助修改说明仅覆盖本 fork 的修改，不覆盖上游原作的创作过程。
-- 当前 `typing.4` 为源码预览，因 DNG 条款兼容性及原生对应源码交付核对未解除而暂停公开发布。本文件、固定来源索引和自动构建结果均不是全面合规认证；具体证据与处理状态见 [版权与许可审计](docs/版权与许可审计.md)。
+- 当前 `typing.4` 为源码预览，no-DNG 替代已通过技术与实物验证，App 与 Avalonia 中 MS-PL 部分的组合授权路径独立未解决，App 公开发布继续暂停。本文件、特定组件源码覆盖或构建成功均不等于全面合规认证；具体证据与处理状态见 [版权与许可审计](docs/版权与许可审计.md)。

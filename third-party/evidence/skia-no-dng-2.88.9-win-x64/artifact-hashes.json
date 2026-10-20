@@ -1,0 +1,13 @@
+{
+  "binary_archive": {
+    "name": "SkiaSharp-2.88.9-no-dng-win-x64.zip",
+    "sha256": "e47750495ae6c003262c61835ed121ae4386848c3a97d20c0d8346f4b2d918b4",
+    "bytes": 3693711
+  },
+  "manifest_sha256": "bb2787a15d331547ee86b29ea611279c88c75e7bf4666a9590f86f2d040966f3",
+  "source_archive": {
+    "name": "SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+    "sha256": "95c5775e4c31b9db945c890339789273a43b942c73409fa051dca78c2f3e4465",
+    "bytes": 218395661
+  }
+}

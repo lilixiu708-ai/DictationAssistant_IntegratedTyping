@@ -4,14 +4,17 @@
 
 ## [4.0.0-typing.4] - 2026-10-20
 
+**源码预览，App 尚未公开发布。** Avalonia 保持 11.3.12，不升级；no-RAW/no-DNG 原生替代已通过真实 Windows CI 和实物核验，App 因 Avalonia/MS-PL 组合授权路径未解决继续暂停公开发行。独立原生资产待源码闭包复核后另行发布，当前未公开。
+
 - 恢复上游 `Copyright (C) 2013-2026 alampy.com` 和完整 AGPL 简短声明，保留原许可证全文，补齐修改记录、AI 辅助开发说明及源码来源。
 - “关于”界面显示原作者、完整 AGPL、第三方许可摘要和与程序提交对应的源码地址。
 - 完整许可正文按行虚拟化，避免长文一次性排版造成高内存占用；实际修复 WAV 扩展头的 PCM/浮点编码识别，防止可解码的本地录音错误回退网络语音。
 - 删除 BASS 原生库及其绑定，改用 MIT 许可的 NAudio/NLayer 流式解码；通用支持 WAV、MP3/MPEG、AIFF，Windows 其他格式依赖系统解码器。非定位输入使用有上限且自动清理的临时文件。
-- 根据实际发布依赖附带许可证原文、组件及文件哈希清单、固定版本源码来源和源码归档；缺失声明、未知二进制或遗留 BASS 会阻止打包。
+- 根据实际构建依赖准备许可证原文、组件与文件哈希清单、固定来源及源码归档；缺失声明、未知二进制或遗留 BASS 会阻止打包。HarfBuzz/ANGLE 的 Windows 编译与修改源码覆盖已补齐，保留具体范围和复现边界。
 - 旧 `typing.1`、`typing.2`、`typing.3` Release 因已确认的授权和声明缺口暂撤为草稿，保留原标签及资产。
-- Adobe DNG 的商业分发补偿条款与 AGPL 的兼容性仍无确定结论；原生依赖的完整对应源码需结合固定 DEPS/子模块索引核验。本次补齐技术性缺失，不宣称获得所有用途的法律合规认证。
-- 已通过完整构建、15 项既有检查、双插件加载和 Windows 包工程校验；Linux 虚拟会话完成 24 位 WAV、MP3、AIFF 三词练习及关于窗口版权/AGPL 浏览。虚拟音频设备不能证明真实扬声器或 Windows 系统解码器正常。
+- 原 NuGet Skia DLL 含 DNG/PIEX；同版本替代已在 [CI 39355910024](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024) 编译成功，1,124 个输入与编译/实现检查排除 DNG/PIEX，941 个导出槽逐字段一致、版本 88.1，上游 PNG 与 production App Windows 窗口开闭均通过。保留原包历史通知，新 DLL 与二进制/源码 ZIP 的实物哈希见 [NATIVE_BUILD.md](docs/NATIVE_BUILD.md)；未单独执行 JPEG/WebP/GIF 解码检查。
+- Avalonia 的 19 个 C# 文件有 Microsoft/MS-PL 头，实际 DLL 含 22 个相关类型及真实 IL，App 直接引用。特定部分未找到双授权/链接例外，[App 与其组合授权路径仍未解决](third-party/evidence/avalonia-mspl-11.3.12/REVIEW.md)；不是只等 DNG 替换即可恢复发行。独立原生资产不含 Avalonia，可按自身范围单独审核。
+- 此前替换 BASS 后的审核构建通过完整编译、15 项既有检查、双插件加载和 Windows 包工程校验；Linux 虚拟会话完成 24 位 WAV、MP3、AIFF 三词练习及关于窗口版权/AGPL 浏览。当前 no-DNG CI 另完成 Windows 图形启动检查；这些结果不证明真实扬声器、Windows 系统解码器、中文输入法或性能降幅。
 
 ## [4.0.0-typing.3] - 2026-10-20
 
@@ -85,7 +88,7 @@
 - Windows 桌面窗口、实际音频、中文输入法及实机 CPU/内存变化仍需验证。交叉构建成功不能替代这些实机检查，本版按预发布交付。
 - 保留原项目 AGPL-3.0-or-later 许可证和第三方组件声明；本版为自定义扩展发行。
 
-[4.0.0-typing.1]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.1
-[4.0.0-typing.2]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.2
-[4.0.0-typing.3]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping_GitHubReady/releases/tag/v4.0.0-typing.3
+[4.0.0-typing.1]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.1
+[4.0.0-typing.2]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.2
+[4.0.0-typing.3]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.3
 [4.0.0-typing.4]: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.4

@@ -112,6 +112,226 @@
         {
           "path": "LICENSES/third-party/avalonia-angle-2.1.25547.20250602/LICENSE",
           "sha256": "54aff7276217df9f6b5181613999d208c9e40d2b1d51bf55217837e6871a4a63"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/angle/LICENSE",
+          "sha256": "bf4da21bd20bcfb5b60b7ecc67fa864a79be049e21d6178076887f178dd6c71a"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/xxhash/LICENSE",
+          "sha256": "86ec6953794503942b70fcd4f35b565d44f63f703b7037ce44dad965c4aaae91"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/volk/LICENSE.md",
+          "sha256": "336f505f8d5aa73ea40b4d798dde86953e9c1f6525757f1d7f18120fea09bb1d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/khrplatform.h",
+          "sha256": "e206a6931f98ffe1c5c7ece69c4f94bbe1c9279243f40cbe7782848a0d3fa2de"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/egl.h",
+          "sha256": "b9669499729432653659b99ec9e92f3defed9207c480ec7926024f424e693f9a"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/eglplatform.h",
+          "sha256": "b748729767798d85ecf8e1923552879328a76d572327b641ce737549b391cc9c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl2.h",
+          "sha256": "35848b4239ffde5d30744fa2cae62ec6ea55d13c4121a3ded60ca83949ccaece"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl2platform.h",
+          "sha256": "f5da0747540a50be5f44aad264aae45bdf157a192c40f17487dd9a2f99c71b6c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl.h",
+          "sha256": "79592c4d0c9fcd6af3470de8acece16c6d2bba43d14926d442cba1eb21bd18e7"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/glplatform.h",
+          "sha256": "857bf0685ecb0dddf692157ea9ef98c95e9f58b5ed0c41b26fd3fe51ed1a3624"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/chromium/LICENSE",
+          "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/LICENSE",
+          "sha256": "e1cfcc55c325b3f78cf55df9664abaa066e2271dffe8213347d9fccdfbac8f2c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/astc-encoder/LICENSE.txt",
+          "sha256": "494accc32e50eb523a0e384d0ae6d4b702db867a89d6971216760e92b240ee12"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/LICENSE.md",
+          "sha256": "ac24e5ea920e4318e4d02c4086ae51f53cfb03feed06c18df1019e7ada1ec7bc"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/Apache-2.0.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/MIT.txt",
+          "sha256": "1ca3502222d967f3be5751c55f6b7ee735b5383909c3b501495f54b216dbf227"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/libcxx/LICENSE.TXT",
+          "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/llvm-libc/LICENSE.TXT",
+          "sha256": "ebcd9bbf783a73d05c53ba4d586b8d5813dcdf3bbec50265860ccc885e606f47"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32.c.LICENSE-prefix.txt",
+          "sha256": "39574e70c84da2c0a0578c47326392710832d78ca8b54232a0b3d37f06d40ff2"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32_simd.c.LICENSE-prefix.txt",
+          "sha256": "d970d8fbd7521072bef5f3e1fe7eba64443eb208b0d4040b248c7ffde26bddff"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32_simd.h.LICENSE-prefix.txt",
+          "sha256": "d2a0b48440a68476f9ce9cfe6bf7d49d2940b21fd0c01e4945e7e6bfc1d1c9be"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/chromeconf.h.LICENSE-prefix.txt",
+          "sha256": "94837b1929d71d414d888e3b3c20538e504b1a8c6b577acf69771bbc17e73c8e"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/compress.c.LICENSE-prefix.txt",
+          "sha256": "3def4a0afd7c18a086ef72293e70f03b074ca7d4b0a65618bec8c9f914709627"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h.LICENSE-prefix.txt",
+          "sha256": "52df535ad2bef944e2d524bb8bc13304fff3aecb87ae7322167d8cee4a6c60cf"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c.LICENSE-prefix.txt",
+          "sha256": "86fad0c2dc4b7da1aaeb1b431eab0714f2821e05acd49fa9720860ca9bb965e1"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.h.LICENSE-prefix.txt",
+          "sha256": "60fe130fd3092837b5119834a8df7e13fffc321f7919cbd6d07540cfae12197f"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inflate.c.LICENSE-prefix.txt",
+          "sha256": "9a6ce405455012b6cd26321323bb58bffb512e7d31a067611be46819ada24219"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h.LICENSE-prefix.txt",
+          "sha256": "36a7a4ee00e3aaf4c2f2c4f37b1df5c73aa8e6660a0bd4f1908acb999b0f2db2"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/cpu_features.c.LICENSE-prefix.txt",
+          "sha256": "97de4036fca0608dae170975a78f31a0443c47cc027c57c9c093a7fdcf88cedd"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/cpu_features.h.LICENSE-prefix.txt",
+          "sha256": "19c125ef8fbe5b29f57c97e6f7fdbe74978fe69eccb658a1db4d030d0fcda70f"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32.c.LICENSE-prefix.txt",
+          "sha256": "deeb51484b37e99feededf48469ce7f63cbce18fd82ac2bc98c73b95e1a75985"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32_simd.c.LICENSE-prefix.txt",
+          "sha256": "08ace092bc7149beccda2a20e1d490eb692fff4a0c90e06ead0163ad5ebff284"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32_simd.h.LICENSE-prefix.txt",
+          "sha256": "2554287d6363c11297f880c8e0c5625ee1fc39aba6049c921c0c349f4bf1d37d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc_folding.c.LICENSE-prefix.txt",
+          "sha256": "7048f8f2f1fc70231d1ec43a91ce905f57675da5b12ab814e79e1068bae32637"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/deflate.c.LICENSE-prefix.txt",
+          "sha256": "1e201b0a1a3055832a60cf1b00ecffa3d09c917ed8653b6835e08b67ab8f96ba"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/deflate.h.LICENSE-prefix.txt",
+          "sha256": "dad2200841fe863693175e7637c2189e9e2e24b53b372b6a626827b5a7b2253d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/google/compression_utils_portable.h.LICENSE-prefix.txt",
+          "sha256": "650f0589fd1ac279b92122f6fbded1b27272713ef98eba178f62e84d121bca7b"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzclose.c.LICENSE-prefix.txt",
+          "sha256": "295cc4471eecfa68fdc048ce0109883dc260ec833716f5991f6f5d3bb71b65c6"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzguts.h.LICENSE-prefix.txt",
+          "sha256": "6523e3f81a4182d5c845820e1ce35e7b6525aa51c95d912a1ae52727efd1c812"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzlib.c.LICENSE-prefix.txt",
+          "sha256": "cf9a78cc2952d2c1feabe17cc67d24303d6665def53766f5388a6e00ded766c1"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzread.c.LICENSE-prefix.txt",
+          "sha256": "2349b70268a88e11540c28587000795fa043c3a5180ec3a9b85bcdebc5e5115c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzwrite.c.LICENSE-prefix.txt",
+          "sha256": "e0115e7c4fdb5f1d1fdfa7cadebabcf157eabb8311c34aa09722a72c2bf41df7"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/infback.c.LICENSE-prefix.txt",
+          "sha256": "c0ce58c9adc918ee87eb0fdc41e0a559c9883148e9399fb7631bafbe906da967"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inffast.c.LICENSE-prefix.txt",
+          "sha256": "886d7660da32fa28245159025a8bca17d9a03b9efdae24d0a6317ec18a161f2d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inffast.h.LICENSE-prefix.txt",
+          "sha256": "e088f393f6454b309000a9cab1bb009f09af964de22fcdd369f903f834e4b7c0"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inflate.h.LICENSE-prefix.txt",
+          "sha256": "d8dc5b00c08b632241f19584204a8f09a986a6dd4698039650886924f85d7b89"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inftrees.c.LICENSE-prefix.txt",
+          "sha256": "413e8ee8629e47d87f1e6f91b11e9c334001d00c1d6bdece4a94d07dafc2e9b4"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inftrees.h.LICENSE-prefix.txt",
+          "sha256": "36819e26c296e515fbb5d27a4b8addce2113057eb978a3eadfdbe8677de83750"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/slide_hash_simd.h.LICENSE-prefix.txt",
+          "sha256": "f61fbfcd4ea5486387101197b5d5794c6d68317a675ae571c1b68bb73aac686f"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/trees.c.LICENSE-prefix.txt",
+          "sha256": "613ddc9514ad64646215c0501fc66425f292c8e917e518e61819776a7ab09503"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/uncompr.c.LICENSE-prefix.txt",
+          "sha256": "2143120e2e5dd1f39532e06207916fc86bc64a82acb90a6878c35e3af0aa9a14"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zconf.h.LICENSE-prefix.txt",
+          "sha256": "45ebfd5937d6e8cfbe0fa0447a206b435ce95e678e8c8542c432a7226ef4f9fe"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zlib.h.LICENSE-prefix.txt",
+          "sha256": "fbab901f75feb30106921191b00a52ed14fb439e49ad0e42bc7b329438c34d24"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zutil.c.LICENSE-prefix.txt",
+          "sha256": "9d1bdd7c98d8aeb85514cabcb2120496b818d0553d1cf43c24780446c62c48fd"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zutil.h.LICENSE-prefix.txt",
+          "sha256": "9898b20d5a8b0337e67cfb40118e1bfe0e386a341ea36d248027077a0bcf2bb3"
         }
       ],
       "distributed_in_windows_release": true,
@@ -132,7 +352,137 @@
       ],
       "source_repository": "https://github.com/AvaloniaUI/angle",
       "source_ref": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
-      "source_archive_url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+      "source_archive_url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "source_archives": [
+        {
+          "name": "angle",
+          "repository": "https://github.com/AvaloniaUI/angle",
+          "revision": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "delivery": "bundled",
+          "sha256": "fbb1aacacd83ea517a45f4a7459167d4d7edb91fa5fd16d7eb209c7a76dcdcc5"
+        },
+        {
+          "name": "angle-zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "revision": "e8ff3f35551275330696606d7fef3a2a0f73a831",
+          "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/e8ff3f35551275330696606d7fef3a2a0f73a831.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/zlib",
+          "reference_download_sha256": "8b8f6d1c31b7b3bbfebc94f68dcdcd126151f0d9d13ab3d0c49ed4f4f31dee9d",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "7401fcbda0f9fb8413febf03c683ce464197cd2591b93351e34bf4d3b555139c",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        },
+        {
+          "name": "angle-astc-encoder",
+          "repository": "https://github.com/ARM-software/astc-encoder",
+          "revision": "2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+          "url": "https://codeload.github.com/ARM-software/astc-encoder/tar.gz/2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+          "sha256": "8b5068ef28a8db1cb354d89d9cefd19d43eddfc72c3468fce7ebb92b2431d4c4",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/astc-encoder/src",
+          "bytes": 36161899,
+          "strip_root": true
+        },
+        {
+          "name": "angle-vulkan-headers",
+          "repository": "https://github.com/KhronosGroup/Vulkan-Headers",
+          "revision": "75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+          "url": "https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+          "sha256": "03a116d741c05d5dd8636a64ce623747196c2cd1b00cb07caa10506b046b5f54",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/vulkan-headers/src",
+          "bytes": 2640096,
+          "strip_root": true
+        },
+        {
+          "name": "angle-build",
+          "repository": "https://chromium.googlesource.com/chromium/src/build",
+          "revision": "69dc3b19a1c8707994411ae29dcaddf3330965b3",
+          "url": "https://chromium.googlesource.com/chromium/src/build/+archive/69dc3b19a1c8707994411ae29dcaddf3330965b3.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "build",
+          "reference_download_sha256": "f9fb5c89d4763d91aaee8ae94d59d2cda8097fb8c9df467d99b7d2adf57808a8",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "fb72e6a3615275aa2dca64052a5b3607fb2b8905afb3d4e2fd87b5849ae4d398",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        },
+        {
+          "name": "angle-testing",
+          "repository": "https://chromium.googlesource.com/chromium/src/testing",
+          "revision": "6a20ae4677a3ee6ed783b576a8586f2566356d22",
+          "url": "https://chromium.googlesource.com/chromium/src/testing/+archive/6a20ae4677a3ee6ed783b576a8586f2566356d22.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "testing",
+          "reference_download_sha256": "8e1d4d932391976131aa82aa60bc62804a64c490b9c9170e1051227e7e63823a",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "1716bb906f1598432c7d7f8ecd245f07ff12d7b277e32948535d6dbd85b1ee21",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        },
+        {
+          "name": "angle-buildtools",
+          "repository": "https://chromium.googlesource.com/chromium/src/buildtools",
+          "revision": "cd169314af80e77a75eb25e2c0df8798f35bc04a",
+          "url": "https://chromium.googlesource.com/chromium/src/buildtools/+archive/cd169314af80e77a75eb25e2c0df8798f35bc04a.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "buildtools",
+          "reference_download_sha256": "976a2ab5d03e3cbfa4ac503c3836328266cb02c8cefc71791511b5c0499256fe",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "453b32a44fcd8493f64c70fc9a8f71bb36ea8b48c592b7d45ebb3e035b8d5561",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        },
+        {
+          "name": "angle-libcplusplus",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx",
+          "revision": "a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96",
+          "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+archive/a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/libc++/src",
+          "reference_download_sha256": "e5aacc19eb97738c55db4cf0ca49195ef4d2b5da882ff91c996df3d9e53764ac",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "18763c22893a2425b6ea3e5a8a30b1e0a69e6b7857513e22a397c0f28fa7b010",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        },
+        {
+          "name": "angle-llvm-libc",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc",
+          "revision": "9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c",
+          "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc/+archive/9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/llvm-libc/src",
+          "reference_download_sha256": "91ffe57134b01320f137d9433ef231c2a80df673bc05c1bbc7b833edb738a7a1",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "3d9efbe00625ec21044399954f006333253be8f7c8532dd1f625de7d4bf1dc8b",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        }
+      ],
+      "vendored_source_paths": [
+        "third-party/sources/angle-cb8b4e1-source-directions"
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "Compilation and modification source coverage for the official Windows x64 libGLESv2 parameter/root closure. Not a claim of a new Windows build, historical toolchain reconstruction or byte-identical DLL reproduction.",
+        "evidence": [
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_ARCHIVES.json",
+          "third-party/sources/angle-cb8b4e1-source-directions/README.md",
+          "Original ANGLE archive plus eight actually acquired fixed dependencies; 48 target closure / 1629 source-input-script files / zero missing files."
+        ],
+        "boundaries": [
+          "GN graph review used original D3D backend arguments, Windows-host branch shadowing and placeholder SDK/compiler discovery; no Windows code compilation or native DLL execution.",
+          "Untouched upstream source archives are deliverable inputs; never ship the graph-review-only toolchain/host modifications as original source.",
+          "Actual DLL strings prove libc++ headers were compiled. The GN closure confirms libc++ and llvm-libc shared headers, ASTC, zlib, Vulkan headers/volk and vendored xxhash; Windows does not link Itanium libc++abi.",
+          "Historical MSVC/SDK build versions and binary byte reproducibility were not independently proven. Provide a real Windows build with recorded compiler/SDK versions before claiming a successful rebuild."
+        ]
+      },
+      "embedded_license_note": "Original ANGLE BSD does not replace xxHash BSD-2, Volk MIT, Khronos MIT/Apache, zlib/Chromium/ARM permissions, Arm ASTC Apache, or LLVM Apache-with-exception and legacy grants. All exact notices are retained separately."
     },
     {
       "id": "Avalonia.AvaloniaEdit",
@@ -992,6 +1342,22 @@
         {
           "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/LICENSE.txt",
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/Skia-30ab-LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-ms-use-COPYING",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/Unicode-License-V3-current.txt",
+          "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/UCD-ReadMe.txt",
+          "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa"
         }
       ],
       "distributed_in_windows_release": true,
@@ -1013,7 +1379,24 @@
       ],
       "source_repository": "https://github.com/mono/SkiaSharp",
       "source_ref": "64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
-      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec"
+      "source_archive_url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/64f24b1cddb68d30ec0ac6b661964178fc21d5ec",
+      "vendored_source_paths": [
+        "third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs"
+      ],
+      "source_coverage": {
+        "status": "complete",
+        "scope": "Windows x64 compilation and modification source coverage. Original generated tables and generation scripts are included; exact historical bit-for-bit table or DLL reproduction is not claimed.",
+        "evidence": [
+          "https://github.com/mono/SkiaSharp/tree/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/windows/libHarfBuzzSharp",
+          "https://github.com/harfbuzz/harfbuzz/tree/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs",
+          "Unicode 15.1.0 UCD and grouped UCDXML fixed archives supplied for the table generation scripts"
+        ],
+        "boundaries": [
+          "The published source already contains readable/modifiable generated C++ tables used directly by the project. Exact historical Microsoft language-tags and IANA registry snapshots used for one previously generated table have not been reconstructed; current online inputs are not misrepresented as those snapshots.",
+          "The exact project compiles harfbuzz-subset.cc with the supplied config header and does not build all targets in the surrounding Skia DEPS. Platform compiler/SDK tools are identified separately."
+        ]
+      }
     },
     {
       "id": "Hexa.NET.SDL2",
@@ -2789,6 +3172,22 @@
         {
           "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-COPYING",
           "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/Skia-30ab-LICENSE",
+          "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+        },
+        {
+          "path": "LICENSES/third-party/harfbuzzsharp-8.3.1.1/HarfBuzz-ms-use-COPYING",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/Unicode-License-V3-current.txt",
+          "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/UCD-ReadMe.txt",
+          "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa"
         }
       ],
       "binary_sha256": {
@@ -2802,6 +3201,24 @@
           "revision": "2b3631a866b3077d9d675caa4ec9010b342b5a7c",
           "url": "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
           "delivery": "bundled"
+        },
+        {
+          "name": "Unicode-UCD",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+          "delivery": "bundled",
+          "bytes": 8248819,
+          "destination_subdir": "unicode-data/15.1.0"
+        },
+        {
+          "name": "Unicode-UCDXML-grouped",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip",
+          "sha256": "39bad74c0f53cf6bdf9efb2270040cf37fd8b514f505a3c58077356ea41d5593",
+          "delivery": "bundled",
+          "bytes": 613918,
+          "destination_subdir": "unicode-data/15.1.0"
         }
       ],
       "license_evidence": [
@@ -2814,11 +3231,22 @@
       ],
       "source_coverage": {
         "status": "complete",
-        "scope": "This upstream component only; source completeness of the containing native binary and its other inputs is reviewed separately.",
+        "scope": "Windows x64 compilation and modification source coverage. Original generated tables and generation scripts are included; exact historical bit-for-bit table or DLL reproduction is not claimed.",
         "evidence": [
-          "https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/2b3631a866b3077d9d675caa4ec9010b342b5a7c"
+          "https://github.com/mono/SkiaSharp/tree/64f24b1cddb68d30ec0ac6b661964178fc21d5ec/native/windows/libHarfBuzzSharp",
+          "https://github.com/harfbuzz/harfbuzz/tree/2b3631a866b3077d9d675caa4ec9010b342b5a7c",
+          "third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs",
+          "Unicode 15.1.0 UCD and grouped UCDXML fixed archives supplied for the table generation scripts"
+        ],
+        "boundaries": [
+          "The published source already contains readable/modifiable generated C++ tables used directly by the project. Exact historical Microsoft language-tags and IANA registry snapshots used for one previously generated table have not been reconstructed; current online inputs are not misrepresented as those snapshots.",
+          "The exact project compiles harfbuzz-subset.cc with the supplied config header and does not build all targets in the surrounding Skia DEPS. Platform compiler/SDK tools are identified separately."
         ]
-      }
+      },
+      "vendored_source_paths": [
+        "third-party/sources/harfbuzzsharp-8.3.1.1-windows-inputs"
+      ],
+      "license_note": "HarfBuzz root MIT does not replace the Microsoft USE data MIT grant, Unicode data terms or BSD license of the Skia configuration input; retain all original notices."
     },
     {
       "id": "libgifcodec",
@@ -3034,6 +3462,987 @@
           "Verified 155-member canonical tar-members-v1 SHA-256 9851a449e84bf955b7b314513f5e96a195ff636373821b5c24017bcfd9ecb45d against independently reconstructed upstream Git tree c864ee4d828656ce93b2714d32218f8f94172627."
         ]
       }
+    },
+    {
+      "id": "Skia expat",
+      "version": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "MIT",
+      "repository": {
+        "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+        "commit": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/expat/COPYING",
+          "sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "expat",
+          "repository": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+          "revision": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+          "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/624da0f593bb8d7e146b9f42b06d8e6c80d032a3.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "b7dbedd3ec7ef30c41ea803714ac72b171f8616ca416883c9114af8ac6c9c6f6",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/expat"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/624da0f593bb8d7e146b9f42b06d8e6c80d032a3.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      }
+    },
+    {
+      "id": "Skia libjpeg-turbo",
+      "version": "9b894306ec3b28cea46e84c32b56773a98c483da",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "IJG AND BSD-3-Clause AND Zlib",
+      "repository": {
+        "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+        "commit": "9b894306ec3b28cea46e84c32b56773a98c483da"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/LICENSE.md",
+          "sha256": "60c756742db3ad1913304e8b13f0e86e22e51adb50cc0b3333c163f7e45ceec1"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/README.ijg",
+          "sha256": "4b7b9f8c03bb8d60270dfd12684e70ab21e4abfd27e73905cd1a7c4cae6f5cdb"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jcarith.c",
+          "sha256": "76b5a23029a6c44f063a35c29c4a5cadd13930e931e83c624d9e2d872e8ce750"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jdarith.c",
+          "sha256": "a0291db89f2a057eefcf234ccf02ad1ea385c00759af13fddec914bab0cfe0d1"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "libjpeg-turbo",
+          "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+          "revision": "9b894306ec3b28cea46e84c32b56773a98c483da",
+          "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git/+archive/9b894306ec3b28cea46e84c32b56773a98c483da.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "ff5184274dba06ce0a4880cf4af63a7d7c985820339a039d5192715e25349328",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/libjpeg-turbo"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git/+archive/9b894306ec3b28cea46e84c32b56773a98c483da.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      },
+      "required_product_acknowledgments": [
+        "This software is based in part on the work of the Independent JPEG Group."
+      ]
+    },
+    {
+      "id": "Skia libpng",
+      "version": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "libpng-2.0",
+      "repository": {
+        "url": "https://skia.googlesource.com/third_party/libpng.git",
+        "commit": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libpng/LICENSE",
+          "sha256": "5c0bb4b05b1354ae7c173532b6702ea68b611047ff9b91c4d3af77da39c195d9"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libpng/README",
+          "sha256": "23272855dcd241684a02515af0f52e586133c3b37cebe59d3a13bbad15c1d3c2"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "libpng",
+          "repository": "https://skia.googlesource.com/third_party/libpng.git",
+          "revision": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+          "url": "https://skia.googlesource.com/third_party/libpng.git/+archive/f135775ad4e5d4408d2e12ffcc71bb36e6b48551.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "c653cbe97b7f3248bda84dda7e1233b99a6e467473dd6d1bfbbe925def5f3292",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/libpng"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://skia.googlesource.com/third_party/libpng.git/+archive/f135775ad4e5d4408d2e12ffcc71bb36e6b48551.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      }
+    },
+    {
+      "id": "Skia libwebp",
+      "version": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause",
+      "repository": {
+        "url": "https://github.com/webmproject/libwebp.git",
+        "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/libwebp/COPYING",
+          "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "libwebp",
+          "repository": "https://github.com/webmproject/libwebp.git",
+          "revision": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+          "url": "https://codeload.github.com/webmproject/libwebp/tar.gz/ca332209cb5567c9b249c86788cb2dbf8847e760",
+          "sha256": "1676107dc385f9bf6cb4c2b94d4a9359d1fd95ab6309cb587191a742df292fe2",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/libwebp"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://codeload.github.com/webmproject/libwebp/tar.gz/ca332209cb5567c9b249c86788cb2dbf8847e760",
+          "third-party/skia-no-dng-build.json"
+        ]
+      }
+    },
+    {
+      "id": "Skia zlib",
+      "version": "3ca9f16f02950edffa391ec19cea856090158e9e",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "Zlib AND BSD-3-Clause",
+      "repository": {
+        "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+        "commit": "3ca9f16f02950edffa391ec19cea856090158e9e"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/LICENSE",
+          "sha256": "e1cfcc55c325b3f78cf55df9664abaa066e2271dffe8213347d9fccdfbac8f2c"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/adler32_simd.c",
+          "sha256": "e0c13f88e5eb7fc14fda25422369cc139092657ff352f1bdf7550239c7d31c06"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h",
+          "sha256": "ca7047566630aa93a701f06df3817e2b7cfd7f12807281b2e09013b8f9132c70"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c",
+          "sha256": "a76c3d70aed9b52b78196199da23e207ae6a01513ade15f40cfffe172b74b345"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inflate.c",
+          "sha256": "3252aade2fcfc7f3a541ea2a1b16dc2c51c19038d93088e09a1c66f29ea5db60"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h",
+          "sha256": "b22accd948ac32ff2ae4357d2e6271566e11f2badccdcc9dd36c6b0499e444f3"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/cpu_features.c",
+          "sha256": "aca9c8fbe556e770221641d454905105c1c9ab7dac5491ceafa9793323ed72a4"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc32_simd.c",
+          "sha256": "55b223e3f0fdcf0c262d3ff37aeb32ba063d300e53b97d56057bd3a34c8ae989"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc_folding.c",
+          "sha256": "b6d3d72e3ecc9d33d5de6d6547f68c577c203d623585adb6455d20216cced592"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/chromium/LICENSE.txt",
+          "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "revision": "3ca9f16f02950edffa391ec19cea856090158e9e",
+          "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/3ca9f16f02950edffa391ec19cea856090158e9e.tar.gz",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "437db42adb2106d66cd9c5f610a2b9fb18885bee669e31b9f2f872096a7777b8",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/externals/zlib"
+        }
+      ],
+      "source_provenance": "Exact mono/skia DEPS revision selected by the Windows x64 target graph. The six external dependencies were independently acquired; the no-DNG producer includes the prepared source trees, original archives and generated input transformations.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream component only. This does not clear the old DNG-enabled Skia binary or prove that the new native rebuild has succeeded.",
+        "evidence": [
+          "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/3ca9f16f02950edffa391ec19cea856090158e9e.tar.gz",
+          "third-party/skia-no-dng-build.json"
+        ]
+      }
+    },
+    {
+      "id": "Skia skcms",
+      "version": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause",
+      "repository": {
+        "url": "https://github.com/mono/skia",
+        "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/skcms/LICENSE",
+          "sha256": "e59bb5c5c6ba426a9ac4ba9fe667ad14c5166b12aa25be8af1d122b14fbe2e36"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "Skia",
+          "repository": "https://github.com/mono/skia",
+          "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": "Embedded in the exact Skia source archive. Original library/header copyright and license grants are retained separately from Skia root BSD.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This embedded source component only; its source is present in the full Skia archive, without an additional gitlink.",
+        "evidence": [
+          "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+        ]
+      }
+    },
+    {
+      "id": "Skia VulkanMemoryAllocator",
+      "version": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause AND MIT",
+      "repository": {
+        "url": "https://github.com/mono/skia",
+        "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/VMA-vk_mem_alloc.h.LICENSE-excerpt.txt",
+          "sha256": "916ab55b4aaa0cd61d85fe286d5dd5ecab29940e5702e1af292aa8869aa32965"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/LICENSE",
+          "sha256": "d27678cba0d529e77201e2d2a053628143e986aad8f1e77f7039ad4366c8f978"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/include/LICENSE.txt",
+          "sha256": "e21477eed484b07902a861a1b18d1e4ecd3e6f22fa81e2410f0770cfb67290e8"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "Skia",
+          "repository": "https://github.com/mono/skia",
+          "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": "Embedded in the exact Skia source archive. Original library/header copyright and license grants are retained separately from Skia root BSD.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This embedded source component only; its source is present in the full Skia archive, without an additional gitlink.",
+        "evidence": [
+          "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+        ]
+      }
+    },
+    {
+      "id": "Skia VulkanHeaders",
+      "version": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "files": [
+        "libSkiaSharp.dll"
+      ],
+      "primary_spdx_expression": "BSD-3-Clause AND Apache-2.0",
+      "repository": {
+        "url": "https://github.com/mono/skia",
+        "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/Vulkan-vulkan_core.h.LICENSE-excerpt.txt",
+          "sha256": "c6286b4462cf15837e4b05a2800d75ffbd51ccacdc592a8048a0f5fc3f3c7f73"
+        },
+        {
+          "path": "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/include/third_party/vulkan/LICENSE",
+          "sha256": "e59bb5c5c6ba426a9ac4ba9fe667ad14c5166b12aa25be8af1d122b14fbe2e36"
+        },
+        {
+          "path": "LICENSES/third-party/apache-2.0/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "binary_sha256": {
+        "libSkiaSharp.dll": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd"
+      },
+      "source_archives": [
+        {
+          "name": "Skia",
+          "repository": "https://github.com/mono/skia",
+          "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+          "delivery": "bundled"
+        }
+      ],
+      "source_provenance": "Embedded in the exact Skia source archive. Original library/header copyright and license grants are retained separately from Skia root BSD.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This embedded source component only; its source is present in the full Skia archive, without an additional gitlink.",
+        "evidence": [
+          "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2"
+        ]
+      }
+    },
+    {
+      "id": "Unicode Data",
+      "version": "15.1.0",
+      "files": [
+        "libHarfBuzzSharp.dll"
+      ],
+      "primary_spdx_expression": "Unicode-3.0",
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/Unicode-License-V3-current.txt",
+          "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        {
+          "path": "LICENSES/third-party/unicode-15.1.0/UCD-ReadMe.txt",
+          "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa"
+        }
+      ],
+      "binary_sha256": {
+        "libHarfBuzzSharp.dll": "eb76238c9e8e41d44b5a5b18167c4c5b39ca5db4277af5dbe92d730f0fc14a7d"
+      },
+      "source_archives": [
+        {
+          "name": "Unicode-UCD",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+          "delivery": "bundled",
+          "bytes": 8248819,
+          "destination_subdir": "unicode-data/15.1.0"
+        },
+        {
+          "name": "Unicode-UCDXML-grouped",
+          "revision": "15.1.0",
+          "url": "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip",
+          "sha256": "39bad74c0f53cf6bdf9efb2270040cf37fd8b514f505a3c58077356ea41d5593",
+          "delivery": "bundled",
+          "bytes": 613918,
+          "destination_subdir": "unicode-data/15.1.0"
+        }
+      ],
+      "license_note": "The data release retains its original 2023 copyright markers. The supplied complete Unicode License V3 is the current official grant (copyright 1991-2026), linked by official Unicode terms; it is not claimed to be a text originally embedded in the 2023 archives.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "Unicode data used for HarfBuzz source table generation; these archives are source-only and are not installed as runtime data.",
+        "evidence": [
+          "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+          "https://www.unicode.org/Public/15.1.0/ucdxml/ucd.nounihan.grouped.zip"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE zlib",
+      "version": "e8ff3f35551275330696606d7fef3a2a0f73a831",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "Zlib AND BSD-3-Clause",
+      "repository": {
+        "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+        "commit": "e8ff3f35551275330696606d7fef3a2a0f73a831"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/LICENSE",
+          "sha256": "e1cfcc55c325b3f78cf55df9664abaa066e2271dffe8213347d9fccdfbac8f2c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32.c.LICENSE-prefix.txt",
+          "sha256": "39574e70c84da2c0a0578c47326392710832d78ca8b54232a0b3d37f06d40ff2"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32_simd.c.LICENSE-prefix.txt",
+          "sha256": "d970d8fbd7521072bef5f3e1fe7eba64443eb208b0d4040b248c7ffde26bddff"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/adler32_simd.h.LICENSE-prefix.txt",
+          "sha256": "d2a0b48440a68476f9ce9cfe6bf7d49d2940b21fd0c01e4945e7e6bfc1d1c9be"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/chromeconf.h.LICENSE-prefix.txt",
+          "sha256": "94837b1929d71d414d888e3b3c20538e504b1a8c6b577acf69771bbc17e73c8e"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/compress.c.LICENSE-prefix.txt",
+          "sha256": "3def4a0afd7c18a086ef72293e70f03b074ca7d4b0a65618bec8c9f914709627"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h.LICENSE-prefix.txt",
+          "sha256": "52df535ad2bef944e2d524bb8bc13304fff3aecb87ae7322167d8cee4a6c60cf"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c.LICENSE-prefix.txt",
+          "sha256": "86fad0c2dc4b7da1aaeb1b431eab0714f2821e05acd49fa9720860ca9bb965e1"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.h.LICENSE-prefix.txt",
+          "sha256": "60fe130fd3092837b5119834a8df7e13fffc321f7919cbd6d07540cfae12197f"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/inflate.c.LICENSE-prefix.txt",
+          "sha256": "9a6ce405455012b6cd26321323bb58bffb512e7d31a067611be46819ada24219"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h.LICENSE-prefix.txt",
+          "sha256": "36a7a4ee00e3aaf4c2f2c4f37b1df5c73aa8e6660a0bd4f1908acb999b0f2db2"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/cpu_features.c.LICENSE-prefix.txt",
+          "sha256": "97de4036fca0608dae170975a78f31a0443c47cc027c57c9c093a7fdcf88cedd"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/cpu_features.h.LICENSE-prefix.txt",
+          "sha256": "19c125ef8fbe5b29f57c97e6f7fdbe74978fe69eccb658a1db4d030d0fcda70f"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32.c.LICENSE-prefix.txt",
+          "sha256": "deeb51484b37e99feededf48469ce7f63cbce18fd82ac2bc98c73b95e1a75985"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32_simd.c.LICENSE-prefix.txt",
+          "sha256": "08ace092bc7149beccda2a20e1d490eb692fff4a0c90e06ead0163ad5ebff284"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc32_simd.h.LICENSE-prefix.txt",
+          "sha256": "2554287d6363c11297f880c8e0c5625ee1fc39aba6049c921c0c349f4bf1d37d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/crc_folding.c.LICENSE-prefix.txt",
+          "sha256": "7048f8f2f1fc70231d1ec43a91ce905f57675da5b12ab814e79e1068bae32637"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/deflate.c.LICENSE-prefix.txt",
+          "sha256": "1e201b0a1a3055832a60cf1b00ecffa3d09c917ed8653b6835e08b67ab8f96ba"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/deflate.h.LICENSE-prefix.txt",
+          "sha256": "dad2200841fe863693175e7637c2189e9e2e24b53b372b6a626827b5a7b2253d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/google/compression_utils_portable.h.LICENSE-prefix.txt",
+          "sha256": "650f0589fd1ac279b92122f6fbded1b27272713ef98eba178f62e84d121bca7b"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzclose.c.LICENSE-prefix.txt",
+          "sha256": "295cc4471eecfa68fdc048ce0109883dc260ec833716f5991f6f5d3bb71b65c6"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzguts.h.LICENSE-prefix.txt",
+          "sha256": "6523e3f81a4182d5c845820e1ce35e7b6525aa51c95d912a1ae52727efd1c812"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzlib.c.LICENSE-prefix.txt",
+          "sha256": "cf9a78cc2952d2c1feabe17cc67d24303d6665def53766f5388a6e00ded766c1"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzread.c.LICENSE-prefix.txt",
+          "sha256": "2349b70268a88e11540c28587000795fa043c3a5180ec3a9b85bcdebc5e5115c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/gzwrite.c.LICENSE-prefix.txt",
+          "sha256": "e0115e7c4fdb5f1d1fdfa7cadebabcf157eabb8311c34aa09722a72c2bf41df7"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/infback.c.LICENSE-prefix.txt",
+          "sha256": "c0ce58c9adc918ee87eb0fdc41e0a559c9883148e9399fb7631bafbe906da967"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inffast.c.LICENSE-prefix.txt",
+          "sha256": "886d7660da32fa28245159025a8bca17d9a03b9efdae24d0a6317ec18a161f2d"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inffast.h.LICENSE-prefix.txt",
+          "sha256": "e088f393f6454b309000a9cab1bb009f09af964de22fcdd369f903f834e4b7c0"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inflate.h.LICENSE-prefix.txt",
+          "sha256": "d8dc5b00c08b632241f19584204a8f09a986a6dd4698039650886924f85d7b89"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inftrees.c.LICENSE-prefix.txt",
+          "sha256": "413e8ee8629e47d87f1e6f91b11e9c334001d00c1d6bdece4a94d07dafc2e9b4"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/inftrees.h.LICENSE-prefix.txt",
+          "sha256": "36819e26c296e515fbb5d27a4b8addce2113057eb978a3eadfdbe8677de83750"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/slide_hash_simd.h.LICENSE-prefix.txt",
+          "sha256": "f61fbfcd4ea5486387101197b5d5794c6d68317a675ae571c1b68bb73aac686f"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/trees.c.LICENSE-prefix.txt",
+          "sha256": "613ddc9514ad64646215c0501fc66425f292c8e917e518e61819776a7ab09503"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/uncompr.c.LICENSE-prefix.txt",
+          "sha256": "2143120e2e5dd1f39532e06207916fc86bc64a82acb90a6878c35e3af0aa9a14"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zconf.h.LICENSE-prefix.txt",
+          "sha256": "45ebfd5937d6e8cfbe0fa0447a206b435ce95e678e8c8542c432a7226ef4f9fe"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zlib.h.LICENSE-prefix.txt",
+          "sha256": "fbab901f75feb30106921191b00a52ed14fb439e49ad0e42bc7b329438c34d24"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zutil.c.LICENSE-prefix.txt",
+          "sha256": "9d1bdd7c98d8aeb85514cabcb2120496b818d0553d1cf43c24780446c62c48fd"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/zlib/source-headers/zutil.h.LICENSE-prefix.txt",
+          "sha256": "9898b20d5a8b0337e67cfb40118e1bfe0e386a341ea36d248027077a0bcf2bb3"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/chromium/LICENSE",
+          "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle-zlib",
+          "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+          "revision": "e8ff3f35551275330696606d7fef3a2a0f73a831",
+          "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/e8ff3f35551275330696606d7fef3a2a0f73a831.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/zlib",
+          "reference_download_sha256": "8b8f6d1c31b7b3bbfebc94f68dcdcd126151f0d9d13ab3d0c49ed4f4f31dee9d",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "7401fcbda0f9fb8413febf03c683ce464197cd2591b93351e34bf4d3b555139c",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/e8ff3f35551275330696606d7fef3a2a0f73a831.tar.gz",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE ASTC decoder",
+      "version": "2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "Apache-2.0",
+      "repository": {
+        "url": "https://github.com/ARM-software/astc-encoder",
+        "commit": "2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/astc-encoder/LICENSE.txt",
+          "sha256": "494accc32e50eb523a0e384d0ae6d4b702db867a89d6971216760e92b240ee12"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle-astc-encoder",
+          "repository": "https://github.com/ARM-software/astc-encoder",
+          "revision": "2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+          "url": "https://codeload.github.com/ARM-software/astc-encoder/tar.gz/2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+          "sha256": "8b5068ef28a8db1cb354d89d9cefd19d43eddfc72c3468fce7ebb92b2431d4c4",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/astc-encoder/src",
+          "bytes": 36161899,
+          "strip_root": true
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://codeload.github.com/ARM-software/astc-encoder/tar.gz/2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE Vulkan-Headers",
+      "version": "75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "Apache-2.0 OR MIT",
+      "repository": {
+        "url": "https://github.com/KhronosGroup/Vulkan-Headers",
+        "commit": "75ad707a587e1469fb53a901b9b68fe9f6fbc11f"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/LICENSE.md",
+          "sha256": "ac24e5ea920e4318e4d02c4086ae51f53cfb03feed06c18df1019e7ada1ec7bc"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/Apache-2.0.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/MIT.txt",
+          "sha256": "1ca3502222d967f3be5751c55f6b7ee735b5383909c3b501495f54b216dbf227"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle-vulkan-headers",
+          "repository": "https://github.com/KhronosGroup/Vulkan-Headers",
+          "revision": "75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+          "url": "https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+          "sha256": "03a116d741c05d5dd8636a64ce623747196c2cd1b00cb07caa10506b046b5f54",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/vulkan-headers/src",
+          "bytes": 2640096,
+          "strip_root": true
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE libc++",
+      "version": "a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "Apache-2.0 WITH LLVM-exception AND (NCSA OR MIT)",
+      "repository": {
+        "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx",
+        "commit": "a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/libcxx/LICENSE.TXT",
+          "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle-libcplusplus",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx",
+          "revision": "a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96",
+          "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+archive/a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/libc++/src",
+          "reference_download_sha256": "e5aacc19eb97738c55db4cf0ca49195ef4d2b5da882ff91c996df3d9e53764ac",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "18763c22893a2425b6ea3e5a8a30b1e0a69e6b7857513e22a397c0f28fa7b010",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+archive/a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96.tar.gz",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE llvm-libc headers",
+      "version": "9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "Apache-2.0 WITH LLVM-exception AND NCSA",
+      "repository": {
+        "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc",
+        "commit": "9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/llvm-libc/LICENSE.TXT",
+          "sha256": "ebcd9bbf783a73d05c53ba4d586b8d5813dcdf3bbec50265860ccc885e606f47"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle-llvm-libc",
+          "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc",
+          "revision": "9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c",
+          "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc/+archive/9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c.tar.gz",
+          "delivery": "bundled",
+          "destination_subdir": "third_party/llvm-libc/src",
+          "reference_download_sha256": "91ffe57134b01320f137d9433ef231c2a80df673bc05c1bbc7b833edb738a7a1",
+          "content_tree_schema": "tar-members-v1",
+          "content_tree_sha256": "3d9efbe00625ec21044399954f006333253be8f7c8532dd1f625de7d4bf1dc8b",
+          "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+          "strip_root": false
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc/+archive/9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c.tar.gz",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE xxHash",
+      "version": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "BSD-2-Clause",
+      "repository": {
+        "url": "https://github.com/AvaloniaUI/angle",
+        "commit": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/xxhash/LICENSE",
+          "sha256": "86ec6953794503942b70fcd4f35b565d44f63f703b7037ce44dad965c4aaae91"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle",
+          "repository": "https://github.com/AvaloniaUI/angle",
+          "revision": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "delivery": "bundled",
+          "sha256": "fbb1aacacd83ea517a45f4a7459167d4d7edb91fa5fd16d7eb209c7a76dcdcc5"
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE Volk",
+      "version": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "MIT",
+      "repository": {
+        "url": "https://github.com/AvaloniaUI/angle",
+        "commit": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/volk/LICENSE.md",
+          "sha256": "336f505f8d5aa73ea40b4d798dde86953e9c1f6525757f1d7f18120fea09bb1d"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle",
+          "repository": "https://github.com/AvaloniaUI/angle",
+          "revision": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "delivery": "bundled",
+          "sha256": "fbb1aacacd83ea517a45f4a7459167d4d7edb91fa5fd16d7eb209c7a76dcdcc5"
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
+    },
+    {
+      "id": "ANGLE Khronos headers",
+      "version": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+      "files": [
+        "av_libglesv2.dll"
+      ],
+      "primary_spdx_expression": "MIT AND Apache-2.0",
+      "repository": {
+        "url": "https://github.com/AvaloniaUI/angle",
+        "commit": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8"
+      },
+      "committed_notice_paths": [
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/khrplatform.h",
+          "sha256": "e206a6931f98ffe1c5c7ece69c4f94bbe1c9279243f40cbe7782848a0d3fa2de"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/egl.h",
+          "sha256": "b9669499729432653659b99ec9e92f3defed9207c480ec7926024f424e693f9a"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/eglplatform.h",
+          "sha256": "b748729767798d85ecf8e1923552879328a76d572327b641ce737549b391cc9c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl2.h",
+          "sha256": "35848b4239ffde5d30744fa2cae62ec6ea55d13c4121a3ded60ca83949ccaece"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl2platform.h",
+          "sha256": "f5da0747540a50be5f44aad264aae45bdf157a192c40f17487dd9a2f99c71b6c"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/gl.h",
+          "sha256": "79592c4d0c9fcd6af3470de8acece16c6d2bba43d14926d442cba1eb21bd18e7"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/khronos/glplatform.h",
+          "sha256": "857bf0685ecb0dddf692157ea9ef98c95e9f58b5ed0c41b26fd3fe51ed1a3624"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/LICENSE.md",
+          "sha256": "ac24e5ea920e4318e4d02c4086ae51f53cfb03feed06c18df1019e7ada1ec7bc"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/Apache-2.0.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "LICENSES/third-party/angle-cb8b4e1-dependencies/vulkan-headers/MIT.txt",
+          "sha256": "1ca3502222d967f3be5751c55f6b7ee735b5383909c3b501495f54b216dbf227"
+        }
+      ],
+      "binary_sha256": {
+        "av_libglesv2.dll": "9b203e40323b49dad29546a52b8b67d200bba8ff4cab9709a79cede23ba847d4"
+      },
+      "source_archives": [
+        {
+          "name": "angle",
+          "repository": "https://github.com/AvaloniaUI/angle",
+          "revision": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "delivery": "bundled",
+          "sha256": "fbb1aacacd83ea517a45f4a7459167d4d7edb91fa5fd16d7eb209c7a76dcdcc5"
+        }
+      ],
+      "source_provenance": "Fixed dependency revision or embedded source in the exact original ANGLE tree; membership established by the official Windows x64 libGLESv2 GN target closure.",
+      "source_coverage": {
+        "status": "complete",
+        "scope": "This upstream source component only; build-scope audit does not claim a successful Windows native recompilation.",
+        "evidence": [
+          "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+          "third-party/sources/angle-cb8b4e1-source-directions/SOURCE_COVERAGE.json"
+        ]
+      }
     }
   ],
   "runtime_pack_policy": {
@@ -3049,6 +4458,26 @@
         "id": "adobe-dng-agpl-compatibility",
         "component": "Adobe DNG SDK/1.4.0",
         "reason": "The shipped libSkiaSharp.dll contains Adobe DNG SDK code under separate software, document and technology patent terms. Compatibility with the combined AGPL/GPL distribution is unresolved; do not publish until resolved. Original notices and exact source were preserved, but attribution alone does not resolve compatibility."
+      },
+      {
+        "id": "avalonia-mspl-agpl-compatibility",
+        "component": "Avalonia.Controls/11.3.12",
+        "reason": "The shipped Avalonia.Controls.dll contains compiled AutoCompleteBox, Calendar and CalendarDatePicker portions whose fixed upstream source explicitly declares the Microsoft Public License (Ms-PL); the AGPL application directly references this assembly. A specific alternative grant for those portions, an applicable AGPL linking exception or another reviewed authorization basis for this combination has not been established. Preserve the original notices, but keep public application distribution blocked until that authorization path is resolved.",
+        "observed_binary": {
+          "path": "Avalonia.Controls.dll",
+          "sha256": "748dcbdf46bf38ad956bf9592a450cc70642e8c79c8456522d63b61a5cb31023",
+          "bytes": 1083392,
+          "assembly_version": "11.3.12.0",
+          "evidence": "Managed metadata contains the named types with actual IL method bodies; DictationAssistant.App.dll has a direct AssemblyRef to Avalonia.Controls 11.3.12.0."
+        },
+        "source_evidence": [
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/AutoCompleteBox/AutoCompleteBox.cs",
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Calendar/Calendar.cs",
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/CalendarDatePicker/CalendarDatePicker.cs",
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/src/Avalonia.Controls/Avalonia.Controls.csproj",
+          "https://github.com/AvaloniaUI/Avalonia/blob/37fbd9655cc581ff5b1c6b1fb1be4e3118c889d0/NOTICE.md"
+        ],
+        "review_boundary": "This records a concrete unresolved combined-distribution authorization path, not a legal certification or a finding of infringement. The Avalonia version and original third-party license grants remain unchanged. It does not change the independent distribution review for the no-DNG Skia native binary/source assets."
       }
     ],
     "scope_note": "Fixed top-level sources and legal notice evidence do not prove that all native git submodules and DEPS archives required for Corresponding Source are present. Native source coverage must be independently reviewed before publication."
@@ -3997,26 +5426,27 @@
       "id": "skiasharp-2.88.9-nodng-win-x64",
       "path": "libSkiaSharp.dll",
       "runtime_identifier": "win-x64",
-      "status": "pending",
+      "status": "verified",
       "supersedes_sha256": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd",
       "archive": {
         "name": "SkiaSharp-2.88.9-no-dng-win-x64.zip",
-        "url": null,
-        "sha256": null
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng.1/SkiaSharp-2.88.9-no-dng-win-x64.zip",
+        "sha256": "e47750495ae6c003262c61835ed121ae4386848c3a97d20c0d8346f4b2d918b4",
+        "bytes": 3693711
       },
       "manifest": {
         "path": "native-build.json",
-        "sha256": null
+        "sha256": "bb2787a15d331547ee86b29ea611279c88c75e7bf4666a9590f86f2d040966f3"
       },
-      "binary_sha256": null,
+      "binary_sha256": "e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e",
       "sources_asset": {
         "name": "SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
-        "url": null,
-        "sha256": null,
-        "bytes": null
+        "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng.1/SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+        "sha256": "95c5775e4c31b9db945c890339789273a43b942c73409fa051dca78c2f3e4465",
+        "bytes": 218395661
       },
       "provenance": {
-        "build_commit": null,
+        "build_commit": "06ebe119f27cad05af71c14a69c51f5baca586b6",
         "sources": {
           "wrapper": {
             "repository": "https://github.com/mono/SkiaSharp",
@@ -4055,16 +5485,17 @@
       "distribution_review": {
         "status": "ready",
         "blocking_issues": [],
-        "scope": "Only the matching native binary and corresponding-source assets produced by build-skia-without-dng.yml after the actual no-DNG graph/commands/binary checks, ABI equality, unchanged upstream PNG utility and production App window checks all succeed. This does not approve an existing DLL, formally pin a native asset, or clear the App release review.",
+        "scope": "Only these actual verified and pinned no-DNG native binary/source assets, produced after no-DNG graph/commands/binary, matching ABI/version, unchanged upstream PNG utility and production App window checks succeeded. The separate Avalonia/Ms-PL/AGPL application authorization review remains blocked.",
         "evidence": [
           "Exact wrapper and Skia archives plus all six Windows-target external dependencies were acquired and checked; actual GN Windows-target generation identified 1124 source inputs with no missing inputs or DNG/PIEX.",
           "The producer source bundle includes the complete prepared source trees, original archives, two tracked patches, generated input transformations, native build script and lock, catalog/notice inventory, rebuild directions and exact tool origins. General MSVC/SDK/compiler tools are identified separately.",
           "Thirty original license/notice files are included byte-for-byte, with full GPL-3.0 text and the selected libgifcodec alternative, Apache-2.0 text and required Independent JPEG Group acknowledgment.",
-          "The workflow uploads binary/source assets only after the real native build, mandatory technical checks and production App startup/close pass. Failed checks cannot reach the upload step."
+          "The workflow uploads binary/source assets only after the real native build, mandatory technical checks and production App startup/close pass. Failed checks cannot reach the upload step.",
+          "Actual successful Windows native and production App validation: https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024"
         ],
-        "application_release_status": "blocked independently; the native artifact entry remains pending and its formal release URL/SHA pins remain empty until the actual output is reviewed."
+        "application_release_status": "blocked independently by avalonia-mspl-agpl-compatibility; this ready native-only review and its verified binary/source pins do not clear the application authorization gate."
       },
-      "scope_note": "Pending build configuration only. Empty artifact pins are deliberate; they do not authorize substitution, remove the existing DNG license blocker, or establish complete native corresponding source. A same-job local review build remains blocked from public distribution.",
+      "scope_note": "Verified native replacement from CI 39355910024, built from the fixed upstream commits and tracked patches. Binary ZIP, producer manifest, actual DLL and paired corresponding-source ZIP are pinned by their independently calculated SHA-256 values. Installation never accepts the original DNG-enabled DLL. The complete application remains blocked only by the independent Avalonia/Ms-PL/AGPL combination authorization review; native asset distribution does not authorize that application release.",
       "native_notice_paths": [
         "LICENSES/third-party/apache-2.0/LICENSE.txt",
         "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
@@ -4103,6 +5534,42 @@
       "selected_gif_license": "For alternatively licensed SkGifImageReader portions this native distribution elects GPL-2.0-or-later at version 3; BSD portions retain their separate original terms. Include the complete corresponding source archive and original copyright notices.",
       "notice": {
         "path": "NOTICE-NATIVE.txt"
+      },
+      "source_coverage": {
+        "status": "complete",
+        "scope": "Only the actual verified Windows x64 no-DNG replacement DLL identified by binary_sha256 and its exact paired corresponding-source archive below, for affected_components and only after installed_native_overrides validates the replacement. This does not change source coverage of the original NuGet DLL or resolve the separate Avalonia/Ms-PL/AGPL authorization review.",
+        "evidence": [
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39355910024",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng.1/SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/06ebe119f27cad05af71c14a69c51f5baca586b6/scripts/build_skia_without_dng.py",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/06ebe119f27cad05af71c14a69c51f5baca586b6/third-party/skia-no-dng-build.json",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/06ebe119f27cad05af71c14a69c51f5baca586b6/third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+          "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/06ebe119f27cad05af71c14a69c51f5baca586b6/third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch"
+        ],
+        "binary_sha256": "e328c8b0a58cd66dace98c0597b404ceb0b585daadf9f8451089a8c09258c95e",
+        "source_asset": {
+          "name": "SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+          "url": "https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/native-skia-2.88.9-no-dng.1/SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+          "sha256": "95c5775e4c31b9db945c890339789273a43b942c73409fa051dca78c2f3e4465",
+          "bytes": 218395661
+        },
+        "producer_manifest_sha256": "bb2787a15d331547ee86b29ea611279c88c75e7bf4666a9590f86f2d040966f3",
+        "build_commit": "06ebe119f27cad05af71c14a69c51f5baca586b6",
+        "verified_results": {
+          "runtime_identifier": "win-x64",
+          "native_version": "88.1",
+          "matching_export_count": 941,
+          "source_input_count": 1124,
+          "no_dng_sources_in_graph": true,
+          "no_dng_commands": true,
+          "no_dng_binary_symbols": true,
+          "upstream_png_encode": true,
+          "production_app_window_opened_and_closed": true
+        },
+        "boundaries": [
+          "Dedicated JPEG/WebP/GIF decoding checks were not run; no new test harness was introduced.",
+          "The source-coverage statement is scoped to the delivered modified source and actual build inputs; it is not a claim of byte-identical historical toolchain/DLL reproduction or a legal certification."
+        ]
       }
     }
   ]

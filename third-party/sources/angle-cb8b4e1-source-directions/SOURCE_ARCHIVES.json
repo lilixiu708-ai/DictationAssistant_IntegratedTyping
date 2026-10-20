@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "base_archive": {
+    "name": "angle",
+    "repository": "https://github.com/AvaloniaUI/angle",
+    "revision": "cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+    "url": "https://codeload.github.com/AvaloniaUI/angle/tar.gz/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8",
+    "delivery": "bundled",
+    "sha256": "fbb1aacacd83ea517a45f4a7459167d4d7edb91fa5fd16d7eb209c7a76dcdcc5"
+  },
+  "additional_archives": [
+    {
+      "name": "angle-zlib",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+      "revision": "e8ff3f35551275330696606d7fef3a2a0f73a831",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/e8ff3f35551275330696606d7fef3a2a0f73a831.tar.gz",
+      "delivery": "bundled",
+      "destination_subdir": "third_party/zlib",
+      "reference_download_sha256": "8b8f6d1c31b7b3bbfebc94f68dcdcd126151f0d9d13ab3d0c49ed4f4f31dee9d",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "7401fcbda0f9fb8413febf03c683ce464197cd2591b93351e34bf4d3b555139c",
+      "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+      "strip_root": false
+    },
+    {
+      "name": "angle-astc-encoder",
+      "repository": "https://github.com/ARM-software/astc-encoder",
+      "revision": "2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+      "url": "https://codeload.github.com/ARM-software/astc-encoder/tar.gz/2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b",
+      "sha256": "8b5068ef28a8db1cb354d89d9cefd19d43eddfc72c3468fce7ebb92b2431d4c4",
+      "delivery": "bundled",
+      "destination_subdir": "third_party/astc-encoder/src",
+      "bytes": 36161899,
+      "strip_root": true
+    },
+    {
+      "name": "angle-vulkan-headers",
+      "repository": "https://github.com/KhronosGroup/Vulkan-Headers",
+      "revision": "75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+      "url": "https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/75ad707a587e1469fb53a901b9b68fe9f6fbc11f",
+      "sha256": "03a116d741c05d5dd8636a64ce623747196c2cd1b00cb07caa10506b046b5f54",
+      "delivery": "bundled",
+      "destination_subdir": "third_party/vulkan-headers/src",
+      "bytes": 2640096,
+      "strip_root": true
+    },
+    {
+      "name": "angle-build",
+      "repository": "https://chromium.googlesource.com/chromium/src/build",
+      "revision": "69dc3b19a1c8707994411ae29dcaddf3330965b3",
+      "url": "https://chromium.googlesource.com/chromium/src/build/+archive/69dc3b19a1c8707994411ae29dcaddf3330965b3.tar.gz",
+      "delivery": "bundled",
+      "destination_subdir": "build",
+      "reference_download_sha256": "f9fb5c89d4763d91aaee8ae94d59d2cda8097fb8c9df467d99b7d2adf57808a8",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "fb72e6a3615275aa2dca64052a5b3607fb2b8905afb3d4e2fd87b5849ae4d398",
+      "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+      "strip_root": false
+    },
+    {
+      "name": "angle-testing",
+      "repository": "https://chromium.googlesource.com/chromium/src/testing",
+      "revision": "6a20ae4677a3ee6ed783b576a8586f2566356d22",
+      "url": "https://chromium.googlesource.com/chromium/src/testing/+archive/6a20ae4677a3ee6ed783b576a8586f2566356d22.tar.gz",
+      "delivery": "bundled",
+      "destination_subdir": "testing",
+      "reference_download_sha256": "8e1d4d932391976131aa82aa60bc62804a64c490b9c9170e1051227e7e63823a",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "1716bb906f1598432c7d7f8ecd245f07ff12d7b277e32948535d6dbd85b1ee21",
+      "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+      "strip_root": false
+    },
+    {
+      "name": "angle-buildtools",
+      "repository": "https://chromium.googlesource.com/chromium/src/buildtools",
+      "revision": "cd169314af80e77a75eb25e2c0df8798f35bc04a",
+      "url": "https://chromium.googlesource.com/chromium/src/buildtools/+archive/cd169314af80e77a75eb25e2c0df8798f35bc04a.tar.gz",
+      "delivery": "bundled",
+      "destination_subdir": "buildtools",
+      "reference_download_sha256": "976a2ab5d03e3cbfa4ac503c3836328266cb02c8cefc71791511b5c0499256fe",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "453b32a44fcd8493f64c70fc9a8f71bb36ea8b48c592b7d45ebb3e035b8d5561",
+      "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+      "strip_root": false
+    },
+    {
+      "name": "angle-libcplusplus",
+      "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx",
+      "revision": "a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+archive/a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96.tar.gz",
+      "delivery": "bundled",
+      "destination_subdir": "third_party/libc++/src",
+      "reference_download_sha256": "e5aacc19eb97738c55db4cf0ca49195ef4d2b5da882ff91c996df3d9e53764ac",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "18763c22893a2425b6ea3e5a8a30b1e0a69e6b7857513e22a397c0f28fa7b010",
+      "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+      "strip_root": false
+    },
+    {
+      "name": "angle-llvm-libc",
+      "repository": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc",
+      "revision": "9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c",
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc/+archive/9c3ae3120fe83b998d0498dcc9ad3a56c29fad0c.tar.gz",
+      "delivery": "bundled",
+      "destination_subdir": "third_party/llvm-libc/src",
+      "reference_download_sha256": "91ffe57134b01320f137d9433ef231c2a80df673bc05c1bbc7b833edb738a7a1",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "3d9efbe00625ec21044399954f006333253be8f7c8532dd1f625de7d4bf1dc8b",
+      "archive_metadata_note": "Gitiles injects per-request timestamps. The pinned canonical content tree preserves every source file byte, path, type, mode, size and link; each acquired transport SHA-256 is recorded separately.",
+      "strip_root": false
+    }
+  ]
+}
