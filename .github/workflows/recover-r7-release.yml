@@ -1,4 +1,4 @@
-name: Resume publication of the verified R7 artifacts
+name: Upload verified R7 artifacts to the three fixed drafts
 
 on:
   workflow_dispatch:
@@ -62,5 +62,5 @@ jobs:
           path: plugin-release
           run-id: 39398895391
           github-token: ${{ github.token }}
-      - name: Publish the existing R7 application and plugin assets without rebuilding
-        run: python scripts/publish_release.py
+      - name: Upload and verify existing R7 assets, leaving all three releases as drafts
+        run: python scripts/publish_release.py --upload-only

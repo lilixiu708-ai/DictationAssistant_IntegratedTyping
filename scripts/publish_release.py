@@ -8,6 +8,7 @@ import argparse, hashlib, json, os, pathlib, re, subprocess, tempfile, zipfile
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--validate-only', action='store_true', help='Check the existing assets and remote refs without creating or publishing releases')
+parser.add_argument('--upload-only', action='store_true', help='Upload only to the three fixed empty R7 recovery drafts, verify them all, and leave them unpublished')
 args = parser.parse_args()
 repository = os.environ['GH_REPO']
 app_tag = os.environ['RELEASE_TAG']
@@ -18,11 +19,28 @@ if 'SOURCE_COMMIT' in os.environ and (
         or commit != '20251457f881d5efca52eb39dc832f8ae2e9f135'
         or os.environ.get('SOURCE_RUN_ID') != '39398895391'):
     raise SystemExit('Source override is restricted to the verified original R7 producer run')
+if args.upload_only and 'SOURCE_COMMIT' not in os.environ:
+    raise SystemExit('Upload-only recovery requires the exact original R7 source override')
 if app_tag not in {'v4.0.0-typing.5', 'v4.0.0-typing.6', 'v4.0.0-typing.7'} or not re.fullmatch(r'[0-9a-f]{40}', commit):
     raise SystemExit('Unexpected release tag or build commit')
 
 def gh(*arguments):
     return subprocess.check_output(['gh', *arguments], text=True)
+
+R7_DRAFT_IDS = {
+    'v4.0.0-typing.7': 418224956,
+    'plugin-synchronous-typing-v1.4.0': 418225160,
+    'plugin-docx-vocabulary-v1.2.0': 418225179,
+}
+
+def verify_recovery_draft(release, tag, title, assets, *, empty=False):
+    if (release.get('id') != R7_DRAFT_IDS[tag] or release.get('tag_name') != tag
+            or release.get('name') != title or release.get('target_commitish') != commit
+            or release.get('draft') is not True or release.get('prerelease') is not True
+            or release.get('body') != assets['RELEASE_NOTES.md'].read_bytes().decode('utf-8')
+            or not isinstance(release.get('assets'), list)
+            or empty and release['assets']):
+        raise SystemExit(f'The fixed original R7 recovery draft changed: {tag}')
 
 plans = {
     'v4.0.0-typing.5': [
@@ -50,7 +68,8 @@ actual_plugin_directories = {path.name for path in pathlib.Path('plugin-release'
 if actual_plugin_directories != expected_plugin_directories:
     raise SystemExit('The plugin artifact contains an unexpected or missing release directory')
 pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
-existing = {item['tag_name'] for page in pages for item in page}
+existing_releases = [item for page in pages for item in page]
+existing = {item['tag_name'] for item in existing_releases}
 application_review = json.loads(pathlib.Path('release/RELEASE_REVIEW.json').read_text(encoding='utf-8'))
 if app_tag == 'v4.0.0-typing.7':
     host_review = application_review.get('release_review', {})
@@ -116,12 +135,17 @@ def verify_r7_zip_assets(tag, assets, review):
 prepared = []
 for tag, title, folder in plans:
     # Never repurpose an older draft or overwrite a published release.
-    if tag in existing:
+    if not args.upload_only and tag in existing:
         raise SystemExit(f'Refusing to replace an existing release/draft: {tag}')
     assets = {path.name: path for path in folder.iterdir() if path.is_file()}
     required = {'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
     if not required <= assets.keys() or len(assets) != 5:
         raise SystemExit(f'Incomplete release asset set: {tag}')
+    if args.upload_only:
+        matches = [item for item in existing_releases if item.get('id') == R7_DRAFT_IDS[tag]]
+        if len(matches) != 1 or sum(item.get('tag_name') == tag for item in existing_releases) != 1:
+            raise SystemExit(f'Expected exactly the fixed original R7 draft: {tag}')
+        verify_recovery_draft(matches[0], tag, title, assets, empty=True)
     review = json.loads(assets['RELEASE_REVIEW.json'].read_text(encoding='utf-8'))
     if review.get('source_commit') != commit:
         raise SystemExit(f'Release review does not match the built commit: {tag}')
@@ -168,7 +192,7 @@ for tag, title, folder in plans:
     target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
     if target is not None and target != commit:
         raise SystemExit(f'Refusing to move an existing tag: {tag}')
-    if tag != app_tag and target is not None:
+    if tag != app_tag and target is not None and not args.upload_only:
         raise SystemExit(f'Refusing to reuse an existing plugin tag: {tag}')
     if tag == app_tag and target != commit:
         raise SystemExit('The application tag does not match the built commit')
@@ -194,14 +218,23 @@ if args.validate_only:
     raise SystemExit(0)
 
 # Every selected asset set and ref is checked before creating any release.
+if args.upload_only:
+    # Recheck all three privileged-created empty drafts before the first upload.
+    for tag, title, _, assets in prepared:
+        release = json.loads(gh('api', f'repos/{repository}/releases/{R7_DRAFT_IDS[tag]}'))
+        verify_recovery_draft(release, tag, title, assets, empty=True)
 uploaded = {}
 verified_digests = {}
 for tag, title, folder, assets in prepared:
-    command = ['release', 'create', tag, '--draft', '--prerelease', '--latest=false',
-               '--title', title, '--notes-file', str(assets['RELEASE_NOTES.md']), '--target', commit]
-    if tag == app_tag:
-        command += ['--verify-tag']
-    gh(*command)
+    if args.upload_only:
+        release = json.loads(gh('api', f'repos/{repository}/releases/{R7_DRAFT_IDS[tag]}'))
+        verify_recovery_draft(release, tag, title, assets, empty=True)
+    else:
+        command = ['release', 'create', tag, '--draft', '--prerelease', '--latest=false',
+                   '--title', title, '--notes-file', str(assets['RELEASE_NOTES.md']), '--target', commit]
+        if tag == app_tag:
+            command += ['--verify-tag']
+        gh(*command)
     gh('release', 'upload', tag, *(str(path) for path in assets.values()))
     # Tag endpoints may omit drafts; query the authenticated list by tag.
     releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
@@ -209,6 +242,8 @@ for tag, title, folder, assets in prepared:
     if len(matches) != 1 or not matches[0]['draft']:
         raise SystemExit(f'Expected exactly one new draft: {tag}')
     release = matches[0]
+    if args.upload_only:
+        verify_recovery_draft(release, tag, title, assets)
     if release.get('tag_name') != tag or tag != app_tag and release.get('target_commitish') != commit:
         raise SystemExit(f'Draft target does not match the built commit: {tag}')
     expected_sizes = {name: path.stat().st_size for name, path in assets.items()}
@@ -242,9 +277,11 @@ for tag, title, folder, assets in prepared:
 # Recheck every completed draft and tag after all uploads, before the
 # first public release. Only the selected new versions enter the plan;
 # no older application, plugin or native release is modified.
-for tag, _, _, _ in prepared:
+for tag, title, _, assets in prepared:
     saved = uploaded[tag]
     current = json.loads(gh('api', f'repos/{repository}/releases/{saved["id"]}'))
+    if args.upload_only:
+        verify_recovery_draft(current, tag, title, assets)
     if (not current.get('draft') or current.get('tag_name') != tag
             or tag != app_tag and current.get('target_commitish') != commit):
         raise SystemExit(f'Draft changed before publication: {tag}')
@@ -261,6 +298,14 @@ for tag, _, _, _ in prepared:
     target = values.get(f'refs/tags/{tag}^{{}}', values.get(f'refs/tags/{tag}'))
     if target not in (None, commit) or tag == app_tag and target != commit:
         raise SystemExit(f'Tag changed before publication: {tag}')
+
+if args.upload_only:
+    print(json.dumps({'status': 'all_original_r7_drafts_uploaded_and_verified_not_published',
+                      'source_commit': commit, 'producer_run_id': '39398895391',
+                      'drafts': [{'tag': tag, 'release_id': uploaded[tag]['id'],
+                                  'asset_digests': verified_digests[tag]} for tag, _, _, _ in prepared]},
+                     ensure_ascii=False, indent=2))
+    raise SystemExit(0)
 
 for tag, _, _, _ in prepared:
     gh('release', 'edit', tag, '--tag', tag, '--target', commit,
