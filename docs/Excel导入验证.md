@@ -1,6 +1,6 @@
 # Excel 导入验证
 
-**范围：Word / Excel 导入插件 1.1.0，正在准备独立发布，尚未公开。** 当前用户 `.xlsx` 样本已完成独立比对；Windows 构建及程序窗口检查通过，其他 Excel 格式与 Windows 下的 Excel 导入交互未验证。R6 本体、同步打字 1.3.1 和已公开的 Word 导入 1.0.1 均不因此变更。
+**范围：Word / Excel 导入插件 1.1.0，已独立公开。** 用户 `.xlsx` 样本已在 Linux 完成全量独立比对，Windows 已通过合成样本 CLI、R6 装载及程序窗口检查；其他 Excel 格式、公式缓存与 Windows 真实 Excel GUI 导入未验证。R6 本体、同步打字 1.3.1 和历史 Word 导入 1.0.1 的资产均不因此变更。
 
 ## 读取库与规则
 
@@ -61,6 +61,7 @@
 | 取消及读取上限 | 待验证 |
 | 导入插件 Release 构建与现有检查 | Linux 已通过：0 警告、0 错误，15 项现有 smoke 检查全部通过 |
 | Windows 构建、插件 / 包校验和生产主窗口开闭 | 提交 `dbb2a04a4ee9b6d623f0c783ccd3edba6a26ea5a` 的 [CI 39390197721](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39390197721) 已通过 |
-| Windows 下的真实 Excel 导入交互 | 未运行；上述逐单元格、CLI 和 GUI 核对在 Linux 执行 |
+| 独立发行的 R6 兼容与合成 Excel 读取 | [Windows CI 39392552810](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39392552810) 已通过：R6 加载导入 1.1.0 与原同步打字 1.2.0，双工作表 / 四列 Unicode 合成样本 CLI、15 项既有检查及窗口开闭 |
+| Windows 下的真实 Excel GUI 导入交互 | 未运行；私人样本的逐单元格、CLI 和 GUI 全量核对在 Linux 执行 |
 
-当前准备以 `plugin-docx-vocabulary-v1.1.0` 独立交付插件 ZIP、对应源码与校验文件，公开前保留现有下载入口，流程见 [发布规范](RELEASING.md#仅发布-word--excel-导入插件-110)。新 Windows 工作流只核验固定 R6 的插件装载及程序窗口，不上传私人工作簿，也不代替真实 Excel 导入交互；不得将本样本的通过扩大为全部格式均通过。
+标签 [`plugin-docx-vocabulary-v1.1.0`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0) 已公开插件 ZIP、对应源码与校验文件，源码提交为 `93631f4e7330a0ee8a89e903c127bfbd929ddf3f`，流程见 [发布规范](RELEASING.md#仅发布-word--excel-导入插件-110)。私人工作簿未上传 CI；合成样本与程序窗口检查不代替真实 Excel GUI 导入，也不证明全部格式均已通过。

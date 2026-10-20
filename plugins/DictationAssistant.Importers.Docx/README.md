@@ -2,7 +2,7 @@
 
 面向 DictationAssistant 插件接口第 1 版，运行目标为 .NET 10。插件在本地读取 `.docx`，不需要安装 Microsoft Word，不启动外部程序，也不访问文档中的链接或嵌入文件。
 
-**1.1.0 已完成本轮 Linux 样本验证，正在准备独立发布，尚未公开。** 新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm` 读取，继续使用插件 ID `docx-vocabulary`、程序集 `DictationAssistant.Importers.Docx` 及原有入口类型；安装目录仍为 `Plugins/DocxVocabulary/`。现有公开的 1.0.1 仅支持 DOCX。
+**[1.1.0 已独立公开](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0)。** 新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm` 读取，继续使用插件 ID `docx-vocabulary`、程序集 `DictationAssistant.Importers.Docx` 及原有入口类型；安装目录仍为 `Plugins/DocxVocabulary/`。历史版本 1.0.1 仅支持 DOCX，资产保留。
 
 ## DOCX 导入内容
 
@@ -16,7 +16,7 @@
 
 插件不会自行去重、打乱或修改词表。检测到文本相同的表格时只返回提示，实际导入范围由宿主预览决定。
 
-## Excel 导入内容（1.1.0，独立发布准备中）
+## Excel 导入内容（1.1.0）
 
 - 每张工作表作为独立分区，用户在宿主预览中选择工作表和列；不把不同工作表拼成一张表。
 - 文本保留原始 Unicode、大小写、空白及列位置，不自行去重、规范化或填补空单元格。
@@ -25,7 +25,7 @@
 
 读取使用 [ExcelDataReader 3.9.0](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3) 的底层接口，无需安装 Excel。该库覆盖旧 `.xls` 与 `.xlsb`，适合本次只读多格式导入；相比之下，[ClosedXML](https://github.com/ClosedXML/ClosedXML/tree/09f2f21a60e821ce7fb18ca3576b272e5dd6d921) 偏向 `.xlsx` / `.xlsm` 的读写编辑，[Open XML SDK](https://github.com/dotnet/Open-XML-SDK/tree/431ab05cf160248cc3885a4a766026d4f8243792) 面向 Open XML 容器，不能覆盖本次全部格式。当前使用的 net8.0 资产没有传递依赖。
 
-用户 `.xlsx` 的 19 张工作表、2,886 个位置和 2,683 份非空文本已在 Linux 独立逐字符比对通过，92 处合并与来源行号等读取规则也已核对；默认 112 处标题 / 表头识别、全部列预览及默认 95 条替换导入均通过。Windows 构建及程序窗口检查通过，其他 Excel 格式与 Windows 下的 Excel 导入交互尚未实测。私人工作簿只用于本地验证，记录仅保留工作表名称、计数、文件哈希及验证范围，见 [Excel 导入验证](../../docs/Excel导入验证.md)。
+用户 `.xlsx` 的 19 张工作表、2,886 个位置和 2,683 份非空文本已在 Linux 独立逐字符比对通过，92 处合并与来源行号等读取规则也已核对；默认 112 处标题 / 表头识别、全部列预览及默认 95 条替换导入均通过。Windows 已通过 R6 装载、双工作表 / 四列 Unicode 合成样本 CLI 及程序窗口检查；其他 Excel 格式、公式缓存与 Windows 真实 Excel GUI 导入尚未实测。私人工作簿只用于本地验证，记录仅保留工作表名称、计数、文件哈希及验证范围，见 [Excel 导入验证](../../docs/Excel导入验证.md)。
 
 ## DOCX 格式与限制
 

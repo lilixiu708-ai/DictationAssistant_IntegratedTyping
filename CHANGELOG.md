@@ -2,15 +2,17 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
-## Word / Excel 导入插件 [1.1.0] - 2026-10-20（独立发布准备中，尚未公开）
+## Word / Excel 导入插件 [1.1.0] - 2026-10-20
 
 - 在既有 DOCX 导入插件中增加 `.xlsx`、`.xls`、`.xlsb`、`.xlsm` 读取；每张工作表作为独立分区，沿用宿主预览和选列流程。插件 ID `docx-vocabulary`、程序集及入口类型保持不变，显示名称更新为 Word / Excel。
 - 文本按原样保留 Unicode、大小写、空白和列位置；合并单元格只保留左上角锚点内容，公式只读取已有缓存结果，不执行计算或宏。
 - 采用固定版本 ExcelDataReader 3.9.0；面向当前 .NET 的 net8.0 资产无传递依赖。Linux 上对用户 `.xlsx` 的 19 工作表、2,886 个位置及 2,683 份非空文本独立逐字符比对零差异；92 处合并、2 处空行、来源行号及特殊文字保留。
 - 现有 CLI 的 56 次逐工作表 / 列导出覆盖 2,683 个非空单元格，按宿主空白规则全部一致；19 页默认规则独立比对通过，共识别 112 处标题 / 表头，自动推荐第 2 页并默认选出 95 条，原始单元格不变。
-- Linux X11 重启最终 DLL 后，实际文件选择、19 页 / 56 列预览及默认 95 条替换写入宿主均经剪贴板复核通过；DOCX Unicode 两列与正文排除回归、伪装成 `.xlsx` 的异常文件拒绝也通过。Release 构建 0 警告、0 错误，15 项既有检查通过。其他 Excel 格式、公式缓存及 Windows 下的 Excel 导入交互未验证，范围见 [Excel 导入验证](docs/Excel导入验证.md)。
+- Linux X11 重启最终 DLL 后，实际文件选择、19 页 / 56 列预览及默认 95 条替换写入宿主均经剪贴板复核通过；DOCX Unicode 两列与正文排除回归、伪装成 `.xlsx` 的异常文件拒绝也通过。Release 构建 0 警告、0 错误，15 项既有检查通过。其他 Excel 格式、公式缓存及 Windows 真实 Excel GUI 导入未验证，范围见 [Excel 导入验证](docs/Excel导入验证.md)。
 - 提交 `dbb2a04a4ee9b6d623f0c783ccd3edba6a26ea5a` 的 [Windows CI 39390197721](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39390197721) 已通过完整构建、插件与程序包校验、既有检查和生产主窗口开闭；未上传用户工作簿，也未创建新 Release。
-- 准备通过 `release-importer-plugin.yml` 和标签 `plugin-docx-vocabulary-v1.1.0` 独立发布，仅在固定公开 R6 上替换、校验新导入插件，再交付插件、对应源码与校验文件。R6 本体、同步打字 1.3.1、原生依赖及既有发行链接保持不变；私人工作簿和整份提取内容不纳入仓库或 CI。
+- 标签 `plugin-docx-vocabulary-v1.1.0` 已公开，源码提交 `93631f4e7330a0ee8a89e903c127bfbd929ddf3f`；[独立 Windows CI 39392552810](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39392552810) 构建与发布成功。固定公开 R6 加载新导入插件及原同步打字 1.2.0，双工作表 / 四列 Unicode 合成样本 CLI、15 项既有检查及窗口正常开闭通过。
+- 五份公开附件的摘要与校验、插件 / DLL / R6 兼容记录及配套源码闭包复核通过；下载源码包已独立还原并通过 Release 发布构建，详情见 [发布规范](docs/RELEASING.md)。
+- 本次只交付导入插件、对应源码与校验文件；R6 本体、同步打字 1.3.1、原生依赖及历史 Word 1.0.1 资产保持不变。私人工作簿和整份提取内容不纳入仓库或 CI，19 页全量核对仍仅在 Linux 执行。
 
 ## 同步打字插件 [1.3.1] - 2026-10-20
 
