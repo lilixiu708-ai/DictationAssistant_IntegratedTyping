@@ -4,13 +4,14 @@
 
 ## [4.0.0-typing.8] - 2026-10-20
 
-**R8 macOS 整合版准备中，尚未公开。** Windows 继续使用 R7 和独立的背诵练习 1.4.1 更新。
+**[R8 macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** Windows 继续使用 R7 和独立的背诵练习 1.4.1 更新。
 
-- 面向 macOS 15+，分别准备 Intel x64 和 Apple Silicon arm64 安装包，均包含背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应架构的 .NET 运行环境。新增应用包、原生构建及发行材料准备入口。
+- 面向 macOS 15+，分别提供 Intel x64 和 Apple Silicon arm64 完整包，均包含背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应架构的 .NET 运行环境。新增标准应用包布局、本机启动器、原生构建及配套源码交付流程。
 - 修正系统语音取消：取消后终止进程树并等待退出；先读取输出再写入输入，避免管道阻塞，已取消的请求不再启动进程。语音列表保留带空格或括号的完整名称，按语言列识别区域。
-- 上述进程与语音名解析通过 15 项临时验证，覆盖实际子进程取消、大量管道输入输出及错误退出；验证运行于 Linux，尚不代表 macOS 窗口、系统语音或扬声器已经实测。
+- 上述进程与语音名解析通过 15 项临时验证，覆盖实际子进程取消、大量管道输入输出及错误退出；这组检查在 Linux 完成。
 - macOS 翻译凭据仅用于当前程序会话，退出后需重新输入。安装包采用 ad-hoc 签名，尚未使用 Developer ID 签名或经过 Apple 公证；安装方式和待验证范围见 [macOS 说明](docs/MACOS.md)。
-- [macOS 无 DNG 原生依赖已独立公开](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng-macos.1)：两个架构的实际构建、源码闭包和 7 份附件重下载核验均通过，正式来源与哈希已固定。完整应用的签名与运行验证仍在进行。Avalonia/MS-PL 组合授权事项继续披露，原始许可和配套源码保留。
+- [macOS 无 DNG 原生依赖已独立公开](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/native-skia-2.88.9-no-dng-macos.1)：两个架构的实际构建、源码闭包和 7 份附件重下载核验均通过，正式来源与哈希已固定。Avalonia/MS-PL 组合授权事项继续披露，原始许可和配套源码保留。
+- [macOS 构建 39425977259](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39425977259)在两个架构均通过严格签名校验、双插件加载、15 项既有逻辑检查、系统语音合成、SDL dummy 播放和主窗口正常开闭。[发布 39426632441](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39426632441)复用同提交产物，6 份公开附件重新下载核验通过。扬声器声音、中文输入法、完整练习交互和真实在线翻译仍未实测。
 
 ## 背诵练习插件 [1.4.1] - 2026-10-20
 

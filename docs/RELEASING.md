@@ -2,7 +2,7 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
-**R8（`v4.0.0-typing.8`）macOS 整合版准备中，尚未公开。** 面向 macOS 15+，分别准备 Intel x64 与 Apple Silicon arm64 包，均内置背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应 .NET 运行环境。实际 macOS 构建、运行和公开下载复核尚待完成；Windows 当前发行仍为 R7，另有背诵练习 1.4.1 独立更新。
+**[R8（`v4.0.0-typing.8`）macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** 需要 macOS 15+，Intel x64 与 Apple Silicon arm64 分包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应 .NET 运行环境。源码提交 `2c64325cbc14e2699aa0e3ea6f6d71599a25383e`；[构建 39425977259](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39425977259)与[发布 39426632441](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39426632441)均成功，6 份公开附件重新下载核验通过。Windows 当前发行仍为 R7，另有背诵练习 1.4.1 独立更新。
 
 **[背诵练习 1.4.1 已独立预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1)。** 标签对应源码提交 `551174f64e15929c648b178affc3a2ec4f2f5cf3`，[Windows CI 39413856150](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39413856150) 的构建与发布均成功。固定公开 R7 加载 1.4.1，核对 API 1 / 功能级别 5、原导入 1.2.0、15 项既有检查及主窗口正常开闭通过；Windows 真实练习 GUI、原生音频与输入法仍未实测。本次仅更新练习插件，R7 完整包仍内置 1.4.0，导入插件与历史发行资产不变。
 
@@ -76,15 +76,15 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 2. 运行既有检查、插件加载、包校验及对应界面验证；按实际平台记录范围。当前已通过 Common Ions 25 对记号、Excel 19 页输出回归、31 项 headless 窗口检查及 15 项既有检查；headless 不等于 Windows 真实练习 GUI 或像素渲染。
 3. 每份发行分别准备二进制 ZIP、同一提交的对应源码、`SHA256SUMS` 及原始许可材料；继续披露宿主 Avalonia/MS-PL 组合授权事项。草稿完整核对后公开，再重新下载验证，最后更新首页入口，保留历史标签和资产。
 
-## R8 macOS 整合版：准备中
+## R8 macOS 整合版
 
 1. macOS 无 DNG 原生资产的二进制、对应源码和原始声明已完成复核并独立公开，两个架构的地址与哈希已固定。正式应用打包使用这批公开资产；未固定的审核资产不进入公开包，既有 Windows 原生资产与 R7 附件不改动。
 2. [macOS 工作流](../.github/workflows/build-typing-macos.yml)仅由 `workflow_dispatch` 触发。在 `main` 发起普通构建，留空 `native_run_id` 和 `build_run_id`，使用公开原生资产的固定来源。Intel x64 与 Apple Silicon arm64 分别在对应 macOS runner 构建，最低系统版本为 macOS 15。宿主、共享契约、两个插件及既有检查项目已按两个 RID 提交 10 份锁文件，构建与检查以 `--locked-mode` 还原。Linux 解析成功不代表 Mac 运行通过。
-3. 使用 `build-macos-typing.sh --rid osx-x64` 或 `--rid osx-arm64`，将两个插件放入 `.app/Contents/Resources/runtime/Plugins/`，保留插件 ID、API 1、功能级别 5 和原配置路径。在每个架构的实际包上核验原生加载、双插件发现、既有逻辑检查、系统语音合成、SDL 播放路径和主窗口开闭；分别记录结果。当前只有 Linux 的 15 项实际进程与语音名解析检查通过，不能写成 Mac 已验证；扬声器、真实翻译 API、中文输入法和完整练习交互仍须实机核对。
+3. 使用 `build-macos-typing.sh --rid osx-x64` 或 `--rid osx-arm64`，将两个插件放入 `.app/Contents/Resources/runtime/Plugins/`，保留插件 ID、API 1、功能级别 5 和原配置路径。在每个架构的实际包上核验原生加载、双插件发现、既有逻辑检查、系统语音合成、SDL 播放路径和主窗口开闭；分别记录结果。R8 的两个实际 Mac 任务已通过严格签名校验、双插件发现、15 项既有逻辑检查、系统语音合成、SDL dummy 播放和生产主窗口正常开闭；Linux 的 15 项实际进程与语音名解析检查另行保留。扬声器、真实翻译 API、中文输入法和完整练习交互仍须实机核对。
 4. 等普通构建的两个 Mac 任务全部成功，确认该运行、当前 HEAD 和待创建标签指向同一完整提交，再创建 `v4.0.0-typing.8`。针对该标签手动触发同一工作流，填入 `build_run_id=<原成功运行 ID>`，保持 `native_run_id` 为空。发布任务重新核对原运行来源、成功状态和精确提交，复用原验证产物，不重新构建；仅推送标签不会触发构建或发布。
 5. 发布流程组装完整配套源码并校验原应用包及附件摘要，草稿附件齐全且摘要相符后才公开，再重新下载复核。应用采用 ad-hoc 签名，不宣称 Developer ID 签名或 Apple 公证；交付两份完整应用包、同一提交的配套源码、原始许可、披露文件和 `SHA256SUMS`。只沿用已明确披露的 Avalonia 组合授权事项，不放行新的来源或完整性缺项。审核构建的 `native_run_id` 只供诊断，不可作为正式发布来源。
 
-安装、首次打开及 macOS 会话凭据的说明见 [MACOS.md](MACOS.md)。发布完成后再补充本节的源码提交、实际 CI 和下载入口。
+本次发布复用上述成功构建，未重新构建应用。两份完整包、对应源码、发布说明、披露文件和 `SHA256SUMS` 共 6 份附件已公开并重新下载核验。安装、首次打开及 macOS 会话凭据的说明见 [MACOS.md](MACOS.md)。后续文档更新不移动发行标签或替换已公开附件。
 
 ## 仅发布 Word / Excel 导入插件 1.1.0
 

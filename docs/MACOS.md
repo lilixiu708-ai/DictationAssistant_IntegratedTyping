@@ -1,6 +1,6 @@
 # macOS 安装与构建
 
-R8（`v4.0.0-typing.8`）正在准备，尚未公开下载。计划面向 **macOS 15 及更新版本**，完整包自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 和 .NET 运行环境，无需另装插件或 .NET。Windows 继续使用 R7 和背诵练习 1.4.1 独立更新。
+[R8（`v4.0.0-typing.8`）已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。需要 **macOS 15 及更新版本**，完整包自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 和 .NET 运行环境，无需另装插件或 .NET。Windows 继续使用 R7 和背诵练习 1.4.1 独立更新。
 
 ## 选择与安装
 
@@ -8,10 +8,10 @@ R8（`v4.0.0-typing.8`）正在准备，尚未公开下载。计划面向 **macO
 
 | 电脑 | 对应包 |
 | --- | --- |
-| Intel 处理器 | `macos-x64.zip` |
-| Apple M 系列芯片 | `macos-arm64.zip` |
+| Intel 处理器 | [x64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/DictationAssistant-4.0.0-typing.8-macos-x64.zip) |
+| Apple M 系列芯片 | [arm64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/DictationAssistant-4.0.0-typing.8-macos-arm64.zip) |
 
-正式附件公开后，先核对 Release 来源与 `SHA256SUMS`，解压并将 `DictationAssistant.app` 拖到“应用程序”，再打开。更新前退出程序并备份用户数据，替换整个应用包。
+先核对 [Release](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8) 来源与 [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/SHA256SUMS)，解压后打开 `payload` 文件夹，将 `DictationAssistant.app` 拖到“应用程序”，再打开。更新前退出程序并备份用户数据，替换整个应用包。
 
 应用采用 **ad-hoc 签名**，尚未使用 Developer ID 签名，也未经过 Apple 公证。首次打开若被系统拦截，核对下载来源后，在“系统设置 → 隐私与安全性”允许打开这个应用。不要全局关闭 Gatekeeper；若系统仍报告损坏或签名校验失败，保留报错并反馈，勿跳过校验。
 
@@ -25,9 +25,11 @@ R8（`v4.0.0-typing.8`）正在准备，尚未公开下载。计划面向 **macO
 
 系统语音调用已修正取消清理：取消时终止进程树并等待退出；先读取输出再写入输入，避免管道阻塞。语音列表按语言列识别，保留含空格和括号的完整名称。
 
-这些修改已通过 15 项临时验证，使用实际子进程检查取消、输入输出阻塞、正常 / 错误退出和已取消请求，并检查语音名称解析。验证在 Linux 完成，包含模拟 `say` 调用；这不代表 macOS 系统语音或图形界面已经运行通过。
+[构建 39425977259](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39425977259)在 Intel 与 Apple Silicon 的 macOS runner 上分别通过完整包构建、严格签名校验、双插件加载、15 项既有逻辑检查、系统语音合成、SDL dummy 播放，以及生产主窗口正常打开和关闭。发布对应源码提交 `2c64325cbc14e2699aa0e3ea6f6d71599a25383e`。
 
-macOS 两个架构的实际构建、双插件加载、主窗口开闭、系统语音与 SDL 播放路径仍待运行记录确认。扬声器声音、真实翻译 API、中文输入法和完整背诵交互尚未实测；发布后按实际结果更新，不将 dummy 音频输出写成扬声器验证。
+进程取消及语音名称解析另在 Linux 完成 15 项临时验证，覆盖实际子进程、管道阻塞、正常 / 错误退出和模拟 `say` 调用。扬声器声音、真实翻译 API、中文输入法和完整背诵交互尚未实测；dummy 播放只验证音频调用路径。
+
+[发布 39426632441](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39426632441)直接使用原验证产物，提供两份整合包、完整配套源码、发布说明、披露文件与校验和；6 份公开附件重新下载核验通过。
 
 ## 源码构建
 
@@ -38,7 +40,7 @@ bash build-macos-typing.sh --rid osx-arm64
 # Intel Mac 使用：bash build-macos-typing.sh --rid osx-x64
 ```
 
-脚本构建宿主与两个插件，准备原始许可和 `.app` 目录，并下载已公开、固定哈希的 macOS 无 DNG 原生资产及配套源码。原生依赖已通过两种 Mac 的构建与独立源码复核；完整应用的运行结果另行记录。[原生构建说明](NATIVE_BUILD.md)和[发布规范](RELEASING.md)记录对应材料与交付步骤。
+脚本构建宿主与两个插件，准备原始许可和 `.app` 目录，并下载已公开、固定哈希的 macOS 无 DNG 原生资产及配套源码。原生依赖已通过两种 Mac 的构建与独立源码复核，完整应用的实际运行范围见上文。`.app/Contents/MacOS/` 中的本机启动器运行 `Contents/Resources/runtime/` 中的 .NET 程序，两个插件保留在该运行目录的 `Plugins/` 下。[原生构建说明](NATIVE_BUILD.md)和[发布规范](RELEASING.md)记录对应材料与交付步骤。
 
 正式 NuGet 依赖已固定：宿主、共享契约、两个插件及既有逻辑检查项目，各有 `osx-x64` 和 `osx-arm64` 锁文件，共 10 份。构建和既有检查均以 `--locked-mode` 还原，依赖变化时直接失败。Linux 上的依赖解析检查不代表 Mac 运行验证。
 
