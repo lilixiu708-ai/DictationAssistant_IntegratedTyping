@@ -2,6 +2,8 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**R7 本体与两个新插件正在准备发布，尚未公开。** 本体标签为 `v4.0.0-typing.7`，背诵练习为 `plugin-synchronous-typing-v1.4.0`，Word / Excel 导入为 `plugin-docx-vocabulary-v1.2.0`。两个插件均要求 R7 的宿主功能级别 5，API 仍为 1；R7 完整包包含它们，独立包供已有 R7 时更新。公开并完成下载核对前，首页保留现有下载入口。
+
 **[Word / Excel 导入插件 1.1.0 已独立公开](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.1.0)。** 标签对应源码提交 `93631f4e7330a0ee8a89e903c127bfbd929ddf3f`，[Windows CI 39392552810](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39392552810) 构建与发布成功：固定 R6 加载导入 1.1.0 与原同步打字 1.2.0，双工作表 / 四列 Unicode 合成样本 CLI、15 项既有检查及窗口正常开闭通过。本体、同步打字、原生依赖与历史 Word 导入 1.0.1 的资产保持不变。
 
 公开后五份附件的服务器摘要、四项 `SHA256SUMS`、插件版本、源码提交、DLL 哈希及 R6 兼容记录均核对通过。独立源码闭包复核覆盖 151 个 Git 文件、125 份许可证、4 份项目声明、ExcelDataReader 原始许可及一份 20,105,239 字节的私有依赖源码归档；下载源码包的独立还原与 Release 发布构建通过。源码包不含用户工作簿；10 个旧 Release、43 份旧附件和 15 个旧标签引用保持不变。
@@ -57,6 +59,12 @@ App 构建只接受目录中已固定地址、来源和哈希的审核原生资�
 - `third-party/components.json` 的 `native_source_provenance`、`source_coverage` 和 `native_overrides` 记录来源及范围；包内 `third-party-sources/SOURCE_ARCHIVES.json` 记录实际归档及哈希。目录中的 `delivery=bundled` 条目须真的入包，引用索引不等于已经交付。
 - 下载字节按固定 SHA-256 验证；Gitiles 有动态归档元数据的条目按目录规定核验固定 canonical `tar-members-v1` 内容树哈希（路径、类型、权限、链接和文件字节），并记录该次归档的实际 SHA-256。不能因压缩字节不同跳过内容验证。
 - GitHub 自动源码 ZIP 不执行上述追加流程，不能称它与准备脚本产出的对应源码包相同。核对每个实际组件要求的交付内容，勿将所有原生源码覆盖一概标成未补齐，也勿把部分通过扩大为整个 App 已合规。
+
+## R7 与两个插件一起发布
+
+1. 从同一提交构建 R7 本体、背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，分别使用上述标签；保留原插件 ID、程序集及本机数据目录。升级保留用户设置，不把新插件单独作为 R6 更新包。
+2. 运行既有检查、插件加载、包校验及对应界面验证；按实际平台记录范围。当前已通过 Common Ions 25 对记号、Excel 19 页输出回归、31 项 headless 窗口检查及 15 项既有检查；headless 不等于 Windows 真实练习 GUI 或像素渲染。
+3. 每份发行分别准备二进制 ZIP、同一提交的对应源码、`SHA256SUMS` 及原始许可材料；继续披露宿主 Avalonia/MS-PL 组合授权事项。草稿完整核对后公开，再重新下载验证，最后更新首页入口，保留历史标签和资产。
 
 ## 仅发布 Word / Excel 导入插件 1.1.0
 

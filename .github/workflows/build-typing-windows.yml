@@ -34,6 +34,31 @@ jobs:
       - name: Validate portable archive and DLL content
         shell: cmd
         run: python scripts\verify_build.py
+      - name: Verify R7 host and both matching feature-level-5 plugins
+        if: github.ref == 'refs/tags/v4.0.0-typing.7'
+        shell: python {0}
+        run: |
+          import json, os, pathlib, subprocess
+          host = pathlib.Path('artifacts/Windows-x64').resolve()
+          result = subprocess.run([str(host / 'DictationAssistant.App.exe'), '--list-plugins'],
+                                  cwd=host, capture_output=True, check=True, timeout=60)
+          report = json.loads(result.stdout.decode('utf-8-sig'))
+          if report.get('ApiVersion') != 1 or report.get('HostFeatureLevel') != 5 or report.get('LoadedCount') != 2:
+              raise SystemExit('R7 must load both matching plugins with API 1 and host feature level 5')
+          plugins = {item['Manifest']['Id']: item for item in report['Plugins'] if item.get('Manifest')}
+          expected = {'synchronous-typing': ('1.4.0', {'practice', 'configuration'}),
+                      'docx-vocabulary': ('1.2.0', {'document-importer'})}
+          if set(plugins) != set(expected):
+              raise SystemExit('Unexpected R7 plugin set')
+          for plugin_id, (version, capabilities) in expected.items():
+              item = plugins[plugin_id]
+              manifest = item['Manifest']
+              if (item.get('IsLoaded') is not True or item.get('Error') is not None
+                      or manifest.get('Version') != version or manifest.get('ApiVersion') != 1
+                      or manifest.get('MinimumHostFeatureLevel') != 5
+                      or not capabilities <= set(item.get('Capabilities', []))):
+                  raise SystemExit(f'R7 did not load the matching plugin: {plugin_id}')
+          print('R7 loaded recitation 1.4.0 and Word/Excel 1.2.0 with API 1 and host feature level 5.')
       - name: Start and close the production Windows application
         shell: pwsh
         run: |
@@ -60,11 +85,11 @@ jobs:
           review = json.loads(manifest.read_text(encoding='utf-8')).get('release_review', {})
           blockers = review.get('blocking_issues', [])
           ready = review.get('status') == 'ready' and not blockers
-          # R5 and R6 are explicitly authorized with the known licensing
+          # R5, R6 and R7 are explicitly authorized with the known licensing
           # issue disclosed. This does not mark that issue as resolved, and does
           # not waive missing notices/source, unknown issues or integrity checks.
           acknowledged_release = (
-              os.environ.get('GITHUB_REF') in {'refs/tags/v4.0.0-typing.5', 'refs/tags/v4.0.0-typing.6'}
+              os.environ.get('GITHUB_REF') in {'refs/tags/v4.0.0-typing.5', 'refs/tags/v4.0.0-typing.6', 'refs/tags/v4.0.0-typing.7'}
               and review.get('status') == 'blocked'
               and isinstance(blockers, list) and bool(blockers)
               and all(isinstance(item, dict) and item.get('id') == 'avalonia-mspl-agpl-compatibility'
@@ -88,7 +113,7 @@ jobs:
           dotnet build sdk\examples\GainEffect\GainEffect.csproj -c Release
           if errorlevel 1 exit /b 1
       - name: Prepare versioned release assets
-        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v4.0.0-typing.5' && github.ref != 'refs/tags/v4.0.0-typing.6'
+        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v4.0.0-typing.5' && github.ref != 'refs/tags/v4.0.0-typing.6' && github.ref != 'refs/tags/v4.0.0-typing.7'
         shell: cmd
         run: python scripts\prepare_release.py "%GITHUB_REF_NAME%"
       - name: Prepare R5 application and independent plugin assets with disclosures
@@ -106,6 +131,14 @@ jobs:
           python scripts\prepare_release.py "%GITHUB_REF_NAME%" --acknowledge-license-review
           if errorlevel 1 exit /b 1
           python scripts\prepare_plugin_release.py --app-release-tag "%GITHUB_REF_NAME%" --plugin-id synchronous-typing
+          if errorlevel 1 exit /b 1
+      - name: Prepare R7 application and both plugin assets with disclosures
+        if: github.ref == 'refs/tags/v4.0.0-typing.7'
+        shell: cmd
+        run: |
+          python scripts\prepare_release.py "%GITHUB_REF_NAME%" --acknowledge-license-review
+          if errorlevel 1 exit /b 1
+          python scripts\prepare_plugin_release.py --app-release-tag "%GITHUB_REF_NAME%" --plugin-id synchronous-typing --plugin-id docx-vocabulary
           if errorlevel 1 exit /b 1
       - name: Upload portable Windows archive
         if: steps.license-review.outputs.distribution_allowed == 'true'
@@ -126,7 +159,7 @@ jobs:
           retention-days: 30
           compression-level: 0
       - name: Upload selected independent plugin release assets
-        if: (github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6') && steps.license-review.outputs.distribution_allowed == 'true'
+        if: (github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6' || github.ref == 'refs/tags/v4.0.0-typing.7') && steps.license-review.outputs.distribution_allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: plugin-release-assets
@@ -148,12 +181,12 @@ jobs:
           name: release-assets
           path: release
       - uses: actions/download-artifact@v4
-        if: github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6'
+        if: github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6' || github.ref == 'refs/tags/v4.0.0-typing.7'
         with:
           name: plugin-release-assets
           path: plugin-release
       - name: Publish validated tagged release
-        if: github.ref != 'refs/tags/v4.0.0-typing.5' && github.ref != 'refs/tags/v4.0.0-typing.6'
+        if: github.ref != 'refs/tags/v4.0.0-typing.5' && github.ref != 'refs/tags/v4.0.0-typing.6' && github.ref != 'refs/tags/v4.0.0-typing.7'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -174,19 +207,19 @@ jobs:
           gh release edit "$RELEASE_TAG" --draft=false --prerelease="$prerelease"
           gh release view "$RELEASE_TAG" --json url --jq .url
       - name: Publish authorized application and selected plugin prereleases
-        if: github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6'
+        if: github.ref == 'refs/tags/v4.0.0-typing.5' || github.ref == 'refs/tags/v4.0.0-typing.6' || github.ref == 'refs/tags/v4.0.0-typing.7'
         shell: python {0}
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          import hashlib, json, os, pathlib, re, subprocess, tempfile
+          import hashlib, json, os, pathlib, re, subprocess, tempfile, zipfile
 
           repository = os.environ['GH_REPO']
           commit = os.environ['GITHUB_SHA']
           app_tag = os.environ['RELEASE_TAG']
-          if app_tag not in {'v4.0.0-typing.5', 'v4.0.0-typing.6'} or not re.fullmatch(r'[0-9a-f]{40}', commit):
+          if app_tag not in {'v4.0.0-typing.5', 'v4.0.0-typing.6', 'v4.0.0-typing.7'} or not re.fullmatch(r'[0-9a-f]{40}', commit):
               raise SystemExit('Unexpected release tag or build commit')
 
           def gh(*arguments):
@@ -205,6 +238,13 @@ jobs:
                   ('plugin-synchronous-typing-v1.2.0', '插件更新：同步打字 1.2.0',
                    pathlib.Path('plugin-release/synchronous-typing')),
               ],
+              'v4.0.0-typing.7': [
+                  (app_tag, 'R7 · 听写与背诵练习（Windows x64）', pathlib.Path('release')),
+                  ('plugin-synchronous-typing-v1.4.0', '背诵练习插件 1.4.0',
+                   pathlib.Path('plugin-release/synchronous-typing')),
+                  ('plugin-docx-vocabulary-v1.2.0', 'Word / Excel 词表导入插件 1.2.0',
+                   pathlib.Path('plugin-release/docx-vocabulary')),
+              ],
           }[app_tag]
           expected_plugin_directories = {folder.name for tag, _, folder in plans if tag != app_tag}
           actual_plugin_directories = {path.name for path in pathlib.Path('plugin-release').iterdir()}
@@ -212,6 +252,64 @@ jobs:
               raise SystemExit('The plugin artifact contains an unexpected or missing release directory')
           pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
           existing = {item['tag_name'] for page in pages for item in page}
+          application_review = json.loads(pathlib.Path('release/RELEASE_REVIEW.json').read_text(encoding='utf-8'))
+          if app_tag == 'v4.0.0-typing.7':
+              host_review = application_review.get('release_review', {})
+              blockers = host_review.get('blocking_issues', [])
+              if (application_review.get('publication_decision') != 'explicitly_requested_publication_with_declared_unresolved_license_review'
+                      or application_review.get('license_review_resolved') is not False
+                      or application_review.get('acknowledged_issue_ids') != ['avalonia-mspl-agpl-compatibility']
+                      or application_review.get('plugin_api_version') != 1 or application_review.get('host_feature_level') != 5
+                      or application_review.get('bundled_plugins') != {'synchronous-typing': '1.4.0', 'docx-vocabulary': '1.2.0'}
+                      or host_review.get('status') != 'blocked' or not isinstance(blockers, list) or not blockers
+                      or any(not isinstance(item, dict) or item.get('id') != 'avalonia-mspl-agpl-compatibility'
+                             or not isinstance(item.get('reason'), str) or not item['reason'].strip() for item in blockers)):
+                  raise SystemExit('R7 disclosure does not match the explicitly acknowledged existing license review')
+
+          def verify_r7_zip_assets(tag, assets, review):
+              is_app = tag == app_tag
+              plugin_id = review.get('plugin_id')
+              folder = {'synchronous-typing': 'SynchronousTyping', 'docx-vocabulary': 'DocxVocabulary'}.get(plugin_id)
+              base = f'DictationAssistant-{app_tag.removeprefix("v")}' if is_app else f'{plugin_id}-{review["plugin_version"]}'
+              binary_name = base + ('-win-x64-portable.zip' if is_app else '.zip')
+              source_name = base + '-source.zip'
+              for name in (binary_name, source_name):
+                  with zipfile.ZipFile(assets[name]) as package:
+                      names = package.namelist()
+                      if len(names) != len(set(names)) or package.testzip() is not None:
+                          raise SystemExit(f'Duplicate or corrupt release ZIP member: {tag}/{name}')
+              source_prefix = base + '-source/' if is_app else ''
+              binary_prefix = '' if is_app else folder + '/'
+              with zipfile.ZipFile(assets[source_name]) as source, zipfile.ZipFile(assets[binary_name]) as binary:
+                  if (source.read(source_prefix + 'RELEASE_REVIEW.json') != assets['RELEASE_REVIEW.json'].read_bytes()
+                          or binary.read(binary_prefix + 'RELEASE_REVIEW.json') != assets['RELEASE_REVIEW.json'].read_bytes()):
+                      raise SystemExit(f'The binary/source disclosure differs from the checksummed review: {tag}')
+                  for path in ('src/DictationAssistant.Plugin.Abstractions/IPracticeDocumentHost.cs',
+                               'src/DictationAssistant.Plugin.Abstractions/IDocumentNotationImporter.cs',
+                               '.github/workflows/build-typing-windows.yml', 'docs/同步打字插件使用说明.md'):
+                      if source_prefix + path not in source.namelist():
+                          raise SystemExit(f'R7 corresponding source is incomplete: {tag}/{path}')
+                  if not is_app:
+                      manifest = json.loads(binary.read(binary_prefix + 'plugin.json'))
+                      if (manifest.get('id') != plugin_id or manifest.get('version') != review['plugin_version']
+                              or manifest.get('apiVersion') != 1 or manifest.get('minimumHostFeatureLevel') != 5
+                              or f'{manifest["version"]}+{commit}'.encode('ascii') not in binary.read(binary_prefix + manifest['entryAssembly'])):
+                          raise SystemExit(f'The plugin binary does not match its R7 release source: {tag}')
+                      project_name = pathlib.PurePosixPath(manifest['entryAssembly']).stem
+                      if source.read(f'plugins/{project_name}/plugin.json') != binary.read(binary_prefix + 'plugin.json'):
+                          raise SystemExit(f'The plugin source and binary manifests differ: {tag}')
+                      inventory = json.loads(source.read('PLUGIN_COMPONENTS.json'))
+                      private_sources = json.loads(source.read('third-party-sources/SOURCE_ARCHIVES.json'))
+                      if (inventory.get('source_commit') != commit or inventory.get('host_source_commit') != commit
+                              or inventory.get('host_release_tag') != app_tag
+                              or json.loads(binary.read(binary_prefix + 'PRIVATE_DEPENDENCY_SOURCES.json')) != private_sources):
+                          raise SystemExit(f'The plugin source/dependency inventory differs: {tag}')
+                      for item in private_sources['archives']:
+                          if item.get('archive_path'):
+                              with source.open('third-party-sources/' + item['archive_path']) as stream:
+                                  actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+                              if actual != item['sha256']:
+                                  raise SystemExit(f'The bundled plugin dependency source differs: {tag}')
           prepared = []
           for tag, title, folder in plans:
               # Never repurpose an older draft or overwrite a published release.
@@ -230,6 +328,21 @@ jobs:
               elif (review.get('app_release_tag') != app_tag
                     or tag != f'plugin-{review.get("plugin_id")}-v{review.get("plugin_version")}'):
                   raise SystemExit(f'Plugin release review does not match the release tag: {tag}')
+              if tag == app_tag:
+                  base = 'DictationAssistant-' + app_tag.removeprefix('v')
+                  zip_names = {base + '-win-x64-portable.zip', base + '-source.zip'}
+              else:
+                  base = f'{review["plugin_id"]}-{review["plugin_version"]}'
+                  zip_names = {base + '.zip', base + '-source.zip'}
+              if set(assets) != required | zip_names:
+                  raise SystemExit(f'Release asset names do not match the selected version: {tag}')
+              if app_tag == 'v4.0.0-typing.7' and tag != app_tag:
+                  if (review.get('host_source_commit') != commit or review.get('plugin_api_version') != 1
+                          or review.get('minimum_host_feature_level') != 5
+                          or review.get('publication_scope') != 'combined-host-and-plugin-release'
+                          or review.get('legal_clearance_claimed') is not False
+                          or review.get('host_release_review') != application_review['release_review']):
+                      raise SystemExit(f'Plugin metadata does not match the R7 host and declared review: {tag}')
               checked = set()
               for line in assets['SHA256SUMS'].read_text(encoding='ascii').splitlines():
                   expected, name = line.split('  ', 1)
@@ -244,6 +357,8 @@ jobs:
                   checked.add(name)
               if checked != set(assets) - {'SHA256SUMS'}:
                   raise SystemExit(f'Asset checksum coverage mismatch: {tag}')
+              if app_tag == 'v4.0.0-typing.7':
+                  verify_r7_zip_assets(tag, assets, review)
               refs = subprocess.check_output(['git', 'ls-remote', 'origin',
                                               f'refs/tags/{tag}', f'refs/tags/{tag}^{{}}'], text=True)
               values = dict(line.split()[::-1] for line in refs.splitlines())
@@ -255,6 +370,21 @@ jobs:
               if tag == app_tag and target != commit:
                   raise SystemExit('The application tag does not match the built commit')
               prepared.append((tag, title, folder, assets))
+
+          if app_tag == 'v4.0.0-typing.7':
+              app_binary = pathlib.Path('release/DictationAssistant-4.0.0-typing.7-win-x64-portable.zip')
+              with zipfile.ZipFile(app_binary) as host:
+                  for _, _, folder, assets in prepared[1:]:
+                      plugin_folder = {'synchronous-typing': 'SynchronousTyping', 'docx-vocabulary': 'DocxVocabulary'}[folder.name]
+                      binary_path = next(path for name, path in assets.items() if name.endswith('.zip') and not name.endswith('-source.zip'))
+                      prefix = f'Plugins/{plugin_folder}/'
+                      with zipfile.ZipFile(binary_path) as plugin:
+                          for member in host.infolist():
+                              path = member.filename.removeprefix('./')
+                              if path.startswith(prefix) and not member.is_dir():
+                                  independent_path = plugin_folder + '/' + path.removeprefix(prefix)
+                                  if host.read(member) != plugin.read(independent_path):
+                                      raise SystemExit(f'Bundled and independent plugin files differ: {path}')
 
           # Every selected asset set and ref is checked before creating any release.
           uploaded = {}
@@ -303,7 +433,8 @@ jobs:
               verified_digests[tag] = asset_digests
 
           # Recheck every completed draft and tag after all uploads, before the
-          # first public release. No R5, Word or native release enters the R6 plan.
+          # first public release. Only the selected new versions enter the plan;
+          # no older application, plugin or native release is modified.
           for tag, _, _, _ in prepared:
               saved = uploaded[tag]
               current = json.loads(gh('api', f'repos/{repository}/releases/{saved["id"]}'))

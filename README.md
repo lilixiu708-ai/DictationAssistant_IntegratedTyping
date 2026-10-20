@@ -1,4 +1,4 @@
-# DictationAssistant Typing · 同步打字练习版
+# DictationAssistant Typing · 听写与背诵练习
 
 面向单词、短语和句子听写的 Windows x64 桌面程序，基于 C#、.NET 10 与 Avalonia 11，在上游 DictationAssistant v4.0.0 上扩展。
 
@@ -8,7 +8,7 @@
 
 Word / Excel 导入插件 **1.1.0 已独立发布**：新增 `.xlsx`、`.xls`、`.xlsb`、`.xlsm`，按工作表预览并选择列，保留 Unicode 文本；原 Word 1.0.1 作为仅支持 DOCX 的[历史版本](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)保留。读取库选用 [ExcelDataReader 3.9.0 固定源码](https://github.com/ExcelDataReader/ExcelDataReader/tree/f3343f5524518923bdeb4801e5003c0417fd35f3)，Linux 全量样本及 Windows 合成样本验证范围见 [Excel 导入验证](docs/Excel导入验证.md)。
 
-**当前源码（未发布）：同步打字更名为“背诵练习插件”1.4.0，配套 Word / Excel 导入 1.2.0。** 可先选文档、表格 / 工作表和同行提示 / 答案列，默认显示离子式、拼写英文名称，支持交换列、静音计时或播报后作答及化学上下标。两个新插件均要求宿主功能级别 **5**，须配套当前源码宿主；公开 R6 仅为级别 4，不能只复制新插件到 R6。插件 ID、程序集和本机配置路径保留，操作见[背诵练习说明](docs/同步打字插件使用说明.md#当前源码背诵练习-140未发布)。
+**准备发布：R7 本体、背诵练习 1.4.0 和 Word / Excel 导入 1.2.0，当前尚未公开。** 新流程先选文档、表格 / 工作表及提示 / 答案列，默认看离子式、拼写英文名称，可交换方向，选择静音计时或播报后作答，支持化学上下标。两个新插件均须配套功能级别 **5** 的 R7，不能单独安装到 R6。R7 便携包将包含这两个插件；独立插件包供已有 R7 的用户更新，本机设置沿用原目录。操作见[背诵练习说明](docs/同步打字插件使用说明.md#背诵练习-140文档配对与计时)，公开前下方下载入口仍保留现有版本。
 
 ## 已发布功能
 

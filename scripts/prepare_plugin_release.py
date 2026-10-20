@@ -27,6 +27,8 @@ PLUGINS = (
 KNOWN_REVIEW_ISSUES = {'avalonia-mspl-agpl-compatibility'}
 PROJECT_NOTICES = ('LICENSE.md', 'NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_NOTICES.md')
 HOST_RELEASE_TAG = 'v4.0.0-typing.6'
+R7_RELEASE_TAG = 'v4.0.0-typing.7'
+R7_PLUGIN_VERSIONS = {'synchronous-typing': '1.4.0', 'docx-vocabulary': '1.2.0'}
 HOST_SOURCE_COMMIT = '0f008c72983b9d567612855498800886201572e6'
 STANDALONE_PLUGIN_TAG = 'plugin-synchronous-typing-v1.3.1'
 STANDALONE_IMPORTER_TAG = 'plugin-docx-vocabulary-v1.1.0'
@@ -406,10 +408,21 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
     if compatibility is not None:
         review['publication_scope'] = 'standalone-plugin-update-existing-host'
         review['host_compatibility'] = compatibility
+    if app_tag == R7_RELEASE_TAG:
+        review['publication_scope'] = 'combined-host-and-plugin-release'
+        review['plugin_api_version'] = manifest['apiVersion']
+        review['minimum_host_feature_level'] = manifest['minimumHostFeatureLevel']
+        if plugin_id == 'synchronous-typing':
+            review['unverified'].append('Migration of existing encrypted translation settings has not been validated on Windows.')
     if plugin_id == 'docx-vocabulary' and version == '1.1.0':
         review['unverified'] = [
             'Full worksheet/value and GUI checks used the supplied XLSX on Linux; Windows GUI interaction with that workbook requires separate validation. Windows standalone compatibility checks consume only a generated two-sheet Unicode XLSX through the published R6 CLI.',
             'XLS, XLSB, XLSM and formula-cache behavior were not exercised by that XLSX sample.'
+        ]
+    elif plugin_id == 'docx-vocabulary' and version == '1.2.0':
+        review['unverified'] = [
+            'Windows interactive document selection and a complete document-backed practice session were not exercised by the build and main-window check.',
+            'XLS, XLSB, XLSM and formula-cache behavior were not exercised by the supplied XLSX sample.'
         ]
     write_json(output / 'RELEASE_REVIEW.json', review)
     write_json(binary_root / 'RELEASE_REVIEW.json', review)
@@ -485,7 +498,11 @@ not establish a new permission or legal clearance for that combination.
 '''
     (binary_root / 'INSTALL_AND_BUILD.md').write_text(build_notes, encoding='utf-8')
     if plugin_id == 'synchronous-typing':
-        if version == '1.3.1':
+        if version == '1.4.0':
+            summary = ('从 Word / Excel 选择提示列和答案列，按同一行配对练习；默认显示离子式、拼写英文名称，'
+                       '也可选择中文列或交换方向。新增不播放音频的计时背诵，保留播报后作答、提前翻译及成绩导出。'
+                       '化学式答案区分元素大小写，支持 Na^+、SO4^2- 和 Unicode 上下标。')
+        elif version == '1.3.1':
             summary = ('新增微软/Bing、Google、百度、有道、腾讯、阿里和火山翻译 API，保留 DeepL；'
                        '在既有多配置、首选项和任务切换界面管理各服务凭据。仅更新插件，复用已发布 R6 本体；'
                        '插件 API 1、宿主功能级别 4 不变，不重新发布本体、Word 导入或原生资产。')
@@ -495,6 +512,9 @@ not establish a new permission or legal clearance for that combination.
                    'Windows 加密绑定整份配置，其他平台仅保留至程序退出；切换配置不触发翻译。') \
                 if version == '1.2.0' else \
                 '新增预录译文、可隐藏翻译提示及 DeepL 提前翻译；独立 API 设置窗口支持 Windows 本机与当前账户绑定的加密保存。删除指定的统一评分提示文字。'
+    elif version == '1.2.0':
+        summary = ('为背诵练习保留 Word 中直接设置的上下标，例如将钠离子的上标电荷保留为 Na^+。'
+                   '普通词表导入继续使用纯文本；Word 表格和正文、Excel 工作表及选列功能保持可用。')
     elif version == '1.1.0':
         summary = ('新增 Excel 工作簿读取，每张工作表独立预览、选列；保留既有 DOCX 导入。'
                    '使用固定 ExcelDataReader 3.9.0，插件 ID、程序集与 API 1 保持不变。'
@@ -528,6 +548,39 @@ not establish a new permission or legal clearance for that combination.
             notes += '已将本插件装入固定哈希的已发布 R6 便携包，核对 API 1、功能级别 4、练习与配置能力加载以及生产主窗口正常开闭；R6 本体和 Word 1.0.1 文件保持原字节。此结果不代表真实在线翻译或 Windows 密钥迁移已验证。\n'
     elif compatibility is not None:
         notes += '\n已将 Word / Excel 导入插件装入固定哈希的既有 R6 本体，核对 API 1、功能级别 4、五种扩展名、插件加载及主窗口正常开闭；15 项既有打字检查通过。Windows 使用合成双工作表 Unicode XLSX 验证实际依赖加载和四次列导出逐行一致，未上传私人工作簿。本体及 R6 自带同步打字 1.2.0 的文件保持原字节，已发布同步打字 1.3.1 的标签和资产不变。Windows 真实 Excel 导入交互及其他 Excel 格式仍以验证页所列范围为准；私人工作簿及完整提取内容不在包内。\n'
+    if app_tag == R7_RELEASE_TAG:
+        notes = f'''# 背诵练习插件 1.4.0
+
+看提示拼答案，既能静音背诵，也能继续做语音听写。原“同步打字”更名为“背诵练习插件”，默认看离子式、输入英文名称。
+
+新插件需要 R7（功能级别 5）和 Word / Excel 导入 1.2.0。首次使用或仍在 R6，请选已包含两个插件的 R7 完整包；已有 R7 才需下载 `synchronous-typing-1.4.0.zip` 单独更新。关闭程序，用完整 `SynchronousTyping/` 目录替换对应插件目录再重启，原有设置、译文和翻译绑定保留。建议先备份用户数据，Windows 密钥绑定仍限原机器和账户。
+
+- 从文档选择表格、工作表和同行的提示 / 答案列，可交换方向；默认跳过表头并保留原顺序与重复项。
+- 每题 1–300 秒，Enter 提交或到时记录，整轮结束统一评分并导出 CSV；练习中不调用翻译服务。
+- 接受 `Na^+` / `Na⁺`、`SO4^2-` / `SO₄²⁻`，化学式区分 `Co` 与 `CO`，英文名称可选择忽略大小写。
+
+已通过记号、判分及既有逻辑检查，headless 窗口核对覆盖整轮作答、超时、反向练习和取消；Windows 真实 GUI、音频及在线翻译仍需实测，详见[验证范围与用法](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/{head}/docs/同步打字插件使用说明.md)。私人文档和完整配对内容不随包提供。
+
+`*-source.zip` 提供对应源码，`SHA256SUMS` 用于校验附件。
+
+配套宿主 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，具体声明与原始许可随附件保留。
+''' if plugin_id == 'synchronous-typing' else f'''# Word / Excel 词表导入插件 1.2.0
+
+从文档直接选择词条或配对内容，少做一次复制整理。所选文档在本地读取，不必先手动另存为文本。背诵准备现在能保留 Word 的上下标，让离子式与英文名称正确对应。
+
+本插件需要 R7（功能级别 5）。首次使用或从 R6 升级，请选 R7 完整包，包内已有本插件和背诵练习 1.4.0；已有 R7 可用 `docx-vocabulary-1.2.0.zip` 单独更新。关闭程序，以完整 `DocxVocabulary/` 目录替换对应插件目录后重启，个人词表、练习设置、译文和翻译绑定保留。
+
+- 读取 Word 表格、正文及 Excel 各工作表，按区域和列预览；支持 `.docx`、`.xlsx`、`.xls`、`.xlsb`、`.xlsm`，无需安装 Office。
+- 增强英文名称、中文名称、Symbol 和整宽标题识别；背诵入口保留直接上下标，普通导入继续提供平文本。
+- Excel 合并区域只读取锚点，公式取已有缓存，不重新计算或执行宏。
+
+已通过离子记号核对、原 Excel 读取回归及配套练习的 headless 检查；其他 Excel 格式、公式缓存和 Windows 真实导入交互仍需验证，详见[验证范围与用法](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/blob/{head}/docs/同步打字插件使用说明.md)。私人文档和完整提取内容不随包提供。
+
+`*-source.zip` 提供对应源码，`SHA256SUMS` 用于校验附件。
+
+配套宿主 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，具体声明与原始许可随附件保留。
+'''
+        notes += f'\n对应提交：`{head}`；配套本体：`{app_tag}`。详细许可事项见 `RELEASE_REVIEW.json`。\n'
     (output / 'RELEASE_NOTES.md').write_text(notes, encoding='utf-8')
     binary = output / f'{plugin_id}-{version}.zip'
     with zipfile.ZipFile(binary, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -544,7 +597,10 @@ not establish a new permission or legal clearance for that combination.
     if compatibility is not None:
         source_paths.append('.github/workflows/release-importer-plugin.yml' if plugin_id == 'docx-vocabulary'
                             else '.github/workflows/release-typing-plugin.yml')
-    if plugin_id == 'docx-vocabulary' and version == '1.1.0':
+    if app_tag == R7_RELEASE_TAG:
+        source_paths.extend(['.github/workflows/build-typing-windows.yml', 'scripts/prepare_release.py',
+                             'scripts/verify_build.py', 'docs/PLUGIN_SDK.md'])
+    if plugin_id == 'docx-vocabulary' and version in ('1.1.0', '1.2.0'):
         source_paths.append('docs/Excel导入验证.md')
     subprocess.run(['git', 'archive', '--format=zip', f'--output={source}', head, '--', *source_paths],
                    cwd=ROOT, check=True)
@@ -576,7 +632,7 @@ def main():
     parser.add_argument('--host-release-tag')
     parser.add_argument('--plugin-release-tag')
     parser.add_argument('--plugin-id', action='append', choices=[item[0] for item in PLUGINS],
-                        help='Package only this plugin (repeat to select several); R5 defaults to both, R6 to typing only')
+                        help='Package only this plugin (repeat to select several); R5/R7 select both, R6 selects typing only')
     args = parser.parse_args()
     try:
         if args.prepare_host:
@@ -616,6 +672,16 @@ def main():
             else [item[0] for item in PLUGINS]))
         if args.app_release_tag == 'v4.0.0-typing.6' and selected != {'synchronous-typing'}:
             raise ValueError('R6 publishes only the updated typing plugin; retain the existing Word importer release')
+        if args.app_release_tag == R7_RELEASE_TAG:
+            if selected != set(R7_PLUGIN_VERSIONS):
+                raise ValueError('R7 must package both matching feature-level-5 plugins')
+            for plugin_id, project_name, _ in PLUGINS:
+                project_dir = ROOT / 'plugins' / project_name
+                manifest = json.loads((project_dir / 'plugin.json').read_text(encoding='utf-8'))
+                if (manifest.get('id') != plugin_id or manifest.get('version') != R7_PLUGIN_VERSIONS[plugin_id]
+                        or project_version(project_dir / f'{project_name}.csproj') != R7_PLUGIN_VERSIONS[plugin_id]
+                        or manifest.get('apiVersion') != 1 or manifest.get('minimumHostFeatureLevel') != 5):
+                    raise ValueError('R7 requires typing 1.4.0 and Word/Excel 1.2.0 with plugin API 1 and host feature level 5')
         if args.app_release_tag != 'v' + project_version(ROOT / 'src/DictationAssistant.App/DictationAssistant.App.csproj'):
             raise ValueError('App release tag must match the current application version')
         if git('rev-parse', '--verify', f'refs/tags/{args.app_release_tag}^{{commit}}') != head:
