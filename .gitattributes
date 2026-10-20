@@ -3,3 +3,5 @@
 # Preserve upstream bytes, including original whitespace, for their recorded hashes.
 LICENSES/** -text -whitespace
 third-party/sources/** -text -whitespace
+# Unified-diff context can intentionally contain original trailing whitespace.
+third-party/patches/** text eol=lf -whitespace

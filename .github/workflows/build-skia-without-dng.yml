@@ -1,0 +1,126 @@
+name: Build pinned SkiaSharp without DNG (Windows x64)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main']
+    paths:
+      - '.github/workflows/build-skia-without-dng.yml'
+      - 'scripts/build_skia_without_dng.py'
+      - 'scripts/collect_third_party_sources.py'
+      - 'third-party/skia-no-dng-build.json'
+      - 'third-party/patches/**'
+
+permissions:
+  contents: read
+
+jobs:
+  native-windows-x64:
+    runs-on: windows-2022
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Locate MSVC v142 or install the missing component
+        id: msvc
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config --global core.longpaths true
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'No Visual Studio C++ installation is available.' }
+          $vc = Join-Path $installation 'VC'
+          if (-not (Get-ChildItem "$vc\Tools\MSVC" -Directory -Filter '14.2*')) {
+            $installer = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
+            $arguments = @('modify', '--installPath', "`"$installation`"", '--quiet', '--norestart', '--add', 'Microsoft.VisualStudio.Component.VC.v142.x86.x64')
+            $process = Start-Process $installer -ArgumentList $arguments -Wait -PassThru
+            if ($process.ExitCode -notin @(0, 3010)) { throw "MSVC v142 installation failed: $($process.ExitCode)" }
+          }
+          if (-not (Get-ChildItem "$vc\Tools\MSVC" -Directory -Filter '14.2*')) { throw 'Required MSVC v142 remains unavailable.' }
+          "path=$vc" >> $env:GITHUB_OUTPUT
+      - name: Fetch and verify the official LLVM 12 toolchain
+        id: llvm
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $lock = Get-Content third-party/skia-no-dng-build.json -Raw | ConvertFrom-Json
+          $installer = Join-Path $env:RUNNER_TEMP 'LLVM-12.0.0-win64.exe'
+          Invoke-WebRequest $lock.tools.llvm.url -OutFile $installer -MaximumRetryCount 3 -RetryIntervalSec 3
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant() -ne $lock.tools.llvm.sha256) { throw 'LLVM installer checksum mismatch.' }
+          if ((Get-Item $installer).Length -ne $lock.tools.llvm.bytes) { throw 'LLVM installer byte count mismatch.' }
+          $directory = Join-Path $env:RUNNER_TEMP 'llvm-12'
+          & 7z x $installer '-y' "-o$directory" | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw 'LLVM archive extraction failed.' }
+          "path=$directory" >> $env:GITHUB_OUTPUT
+      - name: Build the fixed native sources and validate ABI and source graph
+        shell: pwsh
+        run: |
+          python scripts/build_skia_without_dng.py --work-dir "$env:RUNNER_TEMP/skia-native-work" --cache-dir "$env:RUNNER_TEMP/skia-native-cache" --msvc-path '${{ steps.msvc.outputs.path }}' --llvm-dir '${{ steps.llvm.outputs.path }}' --build-commit "$env:GITHUB_SHA" --jobs 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build and verify the production App using the review-only native ZIP
+        shell: cmd
+        env:
+          DICTATION_NATIVE_REVIEW_ARCHIVE: ${{ github.workspace }}\artifacts\skia-native\SkiaSharp-2.88.9-no-dng-win-x64.zip
+        run: |
+          call build-windows-typing.cmd
+          if errorlevel 1 exit /b 1
+          python scripts\verify_build.py
+      - name: Start and close the production Windows renderer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $executable = Join-Path $env:GITHUB_WORKSPACE 'artifacts/Windows-x64/DictationAssistant.App.exe'
+          $process = Start-Process $executable -WorkingDirectory (Split-Path $executable) -PassThru
+          try {
+            Start-Sleep -Seconds 8
+            $process.Refresh()
+            if ($process.HasExited) { throw "The production App exited during renderer startup: $($process.ExitCode)" }
+            if ($process.MainWindowHandle -eq 0) { throw 'The production App did not create a window.' }
+            $null = $process.CloseMainWindow()
+            if (-not $process.WaitForExit(10000)) { throw 'The production window did not close normally.' }
+            if ($process.ExitCode -ne 0) { throw "The production App exited unsuccessfully: $($process.ExitCode)" }
+            @{ production_app_window_opened_and_closed = $true } | ConvertTo-Json | Set-Content artifacts/skia-native/logs/production-app-smoke.json
+          } finally {
+            if (-not $process.HasExited) { $process.Kill() }
+          }
+      - name: Check the independent native distribution review
+        id: distribution-review
+        shell: python {0}
+        run: |
+          import json, os, pathlib
+          catalog = json.loads(pathlib.Path('third-party/components.json').read_text(encoding='utf-8'))
+          entry = next(item for item in catalog.get('native_overrides', []) if item['id'] == 'skiasharp-2.88.9-nodng-win-x64')
+          review = entry.get('distribution_review', {})
+          ready = review.get('status') == 'ready' and not review.get('blocking_issues', [])
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as stream:
+              stream.write(f'ready={str(ready).lower()}\n')
+          if not ready:
+              print('Native binaries and source assets remain local to this job until their distribution review is complete.')
+              print(json.dumps(review, ensure_ascii=False, indent=2))
+      - name: Upload approved native binary and corresponding source assets
+        if: steps.distribution-review.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkiaSharp-2.88.9-no-dng-win-x64
+          path: |
+            artifacts/skia-native/SkiaSharp-2.88.9-no-dng-win-x64.zip
+            artifacts/skia-native/SkiaSharp-2.88.9-no-dng-win-x64-sources.zip
+          if-no-files-found: error
+          compression-level: 0
+      - name: Upload build diagnostics without native binaries or source trees
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkiaSharp-no-dng-build-diagnostics
+          path: |
+            artifacts/skia-native/logs/
+            artifacts/skia-native/native-build.json
+            artifacts/skia-native/native-build-failure.json
+            artifacts/skia-native/artifact-hashes.json
+          if-no-files-found: warn

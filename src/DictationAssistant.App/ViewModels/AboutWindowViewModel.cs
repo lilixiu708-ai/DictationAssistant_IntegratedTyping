@@ -11,6 +11,9 @@ public class AboutWindowViewModel
 
     public string Version { get; } = ResolveVersion();
 
+    public string Description { get; } = (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly())
+        .GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description ?? string.Empty;
+
     public IReadOnlyList<string> NoticeLines { get; } = LoadLegalNotices().ReplaceLineEndings("\n").Split('\n');
 
     private static string ResolveVersion()

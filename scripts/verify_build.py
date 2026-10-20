@@ -9,6 +9,7 @@ import json
 import pathlib
 import urllib.parse
 import zipfile
+from prepare_licenses import ORIGINAL_DNG_SKIA_SHA256, verify_native_manifest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REQUIRED = {
@@ -71,6 +72,9 @@ def verify(archive):
                     hashes[name] = hashlib.file_digest(stream, 'sha256').hexdigest()
             return hashes[name]
 
+        require(checksum('libSkiaSharp.dll') != ORIGINAL_DNG_SKIA_SHA256,
+                'The original DNG-enabled Skia DLL must be replaced by an actual verified no-DNG build')
+
         require(b'GNU AFFERO GENERAL PUBLIC LICENSE' in zf.read(members['LICENSE.md']),
                 'The complete project AGPL license must accompany the binary package')
         for name in ('NOTICE.md', 'MODIFICATIONS.md', 'THIRD_PARTY_NOTICES.md'):
@@ -87,6 +91,12 @@ def verify(archive):
 
         inventory = document('THIRD_PARTY_COMPONENTS.json')
         sources = document('THIRD_PARTY_SOURCES.json')
+        catalog_path = ROOT / 'third-party/components.json'
+        catalog_bytes = catalog_path.read_bytes()
+        require(hashlib.sha256(catalog_bytes).hexdigest() == inventory.get('catalog_sha256'),
+                'Binary inventory does not match the tracked license/native catalog; rebuild the package')
+        catalog = json.loads(catalog_bytes)
+        configured_native = {entry['id']: entry for entry in catalog.get('native_overrides', [])}
         require(inventory.get('schema_version') == 1 and sources.get('schema_version') == 1,
                 'Unsupported component/source manifest version')
         review = sources.get('release_review', {})
@@ -97,6 +107,40 @@ def verify(archive):
         components = {item['identity']: item for item in inventory['components']}
         require(len(components) == len(inventory['components']), 'Duplicate component identities')
         owners = set(components) | set(inventory['project_components'])
+        native_records = inventory.get('native_overrides', [])
+        require(native_records and native_records == sources.get('native_overrides'),
+                'A matching native replacement/provenance record must accompany the no-DNG DLL')
+        native_paths = set()
+        for record in native_records:
+            name = relative(record['path'])
+            require(name not in native_paths, f'Duplicate native replacement path: {name}')
+            native_paths.add(name)
+            require(checksum(name) == record['binary_sha256'], f'Native replacement checksum mismatch: {name}')
+            manifest_path = relative(record['manifest_path'])
+            require(checksum(manifest_path) == record['manifest_sha256'], 'Native build record checksum mismatch')
+            notice_path = relative(record['notice_path'])
+            require(checksum(notice_path) == record['notice_sha256'], 'Native copyright/source notice checksum mismatch')
+            require(record['id'] in configured_native and record['configuration'] == configured_native[record['id']],
+                    'Embedded native configuration differs from the tracked catalog')
+            configuration = configured_native[record['id']]
+            for acknowledgment in configuration.get('required_product_acknowledgments', []):
+                require(acknowledgment.encode('utf-8') in zf.read(members[notice_path]), 'Native product acknowledgment is absent')
+            required_notices = set(configuration['native_notice_paths'])
+            require({item['path'] for item in record.get('notice_files', [])} == required_notices,
+                    'Native original license/notice inventory is incomplete')
+            for notice in record['notice_files']:
+                require(checksum(relative(notice['path'])) == notice['sha256'], 'Native original license/notice checksum mismatch')
+            manifest = verify_native_manifest(configuration, zf.read(members[manifest_path]), zf.read(members[name]), record['review_only'])
+            require(record['source_archive'] == manifest['source_archive'], 'Native source archive description mismatch')
+            require(record.get('source_asset_download_verified') is True, 'Native source asset has not been acquired and checked')
+            require(not (set(configuration.get('removed_components', [])) & set(components)),
+                    'Removed DNG component is still recorded as shipped with the replacement')
+            if record['review_only']:
+                require(review['status'] == 'blocked' and any(issue['id'] == 'unreviewed-native-artifact:' + record['id'] for issue in issues),
+                        'A local native review build cannot be marked ready for public release')
+            else:
+                require(record['archive_sha256'] == configuration['archive']['sha256'], 'Native ZIP pin mismatch')
+        require('libSkiaSharp.dll' in native_paths, 'Skia must use the verified no-DNG native replacement')
         for identity, item in components.items():
             require(item.get('notice_files'), f'No original license/notice recorded for {identity}')
             require(item.get('license_expression'), f'No reviewed license expression for {identity}')

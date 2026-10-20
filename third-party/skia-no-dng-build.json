@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "artifact_id": "skiasharp-2.88.9-nodng-win-x64",
+  "scope": "Windows x64 only. Six exact native dependencies validated by actual GN Windows-target generation. No DNG/PIEX source tree is fetched.",
+  "sources": {
+    "wrapper": {
+      "name": "SkiaSharp",
+      "repository": "https://github.com/mono/SkiaSharp",
+      "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "revision": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "url": "https://codeload.github.com/mono/SkiaSharp/tar.gz/9699cdf046a989423a5e5eca68e7fd813486d81c",
+      "sha256": "5490a714cf26031724a9c771b3e76e0d27ac3243da538d4b83dcdd1cedd4c96d"
+    },
+    "skia": {
+      "name": "Skia",
+      "repository": "https://github.com/mono/skia",
+      "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "revision": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "url": "https://codeload.github.com/mono/skia/tar.gz/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+      "sha256": "4dee89bef1406efd0f0c35ef24ec801a8f18ad37d6033d4360c2120eb858da0e"
+    }
+  },
+  "dependencies": [
+    {
+      "path": "third_party/externals/expat",
+      "repository": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git",
+      "commit": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+      "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/624da0f593bb8d7e146b9f42b06d8e6c80d032a3.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "b7dbedd3ec7ef30c41ea803714ac72b171f8616ca416883c9114af8ac6c9c6f6",
+      "name": "expat",
+      "revision": "624da0f593bb8d7e146b9f42b06d8e6c80d032a3",
+      "strip_root": false
+    },
+    {
+      "path": "third_party/externals/libgifcodec",
+      "repository": "https://skia.googlesource.com/libgifcodec",
+      "commit": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+      "url": "https://skia.googlesource.com/libgifcodec/+archive/d06d2a6d42baf6c0c91cacc28df2542a911d05fe.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "655a8fab53c8594555f54d040b9ac486b759ce31d7b29462cc1e62012644f279",
+      "name": "libgifcodec",
+      "revision": "d06d2a6d42baf6c0c91cacc28df2542a911d05fe",
+      "strip_root": false
+    },
+    {
+      "path": "third_party/externals/libjpeg-turbo",
+      "repository": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+      "commit": "9b894306ec3b28cea46e84c32b56773a98c483da",
+      "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git/+archive/9b894306ec3b28cea46e84c32b56773a98c483da.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "ff5184274dba06ce0a4880cf4af63a7d7c985820339a039d5192715e25349328",
+      "name": "libjpeg-turbo",
+      "revision": "9b894306ec3b28cea46e84c32b56773a98c483da",
+      "strip_root": false
+    },
+    {
+      "path": "third_party/externals/libpng",
+      "repository": "https://skia.googlesource.com/third_party/libpng.git",
+      "commit": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+      "url": "https://skia.googlesource.com/third_party/libpng.git/+archive/f135775ad4e5d4408d2e12ffcc71bb36e6b48551.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "c653cbe97b7f3248bda84dda7e1233b99a6e467473dd6d1bfbbe925def5f3292",
+      "name": "libpng",
+      "revision": "f135775ad4e5d4408d2e12ffcc71bb36e6b48551",
+      "strip_root": false
+    },
+    {
+      "path": "third_party/externals/libwebp",
+      "repository": "https://github.com/webmproject/libwebp.git",
+      "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "url": "https://codeload.github.com/webmproject/libwebp/tar.gz/ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "name": "libwebp",
+      "revision": "ca332209cb5567c9b249c86788cb2dbf8847e760",
+      "strip_root": true,
+      "sha256": "1676107dc385f9bf6cb4c2b94d4a9359d1fd95ab6309cb587191a742df292fe2"
+    },
+    {
+      "path": "third_party/externals/zlib",
+      "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+      "commit": "3ca9f16f02950edffa391ec19cea856090158e9e",
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/3ca9f16f02950edffa391ec19cea856090158e9e.tar.gz",
+      "content_tree_schema": "tar-members-v1",
+      "content_tree_sha256": "437db42adb2106d66cd9c5f610a2b9fb18885bee669e31b9f2f872096a7777b8",
+      "name": "zlib",
+      "revision": "3ca9f16f02950edffa391ec19cea856090158e9e",
+      "strip_root": false
+    }
+  ],
+  "tools": {
+    "gn": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/gn/gn/windows-amd64/+/git_revision:9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0",
+      "sha256": "f3bc13dc1527681a4d5c96169bbed217c868316df1ae9f8eea000b3bb73fbda3",
+      "bytes": 1092064,
+      "revision": "9e993e3da82a9f4bc5c50c190afbcffd61e3d9e0"
+    },
+    "ninja": {
+      "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.1/ninja-win.zip",
+      "sha256": "26a40fa8595694dec2fad4911e62d29e10525d2133c9a4230b66397774ae25bf",
+      "bytes": 289808,
+      "version": "1.13.1"
+    },
+    "llvm": {
+      "version": "12.0.0",
+      "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win64.exe",
+      "sha256": "8426d57f2af2bf07f80014bfd359e87ed10f5521a236a10cfe9fc4870d1b1b25",
+      "bytes": 191037739
+    }
+  },
+  "upstream_policy": [
+    "https://github.com/mono/SkiaSharp/pull/5162",
+    "https://github.com/mono/skia/pull/373"
+  ],
+  "official_package": {
+    "sha256": "90fe573391a0c0719f3497dee13db23b934866d885ef50dda74a5dd6f1b957fe",
+    "bytes": 10918525
+  }
+}

@@ -20,6 +20,8 @@
       <StackPanel HorizontalAlignment="Center" Spacing="6">
         <TextBlock Text="{Binding Title}" FontSize="46" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" />
         <TextBlock Text="{Binding Version, StringFormat=v{0}}" Foreground="White" HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding Description}" Foreground="White" TextWrapping="Wrap"
+                   TextAlignment="Center" MaxWidth="560" />
       </StackPanel>
     </Border>
 

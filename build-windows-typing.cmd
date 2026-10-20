@@ -37,6 +37,15 @@ if errorlevel 1 goto :failed
 echo [2/6] Build native desktop host (self-contained)...
 dotnet publish "src\DictationAssistant.App\DictationAssistant.App.csproj" -c Release -r win-x64 --self-contained true --no-restore -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o "%OUTPUT%"
 if errorlevel 1 goto :failed
+REM Never silently retain the original DNG-enabled Skia native binary.
+REM The independent native workflow can inject its verified local review ZIP;
+REM normal builds require a reviewed, fixed-version asset with catalog SHA pins.
+if defined DICTATION_NATIVE_REVIEW_ARCHIVE (
+  python scripts\prepare_licenses.py --publish-dir "%OUTPUT%" --native-review-archive "%DICTATION_NATIVE_REVIEW_ARCHIVE%"
+) else (
+  python scripts\prepare_licenses.py --publish-dir "%OUTPUT%" --install-native-overrides
+)
+if errorlevel 1 goto :failed
 echo [3/6] Build the two independent plugins...
 dotnet publish "plugins\DictationAssistant.Importers.Docx\DictationAssistant.Importers.Docx.csproj" -c Release -p:DebugType=None -p:DebugSymbols=false -o "%WORDPLUGIN%"
 if errorlevel 1 goto :failed

@@ -1,0 +1,30 @@
+Subject: Backport RAW/DNG removal policy for Windows x64
+Base-Repository: https://github.com/mono/SkiaSharp
+Base-Commit: 9699cdf046a989423a5e5eca68e7fd813486d81c
+Upstream-Precedent: https://github.com/mono/SkiaSharp/pull/5162
+Native-Precedent: https://github.com/mono/skia/pull/373
+Scope: current Windows x64 release investigation only; apply only in the upstream native build workspace.
+Apply this patch inside the repository named above, separately from the other patch.
+The DEPS patch affects the native source checkout globally: do not run other platforms
+until their true RAW/DNG overrides have also been disabled and validated.
+A rebuilt DLL and the recorded build verification remain required.
+
+diff --git a/native/windows/build.cake b/native/windows/build.cake
+--- a/native/windows/build.cake
++++ b/native/windows/build.cake
+@@ -37,13 +37,13 @@
+ 
+         GnNinja($"{VARIANT}/{arch}", "SkiaSharp",
+             $"target_os='win'" +
+             $"target_cpu='{skiaArch}' " +
+             $"skia_enable_fontmgr_win_gdi=false " +
+-            $"skia_use_dng_sdk=true " +
++            $"skia_use_dng_sdk=false " +
+             $"skia_use_icu=false " +
+-            $"skia_use_piex=true " +
++            $"skia_use_piex=false " +
+             $"skia_use_sfntly=false " +
+             $"skia_use_system_expat=false " +
+             $"skia_use_system_libjpeg_turbo=false " +
+             $"skia_use_system_libpng=false " +
+             $"skia_use_system_libwebp=false " +

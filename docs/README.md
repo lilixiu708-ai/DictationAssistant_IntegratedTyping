@@ -1,6 +1,8 @@
 # 文档索引
 
-本仓库当前为 **`v4.0.0-typing.4` 源码预览，公开发布暂停**，包含同步打字练习与通用插件扩展。已确认的 Adobe DNG SDK 条款兼容性与原生对应源码交付仍有未解除事项，详见[审计记录](版权与许可审计.md)与[发布规范](RELEASING.md)。入口为[项目首页](../README.md)与 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases)；历史 `typing.1`、`typing.2`、`typing.3` 已暂时撤回为草稿。插件版本与接口版本独立管理。
+当前为 **`v4.0.0-typing.4` 源码预览，公开发布暂停**。保留 Avalonia 11，不含 Adobe DNG SDK 的原生依赖仍在重建；构建与许可、对应源码交付核对未完成，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。
+
+使用与开发从[项目首页](../README.md)开始。桌面便携包优先通过 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases) 分发，无需仅为本应用下载启用 GitHub Packages。历史 `typing.1`–`typing.3` 已暂时撤回为草稿；插件版本与接口版本独立管理。
 
 ## 当前文档
 

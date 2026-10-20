@@ -3991,5 +3991,119 @@
       "limitation": "gitlinks are exact repository dependency provenance, not a claim that all 74 conditional dependencies are compiled into the Windows runtime DLLs. DEPS also contains CIPD/tool dependencies and nested dependency instructions; first-level gitlink index is not a complete build manifest."
     },
     "scope_note": "Fixed gitlink/DEPS source directions for review; these entries are not a claim that all required native source archives have been included or license compatibility has been established."
-  }
+  },
+  "native_overrides": [
+    {
+      "id": "skiasharp-2.88.9-nodng-win-x64",
+      "path": "libSkiaSharp.dll",
+      "runtime_identifier": "win-x64",
+      "status": "pending",
+      "supersedes_sha256": "9a0d95e8caaa852c70d085af6a40a744242172ad9ea3fd6bc7599875a8a1dbcd",
+      "archive": {
+        "name": "SkiaSharp-2.88.9-no-dng-win-x64.zip",
+        "url": null,
+        "sha256": null
+      },
+      "manifest": {
+        "path": "native-build.json",
+        "sha256": null
+      },
+      "binary_sha256": null,
+      "sources_asset": {
+        "name": "SkiaSharp-2.88.9-no-dng-win-x64-sources.zip",
+        "url": null,
+        "sha256": null,
+        "bytes": null
+      },
+      "provenance": {
+        "build_commit": null,
+        "sources": {
+          "wrapper": {
+            "repository": "https://github.com/mono/SkiaSharp",
+            "commit": "9699cdf046a989423a5e5eca68e7fd813486d81c",
+            "archive_sha256": "5490a714cf26031724a9c771b3e76e0d27ac3243da538d4b83dcdd1cedd4c96d"
+          },
+          "skia": {
+            "repository": "https://github.com/mono/skia",
+            "commit": "4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+            "archive_sha256": "4dee89bef1406efd0f0c35ef24ec801a8f18ad37d6033d4360c2120eb858da0e"
+          }
+        },
+        "patches": [
+          {
+            "path": "third-party/patches/skiasharp-2.88.9-windows-disable-raw.patch",
+            "sha256": "cd82386bb78cd463a99386ba1b506afbe587a25aad9c3e7b5445dee44c55fc26"
+          },
+          {
+            "path": "third-party/patches/mono-skia-4bed-skip-dng-piex-downloads.patch",
+            "sha256": "b10f336dfcb22cd9034722ddb6be6fe3a52d866930cbfcd508882c0ce1117327"
+          }
+        ],
+        "gn_args": {
+          "skia_use_dng_sdk": false,
+          "skia_use_piex": false
+        }
+      },
+      "affected_components": [
+        "SkiaSharp.NativeAssets.Win32/2.88.9",
+        "Skia/4bed689c9c9eb77a120c6a9d54af6a572c85d1c2",
+        "libgifcodec/d06d2a6d42baf6c0c91cacc28df2542a911d05fe"
+      ],
+      "removed_components": [
+        "Adobe DNG SDK/1.4.0"
+      ],
+      "distribution_review": {
+        "status": "ready",
+        "blocking_issues": [],
+        "scope": "Only the matching native binary and corresponding-source assets produced by build-skia-without-dng.yml after the actual no-DNG graph/commands/binary checks, ABI equality, unchanged upstream PNG utility and production App window checks all succeed. This does not approve an existing DLL, formally pin a native asset, or clear the App release review.",
+        "evidence": [
+          "Exact wrapper and Skia archives plus all six Windows-target external dependencies were acquired and checked; actual GN Windows-target generation identified 1124 source inputs with no missing inputs or DNG/PIEX.",
+          "The producer source bundle includes the complete prepared source trees, original archives, two tracked patches, generated input transformations, native build script and lock, catalog/notice inventory, rebuild directions and exact tool origins. General MSVC/SDK/compiler tools are identified separately.",
+          "Thirty original license/notice files are included byte-for-byte, with full GPL-3.0 text and the selected libgifcodec alternative, Apache-2.0 text and required Independent JPEG Group acknowledgment.",
+          "The workflow uploads binary/source assets only after the real native build, mandatory technical checks and production App startup/close pass. Failed checks cannot reach the upload step."
+        ],
+        "application_release_status": "blocked independently; the native artifact entry remains pending and its formal release URL/SHA pins remain empty until the actual output is reviewed."
+      },
+      "scope_note": "Pending build configuration only. Empty artifact pins are deliberate; they do not authorize substitution, remove the existing DNG license blocker, or establish complete native corresponding source. A same-job local review build remains blocked from public distribution.",
+      "native_notice_paths": [
+        "LICENSES/third-party/apache-2.0/LICENSE.txt",
+        "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/COPYING.GPL-3.0.txt",
+        "LICENSES/third-party/libgifcodec-d06d2a6d42baf6c0c91cacc28df2542a911d05fe/LICENSE.md",
+        "LICENSES/third-party/skia-4bed689c9c9eb77a120c6a9d54af6a572c85d1c2/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/chromium/LICENSE.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/VMA-vk_mem_alloc.h.LICENSE-excerpt.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/Vulkan-vulkan_core.h.LICENSE-excerpt.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/include/third_party/vulkan/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/skcms/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/embedded-skia/third_party/vulkanmemoryallocator/include/LICENSE.txt",
+        "LICENSES/third-party/skia-native-4bed-dependencies/expat/COPYING",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/LICENSE.md",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/README.ijg",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jcarith.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libjpeg-turbo/jdarith.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libpng/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libpng/README",
+        "LICENSES/third-party/skia-native-4bed-dependencies/libwebp/COPYING",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/LICENSE",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/adler32_simd.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/chunkcopy.h",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inffast_chunk.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/inflate.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/contrib/optimizations/insert_string.h",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/cpu_features.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc32_simd.c",
+        "LICENSES/third-party/skia-native-4bed-dependencies/zlib/source-headers/crc_folding.c",
+        "LICENSES/third-party/skiasharp-2.88.9/LICENSE.txt",
+        "LICENSES/third-party/skiasharp-2.88.9/THIRD-PARTY-NOTICES.txt"
+      ],
+      "required_product_acknowledgments": [
+        "This software is based in part on the work of the Independent JPEG Group."
+      ],
+      "selected_gif_license": "For alternatively licensed SkGifImageReader portions this native distribution elects GPL-2.0-or-later at version 3; BSD portions retain their separate original terms. Include the complete corresponding source archive and original copyright notices.",
+      "notice": {
+        "path": "NOTICE-NATIVE.txt"
+      }
+    }
+  ]
 }
