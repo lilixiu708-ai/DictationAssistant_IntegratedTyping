@@ -2,9 +2,11 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
-**当前正在准备 `v4.0.0-typing.5`（R5）预发布。** 维护者已指示本次发布本体及两个插件，并明确披露仍未解决的许可事项。Avalonia 保持 **11.3.12**；这一发布决定不等于 MS-PL/AGPL 组合授权路径已解决，不改变第三方许可。历史 `typing.1`–`typing.3` 草稿、原标签及资产保持原状。
+**`v4.0.0-typing.5`（R5）本体及两个插件的独立预发布已公开。** 本次发行明确披露仍未解决的许可事项。Avalonia 保持 **11.3.12**；这一发布决定不等于 MS-PL/AGPL 组合授权路径已解决，不改变第三方许可。历史 `typing.1`–`typing.3` 草稿、原标签及资产保持原状。
 
-本次计划的独立插件标签为 `plugin-synchronous-typing-v1.1.0` 与 `plugin-docx-vocabulary-v1.0.1`，均从同一已验证提交构建。Word 导入 1.0.1 本次仅调整独立交付版本，导入功能未变。
+本次独立插件标签为 `plugin-synchronous-typing-v1.1.0` 与 `plugin-docx-vocabulary-v1.0.1`，均与 R5 本体来自提交 `ae1a23210df3f40c2527832bc1a0c55990f08b3f`。Word 导入 1.0.1 本次仅调整独立交付版本，导入功能未变。后续文档更新不移动这些发行标签。
+
+[Windows 构建 39363409555](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555) 已通过完整构建、包校验、15 项既有逻辑检查、production App 窗口正常开闭及 SDK 示例构建。此结果不包含 Windows DPAPI 保存、跨机器/账户拒绝读取、真实 DeepL 鉴权或真实扬声器和中文输入法验证。
 
 ## 当前核对状态
 

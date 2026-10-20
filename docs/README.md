@@ -1,8 +1,8 @@
 # 文档索引
 
-当前正在准备 **`v4.0.0-typing.5`（R5）预发布**，同步打字 1.1.0 与 Word 导入 1.0.1 另备独立更新包。无 DNG 原生依赖已独立发布；Avalonia 11.3.12 的 MS-PL/AGPL 组合授权路径仍未解决，本次发行将明确披露并保留原始许可和对应源码材料，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。
+当前已发布 **[`v4.0.0-typing.5`（R5）预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5)**，同步打字 1.1.0 与 Word 导入 1.0.1 另有独立更新包。无 DNG 原生依赖已独立发布；Avalonia 11.3.12 的 MS-PL/AGPL 组合授权路径仍未解决，发行说明已明确披露并保留原始许可和对应源码材料，详见[审计记录](版权与许可审计.md)和[发布规范](RELEASING.md)。
 
-使用与开发从[项目首页](../README.md)开始。桌面便携包优先通过 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases) 分发，无需仅为本应用下载启用 GitHub Packages。历史 `typing.1`–`typing.3` 已暂时撤回为草稿；插件版本与接口版本独立管理。
+使用与开发从[项目首页](../README.md)开始。桌面便携包从 [R5 本体 Release](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5) 获取，无需仅为本应用下载启用 GitHub Packages。历史 `typing.1`–`typing.3` 已暂时撤回为草稿；插件版本与接口版本独立管理。
 
 ## 当前文档
 

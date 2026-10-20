@@ -2,7 +2,7 @@
 
 本文件是许可索引。第三方组件保留各自的版权和许可；本项目的 AGPL-3.0-or-later 不会把它们重新许可。原始 LICENSE、NOTICE、附加条款及免责声明保存在 `LICENSES/third-party/`，原文件字节与 SHA-256 记录在 [组件目录](third-party/components.json)。摘要不能代替原文，也不表示自动完成了法律兼容性认证。
 
-当前正在准备 R5 本体及插件独立预发布；仍未解决的 Avalonia/MS-PL 组合授权事项将在发行说明中披露，原始许可和未解决记录继续保留。下表索引 Windows 依赖、原 NuGet 包及历史审计材料；原 NuGet DLL 与已构建验证通过的无 DNG 替代按实际哈希区分。正式包的实际依赖与所带原文以 `THIRD_PARTY_COMPONENTS.json` 为准，固定源码和内联源码以匹配的 `THIRD_PARTY_SOURCES.json` 与源码交付内容为准；目录列出不等于已经发行。
+R5 本体及插件独立预发布已公开；发行说明已披露仍未解决的 Avalonia/MS-PL 组合授权事项，原始许可和未解决记录继续保留。下表索引 Windows 依赖、原 NuGet 包及历史审计材料；原 NuGet DLL 与已构建验证通过的无 DNG 替代按实际哈希区分。正式包的实际依赖与所带原文以 `THIRD_PARTY_COMPONENTS.json` 为准，固定源码和内联源码以匹配的 `THIRD_PARTY_SOURCES.json` 与源码交付内容为准；目录列出不等于已经发行。
 
 ## 应用依赖
 

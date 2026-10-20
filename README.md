@@ -2,7 +2,7 @@
 
 面向单词、短语和句子听写的 Windows x64 桌面程序，基于 C#、.NET 10 与 Avalonia 11，在上游 DictationAssistant v4.0.0 上扩展。
 
-**正在准备 `v4.0.0-typing.5`（R5）预发布及两个插件的独立更新。** Avalonia 保持 11.3.12；其中 MS-PL 部分与 App 的组合授权路径仍未解决，按本次发布决定在发行说明和随包材料中明确披露，不将其表述为已获额外授权。无 DNG 原生依赖已独立发布，原始许可与对应源码继续随适用产物提供。详见[许可审计](docs/版权与许可审计.md)。
+**`v4.0.0-typing.5`（R5）预发布及两个插件的独立更新现已发布。** Avalonia 保持 11.3.12；其中 MS-PL 部分与 App 的组合授权路径仍未解决，已在发行说明和随包材料中明确披露，不将其表述为已获额外授权。无 DNG 原生依赖已独立发布，原始许可与对应源码继续随适用产物提供。详见[许可审计](docs/版权与许可审计.md)。
 
 ## 功能
 
@@ -14,9 +14,9 @@
 
 ## 使用
 
-R5 发布完成后，从 [Releases](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases) 下载 Windows x64 便携 ZIP，解压到新文件夹并运行 `DictationAssistant.App.exe`。便携包自带 .NET 和两个插件；对应源码使用发行附件中的 source ZIP。
+从 [R5 本体 Release](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.5) 下载 Windows x64 便携 ZIP，解压到新文件夹并运行 `DictationAssistant.App.exe`。便携包自带 .NET 和两个插件；对应源码使用该发行附件中的 source ZIP。
 
-插件独立包计划分别提供[同步打字 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.1.0)和 [Word 导入 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。关闭程序，将完整插件目录放入 `Plugins/` 后重启；版本与宿主接口要求见各自说明。Word 导入本次仅调整独立交付版本，导入功能未变。
+插件独立包分别见[同步打字 1.1.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.1.0)和 [Word 导入 1.0.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.0.1)。关闭程序，将完整插件目录放入 `Plugins/` 后重启；版本与宿主接口要求见各自说明。Word 导入本次仅调整独立交付版本，导入功能未变。
 
 1. 编辑每行一条的词表，或通过「插件 → 从文档提取词表」导入 `.docx`。
 2. 设置语音、播报次数及间隔，需要时打乱顺序。
@@ -43,7 +43,7 @@ dotnet build DictationAssistant.slnx -c Release --no-restore
 dotnet run --project src/DictationAssistant.App/DictationAssistant.App.csproj -c Release --no-build --no-restore
 ```
 
-窗口运行需要图形会话及本机音频依赖。真实 Windows 窗口、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
+窗口运行需要图形会话及本机音频依赖。R5 已通过 [Windows CI 构建、包校验、15 项逻辑检查及窗口正常开闭](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39363409555)。Windows DPAPI 绑定与真实 DeepL 翻译、扬声器、中文输入法和性能变化仍须[实机验证](docs/同步打字验证清单.md)；没有测量数据不承诺 CPU 或内存降幅。
 
 ## 文档与扩展
 
