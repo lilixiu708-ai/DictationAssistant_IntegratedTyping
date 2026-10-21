@@ -6,6 +6,8 @@ Windows 当前版本为 **[R7 预发布](https://github.com/lilixiu708-ai/Dictat
 
 [背诵练习 1.4.2 随机词序补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)已预发布，准备页可选“打乱顺序”。Windows 提供 R7 插件补丁，Mac 提供沿用 R8 本体的 Intel / M 系列整合更新；本体、导入插件和原生库保持原样。下载与更新方式见[项目首页](../README.md#下载与使用)。
 
+[背诵练习 1.4.3 中文答案补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)已预发布，仅提供 Windows R7 插件更新。练习前补充答案，或生成候选后逐条确认保存，练习时本地判分；模型配置在本机插件配置中填写，Mac 仍为 1.4.2。操作见[1.4.3 使用说明](同步打字插件使用说明.md#143-更新确认中文同义答案)。
+
 此前的 [背诵练习 1.4.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1) 已独立预发布，增加中途结算并简化提示用词。沿用 R7 和导入 1.2.0，只替换练习插件目录；R7 完整包仍内置 1.4.0。操作见[1.4.1 说明](同步打字插件使用说明.md#141-更新中途结算与提示)。
 
 背诵练习先从文档选择提示与答案，再静音计时或播报练习，操作见[使用说明](同步打字插件使用说明.md#背诵练习-140文档配对与计时)。两个新插件要求 R7 的宿主功能级别 5，不能单独装入 R6；源码、原 Windows 构建和恢复上传的对应关系见[发布记录](RELEASING.md)。

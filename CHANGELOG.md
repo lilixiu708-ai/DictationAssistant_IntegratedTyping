@@ -4,13 +4,14 @@
 
 ## 背诵练习插件 [1.4.3] - 2026-10-21
 
-**仅 Windows，准备中，尚未发布。** 沿用已公开 R7，只更新练习插件，Mac 仍使用 1.4.2。
+**[仅 Windows，已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)。** 沿用已公开 R7，只更新练习插件，Mac 仍使用 1.4.2。
 
 - 练习设置新增“可接受答案”：手动补充，或通过独立配置的 OpenAI 兼容模型接口生成本页候选；候选默认不选中，确认保存后才参与判分。
 - 中文格式归一化与已确认别名在本地处理；可关闭“使用已确认的中文答案”恢复严格匹配。每题按提示与标准答案隔离，开始练习后冻结本轮答案。
 - 模型配置与翻译引擎分开管理，Windows 使用当前账户和设备加密保存。配置保存、练习及结算均不调用模型；化学式仍按原严格规则。
 - 关闭配置或候选答案窗口时，先取消任务并等待结束，避免留下无法退出的窗口。
-- 本轮本地观察与 Windows 兼容验证将按实际结果补充，真实服务账户尚未验证。没有新增 NuGet 依赖。
+- [Windows 构建 39524503791](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39524503791)通过固定 R7 加载、15 项既有检查、主窗口正常开闭和 16 项原生模型配置检查；正式 DLL 另在 Linux Avalonia.Headless 通过原功能回归、答案隔离与快照、候选确认及多层窗口关闭观察。
+- [发布 39525110231](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39525110231)复用原成功产物，五份公开附件重新下载后逐字节一致；191 个源码文件、127 份原始许可及私有依赖源码核对通过，源码包在独立目录还原和构建成功。源码提交 `fd8ac3c841270e4d20ddd64186663631feaa801d`，历史发行与标签不变。真实模型服务、完整 Windows 练习交互、输入法和异机迁移尚未实测；没有新增 NuGet 依赖。
 
 ## 背诵练习插件 [1.4.2] - 2026-10-20
 

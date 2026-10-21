@@ -4,13 +4,13 @@
 
 **Windows 当前版本：R7（`v4.0.0-typing.7`）预发布。** 完整包包含背诵练习 1.4.0、Word / Excel 导入 1.2.0 和 .NET 运行环境。“背诵练习”是原同步打字插件的新名称，原有设置与译文继续沿用。
 
-**背诵练习 1.4.1 是此前的独立更新。** 新增中途结算，并将提示开关改为「显示提示」。R7 完整包仍包含 1.4.0；现在需要更新时，选择下方 1.4.2 补丁即可。[旧版用法](docs/同步打字插件使用说明.md#141-更新中途结算与提示)。
+**背诵练习 1.4.1 是此前的独立更新。** 新增中途结算，并将提示开关改为「显示提示」。R7 完整包仍包含 1.4.0；Windows 现在更新时，选择下方 1.4.3 补丁即可。[旧版用法](docs/同步打字插件使用说明.md#141-更新中途结算与提示)。
 
 **[R8 macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** 需要 macOS 15 或更新版本，Intel 和 M 系列电脑分别提供完整包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及 .NET 运行环境。[安装说明](docs/MACOS.md)。
 
 **[背诵练习 1.4.2 补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。** 在准备页勾选「打乱顺序」，静音背诵和播报后作答都能随机出题；提示与答案一起移动，默认仍按原顺序。提供 Windows 插件补丁及 Mac Intel、M 系列整合更新包。[查看用法](docs/同步打字插件使用说明.md#142-更新打乱顺序)。
 
-**背诵练习 1.4.3（仅 Windows）准备中，尚未发布。** 可在练习前补充同义答案，或用模型生成候选，逐条确认保存后在本地判分；英文拼写和化学式保留原规则。Mac 继续使用 1.4.2。[用法](docs/同步打字插件使用说明.md#143-更新确认中文同义答案)。
+**[背诵练习 1.4.3（仅 Windows）已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)。** 可在练习前补充同义答案，或用模型生成候选，逐条确认保存后在本地判分；英文拼写和化学式保留原规则。Mac 继续使用 1.4.2。[用法](docs/同步打字插件使用说明.md#143-更新确认中文同义答案)。
 
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
@@ -20,16 +20,17 @@ Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披
 - 背诵与听写：静音计时或播报后作答，每题 1–300 秒，Enter 提交或到时记录；1.4.1 可中途结算，查看成绩、导出 CSV。
 - 化学记号：保留 Word 直接上下标，接受 `Na^+`、`SO4^2-` 和 Unicode 上下标；化学式区分元素大小写，英文名称可忽略大小写。
 - 提示：提前录入或使用官方翻译 API 补全，校对保存；提示可隐藏，练习过程中不联网翻译。
+- 中文答案（Windows 1.4.3）：手动补充同义说法，或生成候选并逐条确认保存；练习时本地判分，可切回严格匹配。
 - 词表与扩展：文本编辑、Word / Excel 导入、选列、预览、去重和打乱；插件 SDK 提供导入、练习、命令、语音及音效接口。
 
 ## 下载与使用
 
-Windows 首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`；需要随机词序和中途结算时，再安装下方的 1.4.2 插件补丁。插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6。
+Windows 首次安装或从 R6 升级，选择 **R7 完整包**，解压到新文件夹后运行 `DictationAssistant.App.exe`；再安装下方 1.4.3 插件补丁，可使用随机词序、中途结算和已确认的中文同义答案。插件要求 R7 的宿主功能级别 **5**，不能单独安装到 R6。
 
 | 用途 | 版本与下载 | 选择的附件 |
 | --- | --- | --- |
 | Windows 完整程序 | [R7 本体](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7) | [便携包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/DictationAssistant-4.0.0-typing.7-win-x64-portable.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/DictationAssistant-4.0.0-typing.7-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.7/SHA256SUMS) |
-| Windows R7：背诵练习 1.4.2 | [随机词序补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2) | [Windows 插件包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.2/synchronous-typing-1.4.2-win-x64.zip) |
+| Windows R7：背诵练习 1.4.3 | [中文答案补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3) | [Windows 插件包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.3/synchronous-typing-1.4.3.zip) · [源码](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.3/synchronous-typing-1.4.3-source.zip) · [SHA256SUMS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.3/SHA256SUMS) |
 | macOS Intel：含背诵练习 1.4.2 | [R8 插件更新整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2) | [x64 整合更新](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.2/DictationAssistant-R8-typing-1.4.2-macos-x64.zip) |
 | macOS M 系列：含背诵练习 1.4.2 | [R8 插件更新整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2) | [arm64 整合更新](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/plugin-synchronous-typing-v1.4.2/DictationAssistant-R8-typing-1.4.2-macos-arm64.zip) |
 | macOS Intel：R8 原版（1.4.1） | [R8 macOS](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8) | [x64 整合包](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/download/v4.0.0-typing.8/DictationAssistant-4.0.0-typing.8-macos-x64.zip) |
