@@ -1,5 +1,6 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
 // Modified 2026-10-20: prepare and save optional translations before practice.
+// Modified 2026-10-21: cancel and drain owned configuration before closing.
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -57,6 +58,8 @@ internal sealed class TranslationEditorWindow : Window
         MinWidth = 620;
         MinHeight = 520;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        // Let our Closing handler cancel and await work before closing owned dialogs.
+        ClosingBehavior = WindowClosingBehavior.OwnerWindowOnly;
         _editor.Text = PracticeTranslations.BuildEditorText(words, saved);
         ScrollViewer.SetVerticalScrollBarVisibility(_editor, ScrollBarVisibility.Auto);
         ScrollViewer.SetHorizontalScrollBarVisibility(_editor, ScrollBarVisibility.Auto);

@@ -153,6 +153,8 @@ internal sealed class TypingPracticeWindow : Window
         MinWidth = 570;
         MinHeight = 450;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        // Let our Closing handler cancel and await work before closing owned dialogs.
+        ClosingBehavior = WindowClosingBehavior.OwnerWindowOnly;
 
         var root = new Grid { Margin = new Thickness(24), RowDefinitions = new RowDefinitions("Auto,*,Auto,Auto"), RowSpacing = 14 };
         Content = root;

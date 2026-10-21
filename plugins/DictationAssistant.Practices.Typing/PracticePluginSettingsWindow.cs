@@ -30,6 +30,8 @@ internal sealed class PracticePluginSettingsWindow : Window
         MinWidth = 440;
         MinHeight = 330;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        // Let our Closing handler cancel and await work before closing owned dialogs.
+        ClosingBehavior = WindowClosingBehavior.OwnerWindowOnly;
         var content = new StackPanel { Margin = new Thickness(24), Spacing = 16 };
         Content = content;
         content.Children.Add(_translationButton);

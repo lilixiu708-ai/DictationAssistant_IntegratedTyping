@@ -50,6 +50,8 @@ internal sealed class AcceptedAnswersWindow : Window
         MinWidth = 660;
         MinHeight = 540;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        // Let our Closing handler cancel and await work before closing owned dialogs.
+        ClosingBehavior = WindowClosingBehavior.OwnerWindowOnly;
         var root = new Grid
         {
             Margin = new Thickness(22), RowDefinitions = new RowDefinitions("Auto,Auto,*,Auto,Auto"), RowSpacing = 12
