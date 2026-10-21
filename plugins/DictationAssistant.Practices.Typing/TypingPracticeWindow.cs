@@ -1,5 +1,5 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: retain one paired question order throughout a shuffled practice round.
+// Modified 2026-10-21: freeze confirmed Chinese alternatives before offline practice.
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -70,6 +70,16 @@ internal sealed class TypingPracticeWindow : Window
         Content = "编辑提示", MinWidth = 112, IsEnabled = false,
         HorizontalAlignment = HorizontalAlignment.Center
     };
+    private readonly CheckBox _useAcceptedAnswers = new()
+    {
+        Content = "使用已确认的中文答案", IsChecked = true, FontSize = 18,
+        HorizontalAlignment = HorizontalAlignment.Center, IsVisible = false
+    };
+    private readonly Button _acceptedAnswersButton = new()
+    {
+        Content = "可接受答案…", MinWidth = 132, IsEnabled = false, IsVisible = false,
+        HorizontalAlignment = HorizontalAlignment.Center
+    };
     private readonly Button _startButton = new()
     {
         Content = "开始练习", MinWidth = 112, FontSize = 18,
@@ -107,8 +117,13 @@ internal sealed class TypingPracticeWindow : Window
     private Task? _sessionTask;
     private Task? _settlementTask;
     private Task? _translationTask;
+    private Task? _acceptedAnswersTask;
     private CancellationTokenSource? _sessionCancellation;
     private Dictionary<string, string> _translations = new(StringComparer.Ordinal);
+    private IReadOnlyDictionary<AnswerIdentity, IReadOnlyList<string>> _acceptedAnswers =
+        new Dictionary<AnswerIdentity, IReadOnlyList<string>>();
+    private IReadOnlyDictionary<AnswerIdentity, IReadOnlyList<string>> _roundAcceptedAnswers =
+        new Dictionary<AnswerIdentity, IReadOnlyList<string>>();
     private IReadOnlyList<PracticeQuestion> _questions = Array.Empty<PracticeQuestion>();
     private IReadOnlyList<string> _words = Array.Empty<string>();
     private int _expectedWordCount;
@@ -120,6 +135,8 @@ internal sealed class TypingPracticeWindow : Window
     private bool _allowClose;
     private bool _enterPressed;
     private bool _ignoreCaseSnapshot;
+    private bool _useAcceptedAnswersSnapshot;
+    private bool _acceptedAnswersLoaded;
     private bool _csvSaving;
     private bool _settlementRequested;
 
@@ -227,6 +244,8 @@ internal sealed class TypingPracticeWindow : Window
         _setupPanel.Children.Add(secondsRow);
         _setupPanel.Children.Add(_ignoreCase);
         _setupPanel.Children.Add(_translationsButton);
+        _setupPanel.Children.Add(_useAcceptedAnswers);
+        _setupPanel.Children.Add(_acceptedAnswersButton);
         _setupPanel.Children.Add(_startButton);
         _phaseDetail.Text = "设置每题用时后开始。按 Enter 提交，到时自动提交。";
         _answer.Watermark = _plan.ChemicalAnswers ? "输入化学式，如 Na^+（Enter 提交）"
@@ -245,9 +264,15 @@ internal sealed class TypingPracticeWindow : Window
         _exportButton.Click += async (_, _) => await ExportCsvAsync();
         _translationsButton.Click += async (_, _) =>
         {
-            if (_translationTask is { IsCompleted: false }) return;
+            if (_translationTask is { IsCompleted: false } || _acceptedAnswersTask is { IsCompleted: false }) return;
             _translationTask = EditTranslationsAsync();
             await _translationTask;
+        };
+        _acceptedAnswersButton.Click += async (_, _) =>
+        {
+            if (_acceptedAnswersTask is { IsCompleted: false } || _translationTask is { IsCompleted: false }) return;
+            _acceptedAnswersTask = EditAcceptedAnswersAsync();
+            await _acceptedAnswersTask;
         };
         _showTranslation.IsCheckedChanged += (_, _) =>
         {
@@ -327,6 +352,25 @@ internal sealed class TypingPracticeWindow : Window
             _sessionProgress.Maximum = expected;
             _progress.Text = $"已读取 {actual} / {expected} 条";
             _wordListSummary.Text = DescribePlan();
+            var hasChineseAnswers = !_plan.ChemicalAnswers
+                && _questions.Any(question => ChineseAnswerEvaluation.ContainsChinese(question.Answer));
+            _useAcceptedAnswers.IsVisible = _acceptedAnswersButton.IsVisible = hasChineseAnswers;
+            if (hasChineseAnswers)
+            {
+                try
+                {
+                    _acceptedAnswers = PracticeAcceptedAnswers.Snapshot(await PracticeAcceptedAnswers.LoadAsync(ct));
+                    _acceptedAnswersLoaded = true;
+                    _acceptedAnswersButton.IsEnabled = true;
+                }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                catch (Exception)
+                {
+                    _useAcceptedAnswers.IsChecked = false;
+                    _useAcceptedAnswers.IsEnabled = false;
+                    _error.Text = "无法读取已确认答案，原文件已保留。本次仍可按标准答案严格练习。";
+                }
+            }
             try { _translations = await PracticeTranslations.LoadAsync(ct); }
             catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
             catch (Exception)
@@ -357,7 +401,7 @@ internal sealed class TypingPracticeWindow : Window
     private async Task EditTranslationsAsync()
     {
         if (_closing || _phase != Phase.Setup || _words.Count == 0) return;
-        _translationsButton.IsEnabled = _startButton.IsEnabled = false;
+        _translationsButton.IsEnabled = _startButton.IsEnabled = _acceptedAnswersButton.IsEnabled = false;
         try
         {
             var editor = new TranslationEditorWindow(_words, _translations, _translationEngines, _cancellation.Token);
@@ -378,7 +422,37 @@ internal sealed class TypingPracticeWindow : Window
         finally
         {
             if (!_closing && _phase == Phase.Setup)
+            {
                 _translationsButton.IsEnabled = _startButton.IsEnabled = true;
+                _acceptedAnswersButton.IsEnabled = _acceptedAnswersLoaded;
+            }
+        }
+    }
+
+    private async Task EditAcceptedAnswersAsync()
+    {
+        if (_closing || _phase != Phase.Setup || !_acceptedAnswersLoaded || _plan.ChemicalAnswers) return;
+        _translationsButton.IsEnabled = _startButton.IsEnabled = _acceptedAnswersButton.IsEnabled = false;
+        try
+        {
+            var editor = new AcceptedAnswersWindow(_questions, _acceptedAnswers, _cancellation.Token);
+            var saved = await editor.ShowDialog<IReadOnlyDictionary<AnswerIdentity, IReadOnlyList<string>>?>(this);
+            if (!_closing && saved is not null)
+            {
+                _acceptedAnswers = PracticeAcceptedAnswers.Snapshot(saved);
+                _useAcceptedAnswers.IsChecked = true;
+                _error.Text = string.Empty;
+            }
+        }
+        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
+        catch (Exception)
+        {
+            if (!_closing) _error.Text = "无法打开可接受答案，请检查本地保存文件后重试。";
+        }
+        finally
+        {
+            if (!_closing && _phase == Phase.Setup)
+                _translationsButton.IsEnabled = _startButton.IsEnabled = _acceptedAnswersButton.IsEnabled = true;
         }
     }
 
@@ -419,6 +493,7 @@ internal sealed class TypingPracticeWindow : Window
     private void StartPractice()
     {
         if (_closing || _sessionTask is not null || _translationTask is { IsCompleted: false }
+            || _acceptedAnswersTask is { IsCompleted: false }
             || _phase != Phase.Setup || _words.Count == 0 ||
             _readTask is not { IsCompletedSuccessfully: true }) return;
         if (!int.TryParse(_seconds.Text?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var secs)
@@ -430,6 +505,9 @@ internal sealed class TypingPracticeWindow : Window
 
         _typingSeconds = secs;
         _ignoreCaseSnapshot = !_plan.ChemicalAnswers && _ignoreCase.IsChecked == true;
+        _useAcceptedAnswersSnapshot = !_plan.ChemicalAnswers && _acceptedAnswersLoaded
+            && _useAcceptedAnswers.IsChecked == true;
+        _roundAcceptedAnswers = PracticeAcceptedAnswers.Snapshot(_acceptedAnswers);
         _error.Text = string.Empty;
         SavePreferences();
         _setupPanel.IsVisible = false;
@@ -465,6 +543,7 @@ internal sealed class TypingPracticeWindow : Window
                     answer.TimedOut, answer.Elapsed.TotalSeconds)
                 {
                     Prompt = _plan.PromptIsChemical ? ChemicalNotation.ToDisplay(question.Prompt) : question.Prompt,
+                    AnswerPromptKey = question.Prompt,
                     SourceLabel = question.SourceLabel
                 });
                 _sessionProgress.Value = _records.Count;
@@ -474,7 +553,7 @@ internal sealed class TypingPracticeWindow : Window
             _settleButton.IsEnabled = false;
             _phaseTitle.Text = "正在结算…";
             var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct,
-                _plan.ChemicalAnswers), ct);
+                _plan.ChemicalAnswers, _roundAcceptedAnswers, _useAcceptedAnswersSnapshot), ct);
             ct.ThrowIfCancellationRequested();
             ShowFinalResults(correct);
         }
@@ -530,7 +609,7 @@ internal sealed class TypingPracticeWindow : Window
             await _sessionTask;
             if (_closing || _phase == Phase.Error) return;
             var correct = await Task.Run(() => TypingResults.Score(_records, _ignoreCaseSnapshot, ct,
-                _plan.ChemicalAnswers), ct);
+                _plan.ChemicalAnswers, _roundAcceptedAnswers, _useAcceptedAnswersSnapshot), ct);
             ct.ThrowIfCancellationRequested();
             ShowFinalResults(correct);
         }
@@ -694,6 +773,11 @@ internal sealed class TypingPracticeWindow : Window
         _closing = true;
         _cancellation.Cancel();
         _pendingAnswer?.TrySetCanceled();
+        if (_acceptedAnswersTask is not null)
+        {
+            try { await _acceptedAnswersTask; }
+            catch (OperationCanceledException) { }
+        }
         if (_translationTask is not null)
         {
             try { await _translationTask; }
@@ -727,6 +811,7 @@ internal sealed class TypingPracticeWindow : Window
         if (_allowClose || (_readTask is null || _readTask.IsCompleted) &&
             (_sessionTask is null || _sessionTask.IsCompleted) &&
             (_settlementTask is null || _settlementTask.IsCompleted) &&
+            (_acceptedAnswersTask is null || _acceptedAnswersTask.IsCompleted) &&
             (_translationTask is null || _translationTask.IsCompleted)) return;
         e.Cancel = true;
         await CancelAndCloseAsync();
@@ -746,6 +831,7 @@ internal sealed class TypingPracticeWindow : Window
             _seconds.Text = Math.Clamp(saved.TypingSeconds, 1, 300).ToString(CultureInfo.InvariantCulture);
             _ignoreCase.IsChecked = saved.IgnoreCase;
             _showTranslation.IsChecked = saved.ShowTranslation;
+            _useAcceptedAnswers.IsChecked = saved.UseAcceptedChineseAnswers;
         }
         catch (Exception) { /* Settings failure must never prevent launching an exercise. */ }
     }
@@ -758,7 +844,8 @@ internal sealed class TypingPracticeWindow : Window
             File.WriteAllText(PreferencesPath, JsonSerializer.Serialize(new PracticePreferences
             {
                 TypingSeconds = _typingSeconds, IgnoreCase = _ignoreCase.IsChecked == true,
-                ShowTranslation = _showTranslation.IsChecked == true
+                ShowTranslation = _showTranslation.IsChecked == true,
+                UseAcceptedChineseAnswers = _useAcceptedAnswers.IsChecked == true
             }));
         }
         catch (Exception) { /* The session still works if user config is read-only. */ }
@@ -770,6 +857,7 @@ internal sealed class TypingPracticeWindow : Window
         public int TypingSeconds { get; set; } = 10;
         public bool IgnoreCase { get; set; } = true;
         public bool ShowTranslation { get; set; }
+        public bool UseAcceptedChineseAnswers { get; set; } = true;
     }
 
     private sealed record TypedAnswer(string Value, bool TimedOut, TimeSpan Elapsed);

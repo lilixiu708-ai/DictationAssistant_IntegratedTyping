@@ -1,0 +1,522 @@
+name: Typing 1.4.3 Windows patch (confirmed Chinese answers)
+'on':
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: 'Empty: validate main on Windows; publish: dispatch on the 1.4.3 tag with its successful build
+          run ID'
+        required: false
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: typing-windows-patch-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  dispatch-mode:
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+    steps:
+    - name: Select a main build or promotion of the original verified artifacts
+      id: mode
+      env:
+        BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      shell: python {0}
+      run: |
+        import os, re
+        build_run = os.environ['BUILD_RUN_ID']
+        if os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch':
+            raise SystemExit('The patch workflow requires an explicit dispatch.')
+        if build_run:
+            if (not re.fullmatch(r'[1-9][0-9]*', build_run)
+                    or os.environ['GITHUB_REF'] != 'refs/tags/plugin-synchronous-typing-v1.4.3'):
+                raise SystemExit('Promotion requires the exact 1.4.3 tag and a positive verified build run ID.')
+            mode = 'publish'
+        else:
+            if os.environ['GITHUB_REF'] != 'refs/heads/main':
+                raise SystemExit('Build the main branch first; a tagged dispatch can only promote verified artifacts.')
+            mode = 'build'
+        with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+            output.write(f'mode={mode}\n')
+  windows-patch:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'build'
+    runs-on: windows-latest
+    timeout-minutes: 35
+    env:
+      PATCH_RELEASE_TAG: plugin-synchronous-typing-v1.4.3
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.100
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Verify the exact plugin update and unchanged published host sources
+      shell: python {0}
+      run: |
+        import os, subprocess, sys
+        sys.path.insert(0, 'scripts')
+        from prepare_plugin_release import typing_release_config, verify_typing_release_source
+        config = typing_release_config(os.environ['PATCH_RELEASE_TAG'])
+        head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        if head != os.environ['GITHUB_SHA']:
+            raise SystemExit('The release must use its exact tagged build commit')
+        if os.environ['GITHUB_REF'] != 'refs/heads/main':
+            raise SystemExit('The patch preflight must build the main branch, never a release tag.')
+        local_tag = 'refs/tags/' + os.environ['PATCH_RELEASE_TAG']
+        existing = subprocess.run(['git', 'rev-parse', '--verify', local_tag + '^{commit}'],
+                                  capture_output=True, text=True)
+        if existing.returncode == 0:
+            if existing.stdout.strip() != head:
+                raise SystemExit('An existing patch tag does not match this preflight source.')
+        else:
+            subprocess.run(['git', 'tag', os.environ['PATCH_RELEASE_TAG'], head], check=True)
+        verify_typing_release_source(config, head)
+        with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+            output.write('HOST_RELEASE_TAG=' + config['host_release_tag'] + '\n')
+    - name: Download and verify the unchanged published compatibility host
+      shell: cmd
+      run: python scripts\prepare_plugin_release.py --prepare-host --host-release-tag %HOST_RELEASE_TAG%
+    - name: Build only the updated plugin into the compatibility host
+      shell: cmd
+      run: |
+        rmdir /s /q artifacts\Windows-x64\Plugins\SynchronousTyping
+        if errorlevel 1 exit /b 1
+        dotnet restore plugins\DictationAssistant.Practices.Typing\DictationAssistant.Practices.Typing.csproj -p:NuGetLockFilePath=obj/cloud.packages.lock.json
+        if errorlevel 1 exit /b 1
+        dotnet publish plugins\DictationAssistant.Practices.Typing\DictationAssistant.Practices.Typing.csproj -c Release --no-restore -p:DebugType=None -p:DebugSymbols=false -o artifacts\Windows-x64\Plugins\SynchronousTyping
+        if errorlevel 1 exit /b 1
+    - name: Run the existing typing logic checks
+      shell: cmd
+      run: |
+        dotnet restore tests\TypingPlugin.SmokeTests\TypingPlugin.SmokeTests.csproj -p:NuGetLockFilePath=obj/cloud.packages.lock.json
+        if errorlevel 1 exit /b 1
+        dotnet run --project tests\TypingPlugin.SmokeTests\TypingPlugin.SmokeTests.csproj -c Release --no-restore
+        if errorlevel 1 exit /b 1
+    - name: Load the updated plugin in the published executable
+      shell: python {0}
+      run: |
+        import json, os, pathlib, subprocess, sys
+        sys.path.insert(0, 'scripts')
+        from prepare_plugin_release import typing_release_config, write_json
+        config = typing_release_config(os.environ['PATCH_RELEASE_TAG'])
+        host_config = config['host']
+        host = pathlib.Path('artifacts/Windows-x64').resolve()
+        result = subprocess.run([str(host / 'DictationAssistant.App.exe'), '--list-plugins'],
+                                cwd=host, capture_output=True, check=True, timeout=60)
+        report = json.loads(result.stdout.decode('utf-8-sig'))
+        if report.get('ApiVersion') != 1 or report.get('HostFeatureLevel') != host_config['feature_level']:
+            raise SystemExit('The compatibility executable has an unexpected API or feature level')
+        plugins = {item['Manifest']['Id']: item for item in report['Plugins'] if item.get('Manifest')}
+        if set(plugins) != {'synchronous-typing', 'docx-vocabulary'} or report.get('LoadedCount') != 2:
+            raise SystemExit('The fixed published host did not load exactly the expected two plugins')
+        typing, word = plugins['synchronous-typing'], plugins['docx-vocabulary']
+        if (not typing.get('IsLoaded') or typing.get('Error') is not None
+                or typing['Manifest'].get('Version') != config['version']
+                or typing['Manifest'].get('ApiVersion') != 1
+                or typing['Manifest'].get('MinimumHostFeatureLevel') != host_config['feature_level']
+                or not {'practice', 'configuration'} <= set(typing.get('Capabilities', []))):
+            raise SystemExit('The updated practice and configuration capabilities did not load')
+        if (not word.get('IsLoaded') or word.get('Error') is not None
+                or word['Manifest'].get('Version') != host_config['word_plugin_version']):
+            raise SystemExit('The unchanged bundled Word/Excel importer no longer loads')
+        write_json(pathlib.Path('artifacts/host-releases') / config['host_release_tag'] / 'plugin-discovery.json', report)
+        print('The published host loaded the updated practice plugin and unchanged importer.')
+    - name: Start and close the published production application
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $executable = Join-Path $env:GITHUB_WORKSPACE 'artifacts/Windows-x64/DictationAssistant.App.exe'
+        $process = Start-Process $executable -WorkingDirectory (Split-Path $executable) -PassThru
+        try {
+          Start-Sleep -Seconds 8
+          $process.Refresh()
+          if ($process.HasExited) { throw "The published host exited during startup: $($process.ExitCode)" }
+          if ($process.MainWindowHandle -eq 0) { throw 'The published host did not create a main window.' }
+          $null = $process.CloseMainWindow()
+          if (-not $process.WaitForExit(10000)) { throw 'The published main window did not close normally.' }
+          if ($process.ExitCode -ne 0) { throw "The published host exited unsuccessfully: $($process.ExitCode)" }
+          @{ main_window_opened_and_closed = $true } | ConvertTo-Json | Set-Content (Join-Path ('artifacts/host-releases/' + $env:HOST_RELEASE_TAG) 'window-smoke.json')
+        } finally {
+          if (-not $process.HasExited) { $process.Kill() }
+        }
+    - name: Observe Windows DPAPI model configuration without calling a model service
+      shell: python {0}
+      run: |
+        import os, pathlib, subprocess, tempfile
+        project = '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup></Project>'
+        source = r'''using System.Reflection;
+        using System.Runtime.ExceptionServices;
+        using System.Runtime.Loader;
+        using System.Security.Cryptography;
+        using System.Text;
+        using System.Text.Json;
+        using System.Text.Json.Nodes;
+
+        var pluginDirectory = Path.GetFullPath(args[0]);
+        var hostDirectory = Path.GetFullPath(args[1]);
+        var reportPath = Path.GetFullPath(args[2]);
+        var checks = new Dictionary<string, bool>(StringComparer.Ordinal);
+        void Check(bool condition, string label) {
+            if (!condition) throw new InvalidOperationException("Model configuration observation failed: " + label);
+            checks[label] = true;
+        }
+        AssemblyLoadContext.Default.Resolving += (context, name) => {
+            foreach (var directory in new[] { pluginDirectory, hostDirectory }) {
+                var candidate = Path.Combine(directory, name.Name + ".dll");
+                if (File.Exists(candidate)) return context.LoadFromAssemblyPath(candidate);
+            }
+            return null;
+        };
+        AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(pluginDirectory, "System.Security.Cryptography.ProtectedData.dll"));
+        var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(pluginDirectory, "DictationAssistant.Practices.Typing.dll"));
+        var settings = assembly.GetType("DictationAssistant.Practices.Typing.AnswerModelSettings", throwOnError: true)!;
+        var configurationType = assembly.GetType("DictationAssistant.Practices.Typing.AnswerModelConfiguration", throwOnError: true)!;
+        const BindingFlags StaticMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        var commit = Environment.GetEnvironmentVariable("GITHUB_SHA") ?? throw new InvalidOperationException("Missing source commit.");
+        Check(OperatingSystem.IsWindows(), "real_windows_runner");
+        Check(assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion == "1.4.3+" + commit,
+              "actual_published_plugin_matches_source");
+        Check((bool)settings.GetProperty("CanPersist", StaticMembers)!.GetValue(null)!, "windows_persistence_enabled");
+        var settingsPath = (string)settings.GetProperty("StoragePath", StaticMembers)!.GetValue(null)!;
+        var settingsDirectory = Path.GetDirectoryName(settingsPath)!;
+        var directoryExisted = Directory.Exists(settingsDirectory);
+        var backup = File.Exists(settingsPath) ? await File.ReadAllBytesAsync(settingsPath) : null;
+        var lockPath = settingsPath + ".lock";
+        var lockExisted = File.Exists(lockPath);
+        object Configuration(string endpoint, string model, string key) =>
+            Activator.CreateInstance(configurationType, new object[] { endpoint, model, key })!;
+        async Task<object?> CallAsync(string name, params object[] arguments) {
+            Task pending;
+            try { pending = (Task)settings.GetMethod(name, StaticMembers)!.Invoke(null, arguments)!; }
+            catch (TargetInvocationException exception) when (exception.InnerException is not null) {
+                ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
+                throw;
+            }
+            await pending;
+            return pending.GetType().GetProperty("Result")?.GetValue(pending);
+        }
+        async Task<bool> Rejected<T>(string name, params object[] arguments) where T : Exception {
+            try { await CallAsync(name, arguments); return false; }
+            catch (T) { return true; }
+        }
+        const string Endpoint = "https://model-observation.invalid/v1";
+        const string Model = "offline-observation-model";
+        const string Key = "probe-only-not-a-live-api-key";
+        var configuration = Configuration(Endpoint, Model, Key);
+        try {
+            await CallAsync("DeleteAsync", CancellationToken.None);
+            Check(await CallAsync("LoadAsync", CancellationToken.None) is null, "initial_deleted_load_is_empty");
+            await CallAsync("SaveAsync", configuration, CancellationToken.None);
+            var encrypted = await File.ReadAllBytesAsync(settingsPath);
+            var serialized = Encoding.UTF8.GetString(encrypted);
+            Check(!serialized.Contains(Key, StringComparison.Ordinal)
+                  && !serialized.Contains(Endpoint, StringComparison.Ordinal)
+                  && !serialized.Contains(Model, StringComparison.Ordinal), "all_model_fields_encrypted_at_rest");
+            var loaded = await CallAsync("LoadAsync", CancellationToken.None);
+            Check(loaded is not null
+                  && (string?)configurationType.GetProperty("Endpoint")!.GetValue(loaded) == Endpoint
+                  && (string?)configurationType.GetProperty("Model")!.GetValue(loaded) == Model
+                  && (string?)configurationType.GetProperty("ApiKey")!.GetValue(loaded) == Key,
+                  "dpapi_save_load_round_trip");
+            var display = configuration.ToString() ?? string.Empty;
+            Check(!display.Contains(Key, StringComparison.Ordinal)
+                  && !display.Contains(Endpoint, StringComparison.Ordinal)
+                  && !display.Contains(Model, StringComparison.Ordinal), "configuration_display_redacts_fields");
+            Check(await Rejected<ArgumentException>("SaveAsync",
+                  Configuration("http://model-observation.invalid/v1", Model, Key), CancellationToken.None),
+                  "http_endpoint_rejected");
+            Check((await File.ReadAllBytesAsync(settingsPath)).SequenceEqual(encrypted), "invalid_save_preserves_old_bytes");
+            using var cancelled = new CancellationTokenSource();
+            cancelled.Cancel();
+            Check(await Rejected<OperationCanceledException>("SaveAsync", configuration, cancelled.Token),
+                  "cancelled_save_rejected");
+            Check((await File.ReadAllBytesAsync(settingsPath)).SequenceEqual(encrypted), "cancelled_save_preserves_old_bytes");
+            var envelope = JsonNode.Parse(encrypted)!.AsObject();
+            var binding = envelope["machineBinding"]!.GetValue<string>();
+            Check(binding.Length == 64, "device_binding_is_recorded");
+            envelope["machineBinding"] = (binding[0] == '0' ? "1" : "0") + binding[1..];
+            var tampered = Encoding.UTF8.GetBytes(envelope.ToJsonString());
+            await File.WriteAllBytesAsync(settingsPath, tampered);
+            Check(await Rejected<InvalidOperationException>("LoadAsync", CancellationToken.None), "tampered_device_binding_rejected");
+            Check((await File.ReadAllBytesAsync(settingsPath)).SequenceEqual(tampered), "rejected_load_does_not_rewrite_file");
+            await File.WriteAllBytesAsync(settingsPath, encrypted);
+            await CallAsync("DeleteAsync", CancellationToken.None);
+            Check(!File.Exists(settingsPath) && await CallAsync("LoadAsync", CancellationToken.None) is null,
+                  "delete_removes_configuration");
+        }
+        finally {
+            if (backup is not null) {
+                Directory.CreateDirectory(settingsDirectory);
+                await File.WriteAllBytesAsync(settingsPath, backup);
+            } else File.Delete(settingsPath);
+            if (!lockExisted) File.Delete(lockPath);
+            if (!directoryExisted && Directory.Exists(settingsDirectory) && !Directory.EnumerateFileSystemEntries(settingsDirectory).Any())
+                Directory.Delete(settingsDirectory);
+        }
+        Check(backup is null ? !File.Exists(settingsPath) : (await File.ReadAllBytesAsync(settingsPath)).SequenceEqual(backup),
+              "prior_configuration_restored");
+        Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
+        await File.WriteAllTextAsync(reportPath, JsonSerializer.Serialize(new {
+            status = "passed", plugin_version = "1.4.3", source_commit = commit,
+            plugin_dll_sha256 = Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(assembly.Location))).ToLowerInvariant(),
+            scope = "Real Windows runner using production AnswerModelSettings from the actual published plugin DLL; offline fake credentials only.",
+            checks, network_requests_performed = false, live_provider_credentials_tested = false,
+            cross_account_or_real_other_machine_tested = false
+        }, new JsonSerializerOptions { WriteIndented = true }) + "\n");
+        Console.WriteLine("PASS Windows model configuration: DPAPI round trip, encrypted settings, invalid/canceled writes and device-metadata rejection; prior state restored. No network calls.");
+        '''
+        host = pathlib.Path('artifacts/Windows-x64').resolve()
+        plugin = host / 'Plugins/SynchronousTyping'
+        report = pathlib.Path('artifacts/host-releases') / os.environ['HOST_RELEASE_TAG'] / 'answer-model-observation.json'
+        with tempfile.TemporaryDirectory(prefix='answer-model-observation-', dir=os.environ['RUNNER_TEMP']) as temporary:
+            temporary = pathlib.Path(temporary)
+            (temporary / 'Observation.csproj').write_text(project, encoding='utf-8')
+            (temporary / 'Program.cs').write_text(source, encoding='utf-8')
+            compiled = temporary / 'compiled'
+            subprocess.run(['dotnet', 'build', str(temporary / 'Observation.csproj'), '-c', 'Release', '-o', str(compiled)],
+                           cwd=temporary, check=True, timeout=120)
+            subprocess.run(['dotnet', str(compiled / 'Observation.dll'), str(plugin), str(host), str(report.resolve())],
+                           cwd=host, check=True, timeout=90)
+    - name: Record compatibility and prepare only independent plugin assets
+      shell: python {0}
+      run: |
+        import hashlib, json, os, pathlib, subprocess, sys
+        sys.path.insert(0, 'scripts')
+        from prepare_plugin_release import typing_release_config, verify_answer_model_configuration_observation, write_json
+        config = typing_release_config(os.environ['PATCH_RELEASE_TAG'])
+        host_config = config['host']
+        cache = pathlib.Path('artifacts/host-releases') / config['host_release_tag']
+        discovery = json.loads((cache / 'plugin-discovery.json').read_text(encoding='utf-8'))
+        window = json.loads((cache / 'window-smoke.json').read_text(encoding='utf-8-sig'))
+        baseline = json.loads((cache / 'HOST_BASELINE.json').read_text(encoding='utf-8'))
+        plugin = pathlib.Path('artifacts/Windows-x64/Plugins/SynchronousTyping/DictationAssistant.Practices.Typing.dll')
+        with plugin.open('rb') as stream:
+            checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
+        model_observation = json.loads((cache / 'answer-model-observation.json').read_text(encoding='utf-8'))
+        verify_answer_model_configuration_observation(model_observation, os.environ['GITHUB_SHA'], checksum)
+        compatibility = {
+            'host_release_tag': config['host_release_tag'], 'host_source_commit': host_config['source_commit'],
+            'plugin_source_commit': os.environ['GITHUB_SHA'],
+            'plugin_version': config['version'], 'plugin_api_version': discovery['ApiVersion'],
+            'host_feature_level': discovery['HostFeatureLevel'], 'word_plugin_version': host_config['word_plugin_version'],
+            'practice_and_configuration_loaded': True,
+            'main_window_opened_and_closed': window.get('main_window_opened_and_closed') is True,
+            'plugin_dll_sha256': checksum,
+            'answer_model_configuration_observation': model_observation,
+            'host_documentation_path_adaptations': baseline['documentation_path_adaptations'],
+            'host_non_typing_file_count': len(baseline['files_outside_typing_plugin']),
+            'host_staging_note': baseline['staging_note'],
+            'scope': 'Existing fixed published host, plugin discovery and normal main-window open/close only. Full interactive practice, live translation, credential migration and cross-account encryption are not claimed verified.',
+        }
+        write_json(cache / 'PLUGIN_COMPATIBILITY.json', compatibility)
+        subprocess.run([sys.executable, 'scripts/prepare_plugin_release.py', '--standalone',
+                        '--host-release-tag', config['host_release_tag'], '--plugin-release-tag', os.environ['PATCH_RELEASE_TAG']], check=True)
+    - name: Upload only the independent typing plugin release assets
+      uses: actions/upload-artifact@v4
+      with:
+        name: typing-windows-1.4.3
+        path: artifacts/plugin-releases/synchronous-typing/*
+        if-no-files-found: error
+        retention-days: 30
+        compression-level: 0
+        overwrite: true
+    - name: Preserve offline Windows model-configuration observations
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: typing-windows-1.4.3-observations-attempt-${{ github.run_attempt }}
+        path: artifacts/host-releases/v4.0.0-typing.7/answer-model-observation.json
+        if-no-files-found: warn
+        retention-days: 30
+        overwrite: true
+  publish-patch:
+    if: needs.dispatch-mode.outputs.mode == 'publish' && github.ref == 'refs/tags/plugin-synchronous-typing-v1.4.3'
+    needs: dispatch-mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Verify the original Windows patch build has the exact tagged source
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      shell: python {0}
+      run: |
+        import json, os, re, subprocess
+        run_id, repository = os.environ['BUILD_RUN_ID'], os.environ['GH_REPO']
+        if (not re.fullmatch(r'[1-9][0-9]*', run_id) or run_id == os.environ['GITHUB_RUN_ID']
+                or os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch'
+                or os.environ['GITHUB_REF'] != 'refs/tags/plugin-synchronous-typing-v1.4.3'
+                or repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping'):
+            raise SystemExit('Invalid typing patch artifact promotion request.')
+        head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        tagged = subprocess.check_output(['git', 'rev-parse', 'refs/tags/plugin-synchronous-typing-v1.4.3^{commit}'], text=True).strip()
+        source = json.loads(subprocess.check_output(['gh', 'api', f'repos/{repository}/actions/runs/{run_id}']))
+        if (source.get('id') != int(run_id) or source.get('status') != 'completed'
+                or source.get('conclusion') != 'success' or source.get('event') != 'workflow_dispatch'
+                or source.get('path') != '.github/workflows/release-typing-windows-patch.yml'
+                or source.get('head_branch') != 'main'
+                or source.get('repository', {}).get('full_name') != repository
+                or source.get('head_repository', {}).get('full_name') != repository
+                or not re.fullmatch(r'[0-9a-f]{40}', head)
+                or not (source.get('head_sha') == os.environ['GITHUB_SHA'] == head == tagged)):
+            raise SystemExit('Promotion requires this repository successful Windows preflight and the exact tagged source.')
+        print(f'Promoting verified Windows typing patches from run {run_id}, commit {head}.')
+    - uses: actions/download-artifact@v4
+      with:
+        name: typing-windows-1.4.3
+        path: release
+        run-id: ${{ inputs.build_run_id }}
+        github-token: ${{ github.token }}
+        repository: ${{ github.repository }}
+    - name: Publish only the new typing plugin prerelease
+      shell: python {0}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        RELEASE_TAG: ${{ github.ref_name }}
+      run: |
+        import hashlib, json, os, pathlib, re, subprocess, sys, tempfile, zipfile
+        sys.path.insert(0, "scripts")
+        from prepare_plugin_release import typing_release_config, check_zip, verify_answer_model_configuration_observation
+        repository = os.environ['GH_REPO']
+        commit = os.environ['GITHUB_SHA']
+        tag = os.environ['RELEASE_TAG']
+        config = typing_release_config(tag)
+        version, host_tag, host = config['version'], config['host_release_tag'], config['host']
+        if not re.fullmatch(r'[0-9a-f]{40}', commit):
+            raise SystemExit('Unexpected independent plugin release scope')
+
+        def gh(*arguments):
+            return subprocess.check_output(['gh', *arguments], text=True)
+
+        def remote_target(name):
+            refs = subprocess.check_output(['git', 'ls-remote', 'origin', f'refs/tags/{name}', f'refs/tags/{name}^{{}}'], text=True)
+            values = dict(line.split()[::-1] for line in refs.splitlines())
+            return values.get(f'refs/tags/{name}^{{}}', values.get(f'refs/tags/{name}'))
+
+        if remote_target(tag) != commit or remote_target(host_tag) != host['source_commit']:
+            raise SystemExit('The new plugin tag or existing published host tag changed')
+        releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+        if any(item['tag_name'] == tag for page in releases for item in page):
+            raise SystemExit('Refusing to replace an existing public release or draft')
+        folder = pathlib.Path('release')
+        assets = {path.name: path for path in folder.iterdir() if path.is_file()}
+        expected_names = {f'synchronous-typing-{version}.zip', f'synchronous-typing-{version}-source.zip',
+                          'SHA256SUMS', 'RELEASE_NOTES.md', 'RELEASE_REVIEW.json'}
+        if set(assets) != expected_names:
+            raise SystemExit('The independent plugin asset set is incomplete or contains an unrelated asset')
+        checked = set()
+        expected_hashes = {}
+        for line in assets['SHA256SUMS'].read_text(encoding='ascii').splitlines():
+            expected, name = line.split('  ', 1)
+            if not re.fullmatch(r'[0-9a-f]{64}', expected) or name not in assets or name in checked:
+                raise SystemExit('Invalid or duplicate plugin checksum entry')
+            with assets[name].open('rb') as stream:
+                actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+            if actual != expected:
+                raise SystemExit(f'Plugin release asset checksum mismatch: {name}')
+            checked.add(name)
+        if checked != expected_names - {'SHA256SUMS'}:
+            raise SystemExit('The plugin checksum file does not cover exactly all four other assets')
+        for name, path in assets.items():
+            with path.open('rb') as stream:
+                expected_hashes[name] = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+        review = json.loads(assets['RELEASE_REVIEW.json'].read_text(encoding='utf-8'))
+        host_review = review.get('host_release_review', {})
+        blockers = host_review.get('blocking_issues', [])
+        compatibility = review.get('host_compatibility', {})
+        if (review.get('source_commit') != commit or review.get('plugin_id') != 'synchronous-typing'
+                or review.get('plugin_version') != version or review.get('app_release_tag') != host_tag
+                or review.get('host_source_commit') != host['source_commit']
+                or review.get('publication_scope') != 'standalone-plugin-update-existing-host'
+                or review.get('legal_clearance_claimed') is not False
+                or host_review.get('status') != 'blocked' or not blockers
+                or any(not isinstance(item, dict) or item.get('id') != 'avalonia-mspl-agpl-compatibility'
+                       for item in blockers)
+                or compatibility.get('plugin_source_commit') != commit
+                or compatibility.get('plugin_api_version') != 1 or compatibility.get('host_feature_level') != host['feature_level']
+                or compatibility.get('plugin_version') != version or compatibility.get('host_release_tag') != host_tag
+                or compatibility.get('host_source_commit') != host['source_commit']
+                or compatibility.get('word_plugin_version') != host['word_plugin_version']
+                or compatibility.get('practice_and_configuration_loaded') is not True
+                or compatibility.get('main_window_opened_and_closed') is not True
+                or compatibility.get('host_non_typing_file_count') != host['file_counts']['synchronous-typing']
+                or compatibility.get('host_documentation_path_adaptations') != host['documentation_path_adaptations']):
+            raise SystemExit('The plugin disclosure, source or compatibility metadata is inconsistent')
+        if (review.get('platforms') != ['win-x64']
+                or review.get('patch_base_commit') != config.get('patch_base_commit')
+                or review.get('answer_aliases', {}).get('candidate_approval_required') is not True
+                or review.get('answer_aliases', {}).get('practice_scoring') != 'confirmed-local-only'):
+            raise SystemExit('The Windows answer-candidate disclosure is inconsistent')
+        if version == '1.4.3':
+            verify_answer_model_configuration_observation(
+                compatibility.get('answer_model_configuration_observation'), commit, compatibility.get('plugin_dll_sha256'))
+        binary_path = assets[f'synchronous-typing-{version}.zip']
+        source_path = assets[f'synchronous-typing-{version}-source.zip']
+        for path in (binary_path, source_path):
+            check_zip(path)
+        with zipfile.ZipFile(binary_path) as binary, zipfile.ZipFile(source_path) as source:
+            expected_review = assets['RELEASE_REVIEW.json'].read_bytes().replace(b'\r\n', b'\n')
+            if (binary.read('SynchronousTyping/RELEASE_REVIEW.json').replace(b'\r\n', b'\n') != expected_review
+                    or source.read('RELEASE_REVIEW.json').replace(b'\r\n', b'\n') != expected_review):
+                raise SystemExit('The binary/source generated disclosure differs from the verified review')
+            plugin = binary.read('SynchronousTyping/DictationAssistant.Practices.Typing.dll')
+            if (hashlib.sha256(plugin).hexdigest() != compatibility.get('plugin_dll_sha256')
+                    or f'{version}+{commit}'.encode('ascii') not in plugin):
+                raise SystemExit('The independent plugin DLL does not match the release commit and compatibility record')
+        gh('release', 'create', tag, '--draft', '--prerelease', '--latest=false', '--verify-tag',
+           '--target', commit, '--title', config['title'],
+           '--notes-file', str(assets['RELEASE_NOTES.md']))
+        gh('release', 'upload', tag, *(str(path) for path in assets.values()))
+        releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
+        matches = [item for page in releases for item in page if item['tag_name'] == tag]
+        if len(matches) != 1 or not matches[0].get('draft'):
+            raise SystemExit('Expected exactly one newly created plugin draft')
+        release = matches[0]
+        expected_sizes = {name: path.stat().st_size for name, path in assets.items()}
+        if {item['name']: item['size'] for item in release['assets']} != expected_sizes:
+            raise SystemExit('The draft plugin assets do not match the complete local asset set')
+        for item in release['assets']:
+            if item.get('state') != 'uploaded':
+                raise SystemExit('A draft plugin upload is incomplete')
+            expected = expected_hashes[item['name']]
+            if item.get('digest'):
+                if item['digest'] != expected:
+                    raise SystemExit('An uploaded plugin asset has an unexpected SHA-256 digest')
+            else:
+                with tempfile.TemporaryDirectory() as temporary:
+                    path = pathlib.Path(temporary) / 'asset'
+                    with path.open('wb') as destination:
+                        subprocess.run(['gh', 'api', f'repos/{repository}/releases/assets/{item["id"]}',
+                                        '-H', 'Accept: application/octet-stream'], stdout=destination, check=True)
+                    with path.open('rb') as stream:
+                        actual = 'sha256:' + hashlib.file_digest(stream, 'sha256').hexdigest()
+                    if path.stat().st_size != item['size'] or actual != expected:
+                        raise SystemExit('A downloaded draft plugin asset differs from the verified local file')
+        current = json.loads(gh('api', f'repos/{repository}/releases/{release["id"]}'))
+        fields = lambda value: sorted((item['id'], item['name'], item['size'], item.get('state')) for item in value['assets'])
+        if not current.get('draft') or current.get('tag_name') != tag or fields(current) != fields(release):
+            raise SystemExit('The new plugin draft changed before publication')
+        if any(item.get('digest') and item['digest'] != expected_hashes[item['name']] for item in current['assets']):
+            raise SystemExit('A draft plugin asset digest changed before publication')
+        if remote_target(tag) != commit or remote_target(host_tag) != host['source_commit']:
+            raise SystemExit('The plugin or host tag changed before publication')
+        gh('release', 'edit', tag, '--tag', tag, '--target', commit, '--draft=false', '--prerelease', '--latest=false')
+        print(gh('release', 'view', tag, '--json', 'url', '--jq', '.url').strip())
+    timeout-minutes: 30

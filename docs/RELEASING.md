@@ -2,6 +2,11 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**背诵练习 1.4.3（Windows）准备中，尚未公开。** [Windows 补丁工作流](../.github/workflows/release-typing-windows-patch.yml)先在 main 手动验证，成功后在同一提交创建 plugin-synchronous-typing-v1.4.3，再以原成功运行 ID 触发标签上的发布。仅复用已经过核对的 Windows 插件产物，不重编固定 R7 本体，不更换导入插件，也不发布 Mac 更新。
+
+本轮新增“模型提供候选 → 人工确认保存 → 本地判分”。真实模型服务调用不作为构建前置条件，凭据只在本地程序配置。Windows 原生观察使用假测试值验证加密保存、读取、拒绝篡改和取消保留旧文件，不请求真实模型；具体通过结果待实际 CI 记录确认。源包保留新客户端、存储、界面与工作流，以及原始许可和私有依赖源码。
+
+
 **[背诵练习 1.4.2 三平台补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。** 准备页新增“打乱顺序”，提供 Windows R7 独立插件，以及基于 Mac R8 的 Intel 和 M 系列整合更新包。源码提交 `3e6730ddf9239ee92f41ec408ea5b9421af6cf11`；[构建 39437145026](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39437145026)与[发布 39437870903](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39437870903)均成功，7 份公开附件重新下载核验通过。既有 R7、R8 和 1.4.1 的下载、标签与附件保持不变。
 
 **[R8（`v4.0.0-typing.8`）macOS 整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)。** 需要 macOS 15+，Intel x64 与 Apple Silicon arm64 分包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及对应 .NET 运行环境。源码提交 `2c64325cbc14e2699aa0e3ea6f6d71599a25383e`；[构建 39425977259](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39425977259)与[发布 39426632441](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39426632441)均成功，6 份公开附件重新下载核验通过。Windows 当前发行仍为 R7，另有背诵练习 1.4.1 独立更新。

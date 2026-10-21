@@ -1,4 +1,5 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
+// Modified 2026-10-21: expose separate translation and candidate-model settings.
 using Avalonia.Controls;
 using DictationAssistant.Plugin.Abstractions;
 
@@ -26,7 +27,7 @@ public sealed class SynchronousTypingPlugin : IPracticePlugin, IConfigurablePlug
     {
         if (ownerWindow is not Window owner)
             throw new InvalidOperationException("当前宿主不支持插件配置窗口。");
-        var window = new TranslationApiSettingsWindow(_translationEngines, cancellationToken);
+        var window = new PracticePluginSettingsWindow(_translationEngines, cancellationToken);
         await window.ShowDialog(owner);
     }
 }

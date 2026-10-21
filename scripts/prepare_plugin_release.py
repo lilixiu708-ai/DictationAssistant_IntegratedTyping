@@ -35,6 +35,7 @@ STANDALONE_IMPORTER_TAG = 'plugin-docx-vocabulary-v1.1.0'
 PRESERVED_TYPING_TAG = 'plugin-synchronous-typing-v1.3.1'
 PRESERVED_TYPING_COMMIT = '418501c1a7be64bd1e81dd4dd9816e4ce822c4e2'
 TYPING_PATCH_BASE_COMMIT = 'f277468443bf2d20c0803c39977d93cbe2c1ce13'
+TYPING_WINDOWS_143_BASE_COMMIT = '36c544c34651ff4409ebaf86cd426ff26b3ec7dc'
 IMPORTER_EXTENSIONS = ['.docx', '.xlsx', '.xls', '.xlsb', '.xlsm']
 IMPORTER_BASELINE_FILE = 'HOST_BASELINE-docx-vocabulary.json'
 IMPORTER_COMPATIBILITY_FILE = 'PLUGIN_COMPATIBILITY-docx-vocabulary.json'
@@ -76,6 +77,7 @@ TYPING_RELEASES = {
     STANDALONE_PLUGIN_TAG: ('1.3.1', HOST_RELEASE_TAG, '插件更新：同步打字 1.3.1（多翻译服务）'),
     'plugin-synchronous-typing-v1.4.1': ('1.4.1', R7_RELEASE_TAG, '背诵练习插件 1.4.1'),
     'plugin-synchronous-typing-v1.4.2': ('1.4.2', R7_RELEASE_TAG, '背诵练习插件 1.4.2 · 随机词序补丁'),
+    'plugin-synchronous-typing-v1.4.3': ('1.4.3', R7_RELEASE_TAG, '背诵练习插件 1.4.3 · Windows 中文答案补丁'),
 }
 
 
@@ -87,6 +89,8 @@ def typing_release_config(tag):
               'host': HOSTS[host_tag], 'title': title}
     if version == '1.4.2':
         config['patch_base_commit'] = TYPING_PATCH_BASE_COMMIT
+    elif version == '1.4.3':
+        config['patch_base_commit'] = TYPING_WINDOWS_143_BASE_COMMIT
     return config
 
 
@@ -302,6 +306,27 @@ def verify_typing_release_source(config, head):
     subprocess.run(['git', 'diff', '--quiet', source_base, head, '--', *paths], cwd=ROOT, check=True)
 
 
+def verify_answer_model_configuration_observation(observation, head, plugin_sha256):
+    required = {
+        'real_windows_runner', 'actual_published_plugin_matches_source',
+        'windows_persistence_enabled', 'initial_deleted_load_is_empty',
+        'all_model_fields_encrypted_at_rest', 'dpapi_save_load_round_trip',
+        'configuration_display_redacts_fields', 'http_endpoint_rejected',
+        'invalid_save_preserves_old_bytes', 'cancelled_save_rejected',
+        'cancelled_save_preserves_old_bytes', 'device_binding_is_recorded',
+        'tampered_device_binding_rejected', 'rejected_load_does_not_rewrite_file',
+        'delete_removes_configuration', 'prior_configuration_restored',
+    }
+    if (not isinstance(observation, dict) or observation.get('status') != 'passed'
+            or observation.get('plugin_version') != '1.4.3'
+            or observation.get('source_commit') != head
+            or observation.get('plugin_dll_sha256') != plugin_sha256
+            or observation.get('network_requests_performed') is not False
+            or not isinstance(observation.get('checks'), dict)
+            or any(observation['checks'].get(check) is not True for check in required)):
+        raise ValueError('The Windows model-configuration observation does not match this verified plugin build')
+
+
 def standalone_context(args, head):
     config = typing_release_config(args.plugin_release_tag)
     if args.host_release_tag != config['host_release_tag'] or args.plugin_id not in (None, ['synchronous-typing']):
@@ -328,6 +353,9 @@ def standalone_context(args, head):
                 'plugin_dll_sha256': digest(dll)}
     if any(compatibility.get(key) != value for key, value in expected.items()):
         raise ValueError('Compatibility validation does not match the current standalone plugin and fixed host')
+    if config['version'] == '1.4.3':
+        verify_answer_model_configuration_observation(
+            compatibility.get('answer_model_configuration_observation'), head, digest(dll))
     return disclosure['release_review'], compatibility
 
 
@@ -475,8 +503,19 @@ def package_plugin(plugin_id, project_name, folder, app_tag, head, catalog, host
     if compatibility is not None:
         review['publication_scope'] = 'standalone-plugin-update-existing-host'
         review['host_compatibility'] = compatibility
-        if plugin_id == 'synchronous-typing' and version == '1.4.2':
-            review['patch_base_commit'] = TYPING_PATCH_BASE_COMMIT
+        if plugin_id == 'synchronous-typing' and version in ('1.4.2', '1.4.3'):
+            review['patch_base_commit'] = typing_release_config('plugin-synchronous-typing-v' + version)['patch_base_commit']
+        if plugin_id == 'synchronous-typing' and version == '1.4.3':
+            review['platforms'] = ['win-x64']
+            review['answer_aliases'] = {
+                'candidate_approval_required': True, 'practice_scoring': 'confirmed-local-only',
+                'candidate_generation': 'user-requested-openai-compatible-model-before-practice',
+                'model_credentials': 'local-Windows-user-and-machine-bound-DPAPI',
+            }
+            review['unverified'].extend([
+                'Live model-provider authentication, model quality and real account quotas were not validated with user credentials.',
+                'Cross-account and cross-machine model-profile rejection requires separate real-machine validation.'
+            ])
     if app_tag == R7_RELEASE_TAG:
         if compatibility is None:
             review['publication_scope'] = 'combined-host-and-plugin-release'
@@ -668,6 +707,24 @@ not establish a new permission or legal clearance for that combination.
 配套宿主 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，具体声明与原始许可随附件保留。
 '''
         notes += f'\n对应提交：`{head}`；配套本体：`{app_tag}`。详细许可事项见 `RELEASE_REVIEW.json`。\n'
+    elif plugin_id == 'synchronous-typing' and version == '1.4.3':
+        notes = f'''# 背诵练习插件 1.4.3 · Windows 中文答案补丁
+
+中文答案可以先整理同义写法，再在本地判分。练习前打开“可接受答案”，手动填写，或让已配置的大模型生成候选；逐条核对并勾选后，点击“确认并保存”才会生效。
+未确认的候选不会参与判分。练习过程中不调用模型，也不会把输入答案发到网上。
+
+模型服务在插件配置中单独设置，支持 OpenAI 兼容接口。服务地址、模型名称和密钥在下载后的程序内填写，Windows 使用当前用户和本机绑定的 DPAPI 加密保存。没有模型配置也可手动录入可接受答案。
+
+中文格式差异可按设置处理，已确认别名只用于同一提示和标准答案；英文拼写和化学式仍保留严格判定。随机词序、中途结算、提示和 CSV 导出继续保留。
+
+本次只提供 Windows 插件补丁，继续使用 R7（API 1、功能级别 5）。关闭程序，用 ZIP 内完整 SynchronousTyping 目录替换 Plugins 下的同名目录，再启动程序。本体及 Word / Excel 导入插件保持原字节，Mac 发行仍为 1.4.2。
+
+提供配套源码与 SHA256SUMS。Windows 兼容检查核对固定 R7 加载新插件、15 项既有逻辑检查和生产主窗口正常开闭；这不代替完整人工练习、输入法或真实模型服务验证。未使用个人服务密钥验证在线生成质量，也未验证跨账户或跨机器的配置迁移。
+宿主 Avalonia/MS-PL 与 AGPL 的组合授权事项仍未解决，原始许可和具体声明随附件保留。
+
+补丁提交：{head}；补丁前源码基线：{TYPING_WINDOWS_143_BASE_COMMIT}。
+配套本体：{app_tag}，本体提交：{host_commit}。本次未重新构建本体。
+'''
     elif plugin_id == 'synchronous-typing' and version == '1.4.2':
         notes = f'''# 背诵练习插件 1.4.2 · 随机词序补丁
 
@@ -725,6 +782,8 @@ Windows 真实练习 GUI、原生音频、输入法和在线翻译未实测；�
         source_paths.extend(['scripts/prepare_typing_macos_patch.py', 'scripts/publish_typing_patch.py',
                              'scripts/prepare_macos_release.py',
                              '.github/workflows/release-typing-patch.yml'])
+    if plugin_id == 'synchronous-typing' and version == '1.4.3':
+        source_paths.append('.github/workflows/release-typing-windows-patch.yml')
     if app_tag == R7_RELEASE_TAG and compatibility is None:
         source_paths.extend(['.github/workflows/build-typing-windows.yml', 'scripts/publish_release.py',
                              'scripts/prepare_release.py',

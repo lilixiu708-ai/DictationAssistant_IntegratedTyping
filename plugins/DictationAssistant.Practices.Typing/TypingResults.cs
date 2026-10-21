@@ -1,5 +1,5 @@
 // Source distributed under the AGPL-3.0-or-later terms of DictationAssistant.
-// Modified 2026-10-20: keep scoring and CSV serialization independent of window interaction.
+// Modified 2026-10-21: score confirmed Chinese alternatives from a frozen local snapshot.
 using System.Globalization;
 using System.Text;
 
@@ -10,12 +10,15 @@ internal sealed record TypedResult(int Index, string Expected, string Entered, b
     public bool Correct { get; set; }
     public string Prompt { get; init; } = string.Empty;
     public string SourceLabel { get; init; } = string.Empty;
+    public string? AnswerPromptKey { get; init; }
 }
 
 internal static class TypingResults
 {
     public static int Score(IReadOnlyList<TypedResult> records, bool ignoreCase, CancellationToken cancellationToken,
-        bool chemicalAnswers = false)
+        bool chemicalAnswers = false,
+        IReadOnlyDictionary<AnswerIdentity, IReadOnlyList<string>>? acceptedAnswers = null,
+        bool useAcceptedChineseAnswers = false)
     {
         var correct = 0;
         foreach (var record in records)
@@ -23,6 +26,9 @@ internal static class TypingResults
             cancellationToken.ThrowIfCancellationRequested();
             record.Correct = chemicalAnswers
                 ? ChemicalNotation.IsCorrect(record.Expected, record.Entered)
+                : useAcceptedChineseAnswers && acceptedAnswers is not null
+                ? PracticeAcceptedAnswers.IsAccepted(record.AnswerPromptKey ?? record.Prompt,
+                    record.Expected, record.Entered, ignoreCase, acceptedAnswers)
                 : TypingEvaluation.IsCorrect(record.Expected, record.Entered, ignoreCase);
             if (record.Correct) correct++;
         }

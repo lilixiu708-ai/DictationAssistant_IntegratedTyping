@@ -10,6 +10,8 @@
 
 **[背诵练习 1.4.2 补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。** 在准备页勾选「打乱顺序」，静音背诵和播报后作答都能随机出题；提示与答案一起移动，默认仍按原顺序。提供 Windows 插件补丁及 Mac Intel、M 系列整合更新包。[查看用法](docs/同步打字插件使用说明.md#142-更新打乱顺序)。
 
+**背诵练习 1.4.3（仅 Windows）准备中，尚未发布。** 可在练习前补充同义答案，或用模型生成候选，逐条确认保存后在本地判分；英文拼写和化学式保留原规则。Mac 继续使用 1.4.2。[用法](docs/同步打字插件使用说明.md#143-更新确认中文同义答案)。
+
 Avalonia 11.3.12 的 MS-PL/AGPL 组合授权事项仍未解决，已随发行披露；原始许可与对应源码保留。详见[许可审计](docs/版权与许可审计.md)。
 
 ## 功能
