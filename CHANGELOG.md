@@ -4,11 +4,12 @@
 
 ## macOS 整合更新 [1.4.3-macos.1] - 2026-10-22
 
-**准备中，尚未发布。** 两个完整应用包分别用于 Intel 和 M 系列，内置背诵练习 1.4.3 与 Word / Excel 导入 1.2.0。
+**[完整整合版已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3-macos.1)。** 两个应用包分别用于 Intel 和 M 系列，内置背诵练习 1.4.3 与 Word / Excel 导入 1.2.0，首次安装也可直接使用。
 
 - 将中文同义答案、候选确认及本地判分功能带到 Mac。模型与翻译凭据仅用于当前程序会话，已确认答案保存在用户数据目录。
 - 固定复用已公开 R8 本体，只重建练习插件并重新签名；不替换宿主、导入插件或原生库。保留旧 Mac 包和 Windows 1.4.3 的标签与附件。
-- 使用独立双架构预检与同提交产物发布流程，新增实际 Mac 的模型配置会话观察；签名、语音、SDL 和窗口检查按实际构建结果记录。
+- [双架构构建 39755710588](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39755710588)分别通过严格签名、双插件加载、15 项既有逻辑检查、14 项模型配置会话检查、系统语音、SDL dummy 播放和主窗口正常开闭。[发布 39756286829](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39756286829)复用同提交的原成功产物。
+- 六份公开附件重新下载后与 CI 原件逐字节一致；411 个源码文件、127 份原始许可和私有依赖源码核对通过，每包 331 个宿主、原生及导入文件与原 R8 保持一致。源码为 `7cf4a8602cfe4ea3e227e6d9b6bee17e6806a7a2`，历史发行和标签不变。真实输入法、物理扬声器、在线模型和完整人工背诵尚未实测。
 
 ## 背诵练习插件 [1.4.3] - 2026-10-21
 

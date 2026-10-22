@@ -2,11 +2,13 @@
 
 Windows 当前版本为 **[R7 预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.7)**，完整包包含[背诵练习 1.4.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.0)与 [Word / Excel 导入 1.2.0](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-docx-vocabulary-v1.2.0)。首次安装或从 R6 升级选择完整包，已有 R7 才需单独更新插件；附件选择见[项目首页](../README.md#下载与使用)。
 
-[R8 macOS 整合版](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)已预发布；需要 macOS 15+，Intel 和 Apple Silicon 分包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及 .NET 运行环境。安装、翻译凭据和源码构建见 [macOS 说明](MACOS.md)。
+[Mac 1.4.3 完整整合更新](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3-macos.1)已预发布，内置背诵练习 1.4.3 和导入 1.2.0。Intel 与 M 系列分别下载，退出旧版后替换整个 `.app`；模型与翻译配置仅本次运行使用，已确认答案保存在本地。[安装与配置](MACOS.md)。
+
+原 [R8 macOS 整合版](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)已预发布；需要 macOS 15+，Intel 和 Apple Silicon 分包，均自带背诵练习 1.4.1、Word / Excel 导入 1.2.0 及 .NET 运行环境。安装、翻译凭据和源码构建见 [macOS 说明](MACOS.md)。
 
 [背诵练习 1.4.2 随机词序补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)已预发布，准备页可选“打乱顺序”。Windows 提供 R7 插件补丁，Mac 提供沿用 R8 本体的 Intel / M 系列整合更新；本体、导入插件和原生库保持原样。下载与更新方式见[项目首页](../README.md#下载与使用)。
 
-[背诵练习 1.4.3 中文答案补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)已预发布，仅提供 Windows R7 插件更新。练习前补充答案，或生成候选后逐条确认保存，练习时本地判分；模型配置在本机插件配置中填写，Mac 仍为 1.4.2。操作见[1.4.3 使用说明](同步打字插件使用说明.md#143-更新确认中文同义答案)。
+[背诵练习 1.4.3 中文答案补丁](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)已预发布，仅提供 Windows R7 插件更新。练习前补充答案，或生成候选后逐条确认保存，练习时本地判分；模型配置在本机插件配置中填写，Mac 可直接安装上方的 1.4.3 整合更新。操作见[1.4.3 使用说明](同步打字插件使用说明.md#143-更新确认中文同义答案)。
 
 此前的 [背诵练习 1.4.1](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.1) 已独立预发布，增加中途结算并简化提示用词。沿用 R7 和导入 1.2.0，只替换练习插件目录；R7 完整包仍内置 1.4.0。操作见[1.4.1 说明](同步打字插件使用说明.md#141-更新中途结算与提示)。
 

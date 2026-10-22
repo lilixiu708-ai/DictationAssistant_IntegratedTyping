@@ -2,9 +2,13 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
-**Mac 背诵练习 1.4.3 整合更新准备中，尚未公开。** 新工作流 `release-typing-macos-update.yml` 在 main 分别验证 Intel 与 Apple Silicon；成功后在同一提交创建 `plugin-synchronous-typing-v1.4.3-macos.1`，以原构建 ID 触发发布，直接复用签名与运行检查通过的两个完整应用包。Windows 1.4.3、Mac 1.4.2 和 R8 原发行均不覆盖。
+**[Mac 背诵练习 1.4.3 完整整合更新已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3-macos.1)。** 新工作流 `release-typing-macos-update.yml` 在 main 分别验证 Intel 与 Apple Silicon；成功后在同一提交创建 `plugin-synchronous-typing-v1.4.3-macos.1`，以原构建 ID 触发发布，直接复用签名与运行检查通过的两个完整应用包。Windows 1.4.3、Mac 1.4.2 和 R8 原发行均不覆盖。
 
 新 Mac 源包提供完整 Git 导出、固定私有依赖源码和两个架构的构建记录；未改动的 R8 宿主及原生库源码继续由原固定源码包提供。Mac 模型配置仅保留在当前进程，工作流用合成值验证会话存读、取消、无持久密钥以及新进程不保留配置，不使用真实 API。
+
+源码提交 `7cf4a8602cfe4ea3e227e6d9b6bee17e6806a7a2`；[双架构构建 39755710588](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39755710588)在 Intel 和 M 系列原生 Mac 上均通过固定来源、严格签名、双插件加载、15 项既有逻辑、14 项模型会话配置、系统语音、SDL dummy 播放与生产主窗口正常开闭。[发布 39756286829](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39756286829)只复用这批原成功文件，未重新构建本体。
+
+公开后六份附件重新下载，服务器摘要、五条 SHA256SUMS 和 CI 原件逐字节比对均通过；411 个 Git 导出文件、127 份原始许可、私有依赖源码和每架构八份记录核对通过。每包 337 个应用文件中，331 个不可变文件与实际公开 R8 原件一致。原有 19 份 Release、93 份附件和 20 个标签引用保持不变。该验证不包含真实输入法、物理扬声器、在线服务及完整人工背诵，应用继续使用 ad-hoc 签名，未经过 Apple 公证。
 
 **[背诵练习 1.4.3（Windows）已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)。** [Windows 补丁工作流](../.github/workflows/release-typing-windows-patch.yml)先在 main 手动验证，成功后在同一提交创建 plugin-synchronous-typing-v1.4.3，再以原成功运行 ID 触发标签上的发布。仅复用已经过核对的 Windows 插件产物，不重编固定 R7 本体，不更换导入插件，也不发布 Mac 更新。
 
