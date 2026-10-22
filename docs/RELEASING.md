@@ -2,6 +2,10 @@
 
 发行仓库为 [`lilixiu708-ai/DictationAssistant_IntegratedTyping`](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping)。源码、程序版本、标签、二进制和校验文件须指向同一提交。
 
+**Mac 背诵练习 1.4.3 整合更新准备中，尚未公开。** 新工作流 `release-typing-macos-update.yml` 在 main 分别验证 Intel 与 Apple Silicon；成功后在同一提交创建 `plugin-synchronous-typing-v1.4.3-macos.1`，以原构建 ID 触发发布，直接复用签名与运行检查通过的两个完整应用包。Windows 1.4.3、Mac 1.4.2 和 R8 原发行均不覆盖。
+
+新 Mac 源包提供完整 Git 导出、固定私有依赖源码和两个架构的构建记录；未改动的 R8 宿主及原生库源码继续由原固定源码包提供。Mac 模型配置仅保留在当前进程，工作流用合成值验证会话存读、取消、无持久密钥以及新进程不保留配置，不使用真实 API。
+
 **[背诵练习 1.4.3（Windows）已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)。** [Windows 补丁工作流](../.github/workflows/release-typing-windows-patch.yml)先在 main 手动验证，成功后在同一提交创建 plugin-synchronous-typing-v1.4.3，再以原成功运行 ID 触发标签上的发布。仅复用已经过核对的 Windows 插件产物，不重编固定 R7 本体，不更换导入插件，也不发布 Mac 更新。
 
 本轮新增“模型提供候选 → 人工确认保存 → 本地判分”。真实模型服务调用不作为构建前置条件，凭据只在本地程序配置。Windows 原生观察使用假测试值验证加密保存、读取、拒绝篡改和取消保留旧文件，不请求真实模型；[最终 Windows 构建 39524503791](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/actions/runs/39524503791)已通过固定 R7 加载、15 项既有逻辑检查、生产主窗口正常开闭和 16 项原生配置观察。源包保留新客户端、存储、界面与工作流，以及原始许可和私有依赖源码。

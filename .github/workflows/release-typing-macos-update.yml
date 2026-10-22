@@ -1,0 +1,446 @@
+name: Typing 1.4.3 macOS integrated update (Intel and Apple Silicon)
+'on':
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: 'Empty: validate main on both Mac architectures; publish: dispatch on the macOS update tag
+          with its successful build run ID'
+        required: false
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: typing-macos-update-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  dispatch-mode:
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+    steps:
+    - name: Select a main build or promotion of the original verified artifacts
+      id: mode
+      env:
+        BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      shell: python {0}
+      run: |
+        import os, re
+        build_run = os.environ['BUILD_RUN_ID']
+        if os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch':
+            raise SystemExit('The patch workflow requires an explicit dispatch.')
+        if build_run:
+            if (not re.fullmatch(r'[1-9][0-9]*', build_run)
+                    or os.environ['GITHUB_REF'] != 'refs/tags/plugin-synchronous-typing-v1.4.3-macos.1'):
+                raise SystemExit('Promotion requires the exact macOS 1.4.3 update tag and a positive verified build run ID.')
+            mode = 'publish'
+        else:
+            if os.environ['GITHUB_REF'] != 'refs/heads/main':
+                raise SystemExit('Build the main branch first; a tagged dispatch can only promote verified artifacts.')
+            mode = 'build'
+        with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+            output.write(f'mode={mode}\n')
+  macos-update:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'build'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - runner: macos-15-intel
+          rid: osx-x64
+        - runner: macos-15
+          rid: osx-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.100
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Verify the exact main source without moving an existing update tag
+      shell: python {0}
+      run: |
+        import os, subprocess
+        head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        if os.environ['GITHUB_REF'] != 'refs/heads/main' or head != os.environ['GITHUB_SHA']:
+            raise SystemExit('The Mac preflight must build the exact main commit.')
+        tag = os.environ['PLUGIN_RELEASE_TAG']
+        existing = subprocess.run(['git', 'rev-parse', '--verify', 'refs/tags/' + tag + '^{commit}'],
+                                  capture_output=True, text=True)
+        if existing.returncode == 0:
+            if existing.stdout.strip() != head:
+                raise SystemExit('An existing update tag does not match this preflight source.')
+        else:
+            subprocess.run(['git', 'tag', tag, head], check=True)
+    - name: Update only the typing plugin in the verified R8 application and sign the bundle
+      run: python3 scripts/prepare_typing_macos_patch.py --plugin-release-tag "$PLUGIN_RELEASE_TAG" --build --rid
+        ${{ matrix.rid }} --output-dir artifacts/typing-macos-143/${{ matrix.rid }}
+    - name: Observe session-only model settings in two native Mac processes without calling a service
+      env:
+        TASK_RID: ${{ matrix.rid }}
+      shell: python {0}
+      run: |
+        import hashlib, json, os, pathlib, subprocess, sys, tempfile
+        sys.path.insert(0, 'scripts')
+        from prepare_typing_macos_patch import MACOS_143_CONFIGURATION_CHECKS, verify_answer_model_observation
+        project = r'''<Project Sdk="Microsoft.NET.Sdk">
+          <PropertyGroup>
+            <OutputType>Exe</OutputType>
+            <TargetFramework>net10.0</TargetFramework>
+            <ImplicitUsings>enable</ImplicitUsings>
+            <Nullable>enable</Nullable>
+          </PropertyGroup>
+        </Project>
+        '''
+        source = r'''using System.Diagnostics;
+        using System.Reflection;
+        using System.Runtime.InteropServices;
+        using System.Runtime.Loader;
+        using System.Security.Cryptography;
+        using System.Text;
+        using System.Text.Json;
+
+        internal static class Program
+        {
+            private static readonly Dictionary<string, bool> Checks = new(StringComparer.Ordinal)
+            {
+                ["real_macos_runner"] = false,
+                ["real_native_architecture_runner"] = false,
+                ["actual_published_plugin_matches_source"] = false,
+                ["session_storage_only"] = false,
+                ["initial_deleted_load_is_empty"] = false,
+                ["save_load_round_trip"] = false,
+                ["configuration_display_redacts_fields"] = false,
+                ["http_endpoint_rejected"] = false,
+                ["invalid_save_preserves_previous"] = false,
+                ["cancelled_save_rejected"] = false,
+                ["cancelled_save_preserves_previous"] = false,
+                ["delete_removes_configuration"] = false,
+                ["no_persistent_configuration_file_created"] = false,
+                ["new_process_does_not_retain_session"] = false,
+            };
+            private static Type _settings = null!;
+            private static Type _configuration = null!;
+
+            private static void Check(string label, bool value)
+            {
+                Checks[label] = value;
+                if (!value) throw new InvalidOperationException(label);
+            }
+
+            private static object Configuration(string endpoint, string model, string key) =>
+                Activator.CreateInstance(_configuration, endpoint, model, key)
+                ?? throw new InvalidOperationException("configuration_construction_failed");
+
+            private static string Field(object configuration, string field) =>
+                (string)(_configuration.GetProperty(field)?.GetValue(configuration)
+                ?? throw new InvalidOperationException("configuration_field_unavailable"));
+
+            private static bool Same(object? left, object right) => left is not null &&
+                new[] { "Endpoint", "Model", "ApiKey" }.All(field => Field(left, field) == Field(right, field));
+
+            private static async Task<object?> Call(string method, params object?[] args)
+            {
+                var member = _settings.GetMethod(method, BindingFlags.Public | BindingFlags.Static)
+                    ?? throw new InvalidOperationException("configuration_method_unavailable");
+                Task task;
+                try { task = (Task)(member.Invoke(null, args) ?? throw new InvalidOperationException("missing_operation")); }
+                catch (TargetInvocationException exception) when (exception.InnerException is not null)
+                { System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exception.InnerException).Throw(); throw; }
+                await task;
+                return task.GetType().GetProperty("Result")?.GetValue(task);
+            }
+
+            private static async Task<bool> Rejects<TException>(Func<Task> operation) where TException : Exception
+            {
+                try { await operation(); return false; }
+                catch (TException) { return true; }
+            }
+
+            // Read-only snapshot of only this configuration's existing files and directory.
+            // No profile bytes or paths are included in the result report.
+            private static string ProfileSnapshot(string path)
+            {
+                var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("missing_profile_directory");
+                if (!Directory.Exists(directory)) return "directory-absent";
+                var basename = Path.GetFileName(path);
+                var entries = Directory.EnumerateFileSystemEntries(directory)
+                    .Where(entry => Path.GetFileName(entry).StartsWith(basename, StringComparison.Ordinal))
+                    .Order(StringComparer.Ordinal).ToArray();
+                var result = new StringBuilder("directory-present\n");
+                foreach (var entry in entries)
+                {
+                    result.Append(Path.GetFileName(entry)).Append('\0');
+                    if (File.Exists(entry))
+                    {
+                        using var stream = new FileStream(entry, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                        result.Append(Convert.ToHexString(SHA256.HashData(stream)));
+                    }
+                    else result.Append("non-file");
+                    result.Append('\n');
+                }
+                return result.ToString();
+            }
+
+            public static async Task<int> Main(string[] args)
+            {
+                if (args.Length is < 5 or > 6 || (args.Length == 6 && args[5] != "--fresh")) return 2;
+                var pluginDirectory = Path.GetFullPath(args[0]);
+                var runtimeDirectory = Path.GetFullPath(args[1]);
+                var reportPath = Path.GetFullPath(args[2]);
+                var rid = args[3];
+                var sourceCommit = args[4];
+                var fresh = args.Length == 6;
+                var pluginPath = Path.Combine(pluginDirectory, "DictationAssistant.Practices.Typing.dll");
+                string pluginSha256 = string.Empty;
+                string status = "failed";
+                string? failure = null;
+                try
+                {
+                    if (sourceCommit.Length != 40 || !sourceCommit.All(Uri.IsHexDigit)
+                        || rid is not ("osx-x64" or "osx-arm64"))
+                        throw new InvalidOperationException("invalid_expected_provenance");
+                    if (reportPath.StartsWith(pluginDirectory + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                        || reportPath.StartsWith(runtimeDirectory + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+                        throw new InvalidOperationException("report_must_be_outside_signed_application");
+                    using (var stream = File.OpenRead(pluginPath)) pluginSha256 = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+                    AssemblyLoadContext.Default.Resolving += (_, name) =>
+                    {
+                        foreach (var directory in new[] { pluginDirectory, runtimeDirectory })
+                        {
+                            var candidate = Path.Combine(directory, name.Name + ".dll");
+                            if (File.Exists(candidate)) return AssemblyLoadContext.Default.LoadFromAssemblyPath(candidate);
+                        }
+                        return null;
+                    };
+                    var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(pluginPath);
+                    _settings = assembly.GetType("DictationAssistant.Practices.Typing.AnswerModelSettings", throwOnError: true)!;
+                    _configuration = assembly.GetType("DictationAssistant.Practices.Typing.AnswerModelConfiguration", throwOnError: true)!;
+                    Check("real_macos_runner", OperatingSystem.IsMacOS());
+                    var expectedArchitecture = rid == "osx-arm64" ? Architecture.Arm64 : Architecture.X64;
+                    Check("real_native_architecture_runner", RuntimeInformation.ProcessArchitecture == expectedArchitecture
+                        && RuntimeInformation.OSArchitecture == expectedArchitecture);
+                    Check("actual_published_plugin_matches_source",
+                        assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion == "1.4.3+" + sourceCommit
+                        && FileVersionInfo.GetVersionInfo(pluginPath).FileVersion == "1.4.3.0");
+                    Check("session_storage_only", _settings.GetProperty("CanPersist")?.GetValue(null) is false);
+                    var storagePath = (string)(_settings.GetProperty("StoragePath", BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
+                        ?? throw new InvalidOperationException("configuration_storage_path_unavailable"));
+                    var before = ProfileSnapshot(storagePath);
+                    if (fresh)
+                    {
+                        // Deliberately do not Delete first: this is a separate process which must start empty.
+                        Check("new_process_does_not_retain_session", await Call("LoadAsync", CancellationToken.None) is null);
+                        Check("no_persistent_configuration_file_created", ProfileSnapshot(storagePath) == before);
+                        status = "passed";
+                    }
+                    else
+                    {
+                        await Call("DeleteAsync", CancellationToken.None);
+                        Check("initial_deleted_load_is_empty", await Call("LoadAsync", CancellationToken.None) is null);
+                        var original = Configuration("https://model-service.example.invalid/v1", "observation-model-a", "sk-observation-dummy-a");
+                        await Call("SaveAsync", original, CancellationToken.None);
+                        Check("save_load_round_trip", Same(await Call("LoadAsync", CancellationToken.None), original));
+                        var display = original.ToString() ?? string.Empty;
+                        Check("configuration_display_redacts_fields", !new[] { "Endpoint", "Model", "ApiKey" }
+                            .Any(field => display.Contains(Field(original, field), StringComparison.Ordinal)));
+                        var invalid = Configuration("http://model-service.example.invalid/v1", "observation-model-b", "sk-observation-dummy-b");
+                        Check("http_endpoint_rejected", await Rejects<ArgumentException>(async () => await Call("SaveAsync", invalid, CancellationToken.None)));
+                        Check("invalid_save_preserves_previous", Same(await Call("LoadAsync", CancellationToken.None), original));
+                        var replacement = Configuration("https://other-model-service.example.invalid/v1", "observation-model-b", "sk-observation-dummy-b");
+                        using var cancellation = new CancellationTokenSource();
+                        cancellation.Cancel();
+                        Check("cancelled_save_rejected", await Rejects<OperationCanceledException>(async () => await Call("SaveAsync", replacement, cancellation.Token)));
+                        Check("cancelled_save_preserves_previous", Same(await Call("LoadAsync", CancellationToken.None), original));
+                        await Call("DeleteAsync", CancellationToken.None);
+                        Check("delete_removes_configuration", await Call("LoadAsync", CancellationToken.None) is null);
+                        // Leave a value in memory until process exit; the second process proves it was not retained.
+                        await Call("SaveAsync", original, CancellationToken.None);
+                        if (!Same(await Call("LoadAsync", CancellationToken.None), original))
+                            throw new InvalidOperationException("final_session_value_unavailable");
+                        Check("no_persistent_configuration_file_created", ProfileSnapshot(storagePath) == before);
+                        status = "awaiting_fresh_process";
+                    }
+                }
+                catch (Exception exception)
+                {
+                    // Do not include exception messages, configuration fields, URLs, paths or dummy keys.
+                    failure = exception.GetType().Name;
+                }
+                var report = new
+                {
+                    status,
+                    source_commit = sourceCommit,
+                    plugin_version = "1.4.3",
+                    runtime_identifier = rid,
+                    plugin_dll_sha256 = pluginSha256,
+                    network_requests_performed = false,
+                    live_provider_credentials_tested = false,
+                    checks = Checks,
+                    failure_type = failure,
+                };
+                Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
+                await File.WriteAllTextAsync(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }) + "\n");
+                return failure is null ? 0 : 1;
+            }
+        }
+        '''
+        rid, commit = os.environ['TASK_RID'], os.environ['GITHUB_SHA']
+        if rid not in ('osx-x64', 'osx-arm64'):
+            raise SystemExit('Unexpected native Mac observation architecture.')
+        output = (pathlib.Path('artifacts/typing-macos-143') / rid).resolve()
+        runtime = output / 'payload/DictationAssistant.app/Contents/Resources/runtime'
+        plugin = runtime / 'Plugins/SynchronousTyping'
+        report_path = output / 'ANSWER_MODEL_OBSERVATION.json'
+        plugin_checksum = hashlib.sha256((plugin / 'DictationAssistant.Practices.Typing.dll').read_bytes()).hexdigest()
+        with tempfile.TemporaryDirectory(prefix='typing-macos-model-') as temporary:
+            task = pathlib.Path(temporary)
+            project_path = task / 'Observation.csproj'
+            project_path.write_text(project, encoding='utf-8')
+            (task / 'Program.cs').write_text(source, encoding='utf-8')
+            binary = task / 'published'
+            subprocess.run(['dotnet', 'publish', str(project_path), '-c', 'Release', '-o', str(binary)],
+                           check=True, timeout=180)
+            executable = binary / 'Observation.dll'
+            base = ['dotnet', str(executable), str(plugin), str(runtime)]
+            subprocess.run([*base, str(report_path), rid, commit], check=True, timeout=45)
+            fresh_path = task / 'fresh-observation.json'
+            subprocess.run([*base, str(fresh_path), rid, commit, '--fresh'], check=True, timeout=45)
+            primary = json.loads(report_path.read_text(encoding='utf-8'))
+            fresh = json.loads(fresh_path.read_text(encoding='utf-8'))
+            expected = {'source_commit': commit, 'plugin_version': '1.4.3',
+                        'runtime_identifier': rid, 'plugin_dll_sha256': plugin_checksum,
+                        'network_requests_performed': False, 'live_provider_credentials_tested': False}
+            for record in (primary, fresh):
+                if any(record.get(name) != value for name, value in expected.items()) or record.get('failure_type') is not None:
+                    raise SystemExit('The native Mac configuration observation source or execution does not match.')
+            fresh_check = 'new_process_does_not_retain_session'
+            primary_checks = primary.get('checks', {})
+            if (primary.get('status') != 'awaiting_fresh_process'
+                    or primary_checks.get(fresh_check) is not False
+                    or any(primary_checks.get(name) is not True
+                           for name in MACOS_143_CONFIGURATION_CHECKS if name != fresh_check)):
+                raise SystemExit('The native Mac session observation is incomplete.')
+            fresh_required = ('real_macos_runner', 'real_native_architecture_runner',
+                              'actual_published_plugin_matches_source', 'session_storage_only',
+                              'no_persistent_configuration_file_created', fresh_check)
+            if fresh.get('status') != 'passed' or any(fresh.get('checks', {}).get(name) is not True for name in fresh_required):
+                raise SystemExit('The new native Mac process retained configuration or failed its provenance checks.')
+            primary['checks'][fresh_check] = True
+            primary['status'] = 'passed'
+            primary['scope'] = ('Real native macOS runner using production AnswerModelSettings from the updated app plugin. '
+                                'Synthetic configuration is exercised only in memory; a separate fresh process starts empty. '
+                                'The existing model profile is read-only snapshotted, not written or deleted. '
+                                'No model generation or HTTP request is invoked; no live credentials or Keychain encryption are tested.')
+            verify_answer_model_observation(primary, rid, commit, plugin_checksum)
+            report_path.write_text(json.dumps(primary, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        print('The actual native Mac plugin passed 14 offline session-configuration observations.')
+    - name: Verify the actual plugins, existing logic, speech, SDL and normal main-window close
+      run: python3 scripts/prepare_typing_macos_patch.py --plugin-release-tag "$PLUGIN_RELEASE_TAG" --validate --rid
+        ${{ matrix.rid }} --output-dir artifacts/typing-macos-143/${{ matrix.rid }}
+    - name: Upload only the verified Mac patch and its metadata
+      uses: actions/upload-artifact@v4
+      with:
+        name: typing-macos-1.4.3-${{ matrix.rid }}
+        path: |
+          artifacts/typing-macos-143/${{ matrix.rid }}/*.zip
+          artifacts/typing-macos-143/${{ matrix.rid }}/*.json
+        if-no-files-found: error
+        compression-level: 0
+        retention-days: 30
+        overwrite: true
+    - name: Preserve Mac runtime diagnostics
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: typing-macos-1.4.3-${{ matrix.rid }}-diagnostics-attempt-${{ github.run_attempt }}
+        path: |
+          artifacts/typing-macos-143/${{ matrix.rid }}/*.log
+          artifacts/typing-macos-143/${{ matrix.rid }}/PLUGIN_DISCOVERY.json
+          artifacts/typing-macos-143/${{ matrix.rid }}/BUILD_VALIDATION.json
+          artifacts/typing-macos-143/${{ matrix.rid }}/ANSWER_MODEL_OBSERVATION.json
+        if-no-files-found: warn
+        retention-days: 30
+        overwrite: true
+    env:
+      PLUGIN_RELEASE_TAG: plugin-synchronous-typing-v1.4.3-macos.1
+  publish-update:
+    needs: dispatch-mode
+    if: needs.dispatch-mode.outputs.mode == 'publish' && github.ref == 'refs/tags/plugin-synchronous-typing-v1.4.3-macos.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Verify the original two-architecture Mac build has the exact tagged source
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      shell: python {0}
+      run: |
+        import json, os, re, subprocess
+        run_id, repository = os.environ['BUILD_RUN_ID'], os.environ['GH_REPO']
+        if (not re.fullmatch(r'[1-9][0-9]*', run_id) or run_id == os.environ['GITHUB_RUN_ID']
+                or os.environ['GITHUB_EVENT_NAME'] != 'workflow_dispatch'
+                or os.environ['GITHUB_REF'] != 'refs/tags/plugin-synchronous-typing-v1.4.3-macos.1'
+                or repository != 'lilixiu708-ai/DictationAssistant_IntegratedTyping'):
+            raise SystemExit('Invalid typing patch artifact promotion request.')
+        head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        tagged = subprocess.check_output(['git', 'rev-parse', 'refs/tags/plugin-synchronous-typing-v1.4.3-macos.1^{commit}'], text=True).strip()
+        source = json.loads(subprocess.check_output(['gh', 'api', f'repos/{repository}/actions/runs/{run_id}']))
+        if (source.get('id') != int(run_id) or source.get('status') != 'completed'
+                or source.get('conclusion') != 'success' or source.get('event') != 'workflow_dispatch'
+                or source.get('path') != '.github/workflows/release-typing-macos-update.yml'
+                or source.get('head_branch') != 'main'
+                or source.get('repository', {}).get('full_name') != repository
+                or source.get('head_repository', {}).get('full_name') != repository
+                or not re.fullmatch(r'[0-9a-f]{40}', head)
+                or not (source.get('head_sha') == os.environ['GITHUB_SHA'] == head == tagged)):
+            raise SystemExit('Promotion requires this repository successful two-architecture Mac preflight and the exact tagged source.')
+        print(f'Promoting verified two-architecture Mac typing patches from run {run_id}, commit {head}.')
+    - uses: actions/download-artifact@v4
+      with:
+        name: typing-macos-1.4.3-osx-x64
+        path: artifacts/typing-macos-143/parts/osx-x64
+        run-id: ${{ inputs.build_run_id }}
+        github-token: ${{ github.token }}
+        repository: ${{ github.repository }}
+    - uses: actions/download-artifact@v4
+      with:
+        name: typing-macos-1.4.3-osx-arm64
+        path: artifacts/typing-macos-143/parts/osx-arm64
+        run-id: ${{ inputs.build_run_id }}
+        github-token: ${{ github.token }}
+        repository: ${{ github.repository }}
+    - name: Verify both Mac updates and prepare complete patch source and disclosures
+      run: python3 scripts/publish_typing_macos_update.py --assemble --parts-root artifacts/typing-macos-143/parts
+        --output-dir artifacts/typing-macos-143/release --tag ${{ github.ref_name }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: typing-macos-1.4.3-release-assets
+        path: artifacts/typing-macos-143/release/*
+        if-no-files-found: error
+        compression-level: 0
+        retention-days: 30
+        overwrite: true
+    - name: Publish the new patch after verifying all uploaded asset digests
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        PATCH_BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      run: python3 scripts/publish_typing_macos_update.py --publish --parts-root artifacts/typing-macos-143/parts
+        --output-dir artifacts/typing-macos-143/release --tag ${{ github.ref_name }}

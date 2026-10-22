@@ -2,6 +2,14 @@
 
 版本号采用 [SemVer](https://semver.org/lang/zh-CN/)。带 `typing.N` 后缀的版本为同步打字定制版预发布，详细交付规则见 [发布规范](docs/RELEASING.md)。
 
+## macOS 整合更新 [1.4.3-macos.1] - 2026-10-22
+
+**准备中，尚未发布。** 两个完整应用包分别用于 Intel 和 M 系列，内置背诵练习 1.4.3 与 Word / Excel 导入 1.2.0。
+
+- 将中文同义答案、候选确认及本地判分功能带到 Mac。模型与翻译凭据仅用于当前程序会话，已确认答案保存在用户数据目录。
+- 固定复用已公开 R8 本体，只重建练习插件并重新签名；不替换宿主、导入插件或原生库。保留旧 Mac 包和 Windows 1.4.3 的标签与附件。
+- 使用独立双架构预检与同提交产物发布流程，新增实际 Mac 的模型配置会话观察；签名、语音、SDL 和窗口检查按实际构建结果记录。
+
 ## 背诵练习插件 [1.4.3] - 2026-10-21
 
 **[仅 Windows，已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.3)。** 沿用已公开 R7，只更新练习插件，Mac 仍使用 1.4.2。

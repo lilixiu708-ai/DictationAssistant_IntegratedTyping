@@ -1,6 +1,10 @@
 # macOS 安装与构建
 
-[背诵练习 1.4.2 整合补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。沿用 R8 本体，只更新练习插件，加入“打乱顺序”。需要 **macOS 15 及更新版本**，自带 Word / Excel 导入 1.2.0 和 .NET，首次安装也可直接使用。原 [R8（内置 1.4.1）](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)保留供查阅；Windows 使用 R7 加 1.4.2 插件补丁。
+背诵练习 1.4.3 的完整整合更新正在准备，尚未发布。两个架构均内置新插件与原 Word / Excel 导入插件，更新时替换整个应用包；下方下载仍指向已发布的 1.4.2。
+
+新版可在练习前补充中文同义答案，或生成候选并逐条确认保存后离线判分。Mac 的模型配置与翻译配置都只在当前进程中保留，退出后需重新输入；已确认的答案会保存在本地。模型设置位于“插件管理 → 背诵练习 → 配置 → 同义答案模型”。
+
+[背诵练习 1.4.2 整合补丁已预发布](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/plugin-synchronous-typing-v1.4.2)。沿用 R8 本体，只更新练习插件，加入“打乱顺序”。需要 **macOS 15 及更新版本**，自带 Word / Excel 导入 1.2.0 和 .NET，首次安装也可直接使用。原 [R8（内置 1.4.1）](https://github.com/lilixiu708-ai/DictationAssistant_IntegratedTyping/releases/tag/v4.0.0-typing.8)保留供查阅；Windows 使用 R7 加 1.4.3 插件补丁。
 
 ## 选择与安装
 
